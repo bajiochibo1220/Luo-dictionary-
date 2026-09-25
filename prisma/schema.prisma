@@ -1,0 +1,566 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [vector, uuidOssp(map: "uuid-ossp"), pgTrgm(map: "pg_trgm")]
+}
+
+// ============================================================
+// CORE: LANGUAGES, MODULES, TRANSLATIONS
+// ============================================================
+
+model Language {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  name         String
+  nativeName   String
+  flagIcon     String?
+  isActive     Boolean  @default(false)
+  isDefault    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  createdBy    String?
+
+  moduleTranslations ModuleTranslation[]
+  fieldTranslations  FieldTranslation[]
+  culturalRecords    CulturalRecord[]
+  dictionaryEntries  DictionaryEntry[]
+  mediaAssets        MediaAsset[]
+  transcripts        Transcript[]
+  userRoles          UserLanguageRole[]
+  settings           LanguageSetting[]
+  trainingDatasets   TrainingDataset[]
+  consentRecords     ConsentRecord[]
+
+  @@map("languages")
+}
+
+model Module {
+  id           Int     @id @default(autoincrement())
+  code         String  @unique
+  baseName     String
+  icon         String?
+  displayOrder Int     @default(0)
+  isActive     Boolean @default(true)
+  isStub       Boolean @default(false)
+
+  translations     ModuleTranslation[]
+  fieldDefinitions FieldDefinition[]
+  culturalRecords  CulturalRecord[]
+
+  @@map("modules")
+}
+
+model ModuleTranslation {
+  id          Int     @id @default(autoincrement())
+  moduleId    Int
+  languageId  Int
+  title       String
+  description String?
+
+  module   Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, languageId])
+  @@map("module_translations")
+}
+
+model FieldDefinition {
+  id           Int     @id @default(autoincrement())
+  moduleId     Int
+  fieldCode    String
+  baseLabel    String
+  fieldType    String
+  isRequired   Boolean @default(false)
+  displayOrder Int     @default(0)
+  options      Json?
+
+  module       Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  translations FieldTranslation[]
+
+  @@unique([moduleId, fieldCode])
+  @@map("field_definitions")
+}
+
+model FieldTranslation {
+  id          Int     @id @default(autoincrement())
+  fieldId     Int
+  languageId  Int
+  label       String
+  placeholder String?
+  helpText    String?
+
+  field    FieldDefinition @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  language Language        @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, languageId])
+  @@map("field_translations")
+}
+
+// ============================================================
+// USERS & AUTH
+// ============================================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?
+  isSuperAdmin  Boolean   @default(false)
+  status        String    @default("active")
+  emailVerified DateTime?
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  languageRoles UserLanguageRole[]
+  contributions CulturalRecord[]   @relation("Contributor")
+  reviews       CulturalRecord[]   @relation("Reviewer")
+  validations   CulturalRecord[]   @relation("Validator")
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  reviewActions ReviewHistory[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  level       Int
+
+  @@map("roles")
+}
+
+model UserLanguageRole {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  languageId Int
+  role       String
+  assignedBy String?
+  assignedAt DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, languageId, role])
+  @@map("user_language_roles")
+}
+
+model Permission {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  module String
+  action String
+
+  @@map("permissions")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// CONTENT
+// ============================================================
+
+model CulturalRecord {
+  id            String    @id @default(uuid())
+  languageId    Int
+  moduleId      Int
+  title         String
+  data          Json
+  summary       String?
+  tags          String[]
+  status        String    @default("draft")
+  nrfUri        String?   @unique
+  nrfMetadata   Json?
+  contributorId String?
+  reviewerId    String?
+  validatorId   String?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  language    Language         @relation(fields: [languageId], references: [id])
+  module      Module           @relation(fields: [moduleId], references: [id])
+  contributor User?            @relation("Contributor", fields: [contributorId], references: [id])
+  reviewer    User?            @relation("Reviewer", fields: [reviewerId], references: [id])
+  validator   User?            @relation("Validator", fields: [validatorId], references: [id])
+  media       MediaAsset[]
+  transcripts Transcript[]
+  reviews     ReviewHistory[]
+  embeddings  Embedding[]
+  provenance  Provenance[]
+  versions    VersionHistory[]
+
+  @@index([languageId, moduleId, status])
+  @@index([status])
+  @@map("cultural_records")
+}
+
+model DictionaryEntry {
+  id            String    @id @default(uuid())
+  languageId    Int
+  dholuo        String
+  english       String
+  kiswahili     String?
+  pronunciation String?
+  grammarClass  String?
+  wordOrigin    String?
+  synonyms      String[]
+  antonyms      String[]
+  examples      Json?
+  audioUrl      String?
+  status        String    @default("draft")
+  nrfUri        String?   @unique
+  nrfMetadata   Json?
+  contributorId String?
+  reviewerId    String?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  language   Language     @relation(fields: [languageId], references: [id])
+  media      MediaAsset[]
+  embeddings Embedding[]
+
+  @@index([languageId, dholuo])
+  @@index([languageId, english])
+  @@map("dictionary_entries")
+}
+
+model MediaAsset {
+  id           String   @id @default(uuid())
+  languageId   Int
+  recordId     String?
+  dictionaryId String?
+  type         String
+  url          String
+  publicId     String
+  resourceType String
+  checksum     String
+  format       String
+  sizeBytes    BigInt
+  durationSecs Int?
+  width        Int?
+  height       Int?
+  caption      String?
+  altText      String?
+  thumbnailUrl String?
+  nrfMetadata  Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  language   Language         @relation(fields: [languageId], references: [id])
+  record     CulturalRecord?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  dictionary DictionaryEntry? @relation(fields: [dictionaryId], references: [id], onDelete: Cascade)
+
+  @@index([recordId])
+  @@index([dictionaryId])
+  @@index([publicId])
+  @@map("media_assets")
+}
+
+model Transcript {
+  id           String    @id @default(uuid())
+  languageId   Int
+  recordId     String?
+  text         String    @db.Text
+  languageCode String
+  speaker      String?
+  speakerRole  String?
+  recordedAt   DateTime?
+  location     String?
+  timestamps   Json?
+  isAligned    Boolean   @default(false)
+  aiSummary    String?   @db.Text
+  aiEntities   Json?
+  createdAt    DateTime  @default(now())
+
+  language   Language        @relation(fields: [languageId], references: [id])
+  record     CulturalRecord? @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  embeddings Embedding[]
+
+  @@index([recordId])
+  @@map("transcripts")
+}
+
+// ============================================================
+// WORKFLOW
+// ============================================================
+
+model ReviewHistory {
+  id         Int      @id @default(autoincrement())
+  recordId   String
+  reviewerId String
+  action     String
+  stage      String
+  comments   String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  record   CulturalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  reviewer User           @relation(fields: [reviewerId], references: [id])
+
+  @@map("review_history")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  type      String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+
+model LanguageSetting {
+  id           Int    @id @default(autoincrement())
+  languageId   Int
+  settingKey   String
+  settingValue String @db.Text
+
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([languageId, settingKey])
+  @@map("language_settings")
+}
+
+// ============================================================
+// AI READINESS
+// ============================================================
+
+model Embedding {
+  id           String                       @id @default(uuid())
+  recordId     String?
+  dictionaryId String?
+  transcriptId String?
+  content      String                       @db.Text
+  vector       Unsupported("vector(1536)")?
+  model        String
+  createdAt    DateTime                     @default(now())
+
+  record     CulturalRecord?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  dictionary DictionaryEntry? @relation(fields: [dictionaryId], references: [id], onDelete: Cascade)
+  transcript Transcript?      @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@index([recordId])
+  @@index([dictionaryId])
+  @@index([transcriptId])
+  @@map("embeddings")
+}
+
+model TrainingDataset {
+  id          String   @id @default(uuid())
+  languageId  Int
+  name        String
+  description String?
+  format      String
+  task        String
+  recordCount Int      @default(0)
+  fileUrl     String?
+  checksum    String?
+  version     String   @default("1.0")
+  createdAt   DateTime @default(now())
+
+  language Language          @relation(fields: [languageId], references: [id])
+  examples TrainingExample[]
+
+  @@map("training_datasets")
+}
+
+model TrainingExample {
+  id        String   @id @default(uuid())
+  datasetId String
+  input     String   @db.Text
+  output    String   @db.Text
+  metadata  Json?
+  sourceId  String?
+  createdAt DateTime @default(now())
+
+  dataset TrainingDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@index([datasetId])
+  @@map("training_examples")
+}
+
+model ConsentRecord {
+  id              String    @id @default(uuid())
+  languageId      Int
+  contributorName String
+  contributorType String
+  consentType     String
+  consentGiven    Boolean   @default(false)
+  consentDate     DateTime?
+  witnessName     String?
+  documentUrl     String?
+  notes           String?   @db.Text
+  createdAt       DateTime  @default(now())
+
+  language Language @relation(fields: [languageId], references: [id])
+
+  @@map("consent_records")
+}
+
+model Provenance {
+  id             Int      @id @default(autoincrement())
+  recordId       String
+  sourceType     String
+  sourceName     String
+  sourceDate     DateTime?
+  sourceLocation String?
+  collector      String?
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  record CulturalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@map("provenance")
+}
+
+model VersionHistory {
+  id           Int      @id @default(autoincrement())
+  recordId     String
+  version      Int
+  data         Json
+  changedBy    String?
+  changeReason String?
+  createdAt    DateTime @default(now())
+
+  record CulturalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@unique([recordId, version])
+  @@map("version_history")
+}
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+
+model AnalyticsEvent {
+  id         String   @id @default(uuid())
+  languageId Int?
+  userId     String?
+  eventType  String
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([languageId])
+  @@map("analytics_events")
+}
+
+// ============================================================
+// AI RESPONSES (chatbot logging)
+// ============================================================
+
+model AIResponse {
+  id         String   @id @default(uuid())
+  languageId Int?
+  userId     String?
+  query      String   @db.Text
+  response   String   @db.Text
+  sources    Json?
+  model      String?
+  latencyMs  Int?
+  rating     String?
+  flagged    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([languageId, createdAt])
+  @@map("ai_responses")
+}
+
+// ============================================================
+// BACKUPS
+// ============================================================
+
+model Backup {
+  id        String   @id @default(uuid())
+  filename  String
+  sizeBytes BigInt
+  type      String
+  fileUrl   String?
+  checksum  String?
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  @@map("backups")
+}
