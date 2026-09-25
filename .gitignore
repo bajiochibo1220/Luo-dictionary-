@@ -1,0 +1,47 @@
+# Environment
+.env
+.env.local
+.env*.local
+
+# Data
+data/raw/audio/
+!data/raw/audio/.gitkeep
+data/exports/*.jsonl
+!data/exports/.gitkeep
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Prisma
+prisma/migrations/dev.db*
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
