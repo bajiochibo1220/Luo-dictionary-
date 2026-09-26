@@ -1,0 +1,18 @@
+﻿[
+  {
+    "question": "Ng'ama nyalo wuotho e wi pi?",
+    "translation": "Who can walk on water?",
+    "answer": "Yamo",
+    "answer_translation": "Wind",
+    "context": "Used in children's riddling games at night",
+    "themes": ["nature", "wind"]
+  },
+  {
+    "question": "Gima nigi ot ma ok nigi dhoudi?",
+    "translation": "What has a house with no doors?",
+    "answer": "Tong'",
+    "answer_translation": "Egg",
+    "context": "Common riddle told to children",
+    "themes": ["nature", "animals"]
+  }
+]

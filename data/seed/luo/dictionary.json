@@ -1,0 +1,56 @@
+﻿[
+  {
+    "dholuo": "nyathi",
+    "english": "child",
+    "kiswahili": "mtoto",
+    "pronunciation": "nya-thee",
+    "grammarClass": "noun",
+    "wordOrigin": "Proto-Nilotic",
+    "synonyms": ["nyithindo"],
+    "antonyms": [],
+    "examples": [
+      { "dholuo": "Nyathi ma ber", "english": "A good child" },
+      { "dholuo": "Nyithindo ariyo", "english": "Two children" }
+    ]
+  },
+  {
+    "dholuo": "wendo",
+    "english": "visitor",
+    "kiswahili": "mgeni",
+    "pronunciation": "wen-doh",
+    "grammarClass": "noun",
+    "synonyms": ["wageni"],
+    "antonyms": [],
+    "examples": [{ "dholuo": "Wendo obiro", "english": "A visitor has come" }]
+  },
+  {
+    "dholuo": "nyako",
+    "english": "girl",
+    "kiswahili": "msichana",
+    "pronunciation": "nya-koh",
+    "grammarClass": "noun",
+    "synonyms": ["nyiri"],
+    "antonyms": ["wuoyi"],
+    "examples": [{ "dholuo": "Nyako ma jaber", "english": "A beautiful girl" }]
+  },
+  {
+    "dholuo": "wuoyi",
+    "english": "boy",
+    "kiswahili": "mvulana",
+    "pronunciation": "woo-yee",
+    "grammarClass": "noun",
+    "synonyms": ["yawuoyi"],
+    "antonyms": ["nyako"],
+    "examples": [{ "dholuo": "Wuoyi otimo maber", "english": "The boy did well" }]
+  },
+  {
+    "dholuo": "ot",
+    "english": "house",
+    "kiswahili": "nyumba",
+    "pronunciation": "oht",
+    "grammarClass": "noun",
+    "synonyms": ["udi"],
+    "antonyms": [],
+    "examples": [{ "dholuo": "Ot ma dit", "english": "A big house" }]
+  }
+]
