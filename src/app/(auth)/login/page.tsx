@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { LoginForm } from "@/components/forms/login-form";
 
+export const dynamic = "force-dynamic";
+
 export default function LoginPage() {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">

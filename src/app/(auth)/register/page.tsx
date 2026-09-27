@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
 
+export const dynamic = "force-dynamic";
+
 export default function RegisterPage() {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8">
