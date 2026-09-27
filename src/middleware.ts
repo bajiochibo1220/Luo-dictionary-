@@ -1,14 +1,19 @@
-import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const session = req.auth;
-  const user = session?.user as any;
 
-  // Protect /super-admin/* - super admin only
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const user = token as any;
+
+  // Protect /super-admin/*
   if (pathname.startsWith("/super-admin")) {
-    if (!session) {
+    if (!token) {
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
       );
@@ -19,9 +24,9 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Protect /admin/* - any admin-level role
+  // Protect /admin/*
   if (pathname.startsWith("/admin")) {
-    if (!session) {
+    if (!token) {
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
       );
@@ -39,9 +44,9 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Protect /dashboard/* - any authenticated user
+  // Protect /dashboard/*
   if (pathname.startsWith("/dashboard")) {
-    if (!session) {
+    if (!token) {
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
       );
@@ -50,12 +55,12 @@ export default auth((req) => {
   }
 
   // Redirect logged-in users away from /login and /register
-  if (session && (pathname === "/login" || pathname === "/register")) {
+  if (token && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
