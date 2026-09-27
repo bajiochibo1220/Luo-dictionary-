@@ -1,0 +1,1724 @@
+{
+  "version": "1.0",
+  "createdAt": "2026-09-27T07:23:48.754Z",
+  "tables": {
+    "languages": [
+      {
+        "id": 1,
+        "code": "luo",
+        "name": "Luo",
+        "nativeName": "Dholuo",
+        "flagIcon": null,
+        "isActive": true,
+        "isDefault": true,
+        "displayOrder": 1,
+        "createdAt": "2026-09-26T06:20:26.304Z",
+        "createdBy": null
+      },
+      {
+        "id": 2,
+        "code": "eng",
+        "name": "English",
+        "nativeName": "English",
+        "flagIcon": null,
+        "isActive": true,
+        "isDefault": false,
+        "displayOrder": 2,
+        "createdAt": "2026-09-26T06:20:28.641Z",
+        "createdBy": null
+      },
+      {
+        "id": 3,
+        "code": "kik",
+        "name": "Kikuyu",
+        "nativeName": "Gikuyu",
+        "flagIcon": null,
+        "isActive": false,
+        "isDefault": false,
+        "displayOrder": 3,
+        "createdAt": "2026-09-26T06:20:30.095Z",
+        "createdBy": null
+      },
+      {
+        "id": 5,
+        "code": "kikale",
+        "name": "kalenjine",
+        "nativeName": "kikale",
+        "flagIcon": null,
+        "isActive": false,
+        "isDefault": false,
+        "displayOrder": 99,
+        "createdAt": "2026-09-27T07:16:43.737Z",
+        "createdBy": "d8db80ab-e27b-4478-ae16-d578dc7fe837"
+      }
+    ],
+    "modules": [
+      {
+        "id": 1,
+        "code": "dictionary",
+        "baseName": "Dictionary",
+        "icon": null,
+        "displayOrder": 1,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 2,
+        "code": "proverbs",
+        "baseName": "Proverbs",
+        "icon": null,
+        "displayOrder": 2,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 3,
+        "code": "riddles",
+        "baseName": "Riddles",
+        "icon": null,
+        "displayOrder": 3,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 4,
+        "code": "oral_histories",
+        "baseName": "Oral Histories",
+        "icon": null,
+        "displayOrder": 4,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 5,
+        "code": "folktales",
+        "baseName": "Folktales",
+        "icon": null,
+        "displayOrder": 5,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 6,
+        "code": "songs",
+        "baseName": "Traditional Songs",
+        "icon": null,
+        "displayOrder": 6,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 7,
+        "code": "artifacts",
+        "baseName": "Cultural Artifacts",
+        "icon": null,
+        "displayOrder": 7,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 8,
+        "code": "heritage_sites",
+        "baseName": "Heritage Sites",
+        "icon": null,
+        "displayOrder": 8,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 9,
+        "code": "cultural_calendar",
+        "baseName": "Cultural Calendar",
+        "icon": null,
+        "displayOrder": 9,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 10,
+        "code": "audio_visual",
+        "baseName": "Audio-Visual Library",
+        "icon": null,
+        "displayOrder": 10,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 11,
+        "code": "chatbot",
+        "baseName": "AI Chatbot",
+        "icon": null,
+        "displayOrder": 11,
+        "isActive": true,
+        "isStub": false
+      },
+      {
+        "id": 12,
+        "code": "games",
+        "baseName": "Games",
+        "icon": null,
+        "displayOrder": 12,
+        "isActive": true,
+        "isStub": true
+      },
+      {
+        "id": 13,
+        "code": "learning",
+        "baseName": "Learning Centre",
+        "icon": null,
+        "displayOrder": 13,
+        "isActive": true,
+        "isStub": true
+      },
+      {
+        "id": 14,
+        "code": "ai_tutor",
+        "baseName": "AI Language Tutor",
+        "icon": null,
+        "displayOrder": 14,
+        "isActive": true,
+        "isStub": true
+      },
+      {
+        "id": 15,
+        "code": "research",
+        "baseName": "Research Portal",
+        "icon": null,
+        "displayOrder": 15,
+        "isActive": true,
+        "isStub": false
+      }
+    ],
+    "moduleTranslations": [
+      {
+        "id": 1,
+        "moduleId": 1,
+        "languageId": 1,
+        "title": "Muma",
+        "description": null
+      },
+      {
+        "id": 2,
+        "moduleId": 2,
+        "languageId": 1,
+        "title": "Ngero",
+        "description": null
+      },
+      {
+        "id": 3,
+        "moduleId": 3,
+        "languageId": 1,
+        "title": "Ngeche",
+        "description": null
+      },
+      {
+        "id": 4,
+        "moduleId": 4,
+        "languageId": 1,
+        "title": "Sigana",
+        "description": null
+      },
+      {
+        "id": 5,
+        "moduleId": 5,
+        "languageId": 1,
+        "title": "Sigana",
+        "description": null
+      },
+      {
+        "id": 7,
+        "moduleId": 7,
+        "languageId": 1,
+        "title": "Gik Luo",
+        "description": null
+      },
+      {
+        "id": 8,
+        "moduleId": 8,
+        "languageId": 1,
+        "title": "Piny Luo",
+        "description": null
+      },
+      {
+        "id": 9,
+        "moduleId": 9,
+        "languageId": 1,
+        "title": "Ndalo",
+        "description": null
+      },
+      {
+        "id": 10,
+        "moduleId": 10,
+        "languageId": 1,
+        "title": "Picha gi Duol",
+        "description": null
+      },
+      {
+        "id": 11,
+        "moduleId": 11,
+        "languageId": 1,
+        "title": "Jabuk",
+        "description": null
+      },
+      {
+        "id": 12,
+        "moduleId": 12,
+        "languageId": 1,
+        "title": "Tugo",
+        "description": null
+      },
+      {
+        "id": 13,
+        "moduleId": 13,
+        "languageId": 1,
+        "title": "Puonj",
+        "description": null
+      },
+      {
+        "id": 14,
+        "moduleId": 14,
+        "languageId": 1,
+        "title": "Japuonj",
+        "description": null
+      },
+      {
+        "id": 15,
+        "moduleId": 15,
+        "languageId": 1,
+        "title": "Kido",
+        "description": null
+      },
+      {
+        "id": 6,
+        "moduleId": 6,
+        "languageId": 1,
+        "title": "Wende Joluo Machon",
+        "description": null
+      },
+      {
+        "id": 45,
+        "moduleId": 1,
+        "languageId": 5,
+        "title": "Dictionary",
+        "description": null
+      },
+      {
+        "id": 46,
+        "moduleId": 2,
+        "languageId": 5,
+        "title": "Proverbs",
+        "description": null
+      },
+      {
+        "id": 47,
+        "moduleId": 3,
+        "languageId": 5,
+        "title": "Riddles",
+        "description": null
+      },
+      {
+        "id": 48,
+        "moduleId": 4,
+        "languageId": 5,
+        "title": "Oral Histories",
+        "description": null
+      },
+      {
+        "id": 49,
+        "moduleId": 5,
+        "languageId": 5,
+        "title": "Folktales",
+        "description": null
+      },
+      {
+        "id": 50,
+        "moduleId": 6,
+        "languageId": 5,
+        "title": "Traditional Songs",
+        "description": null
+      },
+      {
+        "id": 51,
+        "moduleId": 7,
+        "languageId": 5,
+        "title": "Cultural Artifacts",
+        "description": null
+      },
+      {
+        "id": 52,
+        "moduleId": 8,
+        "languageId": 5,
+        "title": "Heritage Sites",
+        "description": null
+      },
+      {
+        "id": 53,
+        "moduleId": 9,
+        "languageId": 5,
+        "title": "Cultural Calendar",
+        "description": null
+      },
+      {
+        "id": 54,
+        "moduleId": 10,
+        "languageId": 5,
+        "title": "Audio-Visual Library",
+        "description": null
+      },
+      {
+        "id": 55,
+        "moduleId": 11,
+        "languageId": 5,
+        "title": "AI Chatbot",
+        "description": null
+      },
+      {
+        "id": 56,
+        "moduleId": 12,
+        "languageId": 5,
+        "title": "Games",
+        "description": null
+      },
+      {
+        "id": 57,
+        "moduleId": 13,
+        "languageId": 5,
+        "title": "Learning Centre",
+        "description": null
+      },
+      {
+        "id": 58,
+        "moduleId": 14,
+        "languageId": 5,
+        "title": "AI Language Tutor",
+        "description": null
+      },
+      {
+        "id": 59,
+        "moduleId": 15,
+        "languageId": 5,
+        "title": "Research Portal",
+        "description": null
+      }
+    ],
+    "fieldDefinitions": [
+      {
+        "id": 1,
+        "moduleId": 2,
+        "fieldCode": "original_text",
+        "baseLabel": "Original Text",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 1,
+        "options": null
+      },
+      {
+        "id": 2,
+        "moduleId": 2,
+        "fieldCode": "translation",
+        "baseLabel": "Translation",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 2,
+        "options": null
+      },
+      {
+        "id": 3,
+        "moduleId": 2,
+        "fieldCode": "meaning",
+        "baseLabel": "Meaning",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 3,
+        "options": null
+      },
+      {
+        "id": 4,
+        "moduleId": 2,
+        "fieldCode": "interpretation",
+        "baseLabel": "Interpretation",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 4,
+        "options": null
+      },
+      {
+        "id": 5,
+        "moduleId": 2,
+        "fieldCode": "context",
+        "baseLabel": "Context",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 5,
+        "options": null
+      },
+      {
+        "id": 6,
+        "moduleId": 2,
+        "fieldCode": "usage",
+        "baseLabel": "Usage",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 6,
+        "options": null
+      },
+      {
+        "id": 7,
+        "moduleId": 3,
+        "fieldCode": "question",
+        "baseLabel": "Question",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 1,
+        "options": null
+      },
+      {
+        "id": 8,
+        "moduleId": 3,
+        "fieldCode": "answer",
+        "baseLabel": "Answer",
+        "fieldType": "text",
+        "isRequired": true,
+        "displayOrder": 2,
+        "options": null
+      },
+      {
+        "id": 9,
+        "moduleId": 3,
+        "fieldCode": "translation",
+        "baseLabel": "Translation",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 3,
+        "options": null
+      },
+      {
+        "id": 10,
+        "moduleId": 3,
+        "fieldCode": "context",
+        "baseLabel": "Context",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 4,
+        "options": null
+      },
+      {
+        "id": 11,
+        "moduleId": 1,
+        "fieldCode": "dholuo",
+        "baseLabel": "Dholuo Word",
+        "fieldType": "text",
+        "isRequired": true,
+        "displayOrder": 1,
+        "options": null
+      },
+      {
+        "id": 12,
+        "moduleId": 1,
+        "fieldCode": "english",
+        "baseLabel": "English",
+        "fieldType": "text",
+        "isRequired": true,
+        "displayOrder": 2,
+        "options": null
+      },
+      {
+        "id": 13,
+        "moduleId": 1,
+        "fieldCode": "kiswahili",
+        "baseLabel": "Kiswahili",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 3,
+        "options": null
+      },
+      {
+        "id": 14,
+        "moduleId": 1,
+        "fieldCode": "pronunciation",
+        "baseLabel": "Pronunciation",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 4,
+        "options": null
+      },
+      {
+        "id": 15,
+        "moduleId": 1,
+        "fieldCode": "grammarClass",
+        "baseLabel": "Grammar Class",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 5,
+        "options": null
+      },
+      {
+        "id": 16,
+        "moduleId": 6,
+        "fieldCode": "title",
+        "baseLabel": "Title",
+        "fieldType": "text",
+        "isRequired": true,
+        "displayOrder": 1,
+        "options": null
+      },
+      {
+        "id": 17,
+        "moduleId": 6,
+        "fieldCode": "lyrics",
+        "baseLabel": "Lyrics",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 2,
+        "options": null
+      },
+      {
+        "id": 18,
+        "moduleId": 6,
+        "fieldCode": "translation",
+        "baseLabel": "Translation",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 3,
+        "options": null
+      },
+      {
+        "id": 19,
+        "moduleId": 6,
+        "fieldCode": "meaning",
+        "baseLabel": "Meaning",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 4,
+        "options": null
+      },
+      {
+        "id": 20,
+        "moduleId": 6,
+        "fieldCode": "instruments",
+        "baseLabel": "Instruments",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 5,
+        "options": null
+      },
+      {
+        "id": 21,
+        "moduleId": 6,
+        "fieldCode": "cultural_context",
+        "baseLabel": "Cultural Context",
+        "fieldType": "textarea",
+        "isRequired": false,
+        "displayOrder": 6,
+        "options": null
+      },
+      {
+        "id": 22,
+        "moduleId": 4,
+        "fieldCode": "title",
+        "baseLabel": "Title",
+        "fieldType": "text",
+        "isRequired": true,
+        "displayOrder": 1,
+        "options": null
+      },
+      {
+        "id": 23,
+        "moduleId": 4,
+        "fieldCode": "community",
+        "baseLabel": "Community",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 2,
+        "options": null
+      },
+      {
+        "id": 24,
+        "moduleId": 4,
+        "fieldCode": "clan",
+        "baseLabel": "Clan",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 3,
+        "options": null
+      },
+      {
+        "id": 25,
+        "moduleId": 4,
+        "fieldCode": "narrator",
+        "baseLabel": "Narrator",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 4,
+        "options": null
+      },
+      {
+        "id": 26,
+        "moduleId": 4,
+        "fieldCode": "location",
+        "baseLabel": "Location",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 5,
+        "options": null
+      },
+      {
+        "id": 27,
+        "moduleId": 4,
+        "fieldCode": "county",
+        "baseLabel": "County",
+        "fieldType": "text",
+        "isRequired": false,
+        "displayOrder": 6,
+        "options": null
+      },
+      {
+        "id": 28,
+        "moduleId": 4,
+        "fieldCode": "transcript",
+        "baseLabel": "Transcript",
+        "fieldType": "textarea",
+        "isRequired": true,
+        "displayOrder": 7,
+        "options": null
+      }
+    ],
+    "fieldTranslations": [
+      {
+        "id": 1,
+        "fieldId": 1,
+        "languageId": 1,
+        "label": "Ndiko ma chon",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 2,
+        "fieldId": 2,
+        "languageId": 1,
+        "label": "Lokruok",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 3,
+        "fieldId": 3,
+        "languageId": 1,
+        "label": "Tiende",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 4,
+        "fieldId": 4,
+        "languageId": 1,
+        "label": "Lokruok mopogore",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 5,
+        "fieldId": 5,
+        "languageId": 1,
+        "label": "Kaka inyalo tiyo go",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 6,
+        "fieldId": 6,
+        "languageId": 1,
+        "label": "Kaka itiyo go",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 7,
+        "fieldId": 7,
+        "languageId": 1,
+        "label": "Penjo",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 8,
+        "fieldId": 8,
+        "languageId": 1,
+        "label": "Duoko",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 9,
+        "fieldId": 9,
+        "languageId": 1,
+        "label": "Lokruok",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 10,
+        "fieldId": 10,
+        "languageId": 1,
+        "label": "Kaka inyalo tiyo go",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 11,
+        "fieldId": 11,
+        "languageId": 1,
+        "label": "Wach Dholuo",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 12,
+        "fieldId": 12,
+        "languageId": 1,
+        "label": "Sikukuu",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 13,
+        "fieldId": 13,
+        "languageId": 1,
+        "label": "Kiswahili",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 14,
+        "fieldId": 14,
+        "languageId": 1,
+        "label": "Kaka iluongo",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 15,
+        "fieldId": 15,
+        "languageId": 1,
+        "label": "Kit wach",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 16,
+        "fieldId": 16,
+        "languageId": 1,
+        "label": "Nying wende",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 17,
+        "fieldId": 17,
+        "languageId": 1,
+        "label": "Weche wende",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 18,
+        "fieldId": 18,
+        "languageId": 1,
+        "label": "Lokruok",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 19,
+        "fieldId": 19,
+        "languageId": 1,
+        "label": "Tiende",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 20,
+        "fieldId": 20,
+        "languageId": 1,
+        "label": "Gik moyweyo",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 21,
+        "fieldId": 21,
+        "languageId": 1,
+        "label": "Kit Luo",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 22,
+        "fieldId": 22,
+        "languageId": 1,
+        "label": "Nying sigana",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 23,
+        "fieldId": 23,
+        "languageId": 1,
+        "label": "Oganda",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 24,
+        "fieldId": 24,
+        "languageId": 1,
+        "label": "Anyuola",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 25,
+        "fieldId": 25,
+        "languageId": 1,
+        "label": "Jawacho",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 26,
+        "fieldId": 26,
+        "languageId": 1,
+        "label": "Piny",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 27,
+        "fieldId": 27,
+        "languageId": 1,
+        "label": "Senta",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 28,
+        "fieldId": 28,
+        "languageId": 1,
+        "label": "Ndiko",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 57,
+        "fieldId": 1,
+        "languageId": 5,
+        "label": "Original Text",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 58,
+        "fieldId": 2,
+        "languageId": 5,
+        "label": "Translation",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 59,
+        "fieldId": 3,
+        "languageId": 5,
+        "label": "Meaning",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 60,
+        "fieldId": 4,
+        "languageId": 5,
+        "label": "Interpretation",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 61,
+        "fieldId": 5,
+        "languageId": 5,
+        "label": "Context",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 62,
+        "fieldId": 6,
+        "languageId": 5,
+        "label": "Usage",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 63,
+        "fieldId": 7,
+        "languageId": 5,
+        "label": "Question",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 64,
+        "fieldId": 8,
+        "languageId": 5,
+        "label": "Answer",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 65,
+        "fieldId": 9,
+        "languageId": 5,
+        "label": "Translation",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 66,
+        "fieldId": 10,
+        "languageId": 5,
+        "label": "Context",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 67,
+        "fieldId": 11,
+        "languageId": 5,
+        "label": "Dholuo Word",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 68,
+        "fieldId": 12,
+        "languageId": 5,
+        "label": "English",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 69,
+        "fieldId": 13,
+        "languageId": 5,
+        "label": "Kiswahili",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 70,
+        "fieldId": 14,
+        "languageId": 5,
+        "label": "Pronunciation",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 71,
+        "fieldId": 15,
+        "languageId": 5,
+        "label": "Grammar Class",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 72,
+        "fieldId": 16,
+        "languageId": 5,
+        "label": "Title",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 73,
+        "fieldId": 17,
+        "languageId": 5,
+        "label": "Lyrics",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 74,
+        "fieldId": 18,
+        "languageId": 5,
+        "label": "Translation",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 75,
+        "fieldId": 19,
+        "languageId": 5,
+        "label": "Meaning",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 76,
+        "fieldId": 20,
+        "languageId": 5,
+        "label": "Instruments",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 77,
+        "fieldId": 21,
+        "languageId": 5,
+        "label": "Cultural Context",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 78,
+        "fieldId": 22,
+        "languageId": 5,
+        "label": "Title",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 79,
+        "fieldId": 23,
+        "languageId": 5,
+        "label": "Community",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 80,
+        "fieldId": 24,
+        "languageId": 5,
+        "label": "Clan",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 81,
+        "fieldId": 25,
+        "languageId": 5,
+        "label": "Narrator",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 82,
+        "fieldId": 26,
+        "languageId": 5,
+        "label": "Location",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 83,
+        "fieldId": 27,
+        "languageId": 5,
+        "label": "County",
+        "placeholder": null,
+        "helpText": null
+      },
+      {
+        "id": 84,
+        "fieldId": 28,
+        "languageId": 5,
+        "label": "Transcript",
+        "placeholder": null,
+        "helpText": null
+      }
+    ],
+    "culturalRecords": [
+      {
+        "id": "cb34f656-3f02-4df8-bd43-f631fc83e78a",
+        "languageId": 1,
+        "moduleId": 2,
+        "title": "Ng'ato ok nyal timo gima ok onyal",
+        "data": {
+          "usage": "When advising someone to be realistic",
+          "themes": [
+            "wisdom",
+            "limitations"
+          ],
+          "context": "Used to counsel someone attempting the impossible",
+          "meaning": "Accept your limitations",
+          "translation": "One cannot do what one cannot do",
+          "original_text": "Ng'ato ok nyal timo gima ok onyal",
+          "interpretation": "Know your limits and respect them",
+          "related_proverbs": []
+        },
+        "summary": null,
+        "tags": [
+          "wisdom",
+          "limitations"
+        ],
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/proverbs/e2d6bb67-0d5f-47c7-92bd-1d4ce8099c18",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "validatorId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:36:00.813Z",
+        "updatedAt": "2026-09-26T06:36:00.813Z"
+      },
+      {
+        "id": "b30fe17b-c54f-49fc-8881-6b7e27767490",
+        "languageId": 1,
+        "moduleId": 2,
+        "title": "Kik inyal ng'ato ma ok inyal",
+        "data": {
+          "usage": "When warning someone about overreach",
+          "themes": [
+            "wisdom",
+            "conflict"
+          ],
+          "context": "Used when someone picks a fight beyond their strength",
+          "meaning": "Know who you are dealing with",
+          "translation": "Do not challenge someone you cannot handle",
+          "original_text": "Kik inyal ng'ato ma ok inyal",
+          "interpretation": "Choose your battles wisely",
+          "related_proverbs": []
+        },
+        "summary": null,
+        "tags": [
+          "wisdom",
+          "conflict"
+        ],
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/proverbs/d4bf41e3-5bbd-426a-9c4d-daf43e4a5709",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "validatorId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:36:01.964Z",
+        "updatedAt": "2026-09-26T06:36:01.964Z"
+      },
+      {
+        "id": "62ee415d-8a69-476b-9d6f-9622cb2b2421",
+        "languageId": 1,
+        "moduleId": 2,
+        "title": "Ng'ama nigi kio en ema nyalo ng'iyo lowo",
+        "data": {
+          "usage": "When advising preparation",
+          "themes": [
+            "preparation",
+            "work"
+          ],
+          "context": "Used to encourage preparation",
+          "meaning": "Tools enable action",
+          "translation": "Only the one with a hoe can dig the ground",
+          "original_text": "Ng'ama nigi kio en ema nyalo ng'iyo lowo",
+          "interpretation": "Without preparation, you cannot succeed",
+          "related_proverbs": []
+        },
+        "summary": null,
+        "tags": [
+          "preparation",
+          "work"
+        ],
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/proverbs/8a8a73eb-fe66-46b9-88fa-20ca5416aecf",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "validatorId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:36:02.765Z",
+        "updatedAt": "2026-09-26T06:36:02.765Z"
+      },
+      {
+        "id": "e14434d8-4f17-4e85-a937-cf594efdb51c",
+        "languageId": 1,
+        "moduleId": 3,
+        "title": "Ng'ama nyalo wuotho e wi pi?",
+        "data": {
+          "answer": "Yamo",
+          "themes": [
+            "nature",
+            "wind"
+          ],
+          "context": "Used in children's riddling games at night",
+          "question": "Ng'ama nyalo wuotho e wi pi?",
+          "translation": "Who can walk on water?",
+          "answer_translation": "Wind"
+        },
+        "summary": null,
+        "tags": [
+          "nature",
+          "wind"
+        ],
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/riddles/1329b455-bdb1-418a-8473-27622d7b5a2f",
+        "nrfMetadata": {
+          "genre": "riddles",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "validatorId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:36:03.341Z",
+        "updatedAt": "2026-09-26T06:36:03.341Z"
+      },
+      {
+        "id": "90a477bf-7d3b-4d28-a8fa-78425d4b9a5d",
+        "languageId": 1,
+        "moduleId": 3,
+        "title": "Gima nigi ot ma ok nigi dhoudi?",
+        "data": {
+          "answer": "Tong'",
+          "themes": [
+            "nature",
+            "animals"
+          ],
+          "context": "Common riddle told to children",
+          "question": "Gima nigi ot ma ok nigi dhoudi?",
+          "translation": "What has a house with no doors?",
+          "answer_translation": "Egg"
+        },
+        "summary": null,
+        "tags": [
+          "nature",
+          "animals"
+        ],
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/riddles/c8bb9ce2-477e-4b25-922a-75cde8f7b71c",
+        "nrfMetadata": {
+          "genre": "riddles",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "validatorId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:36:04.005Z",
+        "updatedAt": "2026-09-26T06:36:04.005Z"
+      }
+    ],
+    "dictionaryEntries": [
+      {
+        "id": "41c858bd-c7f4-425e-81c2-04bfde820b06",
+        "languageId": 1,
+        "dholuo": "nyathi",
+        "english": "child",
+        "kiswahili": "mtoto",
+        "pronunciation": "nya-thee",
+        "grammarClass": "noun",
+        "wordOrigin": "Proto-Nilotic",
+        "synonyms": [
+          "nyithindo"
+        ],
+        "antonyms": [],
+        "examples": [
+          {
+            "dholuo": "Nyathi ma ber",
+            "english": "A good child"
+          },
+          {
+            "dholuo": "Nyithindo ariyo",
+            "english": "Two children"
+          }
+        ],
+        "audioUrl": null,
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/dictionary/53e20301-1503-4d48-9555-6b58f81161e0",
+        "nrfMetadata": {
+          "genre": "dictionary",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:35:57.031Z",
+        "updatedAt": "2026-09-26T06:35:57.031Z"
+      },
+      {
+        "id": "97ae48de-8ebd-4590-8af5-bbb4c5341b92",
+        "languageId": 1,
+        "dholuo": "wendo",
+        "english": "visitor",
+        "kiswahili": "mgeni",
+        "pronunciation": "wen-doh",
+        "grammarClass": "noun",
+        "wordOrigin": null,
+        "synonyms": [
+          "wageni"
+        ],
+        "antonyms": [],
+        "examples": [
+          {
+            "dholuo": "Wendo obiro",
+            "english": "A visitor has come"
+          }
+        ],
+        "audioUrl": null,
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/dictionary/7c761fa6-99ff-4819-ac07-1f440dd8ffb1",
+        "nrfMetadata": {
+          "genre": "dictionary",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:35:57.884Z",
+        "updatedAt": "2026-09-26T06:35:57.884Z"
+      },
+      {
+        "id": "68ff13c8-5601-42d1-92ce-696f7992a405",
+        "languageId": 1,
+        "dholuo": "nyako",
+        "english": "girl",
+        "kiswahili": "msichana",
+        "pronunciation": "nya-koh",
+        "grammarClass": "noun",
+        "wordOrigin": null,
+        "synonyms": [
+          "nyiri"
+        ],
+        "antonyms": [
+          "wuoyi"
+        ],
+        "examples": [
+          {
+            "dholuo": "Nyako ma jaber",
+            "english": "A beautiful girl"
+          }
+        ],
+        "audioUrl": null,
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/dictionary/25a5d856-8fd3-4984-8c13-52734a8b9823",
+        "nrfMetadata": {
+          "genre": "dictionary",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:35:58.687Z",
+        "updatedAt": "2026-09-26T06:35:58.687Z"
+      },
+      {
+        "id": "7b7883ac-2283-4126-bb51-aa7260012df9",
+        "languageId": 1,
+        "dholuo": "wuoyi",
+        "english": "boy",
+        "kiswahili": "mvulana",
+        "pronunciation": "woo-yee",
+        "grammarClass": "noun",
+        "wordOrigin": null,
+        "synonyms": [
+          "yawuoyi"
+        ],
+        "antonyms": [
+          "nyako"
+        ],
+        "examples": [
+          {
+            "dholuo": "Wuoyi otimo maber",
+            "english": "The boy did well"
+          }
+        ],
+        "audioUrl": null,
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/dictionary/697457a3-3758-4504-97de-72c27660723c",
+        "nrfMetadata": {
+          "genre": "dictionary",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:35:59.220Z",
+        "updatedAt": "2026-09-26T06:35:59.220Z"
+      },
+      {
+        "id": "3979bad2-d8a6-4842-883a-2664934738e1",
+        "languageId": 1,
+        "dholuo": "ot",
+        "english": "house",
+        "kiswahili": "nyumba",
+        "pronunciation": "oht",
+        "grammarClass": "noun",
+        "wordOrigin": null,
+        "synonyms": [
+          "udi"
+        ],
+        "antonyms": [],
+        "examples": [
+          {
+            "dholuo": "Ot ma dit",
+            "english": "A big house"
+          }
+        ],
+        "audioUrl": null,
+        "status": "published",
+        "nrfUri": "JOOUST/NRF/LuoAI_Repository/luo/dictionary/2aa713ec-d464-4e74-911a-a0be023eb6e5",
+        "nrfMetadata": {
+          "genre": "dictionary",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "contributorId": null,
+        "reviewerId": null,
+        "publishedAt": null,
+        "createdAt": "2026-09-26T06:35:59.829Z",
+        "updatedAt": "2026-09-26T06:35:59.829Z"
+      }
+    ],
+    "mediaAssets": [
+      {
+        "id": "745f41fa-e0d2-4c2f-a1af-7320b401e58b",
+        "languageId": 1,
+        "recordId": null,
+        "dictionaryId": null,
+        "type": "image",
+        "url": "https://res.cloudinary.com/izn4yxke/image/upload/v1790489139/luolinguaai/luo/proverbs/unassigned/image/it5qjuzaxfjs6z4d2fou.jpg",
+        "publicId": "luolinguaai/luo/proverbs/unassigned/image/it5qjuzaxfjs6z4d2fou",
+        "resourceType": "image",
+        "checksum": "942b52611b43b26b9817b4db6a67b82d9025bf089486d1d60fdc5df25bf38bc4",
+        "format": "jpg",
+        "sizeBytes": 18825,
+        "durationSecs": null,
+        "width": 399,
+        "height": 501,
+        "caption": null,
+        "altText": null,
+        "thumbnailUrl": "https://res.cloudinary.com/izn4yxke/image/upload/c_fill,f_auto,h_300,q_auto,w_400/v1/luolinguaai/luo/proverbs/unassigned/image/it5qjuzaxfjs6z4d2fou?_a=BAMAABX00",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "createdAt": "2026-09-27T06:05:41.007Z",
+        "updatedAt": "2026-09-27T06:05:41.007Z"
+      },
+      {
+        "id": "2999c7f3-504f-4fc1-9ebf-1d455190d8df",
+        "languageId": 1,
+        "recordId": null,
+        "dictionaryId": null,
+        "type": "image",
+        "url": "https://res.cloudinary.com/izn4yxke/image/upload/v1790489161/luolinguaai/luo/proverbs/unassigned/image/ddfgix1aewa5kkbvsshs.jpg",
+        "publicId": "luolinguaai/luo/proverbs/unassigned/image/ddfgix1aewa5kkbvsshs",
+        "resourceType": "image",
+        "checksum": "942b52611b43b26b9817b4db6a67b82d9025bf089486d1d60fdc5df25bf38bc4",
+        "format": "jpg",
+        "sizeBytes": 18825,
+        "durationSecs": null,
+        "width": 399,
+        "height": 501,
+        "caption": null,
+        "altText": null,
+        "thumbnailUrl": "https://res.cloudinary.com/izn4yxke/image/upload/c_fill,f_auto,h_300,q_auto,w_400/v1/luolinguaai/luo/proverbs/unassigned/image/ddfgix1aewa5kkbvsshs?_a=BAMAABX00",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "createdAt": "2026-09-27T06:06:03.028Z",
+        "updatedAt": "2026-09-27T06:06:03.028Z"
+      },
+      {
+        "id": "36d7ddd0-2e54-431a-8268-1cf69edc7b3f",
+        "languageId": 1,
+        "recordId": null,
+        "dictionaryId": null,
+        "type": "image",
+        "url": "https://res.cloudinary.com/izn4yxke/image/upload/v1790489392/luolinguaai/luo/proverbs/unassigned/image/tmwtdjnsczjudbwe6wou.jpg",
+        "publicId": "luolinguaai/luo/proverbs/unassigned/image/tmwtdjnsczjudbwe6wou",
+        "resourceType": "image",
+        "checksum": "942b52611b43b26b9817b4db6a67b82d9025bf089486d1d60fdc5df25bf38bc4",
+        "format": "jpg",
+        "sizeBytes": 18825,
+        "durationSecs": null,
+        "width": 399,
+        "height": 501,
+        "caption": null,
+        "altText": null,
+        "thumbnailUrl": "https://res.cloudinary.com/izn4yxke/image/upload/c_fill,f_auto,h_300,q_auto,w_400/v1/luolinguaai/luo/proverbs/unassigned/image/tmwtdjnsczjudbwe6wou?_a=BAMAABX00",
+        "nrfMetadata": {
+          "genre": "proverbs",
+          "domain": "culture",
+          "consent": "granted",
+          "restriction": "none"
+        },
+        "createdAt": "2026-09-27T06:09:54.203Z",
+        "updatedAt": "2026-09-27T06:09:54.203Z"
+      }
+    ],
+    "transcripts": [],
+    "users": [
+      {
+        "id": "a080baf3-9a89-483c-be2e-2e903af50eca",
+        "email": "t@t.com",
+        "name": "Test User",
+        "isSuperAdmin": true,
+        "status": "active",
+        "emailVerified": null,
+        "avatarUrl": null,
+        "createdAt": "2026-09-26T06:48:08.329Z",
+        "updatedAt": "2026-09-26T07:13:20.859Z"
+      },
+      {
+        "id": "d8db80ab-e27b-4478-ae16-d578dc7fe837",
+        "email": "fresh@test.com",
+        "name": "Fresh User",
+        "isSuperAdmin": true,
+        "status": "active",
+        "emailVerified": null,
+        "avatarUrl": null,
+        "createdAt": "2026-09-26T06:59:07.961Z",
+        "updatedAt": "2026-09-26T07:13:35.198Z"
+      }
+    ],
+    "roles": [
+      {
+        "id": 1,
+        "name": "guest",
+        "description": "Unauthenticated visitor",
+        "level": 1
+      },
+      {
+        "id": 2,
+        "name": "registered",
+        "description": "Registered user",
+        "level": 2
+      },
+      {
+        "id": 3,
+        "name": "student",
+        "description": "Student",
+        "level": 3
+      },
+      {
+        "id": 4,
+        "name": "contributor",
+        "description": "Content contributor",
+        "level": 4
+      },
+      {
+        "id": 5,
+        "name": "elder",
+        "description": "Cultural elder",
+        "level": 4
+      },
+      {
+        "id": 6,
+        "name": "teacher",
+        "description": "Teacher",
+        "level": 5
+      },
+      {
+        "id": 7,
+        "name": "researcher",
+        "description": "Researcher",
+        "level": 5
+      },
+      {
+        "id": 8,
+        "name": "moderator",
+        "description": "Content moderator",
+        "level": 6
+      },
+      {
+        "id": 9,
+        "name": "content_editor",
+        "description": "Content editor",
+        "level": 7
+      },
+      {
+        "id": 10,
+        "name": "language_admin",
+        "description": "Language admin",
+        "level": 8
+      },
+      {
+        "id": 11,
+        "name": "super_admin",
+        "description": "Platform super admin",
+        "level": 9
+      }
+    ],
+    "userLanguageRoles": [
+      {
+        "id": 1,
+        "userId": "a080baf3-9a89-483c-be2e-2e903af50eca",
+        "languageId": 1,
+        "role": "registered",
+        "assignedBy": null,
+        "assignedAt": "2026-09-26T06:48:08.329Z"
+      },
+      {
+        "id": 2,
+        "userId": "d8db80ab-e27b-4478-ae16-d578dc7fe837",
+        "languageId": 1,
+        "role": "registered",
+        "assignedBy": null,
+        "assignedAt": "2026-09-26T06:59:07.961Z"
+      },
+      {
+        "id": 3,
+        "userId": "d8db80ab-e27b-4478-ae16-d578dc7fe837",
+        "languageId": 1,
+        "role": "contributor",
+        "assignedBy": "d8db80ab-e27b-4478-ae16-d578dc7fe837",
+        "assignedAt": "2026-09-27T06:17:57.092Z"
+      }
+    ],
+    "languageSettings": [
+      {
+        "id": 1,
+        "languageId": 5,
+        "settingKey": "site_title",
+        "settingValue": "kalenjine"
+      },
+      {
+        "id": 2,
+        "languageId": 5,
+        "settingKey": "default_module",
+        "settingValue": "dictionary"
+      }
+    ],
+    "consentRecords": [],
+    "provenance": [],
+    "trainingDatasets": []
+  }
+}
