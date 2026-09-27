@@ -15,7 +15,6 @@ export async function GET(req: NextRequest) {
     const where: any = {};
     if (languageId > 0) where.languageId = languageId;
 
-    // Chatbot stats
     const [totalQueries, avgLatency, ratedCount, upCount, flaggedCount] =
       await Promise.all([
         prisma.aIResponse.count({ where }),
@@ -37,32 +36,18 @@ export async function GET(req: NextRequest) {
     const satisfactionPct =
       ratedCount === 0 ? 0 : Math.round((upCount / ratedCount) * 100);
 
-    // Recent queries
     const recentQueries = await prisma.aIResponse.findMany({
       where,
       orderBy: { createdAt: "desc" },
       take: 20,
-      select: {
-        id: true,
-        query: true,
-        response: true,
-        rating: true,
-        flagged: true,
-        model: true,
-        latencyMs: true,
-        createdAt: true,
-        sources: true,
-      },
     });
 
-    // Flagged responses
     const flagged = await prisma.aIResponse.findMany({
       where: { ...where, flagged: true },
       orderBy: { createdAt: "desc" },
       take: 20,
     });
 
-    // Embedding coverage
     const [totalRecords, totalEmbeddings] = await Promise.all([
       prisma.culturalRecord.count({
         where: { ...(languageId > 0 ? { languageId } : {}), status: "published" },
@@ -73,7 +58,9 @@ export async function GET(req: NextRequest) {
     ]);
 
     const embeddingCoverage =
-      totalRecords === 0 ? 0 : Math.round((totalEmbeddings / totalRecords) * 100);
+      totalRecords === 0
+        ? 0
+        : Math.round((totalEmbeddings / totalRecords) * 100);
 
     return NextResponse.json({
       success: true,
