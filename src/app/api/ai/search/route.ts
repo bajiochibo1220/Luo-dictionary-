@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { embedText } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Please sign in to use semantic search." },
+        { status: 401 }
+      );
+    }
+
     if (!hasGemini()) {
       return NextResponse.json(
         { success: false, error: "AI is not configured" },
@@ -35,16 +44,7 @@ export async function POST(req: NextRequest) {
     const langFilter = languageId ? `AND cr."languageId" = ${languageId}` : "";
     const take = Math.min(20, Math.max(1, Number(limit)));
 
-    const results = await prisma.$queryRawUnsafe<
-      Array<{
-        id: string;
-        title: string;
-        module: string;
-        moduleCode: string;
-        similarity: number;
-        excerpt: string;
-      }>
-    >(
+    const results = await prisma.$queryRawUnsafe(
       `SELECT
          cr.id,
          cr.title,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: results.map((r) => ({
+      data: (results as any[]).map((r) => ({
         id: r.id,
         title: r.title,
         module: r.module,

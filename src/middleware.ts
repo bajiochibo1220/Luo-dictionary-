@@ -1,73 +1,65 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const PUBLIC_PATHS = ["/", "/login", "/register"];
+
+function isPublic(pathname: string): boolean {
+  if (PUBLIC_PATHS.includes(pathname)) return true;
+  if (pathname.startsWith("/api/auth")) return true;
+  if (pathname.startsWith("/api/languages")) return true;
+  if (pathname.startsWith("/_next")) return true;
+  if (pathname.startsWith("/favicon")) return true;
+  if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js)$/i.test(pathname))
+    return true;
+  return false;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const user = token as any;
 
-  // Protect /super-admin/*
-  if (pathname.startsWith("/super-admin")) {
-    if (!token) {
-      return NextResponse.redirect(
-        new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
-      );
-    }
-    if (!user?.isSuperAdmin) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+  // Logged-in users on landing/auth pages → go to dashboard
+  if (token && ["/", "/login", "/register"].includes(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  // Public paths → allow
+  if (isPublic(pathname)) {
     return NextResponse.next();
   }
 
-  // Protect /admin/*
+  // Everything else requires login
+  if (!token) {
+    return NextResponse.redirect(
+      new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
+    );
+  }
+
+  // Role checks
+  if (pathname.startsWith("/super-admin") && !user?.isSuperAdmin) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
   if (pathname.startsWith("/admin")) {
-    if (!token) {
-      return NextResponse.redirect(
-        new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
-      );
-    }
     const isAdmin =
       user?.isSuperAdmin ||
       (user?.languageRoles ?? []).some((lr: any) =>
-        ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(
-          lr.role
-        )
+        [
+          "language_admin",
+          "moderator",
+          "content_editor",
+          "cultural_expert",
+        ].includes(lr.role)
       );
     if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
-    return NextResponse.next();
-  }
-
-  // Protect /dashboard/*
-  if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      return NextResponse.redirect(
-        new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
-      );
-    }
-    return NextResponse.next();
-  }
-
-  // Redirect logged-in users away from /login and /register
-  if (token && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/super-admin/:path*",
-    "/dashboard/:path*",
-    "/login",
-    "/register",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

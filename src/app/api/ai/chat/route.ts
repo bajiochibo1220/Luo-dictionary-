@@ -16,8 +16,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const session = await auth();
-    const userId = (session?.user as any)?.id ?? null;
+        const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Please sign in to use the AI assistant." },
+        { status: 401 }
+      );
+    }
+    const userId = (session.user as any).id;
 
     const body = await req.json();
     const { question, languageCode } = body;
