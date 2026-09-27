@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAction } from "@/lib/audit";
 
 export async function POST(
   req: NextRequest,
@@ -21,6 +22,8 @@ export async function POST(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const oldStatus = record.status;
+
   await prisma.$transaction([
     prisma.culturalRecord.update({
       where: { id: params.id },
@@ -40,6 +43,17 @@ export async function POST(
       },
     }),
   ]);
+
+  await logAction({
+    userId: (session.user as any).id,
+    action: "content.approved",
+    entityType: "cultural_record",
+    entityId: params.id,
+    oldValue: { status: oldStatus },
+    newValue: { status: "published" },
+    ipAddress: req.headers.get("x-forwarded-for") || null,
+    userAgent: req.headers.get("user-agent") || null,
+  });
 
   return NextResponse.json({ success: true });
 }
