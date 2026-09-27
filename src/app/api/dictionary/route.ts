@@ -42,6 +42,21 @@ export async function GET(req: NextRequest) {
       ];
     }
 
+    if (q.length >= 1) {
+      try {
+        await prisma.analyticsEvent.create({
+          data: {
+            eventType: "search",
+            languageId: language.id,
+            metadata: { query: q },
+            userAgent: req.headers.get("user-agent") || null,
+          },
+        });
+      } catch (err) {
+        console.error("[analytics] search track failed:", err);
+      }
+    }
+
     const [entries, total] = await Promise.all([
       prisma.dictionaryEntry.findMany({
         where,
