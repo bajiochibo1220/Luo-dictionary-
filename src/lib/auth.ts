@@ -1,5 +1,6 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
@@ -29,6 +30,19 @@ declare module "next-auth" {
   }
 }
 
+async function loadUserRoles(userId: string): Promise<LanguageRole[]> {
+  const rows = await prisma.userLanguageRole.findMany({
+    where: { userId },
+    include: { language: true },
+  });
+  return rows.map((lr) => ({
+    languageId: lr.languageId,
+    languageCode: lr.language.code,
+    languageName: lr.language.name,
+    role: lr.role,
+  }));
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -37,6 +51,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -79,29 +98,63 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           isSuperAdmin: user.isSuperAdmin,
-          languageRoles: user.languageRoles.map(
-  (lr: {
-    languageId: number;
-    role: string;
-    language: { code: string; name: string };
-  }) => ({
-    languageId: lr.languageId,
-    languageCode: lr.language.code,
-    languageName: lr.language.name,
-    role: lr.role,
-  })
-),
+          languageRoles: user.languageRoles.map((lr) => ({
+            languageId: lr.languageId,
+            languageCode: lr.language.code,
+            languageName: lr.language.name,
+            role: lr.role,
+          })),
         };
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      if (!user.id) return;
+      try {
+        const defaultLang = await prisma.language.findFirst({
+          where: { isActive: true, isDefault: true },
+          orderBy: { displayOrder: "asc" },
+        });
+        if (defaultLang) {
+          await prisma.userLanguageRole.create({
+            data: {
+              userId: user.id,
+              languageId: defaultLang.id,
+              role: "registered",
+            },
+          });
+        }
+      } catch (err) {
+        console.error("[auth] failed to assign default role:", err);
+      }
+    },
+  },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
         token.languageRoles = (user as any).languageRoles ?? [];
       }
+
+      if (
+        (!token.languageRoles || (token.languageRoles as any[]).length === 0) &&
+        token.id
+      ) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+          });
+          if (dbUser) {
+            token.isSuperAdmin = dbUser.isSuperAdmin;
+            token.languageRoles = await loadUserRoles(dbUser.id);
+          }
+        } catch (err) {
+          console.error("[auth] failed to reload roles:", err);
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {

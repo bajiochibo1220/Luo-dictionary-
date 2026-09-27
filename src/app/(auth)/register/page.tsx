@@ -7,50 +7,41 @@ export const dynamic = "force-dynamic";
 export default function RegisterPage() {
   return (
     <div className="w-full">
-      {/* Brand */}
-      <div className="text-center mb-8">
-        <Link href="/" className="inline-flex flex-col items-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg shadow-amber-900/20 mb-4">
-            <span className="text-white font-serif text-2xl font-bold">L</span>
+      <div className="mb-8">
+        <h1 className="font-serif text-3xl text-stone-900 mb-2">
+          Get started
+        </h1>
+        <p className="text-sm text-stone-600">
+          Create an account to join the community
+        </p>
+      </div>
+
+      <Suspense
+        fallback={
+          <div className="text-center py-8 text-stone-400 text-sm">
+            Loading...
           </div>
-          <p className="font-serif text-2xl text-stone-900">LuoLinguaAI</p>
-        </Link>
-      </div>
+        }
+      >
+        <RegisterForm />
+      </Suspense>
 
-      <div className="bg-white rounded-2xl shadow-xl shadow-stone-900/5 border border-stone-100 p-8">
-        <div className="text-center mb-6">
-          <h1 className="text-xl font-medium text-stone-900 mb-1">
-            Create your account
-          </h1>
-          <p className="text-sm text-stone-500">
-            Join the Luo cultural community
-          </p>
+      <div className="mt-12 pt-6 border-t border-stone-300/50 text-center">
+        <p className="text-xs text-stone-600">JOOUST · NRF · Free Forever</p>
+        <div className="flex items-center justify-center gap-3 mt-2 text-xs text-stone-500">
+          <Link href="/" className="hover:text-amber-800 transition">
+            Home
+          </Link>
+          <span className="text-stone-400">·</span>
+          <a href="#" className="hover:text-amber-800 transition">
+            Help
+          </a>
+          <span className="text-stone-400">·</span>
+          <a href="#" className="hover:text-amber-800 transition">
+            Privacy
+          </a>
         </div>
-
-        <Suspense
-          fallback={
-            <div className="text-center py-8 text-stone-400 text-sm">
-              Loading...
-            </div>
-          }
-        >
-          <RegisterForm />
-        </Suspense>
       </div>
-
-      <p className="text-center mt-6 text-sm text-stone-500">
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className="text-amber-700 hover:text-amber-800 font-medium"
-        >
-          Sign in
-        </Link>
-      </p>
-
-      <p className="text-center mt-8 text-[10px] text-stone-400 font-mono uppercase tracking-wider">
-        JOOUST · NRF · Free Forever
-      </p>
     </div>
   );
 }

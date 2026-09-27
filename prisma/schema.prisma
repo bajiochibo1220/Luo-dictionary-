@@ -10,10 +10,6 @@ datasource db {
   extensions = [vector, uuidOssp(map: "uuid-ossp"), pgTrgm(map: "pg_trgm")]
 }
 
-// ============================================================
-// CORE: LANGUAGES, MODULES, TRANSLATIONS
-// ============================================================
-
 model Language {
   id           Int      @id @default(autoincrement())
   code         String   @unique
@@ -102,15 +98,12 @@ model FieldTranslation {
   @@map("field_translations")
 }
 
-// ============================================================
-// USERS & AUTH
-// ============================================================
-
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
   name          String?
   passwordHash  String?
+  image         String?
   isSuperAdmin  Boolean   @default(false)
   status        String    @default("active")
   emailVerified DateTime?
@@ -203,10 +196,6 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
-
-// ============================================================
-// CONTENT
-// ============================================================
 
 model CulturalRecord {
   id            String    @id @default(uuid())
@@ -330,10 +319,6 @@ model Transcript {
   @@map("transcripts")
 }
 
-// ============================================================
-// WORKFLOW
-// ============================================================
-
 model ReviewHistory {
   id         Int      @id @default(autoincrement())
   recordId   String
@@ -383,10 +368,6 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-// ============================================================
-// SETTINGS
-// ============================================================
-
 model LanguageSetting {
   id           Int    @id @default(autoincrement())
   languageId   Int
@@ -399,17 +380,13 @@ model LanguageSetting {
   @@map("language_settings")
 }
 
-// ============================================================
-// AI READINESS
-// ============================================================
-
 model Embedding {
   id           String                       @id @default(uuid())
   recordId     String?
   dictionaryId String?
   transcriptId String?
   content      String                       @db.Text
-  vector       Unsupported("vector(1536)")?
+  vector       Unsupported("vector(768)")?
   model        String
   createdAt    DateTime                     @default(now())
 
@@ -506,10 +483,6 @@ model VersionHistory {
   @@map("version_history")
 }
 
-// ============================================================
-// ANALYTICS
-// ============================================================
-
 model AnalyticsEvent {
   id         String   @id @default(uuid())
   languageId Int?
@@ -527,10 +500,6 @@ model AnalyticsEvent {
   @@map("analytics_events")
 }
 
-// ============================================================
-// AI RESPONSES (chatbot logging)
-// ============================================================
-
 model AIResponse {
   id         String   @id @default(uuid())
   languageId Int?
@@ -547,10 +516,6 @@ model AIResponse {
   @@index([languageId, createdAt])
   @@map("ai_responses")
 }
-
-// ============================================================
-// BACKUPS
-// ============================================================
 
 model Backup {
   id        String   @id @default(uuid())
