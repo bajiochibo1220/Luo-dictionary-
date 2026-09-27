@@ -11,7 +11,13 @@ const NAV_MODULES = [
   { code: "riddles", path: "ngeche" },
   { code: "songs", path: "wende" },
   { code: "oral_histories", path: "sigana" },
+  { code: "search", path: "search" },
 ];
+
+function labelFor(code: string, t: (c: string) => string): string {
+  if (code === "search") return "Search";
+  return t(code);
+}
 
 export function Header() {
   const { language, t } = useLanguage();
@@ -21,7 +27,6 @@ export function Header() {
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
         <Link href={`/${language.code}`} className="flex items-center gap-2">
           <span className="text-2xl font-serif text-stone-800">
             LuoLinguaAI
@@ -31,7 +36,6 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
           {NAV_MODULES.map((mod) => (
             <Link
@@ -39,14 +43,12 @@ export function Header() {
               href={`/${language.code}/${mod.path}`}
               className="text-sm text-stone-700 hover:text-amber-600 transition"
             >
-              {t(mod.code)}
+              {labelFor(mod.code, t)}
             </Link>
           ))}
         </nav>
 
-        {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Language switcher */}
           <Link
             href="/"
             className="text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded px-2 py-1"
@@ -54,7 +56,6 @@ export function Header() {
             🌐 Switch
           </Link>
 
-          {/* Auth */}
           {session?.user ? (
             <div className="flex items-center gap-2">
               <span className="hidden md:inline text-xs text-stone-500">
@@ -78,7 +79,6 @@ export function Header() {
             </div>
           )}
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-stone-700 text-xl"
@@ -89,7 +89,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
         <nav className="md:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
           {NAV_MODULES.map((mod) => (
@@ -99,7 +98,7 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
               className="text-sm text-stone-700 hover:text-amber-600 py-1"
             >
-              {t(mod.code)}
+              {labelFor(mod.code, t)}
             </Link>
           ))}
         </nav>
