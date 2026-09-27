@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import { prisma } from "@/lib/db";
 import { TranscriptViewer } from "@/components/modules/oral-history/transcript-viewer";
+import { SummarizeButton } from "@/components/admin/summarize-button";
 
 const LocationMap = dynamic(
   () =>
@@ -96,7 +97,6 @@ export default async function OralHistoryDetailPage({
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        {/* Left: Audio + AI summary */}
         <div>
           {record.media.length > 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6 mb-4">
@@ -117,17 +117,28 @@ export default async function OralHistoryDetailPage({
             </div>
           )}
 
-          {record.summary && (
+          {record.summary ? (
             <div className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
               <p className="text-xs uppercase tracking-wider text-amber-700 mb-3">
                 ✨ AI Summary
               </p>
-              <p className="text-stone-700 leading-relaxed">{record.summary}</p>
+              <p className="text-stone-700 leading-relaxed">
+                {record.summary}
+              </p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-stone-100 p-6 text-center">
+              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
+                AI Summary
+              </p>
+              <p className="text-sm text-stone-500 mb-3">
+                Generate an AI summary of this transcript
+              </p>
+              <SummarizeButton recordId={record.id} />
             </div>
           )}
         </div>
 
-        {/* Right: Transcript */}
         <div>
           <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
             <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
@@ -140,7 +151,6 @@ export default async function OralHistoryDetailPage({
         </div>
       </div>
 
-      {/* Map */}
       {coords && (
         <section className="mb-12">
           <h2 className="text-xl font-serif text-stone-700 mb-3">
