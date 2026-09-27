@@ -59,10 +59,20 @@ export async function POST(req: NextRequest) {
       tags: [languageCode, moduleCode, assetType],
     });
 
+    // Only attach recordId if the record actually exists
+    let validRecordId: string | null = null;
+    if (recordId && recordId !== "unassigned") {
+      const exists = await prisma.culturalRecord.findUnique({
+        where: { id: recordId },
+        select: { id: true },
+      });
+      if (exists) validRecordId = exists.id;
+    }
+
     const asset = await prisma.mediaAsset.create({
       data: {
         languageId: language.id,
-        recordId: recordId === "unassigned" ? null : recordId,
+        recordId: validRecordId,
         type: assetType,
         url: uploaded.url,
         publicId: uploaded.publicId,
@@ -83,7 +93,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, data: asset });
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...asset,
+        sizeBytes: Number(asset.sizeBytes),
+      },
+    });
   } catch (err: any) {
     console.error("[media/upload]", err);
     return NextResponse.json(
