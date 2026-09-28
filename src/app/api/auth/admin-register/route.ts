@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { registerSchema } from "@/lib/validation";
 import { calculateAge, parseDateOfBirth } from "@/lib/dates";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
+const adminRegisterSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  dateOfBirth: z.object({
+    day: z.number().int().min(1).max(31),
+    month: z.number().int().min(1).max(12),
+    year: z.number().int().min(1900).max(new Date().getFullYear()),
+  }),
+});
+
 export async function GET() {
-  // Report whether setup is still open
   const existing = await prisma.user.findFirst({
     where: { isSuperAdmin: true },
     select: { id: true },
@@ -37,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const data = registerSchema.parse(body);
+    const data = adminRegisterSchema.parse(body);
 
     const emailTaken = await prisma.user.findUnique({
       where: { email: data.email },
@@ -49,13 +59,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const language = await prisma.language.findUnique({
-      where: { id: data.languageId },
+    // Super admin's primary language is always English
+    const englishLang = await prisma.language.findFirst({
+      where: { code: "eng" },
+      orderBy: { displayOrder: "asc" },
     });
-    if (!language) {
+    // Fallback: any active language if English is not found
+    const fallbackLang = englishLang
+      ? englishLang
+      : await prisma.language.findFirst({
+          where: { isActive: true },
+          orderBy: { displayOrder: "asc" },
+        });
+
+    if (!fallbackLang) {
       return NextResponse.json(
-        { success: false, error: "Invalid language" },
-        { status: 400 }
+        {
+          success: false,
+          error:
+            "No active language found. Please seed the database first.",
+        },
+        { status: 500 }
       );
     }
 
@@ -93,7 +117,7 @@ export async function POST(req: NextRequest) {
         emailVerified: new Date(),
         languageRoles: {
           create: {
-            languageId: data.languageId,
+            languageId: fallbackLang.id,
             role: "language_admin",
           },
         },

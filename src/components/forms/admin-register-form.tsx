@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
@@ -9,25 +9,15 @@ import {
   DateOfBirth,
 } from "./date-of-birth-picker";
 
-type Language = { id: number; code: string; name: string; nativeName: string };
-
 export function AdminRegisterForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [languages, setLanguages] = useState<Language[]>([]);
   const [dob, setDob] = useState<DateOfBirth>({
     day: null,
     month: null,
     year: null,
   });
-
-  useEffect(() => {
-    fetch("/api/languages")
-      .then((r) => r.json())
-      .then((data) => setLanguages(data.data || []))
-      .catch(() => {});
-  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,8 +35,6 @@ export function AdminRegisterForm() {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       dateOfBirth: { day: dob.day, month: dob.month, year: dob.year },
-      role: "registered",
-      languageId: Number(formData.get("languageId")),
     };
 
     const res = await fetch("/api/auth/admin-register", {
@@ -117,22 +105,6 @@ export function AdminRegisterForm() {
         label="Date of birth"
         helpText="Must be 18 or older to hold a super admin account."
       />
-
-      <select
-        name="languageId"
-        required
-        defaultValue=""
-        className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 focus:bg-white transition text-[15px] text-stone-800"
-      >
-        <option value="" disabled>
-          Select primary language
-        </option>
-        {languages.map((l) => (
-          <option key={l.id} value={l.id}>
-            {l.nativeName} ({l.name})
-          </option>
-        ))}
-      </select>
 
       <button
         type="submit"
