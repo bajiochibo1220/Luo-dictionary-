@@ -108,30 +108,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  events: {
-    async createUser({ user }) {
-      if (!user.id) return;
-      try {
-        const defaultLang = await prisma.language.findFirst({
-          where: { isActive: true, isDefault: true },
-          orderBy: { displayOrder: "asc" },
-        });
-        if (defaultLang) {
-          await prisma.userLanguageRole.create({
-            data: {
-              userId: user.id,
-              languageId: defaultLang.id,
-              role: "registered",
-            },
-          });
-        }
-      } catch (err) {
-        console.error("[auth] failed to assign default role:", err);
-      }
-    },
-  },
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.isSuperAdmin = (user as any).isSuperAdmin ?? false;

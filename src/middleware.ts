@@ -32,32 +32,49 @@ export async function middleware(req: NextRequest) {
 
   const user = token as any;
 
-  // Logged-in users on landing/auth pages go to dashboard
+  const hasRoles = ((user?.languageRoles ?? []) as any[]).length > 0;
+  const isSuperAdmin = user?.isSuperAdmin === true;
+  const needsOnboarding = !!token && !isSuperAdmin && !hasRoles;
+
+  // Force onboarding for users without a language
+  if (needsOnboarding) {
+    if (
+      pathname === "/onboarding" ||
+      pathname.startsWith("/api/onboarding") ||
+      isPublic(pathname)
+    ) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/onboarding", req.url));
+  }
+
+  // Already onboarded → don't let them revisit /onboarding
+  if (token && !needsOnboarding && pathname === "/onboarding") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  // Logged-in users on landing/auth pages → dashboard
   if (token && ["/", "/login", "/register"].includes(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Public paths allowed
   if (isPublic(pathname)) {
     return NextResponse.next();
   }
 
-  // Everything else requires login
   if (!token) {
     return NextResponse.redirect(
       new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
     );
   }
 
-  // Super admin
-  if (pathname.startsWith("/super-admin") && !user?.isSuperAdmin) {
+  if (pathname.startsWith("/super-admin") && !isSuperAdmin) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Admin
   if (pathname.startsWith("/admin")) {
     const isAdmin =
-      user?.isSuperAdmin ||
+      isSuperAdmin ||
       (user?.languageRoles ?? []).some((lr: any) =>
         [
           "language_admin",
