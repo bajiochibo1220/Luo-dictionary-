@@ -69,14 +69,13 @@ export function ModuleContent({
     return item.media.filter((m) => m.type === filter);
   };
 
-  // Default media type based on filter
   const defaultMediaType = filter === "all" ? "text" : filter;
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-8 pt-20 md:pt-8">
       <header className="mb-4 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-medium mb-1">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-1">
             {languageName} · {baseName}
           </p>
           <h2 className="font-serif text-3xl md:text-4xl text-stone-900 leading-tight">
@@ -102,7 +101,7 @@ export function ModuleContent({
               className={`text-xs font-semibold px-4 py-1.5 rounded-full border transition-all ${
                 filter === f.key
                   ? "bg-stone-900 text-amber-50 border-stone-900 shadow-md"
-                  : "bg-white/50 backdrop-blur text-stone-900 border-stone-800/25 hover:border-stone-900 hover:bg-white/80"
+                  : "bg-black/5 backdrop-blur text-stone-900 border-stone-800/25 hover:border-stone-900 hover:bg-black/10"
               }`}
             >
               {f.label}
@@ -110,7 +109,7 @@ export function ModuleContent({
           ))}
         </div>
 
-        <div className="ml-auto flex gap-1 bg-white/40 backdrop-blur rounded-full p-1 border border-stone-900/15">
+        <div className="ml-auto flex gap-1 bg-black/5 backdrop-blur rounded-full p-1 border border-stone-900/15">
           {VIEW_MODES.map((v) => (
             <button
               key={v.key}
@@ -119,7 +118,7 @@ export function ModuleContent({
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
                 view === v.key
                   ? "bg-stone-900 text-amber-50 shadow"
-                  : "text-stone-800 hover:bg-white/60"
+                  : "text-stone-800 hover:bg-black/10"
               }`}
             >
               {v.icon}
@@ -129,18 +128,25 @@ export function ModuleContent({
       </div>
 
       {filteredItems.length === 0 ? (
-        <div className="rounded-2xl bg-amber-50/90 backdrop-blur border border-stone-900/15 p-14 text-center shadow-lg">
-          <p className="text-stone-900 font-serif text-2xl mb-3">
+        <div className="py-20 md:py-28 text-center max-w-xl mx-auto">
+          <div className="w-20 h-20 mx-auto rounded-full bg-amber-800/15 flex items-center justify-center mb-6 ring-1 ring-amber-900/20">
+            <span className="text-4xl opacity-70">📖</span>
+          </div>
+
+          <h3 className="font-serif text-3xl md:text-4xl text-stone-900 mb-3 leading-tight">
             No {title} entries yet
+          </h3>
+          <p className="text-base text-stone-800/70 mb-8 leading-relaxed">
+            Be the first to share something with the community. Your
+            contribution will be reviewed and published.
           </p>
-          <p className="text-sm text-stone-800/70 mb-6">
-            Be the first to contribute to this module
-          </p>
+
           <button
             onClick={() => setShowContribute(true)}
-            className="inline-block bg-stone-900 text-amber-50 px-7 py-3 rounded-full text-sm font-semibold hover:bg-amber-900 transition shadow-md"
+            className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-7 py-3 rounded-full text-sm font-semibold hover:bg-[#5c3a1c] transition shadow-lg blink-contribute"
           >
-            + Add {title}
+            <span className="text-lg leading-none">+</span>
+            Add the first {title}
           </button>
         </div>
       ) : view === "feed" ? (
@@ -176,7 +182,7 @@ function FeedView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
 function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
   const primary = media[0];
   return (
-    <article className="bg-amber-50/95 backdrop-blur rounded-2xl border border-stone-900/10 overflow-hidden shadow-lg hover:shadow-xl hover:border-amber-800/40 transition-all">
+    <article className="bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 overflow-hidden shadow-lg hover:shadow-xl hover:border-amber-800/40 transition-all">
       {primary && (
         <div className="bg-stone-900 relative">
           {primary.type === "image" && (
@@ -223,7 +229,7 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
 function MediaChip({ media }: { media: MediaItem }) {
   const icons: Record<string, string> = { image: "🖼️", audio: "🎵", video: "🎬", document: "📄" };
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-stone-900/5 border border-stone-900/15 text-stone-800">
+    <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-black/5 border border-stone-900/15 text-stone-800">
       <span>{icons[media.type] || "📎"}</span>
       <span className="capitalize">{media.type}</span>
     </span>
@@ -238,7 +244,7 @@ function GridView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
         const thumb = media.find((m) => m.type === "image" || m.type === "video");
         const icons = Array.from(new Set(media.map((m) => m.type)));
         return (
-          <div key={item.id} className="bg-amber-50/95 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
+          <div key={item.id} className="bg-black/5 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
             <div className="aspect-square bg-stone-900 relative overflow-hidden">
               {thumb?.type === "image" && (
                 <img src={thumb.url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
