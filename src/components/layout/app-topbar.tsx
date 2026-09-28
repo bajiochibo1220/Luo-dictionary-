@@ -16,26 +16,29 @@ export function AppTopbar({
 }) {
   return (
     <header className="bg-[#5c3a1c] border-b border-black/30 flex items-center justify-between px-6 py-3 shadow-lg relative z-30">
+      {/* Left: Logo */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg ring-1 ring-amber-200/30 flex-shrink-0">
           <span className="text-stone-900 font-serif text-lg font-bold">L</span>
         </div>
         <div className="min-w-0">
-          <h1 className="font-serif text-xl text-amber-50 leading-tight truncate">
+          <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
             Luo Dictionary
           </h1>
-          <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/60">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/60 hidden sm:block">
             LuoLinguaAI
           </p>
         </div>
       </div>
 
-      <div className="hidden md:flex items-center gap-6">
+      {/* Middle: Stats (hidden on small screens) */}
+      <div className="hidden lg:flex items-center gap-6">
         <StatPill label="Uploads" value={stats.uploads} />
         <StatPill label="Approved" value={stats.approved} accent="green" />
         <StatPill label="Pending" value={stats.pending} accent="amber" />
       </div>
 
+      {/* Right: Actions */}
       <div className="flex items-center gap-2">
         <Link
           href={`/${languageCode}/search`}
@@ -62,7 +65,7 @@ export function AppTopbar({
           className="hidden md:inline-flex items-center gap-2 text-sm text-amber-100/80 hover:text-amber-50 transition font-medium px-3 py-1.5 rounded-full hover:bg-amber-100/10"
         >
           <span>💬</span>
-          Chat with Luo Lingua
+          Chat
         </Link>
 
         {isAdmin && (

@@ -38,9 +38,12 @@ export default function HomePage() {
             Privacy
           </a>
           <span className="text-stone-500">·</span>
-          <a href="#" className="hover:text-amber-900 transition">
-            Terms
-          </a>
+          <Link
+            href="/admin-login"
+            className="hover:text-amber-900 transition font-semibold"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </AuthShell>

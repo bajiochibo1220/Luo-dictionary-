@@ -21,14 +21,14 @@ export function AppSidebar({ modules }: { modules: ModuleItem[] }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Small brand caption at top */}
-      <div className="px-5 pt-5 pb-3 border-b border-amber-100/15">
+      {/* Header — taller on mobile to avoid close button overlap */}
+      <div className="px-5 pt-5 md:pt-5 pb-3 border-b border-amber-100/15 min-h-[68px] flex items-end">
         <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/70 font-medium">
           Modules
         </p>
       </div>
 
-      {/* Module list — this is the only scrollable area */}
+      {/* Module list */}
       <nav className="flex-1 overflow-y-auto py-2">
         {items.map((item) => {
           const isActive =
@@ -72,7 +72,6 @@ export function AppSidebar({ modules }: { modules: ModuleItem[] }) {
         })}
       </nav>
 
-      {/* Footer */}
       <div className="p-3 border-t border-amber-100/15 text-[10px] tracking-widest text-amber-100/40 text-center">
         JOOUST · NRF
       </div>
