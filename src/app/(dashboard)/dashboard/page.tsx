@@ -17,6 +17,7 @@ export default async function UserDashboardPage({
   const languageId = primaryRole?.languageId;
   const languageCode = primaryRole?.languageCode ?? "luo";
 
+  // ── Module view
   if (searchParams.module && languageId) {
     const mod = await prisma.module.findUnique({
       where: { code: searchParams.module },
@@ -60,26 +61,33 @@ export default async function UserDashboardPage({
     }
   }
 
+  // ── Overview: text sits directly on the sand background
   return (
-    <div className="p-6 md:p-8">
-      <header className="mb-6">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-medium mb-1">
+    <div className="p-6 md:p-10 pt-20 md:pt-12">
+      <header className="mb-8">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-2">
           {primaryRole?.languageName ?? "Dholuo"} · Overview
         </p>
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-900 leading-tight">
+        <h2 className="font-serif text-4xl md:text-5xl text-stone-900 leading-tight mb-3">
           Welcome{user.name ? `, ${user.name.split(" ")[0]}` : ""}
         </h2>
+        <div className="w-16 h-1 bg-amber-800/70 rounded-full" />
       </header>
 
-      <div className="rounded-2xl bg-amber-50/95 backdrop-blur border border-stone-900/10 p-8 shadow-lg max-w-2xl">
-        <p className="text-base text-stone-800/90 leading-relaxed mb-3">
-          Pick a module from the sidebar. Use the media filters to browse
-          images, audio, video, or transcripts. Click <strong>Contribute</strong>{" "}
-          to add something — it goes straight to that module's review queue.
+      <div className="max-w-2xl space-y-4">
+        <p className="text-lg md:text-xl text-stone-900/90 leading-relaxed font-serif">
+          Pick a module from the sidebar to explore or contribute.
         </p>
-        <p className="text-sm text-stone-800/70 leading-relaxed">
+        <p className="text-base text-stone-800/80 leading-relaxed">
+          Use the filter tabs at the top of each module to browse by{" "}
+          <span className="font-semibold text-amber-900">images</span>,{" "}
+          <span className="font-semibold text-amber-900">audio</span>,{" "}
+          <span className="font-semibold text-amber-900">video</span>, or{" "}
+          <span className="font-semibold text-amber-900">transcripts</span>.
+        </p>
+        <p className="text-base text-stone-800/80 leading-relaxed">
           Your language:{" "}
-          <strong className="text-amber-900">
+          <strong className="text-amber-900 font-semibold">
             {primaryRole?.languageName ?? "Dholuo"}
           </strong>
         </p>

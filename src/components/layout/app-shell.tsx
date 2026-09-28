@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const MIN_WIDTH = 220;
 const MAX_WIDTH = 420;
@@ -18,6 +19,15 @@ export function AppShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeModule = searchParams.get("module") || "";
+
+  // Auto-close drawer on mobile whenever the URL changes (module switch, tab click, etc.)
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname, activeModule]);
+
   // Load saved width
   useEffect(() => {
     const saved = localStorage.getItem("luolinguaai-sidebar-width");
@@ -30,11 +40,6 @@ export function AppShell({
   useEffect(() => {
     localStorage.setItem("luolinguaai-sidebar-width", String(width));
   }, [width]);
-
-  // Close mobile drawer on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [children]);
 
   const onMouseDown = useCallback(() => setDragging(true), []);
 
@@ -80,7 +85,7 @@ export function AppShell({
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR — fixed on mobile (drawer), inline on desktop */}
       <aside
         style={{ width: `${width}px` }}
         className={`bg-[#6b4724] overflow-hidden shadow-xl z-50
@@ -90,7 +95,6 @@ export function AppShell({
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           flex-shrink-0`}
       >
-        {/* Diamond pattern */}
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
@@ -100,7 +104,7 @@ export function AppShell({
           }}
         />
 
-        {/* Close button on mobile only */}
+        {/* Close button — mobile only */}
         <button
           onClick={() => setMobileOpen(false)}
           className="md:hidden absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur text-amber-100 hover:bg-black/50 flex items-center justify-center text-lg"
@@ -127,7 +131,6 @@ export function AppShell({
 
       {/* MAIN CONTENT */}
       <main className="flex-1 min-w-0 relative bg-[#b89a68] overflow-hidden">
-        {/* Diamond pattern on content */}
         <div
           className="absolute inset-0 opacity-[0.10] pointer-events-none"
           style={{
@@ -137,7 +140,7 @@ export function AppShell({
           }}
         />
 
-        {/* Mobile hamburger — floating top-left of content */}
+        {/* Floating hamburger — mobile only */}
         <button
           onClick={() => setMobileOpen(true)}
           className="md:hidden fixed top-4 left-4 z-30 w-11 h-11 rounded-full bg-[#6b4724] text-amber-50 shadow-2xl shadow-black/40 flex items-center justify-center ring-2 ring-amber-300/40"
