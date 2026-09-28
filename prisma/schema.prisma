@@ -380,6 +380,14 @@ model LanguageSetting {
   @@map("language_settings")
 }
 
+model SystemSetting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
 model Embedding {
   id           String                       @id @default(uuid())
   recordId     String?

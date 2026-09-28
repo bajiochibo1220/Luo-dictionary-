@@ -2,6 +2,8 @@ import { getSystemSettings } from "@/lib/settings";
 import { prisma } from "@/lib/db";
 import { SystemClient } from "./system-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function SystemPage() {
   const [settings, languages] = await Promise.all([
     getSystemSettings(),
@@ -12,7 +14,6 @@ export default async function SystemPage() {
     }),
   ]);
 
-  // Mask sensitive keys before passing to client
   const sensitive = [
     "openai_api_key",
     "cloudinary_api_secret",
@@ -31,7 +32,6 @@ export default async function SystemPage() {
     }
   }
 
-  // Default values if not yet saved
   const defaults: Record<string, string> = {
     site_name: "LuoLinguaAI",
     nrf_namespace: "JOOUST/NRF/LuoAI_Repository",
