@@ -16,15 +16,28 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  const isSecure = req.nextUrl.protocol === "https:";
+  const cookieName = isSecure
+    ? "__Secure-authjs.session-token"
+    : "authjs.session-token";
+
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName,
+    salt: cookieName,
+    secureCookie: isSecure,
+  });
+
   const user = token as any;
 
-  // Logged-in users on landing/auth pages → go to dashboard
+  // Logged-in users on landing/auth pages go to dashboard
   if (token && ["/", "/login", "/register"].includes(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Public paths → allow
+  // Public paths allowed
   if (isPublic(pathname)) {
     return NextResponse.next();
   }
@@ -36,11 +49,12 @@ export async function middleware(req: NextRequest) {
     );
   }
 
-  // Role checks
+  // Super admin
   if (pathname.startsWith("/super-admin") && !user?.isSuperAdmin) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
+  // Admin
   if (pathname.startsWith("/admin")) {
     const isAdmin =
       user?.isSuperAdmin ||
