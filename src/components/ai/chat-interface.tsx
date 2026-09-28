@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { BackLink } from "@/components/layout/back-link";
 
 type Source = {
   id: string;
@@ -54,14 +56,24 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // If session is stale, force sign out
+  const handleStale = useCallback(async () => {
+    toast.error("Your session expired. Signing you out...");
+    setTimeout(() => signOut({ callbackUrl: "/" }), 1200);
+  }, []);
+
   const loadConversations = useCallback(async () => {
     try {
       const url = `/api/conversations${showArchived ? "?archived=true" : ""}`;
       const res = await fetch(url);
       const json = await res.json();
+      if (json.code === "STALE_SESSION") {
+        handleStale();
+        return;
+      }
       if (json.success) setConversations(json.data);
     } catch {}
-  }, [showArchived]);
+  }, [showArchived, handleStale]);
 
   useEffect(() => {
     loadConversations();
@@ -74,7 +86,6 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
     });
   }, [messages]);
 
-  // Close menu when clicking elsewhere
   useEffect(() => {
     const close = () => setOpenMenuId(null);
     if (openMenuId) {
@@ -197,6 +208,11 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
 
       const json = await res.json();
 
+      if (json.code === "STALE_SESSION") {
+        handleStale();
+        return;
+      }
+
       if (!json.success) throw new Error(json.error || "Failed");
 
       setMessages((m) => [
@@ -230,13 +246,15 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
 
   return (
     <div className="h-[calc(100vh-4rem)] flex bg-[#b89a68] relative overflow-hidden">
-      {/* Sidebar */}
       <aside
         className={`${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 absolute md:relative inset-y-0 left-0 z-30 w-72 bg-[#6b4724] border-r border-black/20 transition-transform flex flex-col`}
       >
         <div className="p-3 border-b border-amber-100/15 space-y-2">
+          <div className="md:hidden mb-2">
+            <BackLink href="/dashboard" label="Back" variant="on-dark" />
+          </div>
           <button
             onClick={startNewChat}
             className="w-full flex items-center justify-center gap-2 bg-amber-400 text-stone-900 py-2.5 rounded-full font-semibold text-sm hover:bg-amber-300 transition shadow"
@@ -266,9 +284,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                 onClick={() => loadConversation(c.id)}
               >
                 {c.pinned && (
-                  <span className="text-amber-300 text-xs flex-shrink-0">
-                    📌
-                  </span>
+                  <span className="text-amber-300 text-xs flex-shrink-0">📌</span>
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-amber-50 truncate leading-tight">
@@ -335,13 +351,16 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
         />
       )}
 
-      {/* Main */}
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="flex items-center justify-between px-4 py-3 border-b border-stone-900/15 bg-[#a9895a]">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="hidden md:block">
+              <BackLink href="/dashboard" label="Back" variant="on-sand" />
+            </div>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden text-stone-900 text-xl"
+              className="md:hidden text-stone-900 text-2xl leading-none"
+              aria-label="Menu"
             >
               ☰
             </button>
@@ -350,10 +369,10 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                 <span className="text-white text-sm">💬</span>
               </div>
               <div>
-                <h1 className="font-serif text-lg text-stone-900 leading-tight">
+                <h1 className="font-serif text-base md:text-lg text-stone-900 leading-tight">
                   Chat with Luo Lingua
                 </h1>
-                <p className="text-[10px] uppercase tracking-widest text-stone-800/60">
+                <p className="text-[10px] uppercase tracking-widest text-stone-800/60 hidden sm:block">
                   AI Cultural Assistant
                 </p>
               </div>
@@ -382,7 +401,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                     <button
                       key={q}
                       onClick={() => send(q)}
-                      className="text-left p-4 bg-amber-50/95 hover:bg-white border border-stone-900/15 hover:border-amber-800/50 rounded-xl text-sm text-stone-900 transition shadow-sm"
+                      className="text-left p-4 bg-black/5 hover:bg-black/10 border border-stone-900/15 hover:border-amber-800/50 rounded-xl text-sm text-stone-900 transition shadow-sm"
                     >
                       {q}
                     </button>
@@ -404,7 +423,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                     ) : (
                       <div className="flex justify-start">
                         <div className="max-w-xl">
-                          <div className="bg-amber-50/95 backdrop-blur rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-stone-900/10">
+                          <div className="bg-black/5 backdrop-blur rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-stone-900/10">
                             <p className="text-sm text-stone-900 whitespace-pre-line leading-relaxed">
                               {m.content}
                             </p>
@@ -414,7 +433,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                               {m.sources.map((s, j) => (
                                 <span
                                   key={j}
-                                  className="text-xs px-2 py-1 bg-amber-50 text-amber-900 border border-amber-800/20 rounded-full"
+                                  className="text-xs px-2 py-1 bg-black/5 text-amber-900 border border-amber-800/20 rounded-full"
                                   title={`Similarity: ${s.similarity}`}
                                 >
                                   [{j + 1}] {s.title.slice(0, 40)}
@@ -430,7 +449,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                 ))}
                 {busy && (
                   <div className="flex justify-start">
-                    <div className="bg-amber-50/95 rounded-2xl px-4 py-3 shadow-sm">
+                    <div className="bg-black/5 rounded-2xl px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 bg-amber-600 rounded-full animate-bounce" />
                         <span
@@ -490,7 +509,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about Luo culture, songs, artifact videos..."
               disabled={busy}
-              className="flex-1 px-4 py-3 bg-amber-50 border border-stone-900/20 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-800 text-sm text-stone-900 placeholder:text-stone-800/40 disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-white border border-stone-900/20 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-800 text-sm text-stone-900 placeholder:text-stone-800/40 disabled:opacity-50"
             />
             <button
               type="submit"
@@ -534,7 +553,7 @@ function MenuItem({
 
 function MediaCard({ media }: { media: MediaItem }) {
   return (
-    <div className="bg-amber-50/95 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-sm">
+    <div className="bg-black/5 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-sm">
       <div className="bg-stone-900">
         {media.mediaType === "image" && (
           <img

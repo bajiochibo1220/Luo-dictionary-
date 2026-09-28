@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { BackLink } from "@/components/layout/back-link";
 
 export default async function MySubmissionsPage() {
   const session = await auth();
@@ -15,15 +16,12 @@ export default async function MySubmissionsPage() {
     include: {
       module: { select: { baseName: true } },
       language: { select: { nativeName: true } },
-      reviews: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-      },
+      reviews: { orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
 
   const statusColors: Record<string, string> = {
-    draft: "bg-stone-100 text-stone-600",
+    draft: "bg-stone-200 text-stone-700",
     submitted: "bg-amber-100 text-amber-700",
     under_review: "bg-blue-100 text-blue-700",
     validated: "bg-purple-100 text-purple-700",
@@ -33,46 +31,52 @@ export default async function MySubmissionsPage() {
   };
 
   return (
-    <div>
+    <div className="p-6 md:p-10 pt-20 md:pt-10">
+      <div className="mb-4">
+        <BackLink href="/dashboard" label="Back to dashboard" variant="on-sand" />
+      </div>
+
       <header className="mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
+        <h1 className="font-serif text-3xl text-stone-900 mb-1">
           My Submissions
         </h1>
-        <p className="text-sm text-stone-500">
+        <p className="text-sm text-stone-800/70">
           {submissions.length}{" "}
           {submissions.length === 1 ? "submission" : "submissions"}
         </p>
       </header>
 
       {submissions.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center">
-          <p className="text-stone-500 mb-4">
-            You have not submitted any content yet
+        <div className="py-20 text-center max-w-xl mx-auto">
+          <p className="font-serif text-2xl text-stone-900 mb-3">
+            No submissions yet
+          </p>
+          <p className="text-sm text-stone-800/70 mb-6">
+            Start contributing to the cultural repository
           </p>
           <Link
-            href="/dashboard"
-            className="inline-block px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700"
+            href="/contribute"
+            className="inline-block bg-stone-900 text-amber-50 px-6 py-3 rounded-full text-sm font-semibold hover:bg-amber-900 transition shadow-md"
           >
-            Start Contributing
+            Contribute now
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 max-w-3xl">
           {submissions.map((s) => (
             <div
               key={s.id}
-              className="bg-white rounded-xl shadow-sm border border-stone-100 p-5"
+              className="bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 p-5"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
+                  <p className="text-xs uppercase tracking-wider text-stone-800/60 mb-1 font-semibold">
                     {s.module.baseName} · {s.language.nativeName}
                   </p>
-                  <h3 className="text-lg font-serif text-stone-800 mb-1">
+                  <h3 className="text-lg font-serif text-stone-900 mb-1">
                     {s.title}
                   </h3>
-                  <p className="text-xs text-stone-400">
-                    Submitted{" "}
+                  <p className="text-xs text-stone-800/60">
                     {new Date(s.createdAt).toLocaleString("en-KE", {
                       dateStyle: "medium",
                       timeStyle: "short",
@@ -80,7 +84,7 @@ export default async function MySubmissionsPage() {
                   </p>
                 </div>
                 <span
-                  className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
+                  className={`text-xs px-2 py-1 rounded-full whitespace-nowrap font-semibold ${
                     statusColors[s.status] ?? statusColors.draft
                   }`}
                 >
@@ -89,24 +93,13 @@ export default async function MySubmissionsPage() {
               </div>
 
               {s.reviews.length > 0 && s.reviews[0].comments && (
-                <div className="mt-3 pt-3 border-t border-stone-100">
-                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
+                <div className="mt-3 pt-3 border-t border-stone-900/10">
+                  <p className="text-xs uppercase tracking-wider text-stone-800/60 mb-1 font-semibold">
                     Reviewer feedback
                   </p>
-                  <p className="text-sm text-stone-600 italic">
+                  <p className="text-sm text-stone-800/80 italic">
                     &ldquo;{s.reviews[0].comments}&rdquo;
                   </p>
-                </div>
-              )}
-
-              {(s.status === "draft" || s.status === "revision") && (
-                <div className="mt-3 pt-3 border-t border-stone-100 flex gap-3">
-                  <Link
-                    href={`/admin/content/${s.id}/edit`}
-                    className="text-xs text-amber-600 hover:underline"
-                  >
-                    Continue editing →
-                  </Link>
                 </div>
               )}
             </div>

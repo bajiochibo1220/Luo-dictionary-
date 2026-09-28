@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { askQuestion } from "@/lib/ai/rag";
 import { hasGemini } from "@/lib/ai/gemini";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     if (!hasGemini()) {
@@ -22,6 +24,25 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = (session.user as any).id;
+
+    // ── Guard: user might be stale (deleted after DB reset)
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!dbUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Your session has expired. Please sign out and sign in again.",
+          code: "STALE_SESSION",
+        },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { question, languageCode, conversationId } = body;
 
@@ -41,6 +62,17 @@ export async function POST(req: NextRequest) {
     }
 
     let convId = conversationId;
+
+    // Verify the conversation exists and belongs to this user
+    if (convId) {
+      const owned = await prisma.conversation.findFirst({
+        where: { id: convId, userId },
+        select: { id: true },
+      });
+      if (!owned) convId = null;
+    }
+
+    // Create a new conversation if none
     if (!convId) {
       const title =
         question.length > 60 ? question.slice(0, 60) + "…" : question;
@@ -48,18 +80,6 @@ export async function POST(req: NextRequest) {
         data: { userId, title },
       });
       convId = conv.id;
-    } else {
-      const owned = await prisma.conversation.findFirst({
-        where: { id: convId, userId },
-      });
-      if (!owned) {
-        const title =
-          question.length > 60 ? question.slice(0, 60) + "…" : question;
-        const conv = await prisma.conversation.create({
-          data: { userId, title },
-        });
-        convId = conv.id;
-      }
     }
 
     const result = await askQuestion(question, languageId);
@@ -89,6 +109,20 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     console.error("[ai/chat]", err);
+
+    // Catch Prisma FK error just in case
+    if (err?.code === "P2003") {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Your session has expired. Please sign out and sign in again.",
+          code: "STALE_SESSION",
+        },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json(
       { success: false, error: err.message || "Chat failed" },
       { status: 500 }
