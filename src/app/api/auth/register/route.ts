@@ -1,7 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { registerSchema } from "@/lib/validation";
+import { calculateAge, parseDateOfBirth } from "@/lib/dates";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +14,6 @@ export async function POST(req: NextRequest) {
     const existing = await prisma.user.findUnique({
       where: { email: data.email },
     });
-
     if (existing) {
       return NextResponse.json(
         { success: false, error: "Email already registered" },
@@ -22,10 +24,29 @@ export async function POST(req: NextRequest) {
     const language = await prisma.language.findUnique({
       where: { id: data.languageId },
     });
-
     if (!language) {
       return NextResponse.json(
         { success: false, error: "Invalid language" },
+        { status: 400 }
+      );
+    }
+
+    const dob = parseDateOfBirth(
+      data.dateOfBirth.day,
+      data.dateOfBirth.month,
+      data.dateOfBirth.year
+    );
+    if (!dob) {
+      return NextResponse.json(
+        { success: false, error: "Invalid date of birth" },
+        { status: 400 }
+      );
+    }
+
+    const age = calculateAge(dob);
+    if (age < 5 || age > 120) {
+      return NextResponse.json(
+        { success: false, error: "Age must be between 5 and 120" },
         { status: 400 }
       );
     }
@@ -37,6 +58,8 @@ export async function POST(req: NextRequest) {
         name: data.name,
         email: data.email,
         passwordHash,
+        dateOfBirth: dob,
+        age,
         status: data.role === "registered" ? "active" : "pending",
         languageRoles: {
           create: {

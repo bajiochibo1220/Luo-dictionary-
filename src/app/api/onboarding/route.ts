@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { calculateAge, parseDateOfBirth } from "@/lib/dates";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,13 +16,32 @@ export async function POST(req: NextRequest) {
     }
 
     const user = session.user as any;
-
     const body = await req.json();
-    const { languageId, role } = body;
+    const { languageId, role, dateOfBirth } = body;
 
-    if (!languageId || !role) {
+    if (!languageId || !role || !dateOfBirth) {
       return NextResponse.json(
-        { success: false, error: "Language and role are required" },
+        { success: false, error: "Language, role, and date of birth required" },
+        { status: 400 }
+      );
+    }
+
+    const dob = parseDateOfBirth(
+      dateOfBirth.day,
+      dateOfBirth.month,
+      dateOfBirth.year
+    );
+    if (!dob) {
+      return NextResponse.json(
+        { success: false, error: "Invalid date of birth" },
+        { status: 400 }
+      );
+    }
+
+    const age = calculateAge(dob);
+    if (age < 5 || age > 120) {
+      return NextResponse.json(
+        { success: false, error: "Age must be between 5 and 120" },
         { status: 400 }
       );
     }
@@ -49,24 +71,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Prevent duplicate onboarding
     const existing = await prisma.userLanguageRole.findFirst({
       where: { userId: user.id },
     });
     if (existing) {
-      return NextResponse.json({
-        success: true,
-        message: "Already onboarded",
+      // Already onboarded — but ensure DOB/age are set (in case they were missing)
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { dateOfBirth: dob, age },
       });
+      return NextResponse.json({ success: true, message: "Already onboarded" });
     }
 
-    await prisma.userLanguageRole.create({
-      data: {
-        userId: user.id,
-        languageId,
-        role,
-      },
-    });
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { dateOfBirth: dob, age },
+      }),
+      prisma.userLanguageRole.create({
+        data: { userId: user.id, languageId, role },
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -25,6 +27,26 @@ export async function POST(
     where: { id: params.id },
     data: { status: "submitted" },
   });
+
+  // Notify moderators and admins for this language
+  const moderators = await prisma.userLanguageRole.findMany({
+    where: {
+      languageId: record.languageId,
+      role: { in: ["moderator", "language_admin"] },
+    },
+    select: { userId: true },
+  });
+
+  if (moderators.length > 0) {
+    await prisma.notification.createMany({
+      data: moderators.map((m) => ({
+        userId: m.userId,
+        type: "content_submitted",
+        message: `New contribution submitted: "${record.title}"`,
+        link: `/admin/review-queue/${record.id}`,
+      })),
+    });
+  }
 
   await logAction({
     userId: (session.user as any).id,

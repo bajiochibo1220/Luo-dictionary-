@@ -1,7 +1,11 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { auth } from "@/lib/auth";
-import { UserMenu } from "@/components/layout/user-menu";
+import { prisma } from "@/lib/db";
+import { AppShell } from "@/components/layout/app-shell";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { AppTopbar } from "@/components/layout/app-topbar";
+import { FloatingChatbot } from "@/components/layout/floating-chatbot";
 
 export default async function DashboardLayout({
   children,
@@ -12,41 +16,73 @@ export default async function DashboardLayout({
   if (!session?.user) redirect("/login");
 
   const user = session.user as any;
+  const languageRoles = (user.languageRoles ?? []) as any[];
+  const primaryRole = languageRoles[0];
+  const languageCode = primaryRole?.languageCode ?? "luo";
+
+  const [modules, stats] = await Promise.all([
+    primaryRole?.languageId
+      ? prisma.module.findMany({
+          where: { isActive: true, isStub: false },
+          orderBy: { displayOrder: "asc" },
+          include: {
+            translations: { where: { languageId: primaryRole.languageId } },
+          },
+        })
+      : Promise.resolve([]),
+    Promise.all([
+      prisma.culturalRecord.count({ where: { contributorId: user.id } }),
+      prisma.culturalRecord.count({
+        where: { contributorId: user.id, status: "published" },
+      }),
+      prisma.culturalRecord.count({
+        where: {
+          contributorId: user.id,
+          status: { in: ["submitted", "under_review", "validated"] },
+        },
+      }),
+    ]),
+  ]);
+
+  const formattedModules = modules.map((m) => ({
+    code: m.code,
+    title: m.translations[0]?.title ?? m.baseName,
+    baseName: m.baseName,
+  }));
+
+  const userInitial = (user.name || user.email || "U").charAt(0).toUpperCase();
+  const isAdmin =
+    user.isSuperAdmin ||
+    (user.languageRoles ?? []).some((r: any) =>
+      ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(
+        r.role
+      )
+    );
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-serif text-stone-800">
-              LuoLinguaAI
-            </span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm text-stone-600 hover:text-amber-600"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/my-submissions"
-              className="text-sm text-stone-600 hover:text-amber-600"
-            >
-              My Submissions
-            </Link>
-          </nav>
-
-          <UserMenu
-            userEmail={user.email ?? ""}
-            userName={user.name ?? null}
-            isSuperAdmin={!!user.isSuperAdmin}
-          />
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">{children}</main>
+    <div className="h-screen flex flex-col bg-[#b89a68] overflow-hidden">
+      <AppTopbar
+        userInitial={userInitial}
+        isAdmin={isAdmin}
+        languageCode={languageCode}
+        stats={{
+          uploads: stats[0],
+          approved: stats[1],
+          pending: stats[2],
+        }}
+      />
+      <Suspense
+        fallback={
+          <div className="flex-1 flex items-center justify-center text-stone-900">
+            Loading...
+          </div>
+        }
+      >
+        <AppShell sidebar={<AppSidebar modules={formattedModules} />}>
+          {children}
+        </AppShell>
+      </Suspense>
+      <FloatingChatbot />
     </div>
   );
 }

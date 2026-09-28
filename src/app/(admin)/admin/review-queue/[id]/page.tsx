@@ -14,6 +14,9 @@ export default async function ReviewDetailPage({
       language: true,
       module: true,
       media: true,
+      contributor: {
+        select: { id: true, name: true, email: true, age: true },
+      },
       reviews: {
         include: { reviewer: { select: { name: true, email: true } } },
         orderBy: { createdAt: "desc" },
@@ -26,9 +29,7 @@ export default async function ReviewDetailPage({
   const fieldDefs = await prisma.fieldDefinition.findMany({
     where: { moduleId: record.moduleId },
     orderBy: { displayOrder: "asc" },
-    include: {
-      translations: { where: { languageId: record.languageId } },
-    },
+    include: { translations: { where: { languageId: record.languageId } } },
   });
 
   return (
@@ -54,6 +55,43 @@ export default async function ReviewDetailPage({
           Submitted {new Date(record.createdAt).toLocaleString("en-KE")}
         </p>
       </header>
+
+      {/* Contributor info with age */}
+      <section className="bg-amber-50 border-2 border-amber-200 rounded-xl p-5 mb-6">
+        <h2 className="text-xs uppercase tracking-wider text-amber-800 mb-3 font-bold">
+          Contributor (for authenticity assessment)
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500">
+              Name
+            </p>
+            <p className="text-stone-800 font-medium">
+              {record.contributor?.name || "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500">
+              Email
+            </p>
+            <p className="text-stone-700 text-sm">
+              {record.contributor?.email || "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500">
+              Age at submission
+            </p>
+            <p className="text-amber-800 font-bold text-lg">
+              {record.contributorAge ?? record.contributor?.age ?? "—"}
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-stone-600 mt-3 pt-3 border-t border-amber-200">
+          Elders (60+) generally provide authentic traditional knowledge. For
+          younger contributors, verify sources carefully.
+        </p>
+      </section>
 
       {/* Content fields */}
       <section className="bg-white rounded-xl shadow-sm border border-stone-100 p-8 mb-6">
@@ -83,23 +121,26 @@ export default async function ReviewDetailPage({
             <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">
               Media ({record.media.length})
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {record.media.map((m) => (
-                <div
-                  key={m.id}
-                  className="bg-stone-50 rounded-lg p-3 text-xs text-stone-500 border border-stone-200"
-                >
-                  <p className="font-medium text-stone-700 mb-1">
-                    {m.type} · {m.format}
-                  </p>
-                  <a
-                    href={m.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-amber-600 hover:underline"
-                  >
-                    Open →
-                  </a>
+                <div key={m.id} className="bg-stone-50 rounded-lg overflow-hidden border border-stone-200">
+                  {m.type === "image" && (
+                    <img src={m.url} alt={m.caption || ""} className="w-full max-h-64 object-cover" />
+                  )}
+                  {m.type === "video" && (
+                    <video src={m.url} controls className="w-full max-h-64 bg-black" />
+                  )}
+                  {m.type === "audio" && (
+                    <div className="p-4">
+                      <audio src={m.url} controls className="w-full" />
+                    </div>
+                  )}
+                  <div className="px-3 py-2 text-xs text-stone-500 border-t border-stone-200">
+                    <p className="font-medium text-stone-700 capitalize">{m.type}</p>
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
+                      Open original →
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
@@ -115,10 +156,7 @@ export default async function ReviewDetailPage({
           </h2>
           <ul className="space-y-3">
             {record.reviews.map((rv) => (
-              <li
-                key={rv.id}
-                className="text-sm border-l-2 border-stone-200 pl-3"
-              >
+              <li key={rv.id} className="text-sm border-l-2 border-stone-200 pl-3">
                 <p className="text-stone-700">
                   <span className="font-medium">
                     {rv.reviewer.name || rv.reviewer.email}
@@ -139,7 +177,6 @@ export default async function ReviewDetailPage({
         </section>
       )}
 
-      {/* Action buttons */}
       <ReviewActions recordId={record.id} />
     </div>
   );

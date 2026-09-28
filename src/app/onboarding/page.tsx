@@ -2,17 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  DateOfBirthPicker,
+  DateOfBirth,
+} from "@/components/forms/date-of-birth-picker";
 
 type Language = { id: number; code: string; name: string; nativeName: string };
 
 export default function OnboardingPage() {
-  const router = useRouter();
-  const { data: session, update } = useSession();
+  const { update } = useSession();
   const [languages, setLanguages] = useState<Language[]>([]);
   const [languageId, setLanguageId] = useState<number | null>(null);
   const [role, setRole] = useState("registered");
+  const [dob, setDob] = useState<DateOfBirth>({
+    day: null,
+    month: null,
+    year: null,
+  });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -27,8 +34,13 @@ export default function OnboardingPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     if (!languageId) {
       toast.error("Please select a language");
+      return;
+    }
+    if (!dob.day || !dob.month || !dob.year) {
+      toast.error("Please enter your full date of birth");
       return;
     }
 
@@ -37,15 +49,12 @@ export default function OnboardingPage() {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ languageId, role }),
+        body: JSON.stringify({ languageId, role, dateOfBirth: dob }),
       });
 
       const json = await res.json();
-      if (!json.success) {
-        throw new Error(json.error || "Failed");
-      }
+      if (!json.success) throw new Error(json.error || "Failed");
 
-      // Force JWT refresh so middleware sees the new role
       await fetch("/api/auth/session", { cache: "no-store" });
       await update();
 
@@ -76,7 +85,7 @@ export default function OnboardingPage() {
             Welcome to LuoLinguaAI
           </h1>
           <p className="text-sm text-stone-600">
-            Tell us a bit about yourself so we can personalize your journey
+            Just a few details before we continue
           </p>
         </div>
 
@@ -121,6 +130,13 @@ export default function OnboardingPage() {
             </select>
           </div>
 
+          <DateOfBirthPicker
+            value={dob}
+            onChange={setDob}
+            label="Date of birth"
+            helpText="Age helps moderators assess the authenticity of cultural contributions. Elders typically carry traditional knowledge that younger contributors may not."
+          />
+
           <button
             type="submit"
             disabled={loading || !languageId}
@@ -131,7 +147,7 @@ export default function OnboardingPage() {
         </form>
 
         <p className="text-xs text-stone-500 text-center mt-6">
-          You can change these later in your profile settings.
+          You can change this later in your profile settings.
         </p>
       </div>
     </div>

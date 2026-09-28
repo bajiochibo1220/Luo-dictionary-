@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAction } from "@/lib/audit";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,6 +17,7 @@ export async function GET(req: NextRequest) {
     const moduleCode = searchParams.get("module") || "";
     const status = searchParams.get("status") || "";
     const q = searchParams.get("q")?.trim() || "";
+    const mine = searchParams.get("mine") === "true";
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.min(100, Number(searchParams.get("limit") || 50));
     const skip = (page - 1) * limit;
@@ -24,23 +28,25 @@ export async function GET(req: NextRequest) {
       ? undefined
       : ((user.languageRoles ?? []) as any[])
           .filter((r) =>
-            ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(r.role)
+            [
+              "language_admin",
+              "moderator",
+              "content_editor",
+              "cultural_expert",
+            ].includes(r.role)
           )
           .map((r) => r.languageId);
 
     const where: any = {};
-
-    if (languageId > 0) {
-      where.languageId = languageId;
-    } else if (managedLanguageIds) {
-      where.languageId = { in: managedLanguageIds };
-    }
-
+    if (mine) where.contributorId = user.id;
+    if (languageId > 0) where.languageId = languageId;
+    else if (managedLanguageIds) where.languageId = { in: managedLanguageIds };
     if (moduleCode) {
-      const mod = await prisma.module.findUnique({ where: { code: moduleCode } });
+      const mod = await prisma.module.findUnique({
+        where: { code: moduleCode },
+      });
       if (mod) where.moduleId = mod.id;
     }
-
     if (status) where.status = status;
     if (q) where.title = { contains: q, mode: "insensitive" };
 
@@ -53,6 +59,8 @@ export async function GET(req: NextRequest) {
         include: {
           language: { select: { code: true, name: true, nativeName: true } },
           module: { select: { code: true, baseName: true } },
+          media: true,
+          contributor: { select: { id: true, name: true, email: true, age: true } },
         },
       }),
       prisma.culturalRecord.count({ where }),
@@ -80,7 +88,16 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { languageId, moduleCode, title, data, tags } = body;
+    const {
+      languageId,
+      moduleCode,
+      title,
+      data,
+      tags,
+      status,
+      primaryMediaType,
+      mediaId,
+    } = body;
 
     if (!languageId || !moduleCode || !title) {
       return NextResponse.json(
@@ -97,23 +114,72 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const record = await prisma.culturalRecord.create({
-      data: {
-        languageId,
-        moduleId: mod.id,
-        title,
-        data: data ?? {},
-        tags: tags ?? [],
-        status: "draft",
-        contributorId: (session.user as any).id,
-      },
+    // Snapshot the user's current age
+    const dbUser = await prisma.user.findUnique({
+      where: { id: (session.user as any).id },
+      select: { age: true },
+    });
+
+    const record = await prisma.$transaction(async (tx) => {
+      const r = await tx.culturalRecord.create({
+        data: {
+          languageId,
+          moduleId: mod.id,
+          title,
+          data: data ?? {},
+          tags: tags ?? [],
+          status: status ?? "draft",
+          primaryMediaType: primaryMediaType ?? null,
+          contributorAge: dbUser?.age ?? null,
+          contributorId: (session.user as any).id,
+        },
+      });
+
+      // Link an uploaded media asset if provided
+      if (mediaId) {
+        await tx.mediaAsset.update({
+          where: { id: mediaId },
+          data: { recordId: r.id },
+        });
+      }
+
+      return r;
+    });
+
+    // Notify moderators if submitted
+    if (record.status === "submitted") {
+      const moderators = await prisma.userLanguageRole.findMany({
+        where: {
+          languageId,
+          role: { in: ["moderator", "language_admin"] },
+        },
+        select: { userId: true },
+      });
+      if (moderators.length > 0) {
+        await prisma.notification.createMany({
+          data: moderators.map((m) => ({
+            userId: m.userId,
+            type: "content_submitted",
+            message: `New ${mod.baseName} contribution: "${title}"`,
+            link: `/admin/review-queue/${record.id}`,
+          })),
+        });
+      }
+    }
+
+    await logAction({
+      userId: (session.user as any).id,
+      action: "content.created",
+      entityType: "cultural_record",
+      entityId: record.id,
+      newValue: { title, moduleCode, status },
     });
 
     return NextResponse.json({ success: true, data: record });
   } catch (err: any) {
     console.error("[content POST]", err);
     return NextResponse.json(
-      { success: false, error: "Failed to create" },
+      { success: false, error: err.message || "Failed to create" },
       { status: 500 }
     );
   }

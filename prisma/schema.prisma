@@ -104,6 +104,8 @@ model User {
   name          String?
   passwordHash  String?
   image         String?
+  age           Int?
+  dateOfBirth   DateTime?
   isSuperAdmin  Boolean   @default(false)
   status        String    @default("active")
   emailVerified DateTime?
@@ -120,10 +122,10 @@ model User {
   reviewActions ReviewHistory[]
   accounts      Account[]
   sessions      Session[]
+  conversations Conversation[]
 
   @@map("users")
 }
-
 model Role {
   id          Int     @id @default(autoincrement())
   name        String  @unique
@@ -198,22 +200,24 @@ model VerificationToken {
 }
 
 model CulturalRecord {
-  id            String    @id @default(uuid())
-  languageId    Int
-  moduleId      Int
-  title         String
-  data          Json
-  summary       String?
-  tags          String[]
-  status        String    @default("draft")
-  nrfUri        String?   @unique
-  nrfMetadata   Json?
-  contributorId String?
-  reviewerId    String?
-  validatorId   String?
-  publishedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  languageId       Int
+  moduleId         Int
+  title            String
+  data             Json
+  summary          String?
+  tags             String[]
+  status           String    @default("draft")
+  nrfUri           String?   @unique
+  nrfMetadata      Json?
+  contributorId    String?
+  contributorAge   Int?
+  primaryMediaType String?
+  reviewerId       String?
+  validatorId      String?
+  publishedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   language    Language         @relation(fields: [languageId], references: [id])
   module      Module           @relation(fields: [moduleId], references: [id])
@@ -231,7 +235,6 @@ model CulturalRecord {
   @@index([status])
   @@map("cultural_records")
 }
-
 model DictionaryEntry {
   id            String    @id @default(uuid())
   languageId    Int
@@ -508,20 +511,39 @@ model AnalyticsEvent {
   @@map("analytics_events")
 }
 
+model Conversation {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  pinned    Boolean  @default(false)
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AIResponse[]
+
+  @@index([userId, archived, pinned, updatedAt])
+  @@map("conversations")
+}
 model AIResponse {
-  id         String   @id @default(uuid())
-  languageId Int?
-  userId     String?
-  query      String   @db.Text
-  response   String   @db.Text
-  sources    Json?
-  model      String?
-  latencyMs  Int?
-  rating     String?
-  flagged    Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id             String        @id @default(uuid())
+  conversationId String?
+  languageId     Int?
+  userId         String?
+  query          String        @db.Text
+  response       String        @db.Text
+  sources        Json?
+  model          String?
+  latencyMs      Int?
+  rating         String?
+  flagged        Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([languageId, createdAt])
+  @@index([conversationId])
   @@map("ai_responses")
 }
 

@@ -3,7 +3,72 @@ import { getGemini } from "./gemini";
 import { embedText } from "./embeddings";
 import { CULTURAL_ASSISTANT_PROMPT } from "./prompts";
 
-const CHAT_MODEL = "gemini-3.8-flash";
+const PRIMARY_MODEL = "gemini-3.8-flash";
+const FALLBACK_MODEL = "gemini-2.5-flash";
+
+const MEDIA_KEYWORDS: Record<string, string[]> = {
+  video: ["video", "videos", "watch", "footage", "clip", "clips"],
+  image: ["image", "images", "photo", "photos", "picture", "pictures"],
+  audio: ["audio", "listen", "sound", "song", "songs", "recording", "recordings"],
+};
+
+function detectMediaIntent(question: string): string | null {
+  const q = question.toLowerCase();
+  for (const [type, keywords] of Object.entries(MEDIA_KEYWORDS)) {
+    if (keywords.some((k) => q.includes(k))) return type;
+  }
+  return null;
+}
+
+async function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function generateWithRetry(
+  prompt: string,
+  systemInstruction: string
+): Promise<{ text: string; model: string }> {
+  const genAI = getGemini();
+  const models = [PRIMARY_MODEL, FALLBACK_MODEL];
+
+  let lastError: any = null;
+
+  for (const modelName of models) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction,
+        });
+        const result = await model.generateContent(prompt);
+        return { text: result.response.text(), model: modelName };
+      } catch (err: any) {
+        lastError = err;
+        const msg = String(err?.message || err);
+        const isRetryable =
+          msg.includes("503") ||
+          msg.includes("Service Unavailable") ||
+          msg.includes("high demand") ||
+          msg.includes("429") ||
+          msg.includes("overloaded") ||
+          msg.includes("ECONNRESET") ||
+          msg.includes("fetch failed");
+
+        if (!isRetryable) {
+          // Non-retryable error → try the next model immediately
+          break;
+        }
+
+        // Wait before retrying: 1s, 2s, 4s
+        await sleep(1000 * Math.pow(2, attempt));
+      }
+    }
+  }
+
+  throw new Error(
+    "The AI service is temporarily overloaded. Please try again in a few seconds."
+  );
+}
 
 export type RAGSource = {
   id: string;
@@ -12,9 +77,21 @@ export type RAGSource = {
   similarity: number;
 };
 
+export type RAGMediaItem = {
+  recordId: string;
+  title: string;
+  module: string;
+  mediaType: string;
+  url: string;
+  thumbnailUrl: string | null;
+  format: string | null;
+};
+
 export type RAGAnswer = {
   answer: string;
   sources: RAGSource[];
+  media: RAGMediaItem[];
+  mediaFilter: string | null;
   model: string;
   latencyMs: number;
 };
@@ -24,13 +101,10 @@ export async function askQuestion(
   languageId?: number
 ): Promise<RAGAnswer> {
   const start = Date.now();
-  const genAI = getGemini();
+  const mediaFilter = detectMediaIntent(question);
 
-  // 1. Embed the question
   const queryVector = await embedText(question);
   const vectorStr = `[${queryVector.join(",")}]`;
-
-  // 2. Retrieve top 5 similar records
   const langFilter = languageId ? `AND cr."languageId" = ${languageId}` : "";
 
   const results = await prisma.$queryRawUnsafe<
@@ -38,6 +112,7 @@ export async function askQuestion(
       record_id: string;
       title: string;
       module: string;
+      module_code: string;
       content: string;
       similarity: number;
     }>
@@ -46,6 +121,7 @@ export async function askQuestion(
        e."recordId" AS record_id,
        cr.title AS title,
        m."baseName" AS module,
+       m.code AS module_code,
        e.content AS content,
        1 - (e.vector <=> $1::vector) AS similarity
      FROM embeddings e
@@ -64,12 +140,46 @@ export async function askQuestion(
       answer:
         "I don't have information on that in my current sources. Please try a different question or ask about our available content.",
       sources: [],
-      model: CHAT_MODEL,
+      media: [],
+      mediaFilter,
+      model: PRIMARY_MODEL,
       latencyMs: Date.now() - start,
     };
   }
 
-  // 3. Build context
+  const recordIds = results.map((r) => r.record_id);
+  const mediaQuery: any = { recordId: { in: recordIds } };
+  if (mediaFilter) mediaQuery.type = mediaFilter;
+
+  const mediaAssets = await prisma.mediaAsset.findMany({
+    where: mediaQuery,
+    orderBy: { createdAt: "desc" },
+    take: 30,
+  });
+
+  const mediaMap = new Map<string, typeof mediaAssets>();
+  for (const a of mediaAssets) {
+    if (!a.recordId) continue;
+    if (!mediaMap.has(a.recordId)) mediaMap.set(a.recordId, []);
+    mediaMap.get(a.recordId)!.push(a);
+  }
+
+  const media: RAGMediaItem[] = [];
+  for (const r of results) {
+    const assets = mediaMap.get(r.record_id) ?? [];
+    for (const a of assets) {
+      media.push({
+        recordId: r.record_id,
+        title: r.title,
+        module: r.module,
+        mediaType: a.type,
+        url: a.url,
+        thumbnailUrl: a.thumbnailUrl,
+        format: a.format,
+      });
+    }
+  }
+
   const context = results
     .map(
       (r, i) =>
@@ -77,16 +187,16 @@ export async function askQuestion(
     )
     .join("\n\n---\n\n");
 
-  // 4. Call Gemini chat
-  const model = genAI.getGenerativeModel({
-    model: CHAT_MODEL,
-    systemInstruction: CULTURAL_ASSISTANT_PROMPT,
-  });
+  const prompt = `Sources:\n${context}\n\n---\n\nQuestion: ${question}\n\nAnswer using the sources above. Cite them as [Source N].${
+    mediaFilter
+      ? ` The user asked for ${mediaFilter} content. Mention that you found ${media.length} ${mediaFilter} items and that they appear in the results panel.`
+      : ""
+  }`;
 
-  const prompt = `Sources:\n${context}\n\n---\n\nQuestion: ${question}\n\nAnswer using the sources above. Cite them as [Source N].`;
-
-  const result = await model.generateContent(prompt);
-  const answer = result.response.text();
+  const { text: answer, model: usedModel } = await generateWithRetry(
+    prompt,
+    CULTURAL_ASSISTANT_PROMPT
+  );
 
   return {
     answer,
@@ -96,7 +206,9 @@ export async function askQuestion(
       module: r.module,
       similarity: Math.round(r.similarity * 100) / 100,
     })),
-    model: CHAT_MODEL,
+    media,
+    mediaFilter,
+    model: usedModel,
     latencyMs: Date.now() - start,
   };
 }

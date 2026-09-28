@@ -8,25 +8,22 @@ export async function POST(req: NextRequest) {
   try {
     if (!hasGemini()) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "AI is not configured. Contact the administrator.",
-        },
+        { success: false, error: "AI is not configured." },
         { status: 400 }
       );
     }
 
-        const session = await auth();
+    const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Please sign in to use the AI assistant." },
         { status: 401 }
       );
     }
-    const userId = (session.user as any).id;
 
+    const userId = (session.user as any).id;
     const body = await req.json();
-    const { question, languageCode } = body;
+    const { question, languageCode, conversationId } = body;
 
     if (!question || question.length < 2) {
       return NextResponse.json(
@@ -43,26 +40,53 @@ export async function POST(req: NextRequest) {
       if (lang) languageId = lang.id;
     }
 
+    let convId = conversationId;
+    if (!convId) {
+      const title =
+        question.length > 60 ? question.slice(0, 60) + "…" : question;
+      const conv = await prisma.conversation.create({
+        data: { userId, title },
+      });
+      convId = conv.id;
+    } else {
+      const owned = await prisma.conversation.findFirst({
+        where: { id: convId, userId },
+      });
+      if (!owned) {
+        const title =
+          question.length > 60 ? question.slice(0, 60) + "…" : question;
+        const conv = await prisma.conversation.create({
+          data: { userId, title },
+        });
+        convId = conv.id;
+      }
+    }
+
     const result = await askQuestion(question, languageId);
 
-    // Log the query for AI monitoring
-    try {
-      await prisma.aIResponse.create({
+    await prisma.$transaction([
+      prisma.aIResponse.create({
         data: {
+          conversationId: convId,
           languageId: languageId ?? null,
           userId,
           query: question,
           response: result.answer,
-          sources: result.sources,
+          sources: result.sources as any,
           model: result.model,
           latencyMs: result.latencyMs,
         },
-      });
-    } catch (logErr) {
-      console.error("[chat] failed to log AI response:", logErr);
-    }
+      }),
+      prisma.conversation.update({
+        where: { id: convId },
+        data: { updatedAt: new Date() },
+      }),
+    ]);
 
-    return NextResponse.json({ success: true, data: result });
+    return NextResponse.json({
+      success: true,
+      data: { ...result, conversationId: convId },
+    });
   } catch (err: any) {
     console.error("[ai/chat]", err);
     return NextResponse.json(
