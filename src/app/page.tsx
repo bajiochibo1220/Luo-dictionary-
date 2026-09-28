@@ -42,7 +42,7 @@ export default function HomePage() {
             href="/admin-login"
             className="hover:text-amber-900 transition font-semibold"
           >
-            Admin
+            Super Admin
           </Link>
         </div>
       </div>

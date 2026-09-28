@@ -7,7 +7,6 @@ export const dynamic = "force-dynamic";
 export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* LEFT — Form on warm sand */}
       <main className="relative flex-1 flex items-center justify-center px-6 py-12 lg:px-16 bg-[#cfc09a] overflow-hidden">
         <div
           className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -39,22 +38,22 @@ export default function AdminLoginPage() {
             </div>
             <div>
               <h1 className="font-serif text-2xl text-stone-900 leading-tight">
-                Admin Portal
+                Super Admin Portal
               </h1>
               <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold">
-                Restricted Access
+                Owner Access Only
               </p>
             </div>
           </div>
 
           <p className="text-sm text-stone-800/70 mb-5 leading-relaxed">
-            This area is for administrators, moderators, content editors, and
-            cultural experts. Public visitors should use the{" "}
+            This portal is for the platform <strong>owner (super admin)</strong>{" "}
+            only. Other administrators and public users should use the{" "}
             <Link
               href="/"
               className="text-amber-900 hover:text-amber-800 underline font-medium"
             >
-              public login
+              public login page
             </Link>
             .
           </p>
@@ -72,7 +71,7 @@ export default function AdminLoginPage() {
           </div>
 
           <p className="text-center mt-6 text-xs text-stone-800/50">
-            JOOUST · NRF · LuoLinguaAI Administration
+            JOOUST · NRF · LuoLinguaAI Ownership
           </p>
         </div>
       </main>
@@ -95,29 +94,27 @@ export default function AdminLoginPage() {
             <div className="flex items-center gap-2 mb-8">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               <span className="text-xs uppercase tracking-[0.3em] text-amber-200/70">
-                Secure Session
+                Ownership Session
               </span>
             </div>
 
             <h2 className="font-serif text-4xl lg:text-5xl leading-tight text-amber-50 mb-6">
-              Every action is
+              You hold the keys
               <br />
-              <span className="italic text-amber-300">
-                logged and tracked.
-              </span>
+              <span className="italic text-amber-300">to the platform.</span>
             </h2>
 
             <ul className="space-y-4 text-sm text-amber-100/70">
-              <Bullet text="Role-based access control enforced at every route" />
-              <Bullet text="All administrative actions recorded in the audit log" />
-              <Bullet text="Content changes tracked with version history" />
-              <Bullet text="Backups and consent records maintained per NRF standards" />
+              <Bullet text="Create and manage all other administrators" />
+              <Bullet text="Add, activate, or deactivate languages" />
+              <Bullet text="Full control over every module and every record" />
+              <Bullet text="Every action logged and permanently tracked" />
             </ul>
 
             <div className="mt-12 pt-8 border-t border-amber-100/15">
               <p className="text-xs text-amber-100/40 leading-relaxed italic">
-                &ldquo;With great access comes great responsibility. Use it to
-                serve the community, not to control it.&rdquo;
+                &ldquo;A super admin is a steward. Build systems that outlive
+                you, and give others the tools to keep them alive.&rdquo;
               </p>
             </div>
           </div>

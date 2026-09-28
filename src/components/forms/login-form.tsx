@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 
 export function LoginForm() {
   const router = useRouter();
-  const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/dashboard";
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -18,34 +16,56 @@ export function LoginForm() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     const result = await signIn("credentials", {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
+      email,
+      password,
       redirect: false,
     });
 
-    setLoading(false);
-
     if (result?.error) {
+      setLoading(false);
       toast.error("Incorrect email or password");
       return;
     }
 
-    toast.success("Welcome back");
-    router.push(callbackUrl);
-    router.refresh();
-  }
-
-  async function handleOAuth(provider: string, label: string) {
+    // Decide where to send them based on their role
     try {
-      await signIn(provider, { callbackUrl });
-    } catch (err: any) {
-      toast.error(`${label} sign-in failed`);
+      const sessionRes = await fetch("/api/auth/session", {
+        cache: "no-store",
+      });
+      const session = await sessionRes.json();
+      const user = session?.user as any;
+
+      const isSuperAdmin = user?.isSuperAdmin === true;
+      const hasAdminRole = (user?.languageRoles ?? []).some((r: any) =>
+        [
+          "language_admin",
+          "moderator",
+          "content_editor",
+          "cultural_expert",
+        ].includes(r.role)
+      );
+
+      if (isSuperAdmin || hasAdminRole) {
+        toast.success("Welcome back, admin");
+        router.push("/admin/dashboard");
+      } else {
+        toast.success("Welcome back");
+        router.push("/dashboard");
+      }
+      router.refresh();
+    } catch {
+      // Fallback if session fetch fails
+      router.push("/dashboard");
+      router.refresh();
     }
   }
 
   function comingSoon(provider: string) {
-    toast.info(`${provider} is coming soon`);
+    toast.info(`${provider} login is coming in Phase 2`);
   }
 
   return (
@@ -123,7 +143,7 @@ export function LoginForm() {
         </button>
         <button
           type="button"
-          onClick={() => handleOAuth("google", "Google")}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           className="flex items-center justify-center gap-2 py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition text-sm font-medium text-stone-700"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">

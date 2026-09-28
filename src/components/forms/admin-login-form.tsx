@@ -37,29 +37,23 @@ export function AdminLoginForm() {
       const session = await sessionRes.json();
       const user = session?.user as any;
 
-      const hasAdminAccess =
-        user?.isSuperAdmin ||
-        (user?.languageRoles ?? []).some((r: any) =>
-          [
-            "language_admin",
-            "moderator",
-            "content_editor",
-            "cultural_expert",
-          ].includes(r.role)
-        );
+      // ── This portal is for the SUPER ADMIN ONLY
+      const isSuperAdmin = user?.isSuperAdmin === true;
 
-      if (!hasAdminAccess) {
+      if (!isSuperAdmin) {
         await fetch("/api/auth/signout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ callbackUrl: "/admin-login" }),
         });
         setLoading(false);
-        toast.error("This account does not have administrative access");
+        toast.error(
+          "This portal is reserved for the super admin. Use the public login instead."
+        );
         return;
       }
 
-      toast.success("Welcome, admin");
+      toast.success("Welcome, super admin");
       router.push("/admin/dashboard");
       router.refresh();
     } catch {
@@ -72,7 +66,7 @@ export function AdminLoginForm() {
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
         <label className="block text-xs uppercase tracking-wider text-stone-500 mb-1.5 font-semibold">
-          Administrative Email
+          Super Admin Email
         </label>
         <input
           name="email"
@@ -116,9 +110,13 @@ export function AdminLoginForm() {
       </button>
 
       <p className="text-xs text-stone-500 text-center pt-2 leading-relaxed">
-        Admin accounts are created by the super admin. If you don&apos;t have
-        credentials, contact them directly. No social sign-in is available for
-        administrative accounts.
+        This portal is for the <strong>super admin</strong> only. Other
+        administrators (moderators, editors, cultural experts, language
+        admins) should sign in through the{" "}
+        <a href="/" className="text-amber-800 hover:underline font-medium">
+          public login page
+        </a>
+        .
       </p>
     </form>
   );
