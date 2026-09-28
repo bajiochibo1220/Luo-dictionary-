@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { uploadToCloudinary, generateFolderPath } from "@/lib/cloudinary";
+import { canContribute, canReviewContent, isSuperAdmin } from "@/lib/permissions";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,6 +46,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!isSuperAdmin(session) && !canContribute(session, language.id)) {
+      return NextResponse.json({ success: false, error: "You cannot contribute to this language" }, { status: 403 });
+    }
+
+    const module = await prisma.module.findUnique({ where: { code: moduleCode } });
+    if (!module) {
+      return NextResponse.json({ success: false, error: "Invalid content area" }, { status: 400 });
+    }
+
+    let linkedRecord: { id: string; languageId: number; moduleId: number; contributorId: string | null } | null = null;
+    if (recordId !== "unassigned") {
+      linkedRecord = await prisma.culturalRecord.findUnique({
+        where: { id: recordId },
+        select: { id: true, languageId: true, moduleId: true, contributorId: true },
+      });
+      if (!linkedRecord || linkedRecord.languageId !== language.id || linkedRecord.moduleId !== module.id ||
+        (linkedRecord.contributorId !== (session.user as any).id && !canReviewContent(session, language.id))) {
+        return NextResponse.json({ success: false, error: "Invalid content record" }, { status: 403 });
+      }
+    }
+
     const folder = generateFolderPath(
       languageCode,
       moduleCode,
@@ -59,20 +81,10 @@ export async function POST(req: NextRequest) {
       tags: [languageCode, moduleCode, assetType],
     });
 
-    // Only attach recordId if the record actually exists
-    let validRecordId: string | null = null;
-    if (recordId && recordId !== "unassigned") {
-      const exists = await prisma.culturalRecord.findUnique({
-        where: { id: recordId },
-        select: { id: true },
-      });
-      if (exists) validRecordId = exists.id;
-    }
-
     const asset = await prisma.mediaAsset.create({
       data: {
         languageId: language.id,
-        recordId: validRecordId,
+        recordId: linkedRecord?.id ?? null,
         type: assetType,
         url: uploaded.url,
         publicId: uploaded.publicId,

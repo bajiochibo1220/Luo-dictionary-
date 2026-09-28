@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { canContribute, canReviewContent } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -57,20 +58,42 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const [entries, total] = await Promise.all([
+    const [entries, records, total] = await Promise.all([
       prisma.dictionaryEntry.findMany({
         where,
         orderBy: { dholuo: "asc" },
-        skip,
-        take: limit,
+        take: limit + skip,
+      }),
+      prisma.culturalRecord.findMany({
+        where: { languageId: language.id, status: "published", module: { code: "dictionary" } },
+        orderBy: { createdAt: "desc" },
+        take: limit + skip,
+        include: { media: true },
       }),
       prisma.dictionaryEntry.count({ where }),
     ]);
 
+    const recordEntries = records.map((record) => {
+      const data = record.data as Record<string, any>;
+      const audio = record.media.find((item) => item.type === "audio");
+      return {
+        id: record.id,
+        dholuo: data.dholuo || record.title,
+        english: data.english || "",
+        kiswahili: data.kiswahili ?? null,
+        pronunciation: data.pronunciation ?? null,
+        grammarClass: data.grammarClass ?? null,
+        audioUrl: audio?.url ?? null,
+        media: record.media.map(({ id, type, url, thumbnailUrl }) => ({ id, type, url, thumbnailUrl })),
+        status: record.status,
+      };
+    }).filter((entry) => !q || [entry.dholuo, entry.english, entry.kiswahili ?? ""].some((value) => value.toLowerCase().includes(q.toLowerCase())));
+    const combined = [...entries, ...recordEntries].sort((a, b) => a.dholuo.localeCompare(b.dholuo)).slice(skip, skip + limit);
+
     return NextResponse.json({
       success: true,
-      data: entries,
-      meta: { page, total, limit },
+      data: combined,
+      meta: { page, total: total + recordEntries.length, limit },
     });
   } catch (err: any) {
     console.error("[dictionary GET]", err);
@@ -107,39 +130,39 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = createSchema.parse(body);
 
-    const userRoles =
-      ((session.user as any).languageRoles as any[]) ?? [];
-    const allowed = userRoles.some(
-      (r) =>
-        r.languageId === data.languageId &&
-        ["elder", "contributor", "moderator", "content_editor", "language_admin"].includes(r.role)
-    );
-
-    if (!allowed && !(session.user as any).isSuperAdmin) {
+    if (!canContribute(session, data.languageId)) {
       return NextResponse.json(
         { success: false, error: "Not allowed to contribute to this language" },
         { status: 403 }
       );
     }
 
-    const entry = await prisma.dictionaryEntry.create({
+    const module = await prisma.module.findUnique({ where: { code: "dictionary" } });
+    if (!module) return NextResponse.json({ success: false, error: "Dictionary module missing" }, { status: 500 });
+    const isAdmin = canReviewContent(session, data.languageId);
+    const record = await prisma.culturalRecord.create({
       data: {
         languageId: data.languageId,
-        dholuo: data.dholuo,
-        english: data.english,
-        kiswahili: data.kiswahili,
-        pronunciation: data.pronunciation,
-        grammarClass: data.grammarClass,
-        wordOrigin: data.wordOrigin,
-        synonyms: data.synonyms ?? [],
-        antonyms: data.antonyms ?? [],
-        examples: data.examples ?? [],
-        status: "submitted",
+        moduleId: module.id,
+        title: data.dholuo,
+        data: {
+          dholuo: data.dholuo,
+          english: data.english,
+          kiswahili: data.kiswahili ?? null,
+          pronunciation: data.pronunciation ?? null,
+          grammarClass: data.grammarClass ?? null,
+          wordOrigin: data.wordOrigin ?? null,
+          synonyms: data.synonyms ?? [],
+          antonyms: data.antonyms ?? [],
+          examples: data.examples ?? [],
+        },
+        status: isAdmin ? "published" : "submitted",
+        publishedAt: isAdmin ? new Date() : null,
         contributorId: (session.user as any).id,
       },
     });
 
-    return NextResponse.json({ success: true, data: entry });
+    return NextResponse.json({ success: true, data: record });
   } catch (err: any) {
     if (err.name === "ZodError") {
       return NextResponse.json(

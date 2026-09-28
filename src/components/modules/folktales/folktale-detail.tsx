@@ -15,7 +15,7 @@ type Props = {
       children_version?: string;
       teacher_notes?: string;
     };
-    media: { url: string; type: string }[];
+    media: { id?: string; url: string; type: string; thumbnailUrl?: string | null }[];
     tags: string[];
   };
   langCode: string;
@@ -87,6 +87,14 @@ export function FolktaleDetail({ tale, langCode }: Props) {
           </audio>
         </div>
       )}
+
+      {tale.media.filter((item) => item.type !== "audio").map((item, index) => (
+        <div key={item.id ?? index} className="mb-5 bg-white rounded-xl border border-stone-100 p-5">
+          {item.type === "image" ? <img src={item.url} alt={tale.title} className="w-full max-h-[32rem] object-contain rounded-lg" /> :
+            item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+        </div>
+      ))}
 
       <article className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12 mb-8">
         <div className="prose prose-stone max-w-none">

@@ -35,6 +35,7 @@ export default async function ContributePage({
 
   let languageId: number;
   let languageName: string;
+  let languageCode: string;
 
   if (user.isSuperAdmin && !primaryRole) {
     const first = await prisma.language.findFirst({
@@ -44,6 +45,7 @@ export default async function ContributePage({
     if (!first) notFound();
     languageId = first.id;
     languageName = first.nativeName;
+    languageCode = first.code;
   } else {
     const lang = await prisma.language.findUnique({
       where: { id: primaryRole.languageId },
@@ -51,6 +53,7 @@ export default async function ContributePage({
     if (!lang) notFound();
     languageId = lang.id;
     languageName = lang.nativeName;
+    languageCode = lang.code;
   }
 
   const modTranslation = await prisma.moduleTranslation.findFirst({
@@ -107,6 +110,7 @@ export default async function ContributePage({
           moduleCode={mod.code}
           languageId={languageId}
           languageName={languageName}
+          languageCode={languageCode}
           fieldDefs={formatted}
         />
       )}

@@ -21,6 +21,7 @@ export default async function ProverbsPage({
   const records = await prisma.culturalRecord.findMany({
     where: { languageId: language.id, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
+    include: { media: true },
   });
 
   // collect unique themes

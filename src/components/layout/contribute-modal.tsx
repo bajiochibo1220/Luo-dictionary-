@@ -49,28 +49,6 @@ export function ContributeModal({
     setUploading(true);
 
     try {
-      let mediaId: string | null = null;
-
-      // Upload file first if present
-      if (file) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("languageCode", languageCode);
-        fd.append("moduleCode", moduleCode);
-        fd.append("recordId", "unassigned");
-        fd.append("assetType", mediaType === "transcript" ? "document" : mediaType);
-
-        const uploadRes = await fetch("/api/media/upload", {
-          method: "POST",
-          body: fd,
-        });
-        const uploadJson = await uploadRes.json();
-        if (!uploadJson.success) {
-          throw new Error(uploadJson.error || "Upload failed");
-        }
-        mediaId = uploadJson.data.id;
-      }
-
       const payload: any = {
         languageId,
         moduleCode,
@@ -80,9 +58,8 @@ export function ContributeModal({
           transcript: transcript.trim() || null,
         },
         tags: [],
-        status,
+        status: "draft",
         primaryMediaType: mediaType,
-        mediaId,
       };
 
       const res = await fetch("/api/content", {
@@ -93,6 +70,24 @@ export function ContributeModal({
 
       const json = await res.json();
       if (!json.success) throw new Error(json.error || "Failed");
+
+      if (file) {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("languageCode", languageCode);
+        fd.append("moduleCode", moduleCode);
+        fd.append("recordId", json.data.id);
+        fd.append("assetType", mediaType === "transcript" ? "document" : mediaType);
+        const uploadRes = await fetch("/api/media/upload", { method: "POST", body: fd });
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok || !uploadJson.success) throw new Error(uploadJson.error || "Upload failed");
+      }
+
+      if (status === "submitted") {
+        const submitRes = await fetch(`/api/content/${json.data.id}/submit`, { method: "POST" });
+        const submitJson = await submitRes.json();
+        if (!submitRes.ok || !submitJson.success) throw new Error(submitJson.error || "Could not submit for review");
+      }
 
       toast.success(
         status === "submitted"

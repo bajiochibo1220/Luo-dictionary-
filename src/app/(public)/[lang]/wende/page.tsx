@@ -19,6 +19,7 @@ export default async function SongsPage({
   const records = await prisma.culturalRecord.findMany({
     where: { languageId: language.id, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
+    include: { media: true },
   });
 
   const titleMap: Record<string, string> = {};

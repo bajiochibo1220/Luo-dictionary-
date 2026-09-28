@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
+import { canReviewContent } from "@/lib/permissions";
 
 export default async function EditContentPage({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await auth();
   const record = await prisma.culturalRecord.findUnique({
     where: { id: params.id },
     include: { module: true, language: true },
@@ -53,6 +56,8 @@ export default async function EditContentPage({
         moduleCode={record.module.code}
         languageId={record.languageId}
         languageName={record.language.nativeName}
+        languageCode={record.language.code}
+        isAdmin={canReviewContent(session, record.languageId)}
         fieldDefs={formatted}
         initialData={initialData}
         recordId={record.id}

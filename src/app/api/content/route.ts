@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
+import { canContribute, canReviewContent } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -94,9 +95,8 @@ export async function POST(req: NextRequest) {
       title,
       data,
       tags,
-      status,
       primaryMediaType,
-      mediaId,
+      status,
     } = body;
 
     if (!languageId || !moduleCode || !title) {
@@ -113,12 +113,18 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    const language = await prisma.language.findUnique({ where: { id: Number(languageId) } });
+    if (!language) return NextResponse.json({ success: false, error: "Invalid language" }, { status: 400 });
+    if (!canContribute(session, language.id)) return NextResponse.json({ success: false, error: "You cannot contribute to this language" }, { status: 403 });
 
     // Snapshot the user's current age
     const dbUser = await prisma.user.findUnique({
       where: { id: (session.user as any).id },
       select: { age: true },
     });
+
+    const canPublish = canReviewContent(session, language.id);
+    const recordStatus = canPublish ? "draft" : status === "draft" ? "draft" : "submitted";
 
     const record = await prisma.$transaction(async (tx) => {
       const r = await tx.culturalRecord.create({
@@ -128,20 +134,15 @@ export async function POST(req: NextRequest) {
           title,
           data: data ?? {},
           tags: tags ?? [],
-          status: status ?? "draft",
+          // Public contributors can only submit for review. Admin publishing is
+          // decided from the authenticated role, never from the request body.
+          status: recordStatus,
+          publishedAt: null,
           primaryMediaType: primaryMediaType ?? null,
           contributorAge: dbUser?.age ?? null,
           contributorId: (session.user as any).id,
         },
       });
-
-      // Link an uploaded media asset if provided
-      if (mediaId) {
-        await tx.mediaAsset.update({
-          where: { id: mediaId },
-          data: { recordId: r.id },
-        });
-      }
 
       return r;
     });
@@ -172,7 +173,7 @@ export async function POST(req: NextRequest) {
       action: "content.created",
       entityType: "cultural_record",
       entityId: record.id,
-      newValue: { title, moduleCode, status },
+      newValue: { title, moduleCode, status: recordStatus },
     });
 
     return NextResponse.json({ success: true, data: record });

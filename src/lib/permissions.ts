@@ -63,7 +63,8 @@ export function canReviewContent(
     isSuperAdmin(session) ||
     hasRole(session, languageId, "moderator") ||
     hasRole(session, languageId, "language_admin") ||
-    hasRole(session, languageId, "content_editor")
+    hasRole(session, languageId, "content_editor") ||
+    hasRole(session, languageId, "cultural_expert")
   );
 }
 
@@ -88,7 +89,11 @@ export function canContribute(
     hasRole(session, languageId, "elder") ||
     hasRole(session, languageId, "moderator") ||
     hasRole(session, languageId, "content_editor") ||
-    hasRole(session, languageId, "language_admin")
+    hasRole(session, languageId, "language_admin") ||
+    hasRole(session, languageId, "registered") ||
+    hasRole(session, languageId, "student") ||
+    hasRole(session, languageId, "teacher") ||
+    hasRole(session, languageId, "researcher")
   );
 }
 

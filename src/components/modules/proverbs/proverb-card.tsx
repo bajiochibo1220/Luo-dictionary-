@@ -12,8 +12,11 @@ type Proverb = {
     meaning: string;
     interpretation?: string;
     context?: string;
+    description?: string;
+    transcript?: string;
   };
   tags: string[];
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
 
 export function ProverbCard({
@@ -25,17 +28,26 @@ export function ProverbCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const d = proverb.data;
+  const media = proverb.media ?? [];
+  const original = d.original_text || proverb.title;
+  const translation = d.translation || d.description || d.transcript || "";
+  const meaning = d.meaning || d.description || "";
 
   return (
     <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       <div className="p-6">
+        {media.map((item) => item.type === "image" ? (
+          <img key={item.id} src={item.url} alt={proverb.title} className="w-full max-h-72 object-contain rounded-lg mb-4 bg-stone-100" />
+        ) : item.type === "video" ? (
+          <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-72 rounded-lg mb-4 bg-stone-950" />
+        ) : item.type === "audio" ? (
+          <audio key={item.id} src={item.url} controls className="w-full mb-4" />
+        ) : null)}
         <p className="text-xl md:text-2xl font-serif text-stone-800 mb-3 leading-snug">
-          &ldquo;{d.original_text}&rdquo;
+          &ldquo;{original}&rdquo;
         </p>
 
-        <p className="text-sm text-stone-500 italic mb-4">
-          {d.translation}
-        </p>
+        {translation && <p className="text-sm text-stone-500 italic mb-4">{translation}</p>}
 
         <button
           onClick={() => setExpanded(!expanded)}
@@ -50,7 +62,7 @@ export function ProverbCard({
               <span className="text-xs uppercase tracking-wider text-stone-400 mr-2">
                 Meaning:
               </span>
-              {d.meaning}
+              {meaning || "No meaning provided yet."}
             </p>
             {d.context && (
               <p className="text-sm text-stone-500">

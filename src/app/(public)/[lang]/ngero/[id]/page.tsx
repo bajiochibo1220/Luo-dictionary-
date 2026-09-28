@@ -13,7 +13,8 @@ export default async function ProverbDetailPage({
   if (!language) notFound();
 
   const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id },
+    where: { id: params.id, languageId: language.id, status: "published", module: { code: "proverbs" } },
+    include: { media: true },
   });
   if (!record) notFound();
 
@@ -35,7 +36,7 @@ export default async function ProverbDetailPage({
             Original
           </p>
           <p className="text-3xl md:text-4xl font-serif text-stone-800 leading-snug">
-            &ldquo;{d.original_text}&rdquo;
+            &ldquo;{d.original_text || record.title}&rdquo;
           </p>
         </div>
 
@@ -44,7 +45,7 @@ export default async function ProverbDetailPage({
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
             Translation
           </p>
-          <p className="text-xl text-stone-600 italic">{d.translation}</p>
+          <p className="text-xl text-stone-600 italic">{d.translation || d.description || d.transcript || ""}</p>
         </div>
 
         <div className="space-y-6">
@@ -52,7 +53,7 @@ export default async function ProverbDetailPage({
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
               Meaning
             </h2>
-            <p className="text-lg text-stone-800">{d.meaning}</p>
+            <p className="text-lg text-stone-800">{d.meaning || d.description || ""}</p>
           </div>
 
           {d.interpretation && (
@@ -101,6 +102,12 @@ export default async function ProverbDetailPage({
           )}
         </div>
       </div>
+      {record.media.map((item) => <div key={item.id} className="my-5 rounded-xl bg-white border border-stone-100 p-5">
+        {item.type === "image" ? <img src={item.url} alt={record.title} className="max-h-[32rem] w-full object-contain" /> :
+          item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-[32rem] w-full bg-stone-950" /> :
+          item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
+          <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+      </div>)}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
+import { canReviewContent } from "@/lib/permissions";
 
 export async function POST(
   req: NextRequest,
@@ -20,6 +21,9 @@ export async function POST(
   });
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (!canReviewContent(session, record.languageId)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const oldStatus = record.status;

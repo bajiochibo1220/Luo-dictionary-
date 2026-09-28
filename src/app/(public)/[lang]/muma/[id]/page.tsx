@@ -12,9 +12,31 @@ export default async function DictionaryDetailPage({
   });
   if (!language) notFound();
 
-  const entry = await prisma.dictionaryEntry.findUnique({
-    where: { id: params.id },
-  });
+  const [entry, authoredRecord] = await Promise.all([
+    prisma.dictionaryEntry.findFirst({ where: { id: params.id, languageId: language.id, status: "published" } }),
+    prisma.culturalRecord.findFirst({
+      where: { id: params.id, languageId: language.id, status: "published", module: { code: "dictionary" } },
+      include: { media: true },
+    }),
+  ]);
+  if (!entry && authoredRecord) {
+    const data = authoredRecord.data as Record<string, any>;
+    return (
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-stone-100 p-8 md:p-12">
+        <Link href={`/${language.code}/muma`} className="text-sm text-amber-800 hover:underline">← Back to Dictionary</Link>
+        <h1 className="text-5xl font-serif text-stone-800 mt-8">{data.dholuo || authoredRecord.title}</h1>
+        {data.pronunciation && <p className="text-stone-400 italic mt-2">/{data.pronunciation}/</p>}
+        {data.english && <p className="text-2xl text-stone-700 mt-6">{data.english}</p>}
+        {data.kiswahili && <p className="text-lg text-stone-600 mt-2">Kiswahili: {data.kiswahili}</p>}
+        {authoredRecord.media.map((item) => <div key={item.id} className="mt-6">
+          {item.type === "image" ? <img src={item.url} alt={authoredRecord.title} className="max-h-96 rounded-lg" /> :
+            item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
+            item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full rounded-lg" /> :
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+        </div>)}
+      </div>
+    );
+  }
   if (!entry) notFound();
 
   const examples = (entry.examples as any[]) ?? [];

@@ -29,7 +29,7 @@ export default async function HeritageSiteDetailPage({
   if (!language) notFound();
 
   const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id },
+    where: { id: params.id, languageId: language.id, status: "published", module: { code: "heritage_sites" } },
     include: { media: true },
   });
   if (!record) notFound();

@@ -13,7 +13,7 @@ export default async function ArtifactDetailPage({
   if (!language) notFound();
 
   const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id },
+    where: { id: params.id, languageId: language.id, status: "published", module: { code: "artifacts" } },
     include: { media: true },
   });
   if (!record) notFound();
@@ -120,6 +120,14 @@ export default async function ArtifactDetailPage({
           )}
         </div>
       </div>
+
+      {record.media.filter((item) => item.type !== "image").map((item) => (
+        <section key={item.id} className="mb-6 bg-white rounded-xl border border-stone-100 p-5">
+          {item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
+            item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+        </section>
+      ))}
 
       {related.length > 0 && (
         <section>

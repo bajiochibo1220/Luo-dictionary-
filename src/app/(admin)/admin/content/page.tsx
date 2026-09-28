@@ -62,12 +62,14 @@ export default async function ContentPage({
             {formatted.length} {formatted.length === 1 ? "record" : "records"}
           </p>
         </div>
-        <Link
-          href="/admin/content/new/proverbs"
-          className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium"
-        >
-          + New
-        </Link>
+        <div className="flex flex-wrap justify-end gap-2">
+          {modules.filter((module) => module.isActive && !module.isStub).map((module) => (
+            <Link key={module.code} href={`/admin/content/new/${module.code}`}
+              className="px-3 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-medium">
+              + {module.baseName}
+            </Link>
+          ))}
+        </div>
       </header>
 
       {/* Filters */}

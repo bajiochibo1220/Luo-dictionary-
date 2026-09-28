@@ -15,7 +15,7 @@ type Props = {
       cultural_context?: string;
       notation?: string;
     };
-    media: { url: string; type: string }[];
+    media: { id?: string; url: string; type: string; thumbnailUrl?: string | null }[];
     tags: string[];
   };
   langCode: string;
@@ -77,6 +77,14 @@ export function SongDetail({ song, langCode }: Props) {
           </audio>
         </div>
       )}
+
+      {song.media.filter((item) => item.type !== "audio").map((item, index) => (
+        <div key={item.id ?? index} className="mb-5 bg-white rounded-xl border border-stone-100 p-5">
+          {item.type === "image" ? <img src={item.url} alt={song.title} className="w-full max-h-[32rem] object-contain rounded-lg" /> :
+            item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+        </div>
+      ))}
 
       {!audio && (
         <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 mb-8 text-center text-sm text-stone-500">

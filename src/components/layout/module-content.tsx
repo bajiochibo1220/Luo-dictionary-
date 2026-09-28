@@ -16,6 +16,9 @@ export type ContentItem = {
   title: string;
   summary: string | null;
   media: MediaItem[];
+  moduleCode?: string;
+  moduleName?: string;
+  createdAt?: string;
 };
 
 const FILTERS = [
@@ -49,20 +52,26 @@ export function ModuleContent({
   items: ContentItem[];
 }) {
   const [filter, setFilter] = useState("all");
+  const [category, setCategory] = useState("all");
   const [view, setView] = useState("feed");
   const [showContribute, setShowContribute] = useState(false);
 
   const filteredItems = useMemo(() => {
-    if (filter === "all") return items;
+    const byCategory = moduleCode !== "all" || category === "all"
+      ? items
+      : items.filter((item) => item.moduleCode === category);
+    if (filter === "all") return byCategory;
     if (filter === "transcript") {
-      return items.filter(
+      return byCategory.filter(
         (i) =>
           i.media.length === 0 ||
           i.media.some((m) => m.type === "document" || m.type === "transcript")
       );
     }
-    return items.filter((i) => i.media.some((m) => m.type === filter));
-  }, [items, filter]);
+    return byCategory.filter((i) => i.media.some((m) => m.type === filter));
+  }, [items, filter, category, moduleCode]);
+
+  const categories = Array.from(new Map(items.filter((item) => item.moduleCode).map((item) => [item.moduleCode!, item.moduleName || item.moduleCode!])).entries());
 
   const mediaForCard = (item: ContentItem): MediaItem[] => {
     if (filter === "all") return item.media;
@@ -83,14 +92,20 @@ export function ModuleContent({
           </h2>
         </div>
 
-        <button
+        {moduleCode !== "all" && <button
           onClick={() => setShowContribute(true)}
           className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-5 py-2.5 rounded-full font-semibold shadow-lg hover:bg-[#5c3a1c] transition flex-shrink-0 blink-contribute"
         >
           <span className="text-lg leading-none">+</span>
           Contribute
-        </button>
+        </button>}
       </header>
+
+      {moduleCode === "all" && <div className="flex flex-wrap gap-2 mb-4">
+        {[{ key: "all", label: "All content" }, ...categories.map(([key, label]) => ({ key, label }))].map((item) => (
+          <button key={item.key} onClick={() => setCategory(item.key)} className={`text-xs font-semibold px-4 py-1.5 rounded-full border ${category === item.key ? "bg-amber-800 text-white border-amber-800" : "bg-white/60 text-stone-800 border-stone-800/20"}`}>{item.label}</button>
+        ))}
+      </div>}
 
       <div className="flex flex-wrap items-center gap-2 mb-6 pb-4 border-b border-stone-900/15">
         <div className="flex flex-wrap gap-2">
@@ -141,13 +156,13 @@ export function ModuleContent({
             contribution will be reviewed and published.
           </p>
 
-          <button
+          {moduleCode !== "all" && <button
             onClick={() => setShowContribute(true)}
             className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-7 py-3 rounded-full text-sm font-semibold hover:bg-[#5c3a1c] transition shadow-lg blink-contribute"
           >
             <span className="text-lg leading-none">+</span>
             Add the first {title}
-          </button>
+          </button>}
         </div>
       ) : view === "feed" ? (
         <FeedView items={filteredItems} mediaForCard={mediaForCard} />
@@ -209,7 +224,17 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
           )}
         </div>
       )}
+      {primary && (primary.type === "document" || primary.type === "transcript") && <a href={primary.url} target="_blank" rel="noreferrer" className="block p-5 bg-stone-900 text-amber-100 underline">Open transcript or document</a>}
+      {media.slice(1).map((asset) => (
+        <div key={asset.id} className="bg-stone-900">
+          {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-stone-950" />}
+          {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-stone-950" />}
+          {asset.type === "audio" && <div className="p-6 bg-gradient-to-br from-stone-800 to-stone-950"><p className="text-sm text-amber-100 mb-3">Audio recording{asset.format ? ` · ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
+          {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="block p-5 text-amber-100 underline">Open transcript or document</a>}
+        </div>
+      ))}
       <div className="p-6">
+        {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
         <h3 className="font-serif text-2xl text-stone-900 mb-2 leading-snug">{item.title}</h3>
         {item.summary && (
           <p className="text-sm text-stone-800/80 leading-relaxed mb-4">{item.summary}</p>

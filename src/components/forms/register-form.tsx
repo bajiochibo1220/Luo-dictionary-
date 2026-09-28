@@ -42,20 +42,26 @@ export function RegisterForm() {
     const formData = new FormData(e.currentTarget);
     const body = {
       name: formData.get("name") as string,
-      email: formData.get("email") as string,
+      email: (formData.get("email") as string).trim().toLowerCase(),
       password: formData.get("password") as string,
       dateOfBirth: { day: dob.day, month: dob.month, year: dob.year },
       role: formData.get("role") as string,
       languageId: Number(formData.get("languageId")),
     };
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
+    let data: any;
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      data = await res.json();
+    } catch {
+      setLoading(false);
+      toast.error("Unable to create your account right now. Please try again.");
+      return;
+    }
     setLoading(false);
 
     if (!data.success) {
@@ -64,11 +70,17 @@ export function RegisterForm() {
     }
 
     toast.success("Account created. Signing in...");
-    await signIn("credentials", {
+    const signInResult = await signIn("credentials", {
       email: body.email,
       password: body.password,
       redirect: false,
     });
+    if (signInResult?.error) {
+      toast.error("Account created, but sign in failed. Please log in with your email and password.");
+      router.push("/login");
+      router.refresh();
+      return;
+    }
     router.push("/dashboard");
     router.refresh();
   }

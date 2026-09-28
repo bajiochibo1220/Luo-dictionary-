@@ -18,9 +18,19 @@ type MediaAsset = {
   caption?: string | null;
   thumbnailUrl?: string | null;
   createdAt: string;
+  languageId: number;
+  nrfMetadata?: unknown;
   language: { code: string; nativeName: string };
-  record?: { id: string; title: string } | null;
+  record?: { id: string; title: string; status: string; module: { code: string } } | null;
 };
+
+type PublishedRecord = { id: string; title: string; module: { code: string } };
+
+function getGenre(asset: MediaAsset): string | undefined {
+  if (!asset.nrfMetadata || typeof asset.nrfMetadata !== "object") return undefined;
+  const genre = (asset.nrfMetadata as { genre?: unknown }).genre;
+  return typeof genre === "string" ? genre : undefined;
+}
 
 function formatBytes(bytes: number | string | bigint): string {
   const n = typeof bytes === "string" ? Number(bytes) : Number(bytes);
@@ -39,6 +49,8 @@ export function MediaGrid({
   const router = useRouter();
   const [selected, setSelected] = useState<MediaAsset | null>(null);
   const [busy, setBusy] = useState(false);
+  const [records, setRecords] = useState<PublishedRecord[]>([]);
+  const [recordId, setRecordId] = useState("");
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this file permanently from Cloudinary and database?"))
@@ -52,6 +64,48 @@ export function MediaGrid({
       router.refresh();
     } catch {
       toast.error("Delete failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadPublishedRecords(asset: MediaAsset) {
+    setSelected(asset);
+    setRecordId("");
+    setRecords([]);
+    const moduleCode = getGenre(asset);
+    if (!moduleCode || asset.record) return;
+    try {
+      const params = new URLSearchParams({
+        languageId: String(asset.languageId),
+        module: moduleCode,
+        status: "published",
+        limit: "100",
+      });
+      const response = await fetch(`/api/content?${params}`);
+      const result = await response.json();
+      if (response.ok && result.success) setRecords(result.data);
+    } catch {
+      toast.error("Could not load published content");
+    }
+  }
+
+  async function attachToRecord() {
+    if (!selected || !recordId) return;
+    setBusy(true);
+    try {
+      const response = await fetch(`/api/media/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recordId }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || "Could not attach media");
+      toast.success("Media attached. It is available on the public content page.");
+      setSelected(null);
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message || "Could not attach media");
     } finally {
       setBusy(false);
     }
@@ -71,7 +125,7 @@ export function MediaGrid({
         {assets.map((a) => (
           <button
             key={a.id}
-            onClick={() => setSelected(a)}
+            onClick={() => void loadPublishedRecords(a)}
             className="group bg-white rounded-xl shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-lg transition overflow-hidden text-left"
           >
             <div className="aspect-square bg-stone-100 flex items-center justify-center overflow-hidden">
@@ -208,9 +262,35 @@ export function MediaGrid({
                         href={`/admin/content/${selected.record.id}/edit`}
                         className="text-amber-600 hover:underline"
                       >
-                        {selected.record.title}
+                        {selected.record.title} · {selected.record.module.code} · {selected.record.status}
                       </a>
                     </dd>
+                  </div>
+                )}
+
+                {!selected.record && (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                    <p className="text-sm font-medium text-amber-900">Not attached to published content</p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      Uploading a file to the library does not publish it. Attach it to a published {getGenre(selected) || "content"} entry to show it publicly.
+                    </p>
+                    {getGenre(selected) ? (
+                      records.length > 0 ? (
+                        <div className="mt-3 space-y-2">
+                          <select value={recordId} onChange={(event) => setRecordId(event.target.value)} className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm">
+                            <option value="">Choose published {getGenre(selected)}</option>
+                            {records.map((record) => <option key={record.id} value={record.id}>{record.title}</option>)}
+                          </select>
+                          <button onClick={() => void attachToRecord()} disabled={!recordId || busy} className="w-full rounded-lg bg-amber-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-50">
+                            {busy ? "Attaching..." : "Attach to content"}
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="mt-2 text-xs text-amber-800">No published entry is available in this language and area. <a className="font-semibold underline" href={`/admin/content/new/${getGenre(selected)}?languageId=${selected.languageId}`}>Create and publish one</a>, then return here to attach this file.</p>
+                      )
+                    ) : (
+                      <p className="mt-2 text-xs text-amber-800">This file has no content area assigned. Upload it again from the correct content entry.</p>
+                    )}
                   </div>
                 )}
 

@@ -10,6 +10,7 @@ type Entry = {
   pronunciation?: string | null;
   grammarClass?: string | null;
   audioUrl?: string | null;
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
 
 export function DictionaryCard({
@@ -42,6 +43,13 @@ export function DictionaryCard({
       )}
 
       <p className="text-stone-600">{entry.english}</p>
+      {(entry.media ?? []).map((item) => item.type === "image" ? (
+        <img key={item.id} src={item.url} alt={entry.dholuo} className="mt-3 max-h-40 w-full object-cover rounded-lg" />
+      ) : item.type === "audio" ? (
+        <audio key={item.id} src={item.url} controls className="mt-3 w-full" />
+      ) : item.type === "video" ? (
+        <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="mt-3 max-h-48 w-full rounded-lg" />
+      ) : null)}
       {entry.kiswahili && (
         <p className="text-stone-400 text-sm mt-1">
           Kiswahili: {entry.kiswahili}

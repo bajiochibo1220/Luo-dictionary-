@@ -20,6 +20,9 @@ export async function POST(
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (record.contributorId !== (session.user as any).id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const oldStatus = record.status;
 

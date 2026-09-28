@@ -11,6 +11,7 @@ type Entry = {
   pronunciation?: string | null;
   grammarClass?: string | null;
   audioUrl?: string | null;
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
 
 export function DictionarySearch({

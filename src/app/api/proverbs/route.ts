@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { canContribute } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
     const records = await prisma.culturalRecord.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include: { media: true },
     });
 
     return NextResponse.json({ success: true, data: records });
@@ -88,6 +90,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const data = createSchema.parse(body);
+
+    if (!canContribute(session, data.languageId)) {
+      return NextResponse.json({ error: "You cannot contribute to this language" }, { status: 403 });
+    }
 
     const proverbsModule = await prisma.module.findUnique({
       where: { code: "proverbs" },

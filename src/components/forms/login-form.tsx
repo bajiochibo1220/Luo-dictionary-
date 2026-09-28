@@ -16,14 +16,17 @@ export function LoginForm() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
+    const email = (formData.get("email") as string).trim().toLowerCase();
     const password = formData.get("password") as string;
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    let result;
+    try {
+      result = await signIn("credentials", { email, password, redirect: false });
+    } catch {
+      setLoading(false);
+      toast.error("Unable to log in right now. Please try again.");
+      return;
+    }
 
     if (result?.error) {
       setLoading(false);

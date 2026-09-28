@@ -30,7 +30,14 @@ export default async function MediaLibraryPage({
     take: 200,
     include: {
       language: { select: { code: true, nativeName: true } },
-      record: { select: { id: true, title: true } },
+      record: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          module: { select: { code: true } },
+        },
+      },
     },
   });
 
@@ -49,6 +56,8 @@ export default async function MediaLibraryPage({
     thumbnailUrl: a.thumbnailUrl,
     createdAt: a.createdAt.toISOString(),
     language: a.language,
+    languageId: a.languageId,
+    nrfMetadata: a.nrfMetadata,
     record: a.record,
   }));
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { canReviewContent } from "@/lib/permissions";
 
 export async function GET(
   _req: NextRequest,
@@ -40,6 +41,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id } });
+  if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const userId = (session.user as any).id;
+  if (record.contributorId !== userId && !canReviewContent(session, record.languageId)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const body = await req.json();
   const { title, data, tags, status } = body;
 
@@ -47,7 +55,7 @@ export async function PATCH(
   if (title !== undefined) update.title = title;
   if (data !== undefined) update.data = data;
   if (tags !== undefined) update.tags = tags;
-  if (status !== undefined) update.status = status;
+  // Only the review workflow can change status.
 
   const updated = await prisma.culturalRecord.update({
     where: { id: params.id },

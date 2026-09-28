@@ -23,6 +23,7 @@ type Song = {
   id: string;
   title: string;
   tags: string[];
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
   data: {
     lyrics?: string;
     translation?: string;
@@ -51,6 +52,13 @@ export function SongCard({
       className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
     >
       <div className="p-6">
+        {(song.media ?? []).map((item) => item.type === "image" ? (
+          <img key={item.id} src={item.url} alt={song.title} className="w-full max-h-64 object-cover rounded-lg mb-4" />
+        ) : item.type === "video" ? (
+          <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-64 rounded-lg mb-4 bg-stone-950" />
+        ) : item.type === "audio" ? (
+          <audio key={item.id} src={item.url} controls className="w-full mb-4" />
+        ) : null)}
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Song
         </span>

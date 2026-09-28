@@ -2,11 +2,14 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
+import { canReviewContent } from "@/lib/permissions";
 
 export default async function NewContentPage({
   params,
+  searchParams,
 }: {
   params: { module: string };
+  searchParams: { languageId?: string };
 }) {
   const session = await auth();
   const user = session!.user as any;
@@ -16,35 +19,19 @@ export default async function NewContentPage({
   });
   if (!mod) notFound();
 
-  // Pick language: first from user roles, else super admin uses first active language
-  let languageId: number | null = null;
-  let languageName = "";
-
-  if (user.isSuperAdmin) {
-    const first = await prisma.language.findFirst({
-      where: { isActive: true },
-      orderBy: { displayOrder: "asc" },
-    });
-    if (first) {
-      languageId = first.id;
-      languageName = first.nativeName;
-    }
-  } else {
-    const role = ((user.languageRoles ?? []) as any[]).find((r) =>
-      ["language_admin", "moderator", "content_editor", "contributor", "elder"].includes(r.role)
-    );
-    if (role) {
-      const lang = await prisma.language.findUnique({
-        where: { id: role.languageId },
-      });
-      if (lang) {
-        languageId = lang.id;
-        languageName = lang.nativeName;
-      }
-    }
-  }
-
-  if (!languageId) notFound();
+  const adminRoles = (user.languageRoles ?? []).filter((role: any) =>
+    ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(role.role)
+  );
+  const allowedLanguageIds = adminRoles.map((role: any) => role.languageId);
+  const languages = await prisma.language.findMany({
+    where: { isActive: true, ...(user.isSuperAdmin ? {} : { id: { in: allowedLanguageIds } }) },
+    orderBy: { displayOrder: "asc" },
+    select: { id: true, code: true, name: true, nativeName: true },
+  });
+  const requestedLanguageId = Number(searchParams.languageId);
+  const selectedLanguage = languages.find((language) => language.id === requestedLanguageId) ?? languages[0];
+  if (!selectedLanguage) notFound();
+  const languageId = selectedLanguage.id;
 
   // Load field definitions + translations for this module + language
   const fieldDefs = await prisma.fieldDefinition.findMany({
@@ -73,16 +60,24 @@ export default async function NewContentPage({
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           New {mod.baseName}
         </h1>
-        <p className="text-sm text-stone-500">
-          Adding content in {languageName}
-        </p>
+        <p className="text-sm text-stone-500">Adding content in {selectedLanguage.nativeName}</p>
       </header>
+
+      {languages.length > 1 && <nav aria-label="Content language" className="mb-6 flex flex-wrap gap-2">
+        {languages.map((language) => <a key={language.id} href={`/admin/content/new/${mod.code}?languageId=${language.id}`}
+          aria-current={language.id === languageId ? "page" : undefined}
+          className={`rounded-full border px-4 py-2 text-sm ${language.id === languageId ? "border-amber-800 bg-amber-800 text-white" : "border-stone-300 bg-white text-stone-700"}`}>
+          {language.nativeName}
+        </a>)}
+      </nav>}
 
       <DynamicContentForm
         moduleCode={mod.code}
         languageId={languageId}
-        languageName={languageName}
+        languageName={selectedLanguage.nativeName}
+        languageCode={selectedLanguage.code}
         fieldDefs={formatted}
+        isAdmin={canReviewContent(session, languageId)}
       />
     </div>
   );

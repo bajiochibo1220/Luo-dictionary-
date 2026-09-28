@@ -13,7 +13,7 @@ export default async function FolktaleDetailPage({
   if (!language) notFound();
 
   const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id },
+    where: { id: params.id, languageId: language.id, status: "published", module: { code: "folktales" } },
     include: { media: true },
   });
   if (!record) notFound();

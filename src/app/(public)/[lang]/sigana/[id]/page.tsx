@@ -39,7 +39,7 @@ export default async function OralHistoryDetailPage({
   if (!language) notFound();
 
   const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id },
+    where: { id: params.id, languageId: language.id, status: "published", module: { code: "oral_histories" } },
     include: { media: true, transcripts: true },
   });
   if (!record) notFound();

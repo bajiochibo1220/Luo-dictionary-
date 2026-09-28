@@ -22,11 +22,36 @@ export default async function DictionaryPage({
   }
   const pageTitle = titleMap["dictionary"] || "Dictionary";
 
-  const entries = await prisma.dictionaryEntry.findMany({
-    where: { languageId: language.id, status: "published" },
-    orderBy: { dholuo: "asc" },
-    take: 50,
+  const [entries, records] = await Promise.all([
+    prisma.dictionaryEntry.findMany({
+      where: { languageId: language.id, status: "published" },
+      orderBy: { dholuo: "asc" },
+      take: 50,
+    }),
+    prisma.culturalRecord.findMany({
+      where: { languageId: language.id, status: "published", module: { code: "dictionary" } },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      include: { media: true },
+    }),
+  ]);
+  const authoredEntries = records.map((record) => {
+    const data = record.data as Record<string, any>;
+    const audio = record.media.find((item) => item.type === "audio");
+    return {
+      id: record.id,
+      dholuo: data.dholuo || record.title,
+      english: data.english || "",
+      kiswahili: data.kiswahili ?? null,
+      pronunciation: data.pronunciation ?? null,
+      grammarClass: data.grammarClass ?? null,
+      audioUrl: audio?.url ?? null,
+      media: record.media.map(({ id, type, url, thumbnailUrl }) => ({ id, type, url, thumbnailUrl })),
+    };
   });
+  const publicEntries = [...entries, ...authoredEntries]
+    .sort((a, b) => a.dholuo.localeCompare(b.dholuo))
+    .slice(0, 50);
 
   const emptyMessage =
     language.code === "luo"
@@ -40,12 +65,12 @@ export default async function DictionaryPage({
           {pageTitle}
         </h1>
         <p className="text-stone-500">
-          {entries.length} {entries.length === 1 ? "entry" : "entries"}
+          {publicEntries.length} {publicEntries.length === 1 ? "entry" : "entries"}
         </p>
       </header>
 
       <DictionarySearch
-        initialEntries={entries}
+        initialEntries={publicEntries}
         langCode={language.code}
         emptyMessage={emptyMessage}
       />
