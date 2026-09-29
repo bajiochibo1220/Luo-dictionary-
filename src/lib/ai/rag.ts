@@ -96,10 +96,13 @@ export type RAGAnswer = {
   latencyMs: number;
 };
 
+export type ChatTurn = { role: "user" | "assistant"; content: string };
+
 export async function askQuestion(
   question: string,
   languageId?: number,
-  cultureLanguageId?: number
+  cultureLanguageId?: number,
+  history: ChatTurn[] = []
 ): Promise<RAGAnswer> {
   const start = Date.now();
   const mediaFilter = detectMediaIntent(question);
@@ -108,27 +111,58 @@ export async function askQuestion(
     return { answer: "Hello! I’m Luo Lingua, your guide to Luo language and culture. How may I help you? You can ask about proverbs, songs, stories, artifacts, or request available images, audio, and videos.", sources: [], media: [], mediaFilter, model: "friendly-greeting", latencyMs: Date.now() - start };
   }
 
-  if (/\b(all|list|show|available|what).{0,35}\b(contents?|artifacts?|items?)\b|\b(contents?|artifacts?)\s+(available|in the system)\b/.test(normalizedQuestion)) {
-    const module = await prisma.module.findUnique({ where: { code: "artifacts" }, select: { id: true } });
-    const artifacts = module ? await prisma.culturalRecord.findMany({
-      where: { moduleId: module.id, status: "published", languageId: cultureLanguageId ?? languageId },
-      orderBy: { title: "asc" }, take: 100,
-      select: { id: true, title: true, media: { where: { type: "image" }, take: 3, orderBy: { createdAt: "desc" } } },
+  const modules = await prisma.module.findMany({ where: { isActive: true, isStub: false }, select: { id: true, code: true, baseName: true } });
+  const moduleSynonyms: Record<string, string[]> = {
+    artifacts: ["artifact", "artifacts", "cultural item"],
+    proverbs: ["proverb", "proverbs"],
+    songs: ["song", "songs", "music"],
+    dictionary: ["dictionary", "word", "words", "translation"],
+    riddles: ["riddle", "riddles"],
+    transcripts: ["transcript", "transcripts"],
+    oral_histories: ["oral history", "oral histories", "history interview"],
+    folktales: ["folktale", "folktales", "folk tale", "folk tales", "story", "stories"],
+  };
+  const requestedModule = modules.find((module) =>
+    normalizedQuestion.includes(module.code.replaceAll("-", " ")) ||
+    normalizedQuestion.includes(module.baseName.toLowerCase()) ||
+    (moduleSynonyms[module.code] ?? []).some((synonym) => normalizedQuestion.includes(synonym))
+  );
+  const asksForCatalog = /\b(all|list|show|available|what|give me|need).{0,50}\b(content|contents|records|artifacts|proverbs|songs|stories|dictionary|riddles|transcripts|videos|images)\b|\b(content|contents)\s+(available|in the system)\b/.test(normalizedQuestion);
+  if (asksForCatalog) {
+    const contentLanguageId = cultureLanguageId ?? languageId;
+    const chosenModules = requestedModule ? modules.filter((module) => module.id === requestedModule.id) : modules;
+    const records = await prisma.culturalRecord.findMany({
+      where: { status: "published", moduleId: { in: chosenModules.map((module) => module.id) }, ...(contentLanguageId ? { languageId: contentLanguageId } : {}) },
+      orderBy: [{ moduleId: "asc" }, { title: "asc" }], take: 250,
+      include: { module: { select: { baseName: true } }, media: { where: mediaFilter ? { type: mediaFilter } : { type: "image" }, take: 2, orderBy: { createdAt: "desc" } } },
+    });
+    const dictionaryModule = chosenModules.some((module) => module.code === "dictionary");
+    const dictionary = dictionaryModule ? await prisma.dictionaryEntry.findMany({
+      where: { status: "published", ...(contentLanguageId ? { languageId: contentLanguageId } : {}) }, orderBy: { dholuo: "asc" }, take: 250,
+      include: { media: { where: mediaFilter ? { type: mediaFilter } : { type: "image" }, take: 2 } },
     }) : [];
-    const media: RAGMediaItem[] = artifacts.flatMap((artifact) => artifact.media.map((item) => ({
-      recordId: artifact.id, title: artifact.title, module: "Cultural Artifacts", mediaType: "image", url: item.url, thumbnailUrl: item.thumbnailUrl, format: item.format,
-    })));
-    const answer = artifacts.length
-      ? `Here are the ${artifacts.length} published cultural artifacts I can find${media.length ? `, with ${media.length} images` : ""}:\n${artifacts.map((item, index) => `${index + 1}. ${item.title}`).join("\n")}`
-      : "I don’t see any published cultural artifacts for this language yet. Try another category, such as proverbs, songs, or stories.";
-    return { answer, sources: artifacts.map((item) => ({ id: item.id, title: item.title, module: "Cultural Artifacts", similarity: 1 })), media, mediaFilter: "image", model: "content-catalog", latencyMs: Date.now() - start };
+    const sources: RAGSource[] = [
+      ...records.map((record) => ({ id: record.id, title: record.title, module: record.module.baseName, similarity: 1 })),
+      ...dictionary.map((entry) => ({ id: entry.id, title: entry.dholuo, module: "Dictionary", similarity: 1 })),
+    ];
+    const catalogMedia: RAGMediaItem[] = [
+      ...records.flatMap((record) => record.media.map((item) => ({ recordId: record.id, title: record.title, module: record.module.baseName, mediaType: item.type, url: item.url, thumbnailUrl: item.thumbnailUrl, format: item.format }))),
+      ...dictionary.flatMap((entry) => entry.media.map((item) => ({ recordId: entry.id, title: entry.dholuo, module: "Dictionary", mediaType: item.type, url: item.url, thumbnailUrl: item.thumbnailUrl, format: item.format }))),
+    ];
+    const media = catalogMedia.slice(0, 30);
+    const answer = sources.length
+      ? `Here are ${sources.length} published ${requestedModule?.baseName ?? "content"} records${media.length ? `, with ${media.length}${catalogMedia.length > media.length ? " sample" : ""} ${mediaFilter ?? "image"} files shown in the results` : ""}:\n${sources.map((item, index) => `${index + 1}. ${item.module}: ${item.title}`).join("\n")}`
+      : `I couldn't find published ${requestedModule?.baseName ?? "content"} records for this language yet. You can try another content category or ask me a general question.`;
+    return { answer, sources, media, mediaFilter: mediaFilter ?? (media.length ? "image" : null), model: "content-catalog", latencyMs: Date.now() - start };
   }
 
   const responseLanguage = languageId
     ? (await prisma.language.findUnique({ where: { id: languageId }, select: { nativeName: true } }))?.nativeName
     : null;
 
-  const queryVector = await embedText(question);
+  const recentHistory = history.slice(-8).map((turn) => `${turn.role}: ${turn.content.slice(0, 500)}`).join("\n");
+  const retrievalQuestion = recentHistory ? `Recent conversation:\n${recentHistory}\nCurrent question: ${question}` : question;
+  const queryVector = await embedText(retrievalQuestion);
   const vectorStr = `[${queryVector.join(",")}]`;
   const langFilter = languageId ? `AND e."languageId" = ${languageId}` : "";
   const cultureFilter = cultureLanguageId
@@ -174,15 +208,11 @@ export async function askQuestion(
   const rankedResults = results.sort((a, b) => b.similarity - a.similarity).slice(0, 5);
 
   if (rankedResults.length === 0) {
-    return {
-      answer:
-        "I don't have information on that in my current sources. Please try a different question or ask about our available content.",
-      sources: [],
-      media: [],
-      mediaFilter,
-      model: PRIMARY_MODEL,
-      latencyMs: Date.now() - start,
-    };
+    const { text: answer, model } = await generateWithRetry(
+      `Recent conversation:\n${recentHistory || "No prior conversation."}\n\nThe user asks: ${question}\n\nThere are no matching platform sources for this question. Answer helpfully from general knowledge when possible, do not claim facts about this platform or Luo culture that are not supported by sources, and state uncertainty or limits plainly. Do not invent citations.`,
+      `${CULTURAL_ASSISTANT_PROMPT}\nRespond in ${responseLanguage || "English"}.`
+    );
+    return { answer, sources: [], media: [], mediaFilter, model, latencyMs: Date.now() - start };
   }
 
   const recordIds = rankedResults.filter((r) => !r.is_dictionary).map((r) => r.record_id);
@@ -227,7 +257,7 @@ export async function askQuestion(
     )
     .join("\n\n---\n\n");
 
-  const prompt = `Sources:\n${context}\n\n---\n\nQuestion: ${question}\n\nAnswer using the sources above. Cite them as [Source N].${
+  const prompt = `Recent conversation:\n${recentHistory || "No prior conversation."}\n\nSources:\n${context}\n\n---\n\nQuestion: ${question}\n\nIf this is about Luo culture or what is in the platform, answer only claims supported by relevant sources and cite them as [Source N]. If it is an unrelated general question, answer from general knowledge and do not force these sources into the response. If the sources do not support a platform or cultural claim, say so clearly. Do not invent source citations.${
     mediaFilter
       ? ` The user asked for ${mediaFilter} content. Mention that you found ${media.length} ${mediaFilter} items and that they appear in the results panel.`
       : ""

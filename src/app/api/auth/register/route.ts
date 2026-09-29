@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { registerSchema } from "@/lib/validation";
 import { calculateAge, parseDateOfBirth } from "@/lib/dates";
+import { createHash } from "crypto";
+import { getSystemSetting } from "@/lib/settings";
+import { DEFAULT_PRIVACY, DEFAULT_TERMS } from "@/lib/legal-content";
 
 export const dynamic = "force-dynamic";
 
@@ -53,21 +56,36 @@ export async function POST(req: NextRequest) {
 
     const passwordHash = await bcrypt.hash(data.password, 12);
 
-    const user = await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        passwordHash,
-        dateOfBirth: dob,
-        age,
-        status: data.role === "registered" ? "active" : "pending",
-        languageRoles: {
-          create: {
-            languageId: data.languageId,
-            role: data.role,
-          },
+    const [terms, privacy] = await Promise.all([
+      getSystemSetting("terms_content", DEFAULT_TERMS),
+      getSystemSetting("privacy_content", DEFAULT_PRIVACY),
+    ]);
+    const legalVersion = createHash("sha256").update(`${terms}\n---\n${privacy}`).digest("hex");
+
+    const user = await prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          passwordHash,
+          dateOfBirth: dob,
+          age,
+          status: data.role === "registered" ? "active" : "pending",
+          languageRoles: { create: { languageId: data.languageId, role: data.role } },
         },
-      },
+      });
+      await tx.consentRecord.create({
+        data: {
+          languageId: data.languageId,
+          contributorName: data.name,
+          contributorType: data.role,
+          consentType: "platform_terms_privacy",
+          consentGiven: true,
+          consentDate: new Date(),
+          notes: `Accepted Terms and Privacy Policy version sha256:${legalVersion}`,
+        },
+      });
+      return createdUser;
     });
 
     return NextResponse.json({

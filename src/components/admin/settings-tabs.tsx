@@ -6,19 +6,22 @@ const TABS = [
   { key: "email", label: "Email" },
   { key: "storage", label: "Storage" },
   { key: "maintenance", label: "Maintenance" },
+  { key: "legal", label: "Terms & Privacy" },
 ];
 
 export function SettingsTabs({
   active,
   onChange,
+  isMasterSuperAdmin,
 }: {
   active: string;
   onChange: (key: string) => void;
+  isMasterSuperAdmin: boolean;
 }) {
   return (
     <div className="mb-6 border-b border-stone-200">
       <div className="flex gap-4 overflow-x-auto">
-        {TABS.map((t) => (
+        {TABS.filter((t) => t.key !== "legal" || isMasterSuperAdmin).map((t) => (
           <button
             key={t.key}
             onClick={() => onChange(t.key)}

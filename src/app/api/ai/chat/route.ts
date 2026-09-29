@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
     }
 
     let convId = conversationId;
+    let history: Array<{ role: "user" | "assistant"; content: string }> = [];
 
     // Verify the conversation exists and belongs to this user
     if (convId) {
@@ -70,6 +71,18 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       });
       if (!owned) convId = null;
+      else {
+        const previousMessages = await prisma.aIResponse.findMany({
+          where: { conversationId: convId },
+          orderBy: { createdAt: "desc" },
+          take: 8,
+          select: { query: true, response: true },
+        });
+        history = previousMessages.reverse().flatMap((message) => [
+          { role: "user" as const, content: message.query },
+          { role: "assistant" as const, content: message.response },
+        ]);
+      }
     }
 
     // Create a new conversation if none
@@ -82,7 +95,7 @@ export async function POST(req: NextRequest) {
       convId = conv.id;
     }
 
-    const result = await askQuestion(question, languageId, cultureLanguageId);
+    const result = await askQuestion(question, languageId, cultureLanguageId, history);
 
     await prisma.$transaction([
       prisma.aIResponse.create({

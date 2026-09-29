@@ -1,5 +1,22 @@
 import Link from "next/link";
+import { getSystemSetting } from "@/lib/settings";
+import { DEFAULT_PRIVACY } from "@/lib/legal-content";
+import { LegalDocument } from "@/components/legal/legal-document";
 
-export default function PrivacyPage() {
-  return <main className="min-h-screen bg-[#cfc09a] px-5 py-12 text-stone-900"><article className="mx-auto max-w-3xl rounded-2xl bg-white/80 p-6 md:p-10 shadow-sm"><Link href="/register" className="text-sm text-amber-800 underline">← Back to registration</Link><p className="mt-8 text-xs uppercase tracking-[0.25em] text-amber-800">LuoLinguaAI</p><h1 className="mt-2 font-serif text-4xl">Privacy Policy</h1><p className="mt-3 text-sm text-stone-600">Effective 29 September 2026</p><div className="mt-8 space-y-6 text-sm leading-7"><section><h2 className="font-semibold text-lg">Information we collect</h2><p>Account details such as your name, email, date of birth and selected language; contributions and associated media; and service activity needed to operate accounts, moderation, and conversations.</p></section><section><h2 className="font-semibold text-lg">How information is used</h2><p>We use information to provide the service, manage access, review contributions, preserve language and cultural material, respond to questions, and protect the platform. AI conversations may be processed to generate answers and improve retrieval from published platform content.</p></section><section><h2 className="font-semibold text-lg">Sharing and public content</h2><p>Published contributions may be visible to the public with their media and descriptions. Account information is not displayed as part of a public contribution unless the service clearly says so. Service providers may process data to host, secure, or operate platform features.</p></section><section><h2 className="font-semibold text-lg">Your choices</h2><p>You may request access, correction, or deletion of personal information and ask for a contribution to be reviewed or removed, subject to preservation, safety, and legal requirements. Contact the platform operator to make a request.</p></section><section><h2 className="font-semibold text-lg">Retention and security</h2><p>Information is kept for as long as needed to operate the service and meet legitimate preservation or legal needs. Reasonable safeguards are used, though no online service can guarantee absolute security.</p></section><section><h2 className="font-semibold text-lg">Contact and changes</h2><p>Contact the platform operator with privacy questions or requests. This policy may be updated as the service and its data practices change.</p></section><p className="text-xs text-stone-500">This notice is a product draft, not legal advice. The responsible institution should confirm its controller identity, contact details, providers, retention periods, and legal basis before launch. It is intended to be completed against applicable Kenyan data protection requirements.</p><a className="text-xs underline text-amber-800" href="https://new.kenyalaw.org/akn/ke/act/2019/24/eng%402019-11-25">Kenya Data Protection Act, 2019</a></div></article></main>;
+export const dynamic = "force-dynamic";
+
+export default async function PrivacyPage() {
+  const privacy = await getSystemSetting("privacy_content", DEFAULT_PRIVACY);
+  return (
+    <main className="min-h-screen bg-[#cfc09a] px-5 py-12 text-stone-900">
+      <article className="mx-auto max-w-3xl rounded-2xl bg-white/80 p-6 shadow-sm md:p-10">
+        <Link href="/register" className="text-sm text-amber-800 underline">← Back to registration</Link>
+        <p className="mt-8 text-xs uppercase tracking-[0.25em] text-amber-800">LuoLinguaAI</p>
+        <h1 className="mt-2 font-serif text-4xl">Privacy Policy</h1>
+        <nav className="mt-4 flex gap-4 text-sm"><Link href="/terms" className="text-amber-800 underline">Terms and Conditions</Link><Link href="/" className="text-amber-800 underline">Home</Link></nav>
+        <LegalDocument content={privacy} />
+        <a className="mt-6 inline-block text-xs underline text-amber-800" href="https://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/2019/TheDataProtectionAct__No24of2019.pdf">Kenya Data Protection Act, 2019</a>
+      </article>
+    </main>
+  );
 }

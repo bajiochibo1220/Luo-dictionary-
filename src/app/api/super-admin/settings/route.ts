@@ -20,7 +20,7 @@ function mask(value: string): string {
 
 export async function GET() {
   const session = await auth();
-  if (!session?.user || !(session.user as any).isSuperAdmin) {
+  if (!session?.user || (!(session.user as any).isSuperAdmin && !(session.user as any).isMasterSuperAdmin)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -37,7 +37,7 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   const session = await auth();
-  if (!session?.user || !(session.user as any).isSuperAdmin) {
+  if (!session?.user || (!(session.user as any).isSuperAdmin && !(session.user as any).isMasterSuperAdmin)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -46,6 +46,12 @@ export async function PATCH(req: NextRequest) {
 
   for (const [key, value] of Object.entries(body)) {
     if (typeof value !== "string") continue;
+    if ((key === "terms_content" || key === "privacy_content") && !(session.user as any).isMasterSuperAdmin) {
+      return NextResponse.json({ error: "Only the master super admin can edit legal documents" }, { status: 403 });
+    }
+    if ((key === "terms_content" || key === "privacy_content") && value.length > 50_000) {
+      return NextResponse.json({ error: "Legal documents must be under 50,000 characters" }, { status: 400 });
+    }
     // Skip masked values (user didn't change them)
     if (
       SENSITIVE_KEYS.includes(key) &&

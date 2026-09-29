@@ -10,9 +10,11 @@ type Language = { id: number; code: string; name: string; nativeName: string };
 export function SystemClient({
   settings,
   languages,
+  isMasterSuperAdmin,
 }: {
   settings: Record<string, string>;
   languages: Language[];
+  isMasterSuperAdmin: boolean;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState("general");
@@ -110,7 +112,7 @@ export function SystemClient({
         </p>
       </header>
 
-      <SettingsTabs active={tab} onChange={setTab} />
+      <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} />
 
       <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
         {tab === "general" && (
@@ -381,6 +383,18 @@ export function SystemClient({
             >
               {busy ? "Saving..." : "Save Maintenance Settings"}
             </button>
+          </>
+        )}
+
+        {tab === "legal" && isMasterSuperAdmin && (
+          <>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public legal documents</h2>
+            <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">These drafts are visible to users. Replace every bracketed placeholder with the Operator’s verified details and have counsel review the documents before relying on them. Saving publishes the text on the public Terms and Privacy pages.</p>
+            <label className="mb-2 block text-sm font-medium text-stone-700">Terms and Conditions</label>
+            <textarea rows={18} value={values.terms_content ?? ""} onChange={(e) => update("terms_content", e.target.value)} className="mb-6 w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <label className="mb-2 block text-sm font-medium text-stone-700">Privacy Policy</label>
+            <textarea rows={18} value={values.privacy_content ?? ""} onChange={(e) => update("privacy_content", e.target.value)} className="w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <button onClick={() => save(["terms_content", "privacy_content"])} disabled={busy} className="mt-5 rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50">{busy ? "Saving…" : "Save and publish legal documents"}</button>
           </>
         )}
       </div>
