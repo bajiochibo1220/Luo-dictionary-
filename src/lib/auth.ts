@@ -173,16 +173,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-    async signIn({ user }) {
-      if (!user.id) return false;
-      const account = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: { status: true },
-      });
-      // Match credentials authorization: pending accounts may authenticate,
-      // but suspended or missing accounts may not. Pending users are kept out
-      // of privileged routes because JWT role claims are only loaded as active.
-      return !!account && account.status !== "suspended";
+    async signIn({ user, account: providerAccount, profile }) {
+      let accountUser = user.id
+        ? await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { status: true },
+          })
+        : null;
+
+      // Auth.js calls this callback before linking OAuth accounts. A first-time
+      // Google profile therefore has no local user ID yet. Resolve a possible
+      // existing account by its verified email before deciding whether to
+      // allow the OAuth flow to create/link the account.
+      if (!accountUser && providerAccount?.provider === "google" && user.email) {
+        accountUser = await prisma.user.findFirst({
+          where: { email: { equals: user.email.trim(), mode: "insensitive" } },
+          select: { status: true },
+        });
+      }
+
+      if (accountUser?.status === "suspended") return false;
+
+      if (providerAccount?.provider === "google" && !user.id) {
+        const googleProfile = profile as { email_verified?: boolean } | undefined;
+        return googleProfile?.email_verified === true && !!user.email;
+      }
+
+      // Keep credentials and already-linked provider accounts consistent with
+      // authorize(): missing and suspended local accounts cannot sign in.
+      return !!accountUser && accountUser.status !== "suspended";
     },
   },
   trustHost: true,
