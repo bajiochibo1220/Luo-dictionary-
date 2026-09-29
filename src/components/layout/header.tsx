@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { UserMenu } from "@/components/layout/user-menu";
 
 const NAV_MODULES = [
   { code: "dictionary", path: "muma" },
@@ -23,6 +24,12 @@ export function Header() {
   const { language, t } = useLanguage();
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isAdmin = Boolean(
+    session?.user?.isSuperAdmin ||
+    session?.user?.languageRoles?.some((role) =>
+      ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(role.role)
+    )
+  );
 
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
@@ -57,17 +64,12 @@ export function Header() {
           </Link>
 
           {session?.user ? (
-            <div className="flex items-center gap-2">
-              <span className="hidden md:inline text-xs text-stone-500">
-                {session.user.name || session.user.email}
-              </span>
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="text-xs text-stone-500 hover:text-red-600"
-              >
-                Sign out
-              </button>
-            </div>
+            <UserMenu
+              userName={session.user.name ?? null}
+              userEmail={session.user.email ?? ""}
+              userImage={session.user.image ?? null}
+              isAdmin={isAdmin}
+            />
           ) : (
             <div className="flex items-center gap-2">
               <Link

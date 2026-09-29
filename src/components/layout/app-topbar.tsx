@@ -1,19 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { signOut } from "next-auth/react";
 
 export function AppTopbar({
   userInitial,
+  userName,
+  userEmail,
+  userImage,
   isAdmin,
   languageCode,
   stats,
 }: {
   userInitial: string;
+  userName: string | null;
+  userEmail: string;
+  userImage: string | null;
   isAdmin: boolean;
   languageCode: string;
   stats: { uploads: number; approved: number; pending: number };
 }) {
+  const [profileOpen, setProfileOpen] = useState(false);
+
   return (
     <header className="bg-[#5c3a1c] border-b border-black/30 flex items-center justify-between px-6 py-3 shadow-lg relative z-30">
       {/* Left: Logo */}
@@ -77,13 +86,36 @@ export function AppTopbar({
           </Link>
         )}
 
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-stone-900 font-serif text-base font-bold shadow-lg ring-1 ring-amber-200/30"
-          title="Sign out"
-        >
-          {userInitial}
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setProfileOpen((open) => !open)}
+            aria-label="Open account menu"
+            aria-expanded={profileOpen}
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-stone-900 font-serif text-base font-bold shadow-lg ring-1 ring-amber-200/30"
+          >
+            {userImage ? <img src={userImage} alt="" className="w-full h-full rounded-full object-cover" /> : userInitial}
+          </button>
+          {profileOpen && (
+            <>
+              <button
+                type="button"
+                aria-label="Close account menu"
+                className="fixed inset-0 z-10 cursor-default"
+                onClick={() => setProfileOpen(false)}
+              />
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-stone-200 py-2 z-20">
+                <div className="px-4 py-3 border-b border-stone-100">
+                  <p className="text-sm font-semibold text-stone-800 truncate">{userName || "Account"}</p>
+                  <p className="text-xs text-stone-500 truncate">{userEmail}</p>
+                </div>
+                <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My dashboard</Link>
+                {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Admin dashboard</Link>}
+                <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">Sign out</button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

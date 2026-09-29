@@ -37,7 +37,6 @@ const LANGUAGE_ADMIN_SECTIONS: NavSection[] = [
       { label: "Analytics", href: "/admin/analytics", icon: "▲" },
       { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "✦" },
       { label: "Audit Logs", href: "/admin/audit-logs", icon: "◈" },
-      { label: "Settings", href: "/admin/settings", icon: "⚙" },
     ],
   },
 ];
@@ -67,7 +66,7 @@ export function AdminSidebar({
   const renderSection = (section: NavSection, idx: number) => (
     <div key={idx} className="mb-6">
       {section.title && (
-        <p className="px-4 mb-2 text-xs uppercase tracking-wider text-stone-500">
+        <p className="px-4 mb-2 text-xs uppercase tracking-wider text-amber-200/70">
           {section.title}
         </p>
       )}
@@ -81,8 +80,8 @@ export function AdminSidebar({
               onClick={onNavigate}
               className={`flex items-center gap-3 px-4 py-2.5 text-sm transition rounded-lg mx-2 ${
                 active
-                  ? "bg-amber-600/20 text-amber-300 border-l-2 border-amber-500"
-                  : "text-stone-300 hover:bg-stone-800 hover:text-white"
+                  ? "bg-black/25 text-amber-100 border-l-2 border-amber-400"
+                  : "text-amber-50/80 hover:bg-black/15 hover:text-amber-50"
               }`}
             >
               <span className="text-base w-5 text-center">{item.icon}</span>
@@ -95,10 +94,10 @@ export function AdminSidebar({
   );
 
   return (
-    <div className="h-full bg-stone-900 text-stone-100 overflow-y-auto py-4">
+    <div className="h-full bg-transparent text-amber-50 overflow-y-auto py-4">
       {LANGUAGE_ADMIN_SECTIONS.map(renderSection)}
       {isSuperAdmin && (
-        <div className="mt-8 pt-6 border-t border-stone-800">
+        <div className="mt-8 pt-6 border-t border-amber-100/15">
           {renderSection(SUPER_ADMIN_SECTION, 999)}
         </div>
       )}

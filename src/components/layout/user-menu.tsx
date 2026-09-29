@@ -7,22 +7,27 @@ import { signOut } from "next-auth/react";
 export function UserMenu({
   userEmail,
   userName,
-  isSuperAdmin,
+  userImage,
+  isAdmin,
 }: {
   userEmail: string;
   userName: string | null;
-  isSuperAdmin: boolean;
+  userImage: string | null;
+  isAdmin: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setOpen(!open)}
+        aria-label="Open account menu"
+        aria-expanded={open}
         className="flex items-center gap-2 p-1 rounded-lg hover:bg-stone-100"
       >
-        <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-medium">
-          {(userName || userEmail).charAt(0).toUpperCase()}
+        <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-medium overflow-hidden">
+          {userImage ? <img src={userImage} alt="" className="w-full h-full object-cover" /> : (userName || userEmail).charAt(0).toUpperCase()}
         </div>
       </button>
 
@@ -45,7 +50,13 @@ export function UserMenu({
             >
               Public site
             </Link>
-            {isSuperAdmin && (
+            <Link
+              href="/dashboard"
+              className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
+            >
+              My dashboard
+            </Link>
+            {isAdmin && (
               <Link
                 href="/admin/dashboard"
                 className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"

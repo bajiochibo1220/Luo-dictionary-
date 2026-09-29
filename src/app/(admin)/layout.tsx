@@ -39,6 +39,7 @@ export default async function AdminLayout({
     <AdminShell
       userEmail={user.email ?? ""}
       userName={user.name ?? null}
+      userImage={user.image ?? null}
       isSuperAdmin={isSuperAdmin}
       notificationCount={notificationCount}
     >

@@ -63,6 +63,9 @@ export default async function DashboardLayout({
     <div className="h-screen flex flex-col bg-[#b89a68] overflow-hidden">
       <AppTopbar
         userInitial={userInitial}
+        userName={user.name ?? null}
+        userEmail={user.email ?? ""}
+        userImage={user.image ?? null}
         isAdmin={isAdmin}
         languageCode={languageCode}
         stats={{
