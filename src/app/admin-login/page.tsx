@@ -1,6 +1,17 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { AdminLoginForm } from "@/components/forms/admin-login-form";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Super Admin · LuoLinguaAI",
+  applicationName: "LuoLinguaAI Super Admin",
+  manifest: "/super-admin.webmanifest",
+  icons: {
+    icon: "/icons/super-admin-app.svg",
+    shortcut: "/icons/super-admin-app.svg",
+  },
+};
 
 export const dynamic = "force-dynamic";
 

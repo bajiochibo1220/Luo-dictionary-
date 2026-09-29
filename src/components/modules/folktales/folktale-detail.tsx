@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Props = {
   tale: {
@@ -40,6 +41,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       </Link>
 
       <header className="mb-8">
+        <EnglishVersionLink langCode={langCode} href={`/${langCode}/sigana/folktales/${tale.id}`} />
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Folktale
         </span>

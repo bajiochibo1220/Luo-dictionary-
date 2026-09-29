@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!hasGemini()) {
+  if (!(await hasGemini())) {
     return NextResponse.json(
       { error: "GEMINI_API_KEY not configured. Add to .env" },
       { status: 400 }

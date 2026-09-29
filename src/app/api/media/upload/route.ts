@@ -55,20 +55,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Invalid content area" }, { status: 400 });
     }
 
-    let linkedRecord: { id: string; languageId: number; moduleId: number; contributorId: string | null } | null = null;
+    let linkedRecord: { id: string; languageId: number; moduleId: number; contributorId: string | null; language: { code: string } } | null = null;
     if (recordId !== "unassigned") {
       linkedRecord = await prisma.culturalRecord.findUnique({
         where: { id: recordId },
-        select: { id: true, languageId: true, moduleId: true, contributorId: true },
+        select: { id: true, languageId: true, moduleId: true, contributorId: true, language: { select: { code: true } } },
       });
-      if (!linkedRecord || linkedRecord.languageId !== language.id || linkedRecord.moduleId !== module.id ||
-        (linkedRecord.contributorId !== (session.user as any).id && !canReviewContent(session, language.id))) {
+      const isSourceLanguage = linkedRecord?.languageId === language.id;
+      const hasTranslation = linkedRecord && !isSourceLanguage
+        ? await prisma.culturalRecordTranslation.findUnique({ where: { recordId_languageId: { recordId: linkedRecord.id, languageId: language.id } }, select: { id: true } })
+        : null;
+      const mayUpload = linkedRecord && (
+        isSourceLanguage
+          ? linkedRecord.contributorId === (session.user as any).id || canReviewContent(session, language.id)
+          : !!hasTranslation && canReviewContent(session, language.id)
+      );
+      if (!linkedRecord || linkedRecord.moduleId !== module.id || !mayUpload) {
         return NextResponse.json({ success: false, error: "Invalid content record" }, { status: 403 });
       }
     }
 
+    const storageLanguageCode = linkedRecord?.language.code ?? languageCode;
     const folder = generateFolderPath(
-      languageCode,
+      storageLanguageCode,
       moduleCode,
       recordId,
       assetType
@@ -83,7 +92,9 @@ export async function POST(req: NextRequest) {
 
     const asset = await prisma.mediaAsset.create({
       data: {
-        languageId: language.id,
+        // A translation editor attaches media to the same source record. Keep
+        // the asset in its record's source locale so every translation shares it.
+        languageId: linkedRecord?.languageId ?? language.id,
         recordId: linkedRecord?.id ?? null,
         type: assetType,
         url: uploaded.url,

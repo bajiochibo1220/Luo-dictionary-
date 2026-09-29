@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Riddle = {
   id: string;
@@ -13,6 +14,7 @@ type Riddle = {
     translation?: string;
     context?: string;
   };
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
 
 export function RiddleCard({
@@ -28,6 +30,14 @@ export function RiddleCard({
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 overflow-hidden">
       <div className="p-6">
+        <EnglishVersionLink langCode={langCode} href={`/${langCode}/ngeche/${riddle.id}`} />
+        {(riddle.media ?? []).map((item) => item.type === "image" ? (
+          <img key={item.id} src={item.url} alt={riddle.title} className="my-3 max-h-64 w-full rounded-lg object-contain" />
+        ) : item.type === "video" ? (
+          <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="my-3 max-h-64 w-full rounded-lg bg-stone-950" />
+        ) : item.type === "audio" ? (
+          <audio key={item.id} src={item.url} controls className="my-3 w-full" />
+        ) : null)}
         <p className="text-xs uppercase tracking-wider text-amber-600 mb-3">
           Riddle
         </p>

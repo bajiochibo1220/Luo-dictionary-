@@ -6,6 +6,7 @@ import { ContentBarChart } from "@/components/admin/content-bar-chart";
 import { PendingSummary } from "@/components/admin/pending-summary";
 import { ContributorList } from "@/components/admin/contributor-list";
 import { AiUsageCard } from "@/components/admin/ai-usage-card";
+import { getSelectedAdminCultureId, getSelectedAdminLanguageId } from "@/lib/admin-language";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -15,8 +16,10 @@ export default async function AdminDashboardPage() {
   const isSuperAdmin = !!user.isSuperAdmin;
 
   // Which languages can this admin see?
+  const selectedLanguageId = isSuperAdmin ? await getSelectedAdminLanguageId() : undefined;
+  const selectedCultureId = isSuperAdmin ? await getSelectedAdminCultureId() : undefined;
   const managedLanguageIds: number[] = isSuperAdmin
-    ? (
+    ? selectedLanguageId ? [selectedLanguageId] : (
         await prisma.language.findMany({
           where: { isActive: true },
           select: { id: true },
@@ -32,6 +35,11 @@ export default async function AdminDashboardPage() {
           ].includes(r.role)
         )
         .map((r) => r.languageId);
+  const recordScope: any = isSuperAdmin && selectedCultureId
+    ? { languageId: selectedCultureId }
+    : isSuperAdmin
+    ? {}
+    : { languageId: { in: managedLanguageIds } };
 
   // Stats
   const [
@@ -42,18 +50,20 @@ export default async function AdminDashboardPage() {
     aiQueries,
   ] = await Promise.all([
     prisma.culturalRecord.count({
-      where: { languageId: { in: managedLanguageIds } },
+      where: recordScope,
     }),
     prisma.culturalRecord.count({
       where: {
-        languageId: { in: managedLanguageIds },
+        ...recordScope,
         status: "submitted",
       },
     }),
     prisma.mediaAsset.count({
-      where: { languageId: { in: managedLanguageIds } },
+      where: isSuperAdmin && selectedCultureId
+        ? { OR: [{ languageId: selectedCultureId }, { record: { languageId: selectedCultureId } }] }
+        : isSuperAdmin ? {} : { OR: [{ languageId: { in: managedLanguageIds } }, { record: { languageId: { in: managedLanguageIds } } }] },
     }),
-    prisma.user.count(),
+    prisma.user.count({ where: isSuperAdmin && selectedLanguageId ? { languageRoles: { some: { languageId: selectedLanguageId } } } : {} }),
     prisma.aIResponse.count({
       where: { languageId: { in: managedLanguageIds } },
     }),
@@ -62,14 +72,15 @@ export default async function AdminDashboardPage() {
   // Content by module
   const modules = await prisma.module.findMany({
     orderBy: { displayOrder: "asc" },
+    include: { translations: { where: selectedLanguageId ? { languageId: selectedLanguageId } : undefined } },
   });
 
   const contentByModule = await Promise.all(
     modules.map(async (m) => ({
-      label: m.baseName,
+      label: m.translations[0]?.title ?? m.baseName,
       count: await prisma.culturalRecord.count({
         where: {
-          languageId: { in: managedLanguageIds },
+          ...recordScope,
           moduleId: m.id,
         },
       }),
@@ -80,10 +91,10 @@ export default async function AdminDashboardPage() {
   // Pending by module
   const pendingByModule = await Promise.all(
     modules.map(async (m) => ({
-      label: m.baseName,
+      label: m.translations[0]?.title ?? m.baseName,
       count: await prisma.culturalRecord.count({
         where: {
-          languageId: { in: managedLanguageIds },
+          ...recordScope,
           moduleId: m.id,
           status: "submitted",
         },
@@ -96,7 +107,7 @@ export default async function AdminDashboardPage() {
   const contributorsRaw = await prisma.culturalRecord.groupBy({
     by: ["contributorId"],
     where: {
-      languageId: { in: managedLanguageIds },
+          ...recordScope,
       contributorId: { not: null },
     },
     _count: { contributorId: true },
@@ -149,7 +160,7 @@ export default async function AdminDashboardPage() {
 
   // Language label
   const primaryLang = isSuperAdmin
-    ? "All Languages"
+    ? (selectedLanguageId ? (await prisma.language.findUnique({ where: { id: selectedLanguageId }, select: { nativeName: true } }))?.nativeName : "All Languages")
     : managedLanguageIds.length > 0
     ? (
         await prisma.language.findFirst({

@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const recordIds = Array.isArray(body.recordIds) ? body.recordIds : [];
-  if (recordIds.length < 1 || recordIds.length > 5 || recordIds.some((id: unknown) => typeof id !== "string") || new Set(recordIds).size !== recordIds.length) {
-    return NextResponse.json({ success: false, error: "Choose between one and five unique records" }, { status: 400 });
+  if (recordIds.length < 1 || recordIds.length > 20 || recordIds.some((id: unknown) => typeof id !== "string") || new Set(recordIds).size !== recordIds.length) {
+    return NextResponse.json({ success: false, error: "Choose between one and twenty unique records" }, { status: 400 });
   }
 
   const records = await prisma.culturalRecord.findMany({

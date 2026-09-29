@@ -3,6 +3,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import { canContribute, canReviewContent } from "@/lib/permissions";
+import { createDefaultRecordTranslations, getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
+import { embedRecord } from "@/lib/ai/embeddings";
+import { hasGemini } from "@/lib/ai/gemini";
 
 export async function GET(req: NextRequest) {
   try {
@@ -30,8 +33,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const cultureLanguageId = await getContentCultureLanguageId(language.id);
     const where: any = {
-      languageId: language.id,
+      languageId: cultureLanguageId,
       status: "published",
     };
 
@@ -65,15 +69,15 @@ export async function GET(req: NextRequest) {
         take: limit + skip,
       }),
       prisma.culturalRecord.findMany({
-        where: { languageId: language.id, status: "published", module: { code: "dictionary" } },
+        where: { languageId: cultureLanguageId, status: "published", module: { code: "dictionary" } },
         orderBy: { createdAt: "desc" },
         take: limit + skip,
-        include: { media: true },
+        include: { media: true, translations: { where: { languageId: language.id } } },
       }),
       prisma.dictionaryEntry.count({ where }),
     ]);
 
-    const recordEntries = records.map((record) => {
+    const recordEntries = records.map((record) => localizeRecord(record, language.id)).map((record) => {
       const data = record.data as Record<string, any>;
       const audio = record.media.find((item) => item.type === "audio");
       return {
@@ -140,27 +144,39 @@ export async function POST(req: NextRequest) {
     const module = await prisma.module.findUnique({ where: { code: "dictionary" } });
     if (!module) return NextResponse.json({ success: false, error: "Dictionary module missing" }, { status: 500 });
     const isAdmin = canReviewContent(session, data.languageId);
-    const record = await prisma.culturalRecord.create({
-      data: {
-        languageId: data.languageId,
-        moduleId: module.id,
-        title: data.dholuo,
+    const record = await prisma.$transaction(async (tx) => {
+      const created = await tx.culturalRecord.create({
         data: {
-          dholuo: data.dholuo,
-          english: data.english,
-          kiswahili: data.kiswahili ?? null,
-          pronunciation: data.pronunciation ?? null,
-          grammarClass: data.grammarClass ?? null,
-          wordOrigin: data.wordOrigin ?? null,
-          synonyms: data.synonyms ?? [],
-          antonyms: data.antonyms ?? [],
-          examples: data.examples ?? [],
+          languageId: data.languageId,
+          moduleId: module.id,
+          title: data.dholuo,
+          data: {
+            dholuo: data.dholuo,
+            english: data.english,
+            kiswahili: data.kiswahili ?? null,
+            pronunciation: data.pronunciation ?? null,
+            grammarClass: data.grammarClass ?? null,
+            wordOrigin: data.wordOrigin ?? null,
+            synonyms: data.synonyms ?? [],
+            antonyms: data.antonyms ?? [],
+            examples: data.examples ?? [],
+          },
+          status: isAdmin ? "published" : "submitted",
+          publishedAt: isAdmin ? new Date() : null,
+          contributorId: (session.user as any).id,
         },
-        status: isAdmin ? "published" : "submitted",
-        publishedAt: isAdmin ? new Date() : null,
-        contributorId: (session.user as any).id,
-      },
+      });
+      await createDefaultRecordTranslations(tx, created.id, data.languageId);
+      return created;
     });
+
+    if (isAdmin && await hasGemini()) {
+      try {
+        await embedRecord(record.id, true);
+      } catch (error) {
+        console.error("[dictionary POST] failed to update AI index:", error);
+      }
+    }
 
     return NextResponse.json({ success: true, data: record });
   } catch (err: any) {

@@ -9,7 +9,7 @@ export async function summarizeTranscript(transcriptId: string) {
   });
   if (!transcript) throw new Error("Transcript not found");
 
-  const genAI = getGemini();
+  const genAI = await getGemini();
   const model = genAI.getGenerativeModel({ model: MODEL });
 
   const prompt = `Summarize the following Luo oral history transcript in exactly 3 sentences in English. Preserve the names of people, places, and clans. Be factual and do not invent details.
@@ -36,7 +36,7 @@ export async function extractEntities(transcriptId: string) {
   });
   if (!transcript) throw new Error("Transcript not found");
 
-  const genAI = getGemini();
+  const genAI = await getGemini();
   const model = genAI.getGenerativeModel({ model: MODEL });
 
   const prompt = `Extract named entities from the following Luo oral history transcript. Return ONLY a JSON object with three arrays, nothing else. No markdown, no code fences.

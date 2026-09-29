@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { RiddleQuiz } from "@/components/modules/riddles/riddle-quiz";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function RiddleQuizPage({
   params,
@@ -11,6 +12,7 @@ export default async function RiddleQuizPage({
     where: { code: params.lang },
   });
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const mod = await prisma.module.findUnique({
     where: { code: "riddles" },
@@ -18,11 +20,13 @@ export default async function RiddleQuizPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
+    include: { translations: { where: { languageId: language.id } } },
   });
+  const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
   // Shuffle on server for each visit
-  const shuffled = [...records].sort(() => Math.random() - 0.5);
+  const shuffled = [...localizedRecords].sort(() => Math.random() - 0.5);
 
   return (
     <div>

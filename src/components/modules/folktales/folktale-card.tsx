@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Folktale = {
   id: string;
   title: string;
   tags: string[];
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
   data: {
     original?: string;
     translation?: string;
@@ -23,10 +25,15 @@ export function FolktaleCard({
   const preview = (d.translation || d.original || "").slice(0, 140);
 
   return (
-    <Link
-      href={`/${langCode}/sigana/folktales/${tale.id}`}
-      className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
-    >
+    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+      {(tale.media ?? []).map((item) => item.type === "image" ? (
+        <img key={item.id} src={item.url} alt={tale.title} className="max-h-64 w-full object-contain" />
+      ) : item.type === "video" ? (
+        <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-64 w-full bg-stone-950" />
+      ) : item.type === "audio" ? (
+        <audio key={item.id} src={item.url} controls className="w-full" />
+      ) : null)}
+      <Link href={`/${langCode}/sigana/folktales/${tale.id}`} className="block">
       <div className="p-6">
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Folktale
@@ -66,6 +73,8 @@ export function FolktaleCard({
           </div>
         )}
       </div>
-    </Link>
+      </Link>
+      <div className="px-6 pb-5"><EnglishVersionLink langCode={langCode} href={`/${langCode}/sigana/folktales/${tale.id}`} /></div>
+    </div>
   );
 }

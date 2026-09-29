@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/db";
 import { AdminsClient } from "./admins-client";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminsPage() {
+  const session = await auth();
+  const isMasterSuperAdmin = session?.user?.isMasterSuperAdmin === true;
+  const assignedLanguageIds = (session?.user?.languageRoles ?? []).map((role) => role.languageId);
   const [admins, languages] = await Promise.all([
     prisma.user.findMany({
       where: {
@@ -31,6 +35,7 @@ export default async function AdminsPage() {
         email: true,
         name: true,
         isSuperAdmin: true,
+        isMasterSuperAdmin: true,
         status: true,
         languageRoles: {
           select: {
@@ -42,11 +47,11 @@ export default async function AdminsPage() {
       },
     }),
     prisma.language.findMany({
-      where: { isActive: true },
+      where: { isActive: true, ...(isMasterSuperAdmin ? {} : { id: { in: assignedLanguageIds } }) },
       orderBy: { displayOrder: "asc" },
       select: { id: true, code: true, nativeName: true },
     }),
   ]);
 
-  return <AdminsClient admins={admins} languages={languages} />;
+  return <AdminsClient admins={admins} languages={languages} isMasterSuperAdmin={isMasterSuperAdmin} />;
 }

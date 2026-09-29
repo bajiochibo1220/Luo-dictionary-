@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { SongCard } from "@/components/modules/songs/song-card";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function SongsPage({
   params,
@@ -12,15 +13,17 @@ export default async function SongsPage({
     include: { moduleTranslations: { include: { module: true } } },
   });
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const mod = await prisma.module.findUnique({ where: { code: "songs" } });
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
-    include: { media: true },
+    include: { media: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
@@ -40,7 +43,7 @@ export default async function SongsPage({
         </p>
       </header>
 
-      {records.length === 0 ? (
+      {localizedRecords.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
           <p className="text-lg">No songs published yet</p>
           <p className="text-sm mt-2">
@@ -49,7 +52,7 @@ export default async function SongsPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {records.map((r) => (
+          {localizedRecords.map((r) => (
             <SongCard key={r.id} song={r as any} langCode={language.code} />
           ))}
         </div>

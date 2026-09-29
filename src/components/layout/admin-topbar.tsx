@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 type AdminNotification = {
@@ -19,6 +20,9 @@ export function AdminTopbar({
   userImage,
   isSuperAdmin,
   notificationCount,
+  languages,
+  selectedLanguageId,
+  selectedCultureId,
   onMenuClick,
 }: {
   userEmail: string;
@@ -26,13 +30,35 @@ export function AdminTopbar({
   userImage: string | null;
   isSuperAdmin: boolean;
   notificationCount: number;
+  languages: { id: number; code: string; nativeName: string; isActive: boolean }[];
+  selectedLanguageId: number | null;
+  selectedCultureId: number | null;
   onMenuClick: () => void;
 }) {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(notificationCount);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
+
+  async function selectLanguage(languageId: number) {
+    const response = await fetch("/api/admin/language", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ languageId }),
+    });
+    if (response.ok) router.refresh();
+  }
+
+  async function selectCulture(cultureId: number | null) {
+    const response = await fetch("/api/admin/language", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cultureId }),
+    });
+    if (response.ok) router.refresh();
+  }
 
   async function toggleNotifications() {
     const nextOpen = !notificationsOpen;
@@ -88,6 +114,30 @@ export function AdminTopbar({
       </div>
 
       <div className="flex items-center gap-3">
+        {isSuperAdmin && (
+          <label className="flex items-center gap-2 text-xs text-amber-100/80">
+            <span className="hidden sm:inline">Language</span>
+            <select
+              aria-label="Choose language to manage"
+              value={selectedLanguageId ?? ""}
+              onChange={(event) => void selectLanguage(Number(event.target.value))}
+              className="max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            >
+              {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}{language.isActive ? "" : " (inactive)"}</option>)}
+            </select>
+          </label>
+        )}
+        {isSuperAdmin && (
+          <label className="hidden lg:flex items-center gap-2 text-xs text-amber-100/80">
+            <span>Culture</span>
+            <select aria-label="Choose culture content" value={selectedCultureId ?? "all"}
+              onChange={(event) => void selectCulture(event.target.value === "all" ? null : Number(event.target.value))}
+              className="max-w-36 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <option value="all">All cultures</option>
+              {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}</option>)}
+            </select>
+          </label>
+        )}
         <div className="relative">
           <button
             type="button"

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { uploadMediaFile } from "@/lib/media-upload-client";
 
 const MEDIA_TYPES = [
   { key: "image", label: "Image", accept: "image/*", icon: "🖼️" },
@@ -72,15 +73,12 @@ export function ContributeModal({
       if (!json.success) throw new Error(json.error || "Failed");
 
       if (file) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("languageCode", languageCode);
-        fd.append("moduleCode", moduleCode);
-        fd.append("recordId", json.data.id);
-        fd.append("assetType", mediaType === "transcript" ? "document" : mediaType);
-        const uploadRes = await fetch("/api/media/upload", { method: "POST", body: fd });
-        const uploadJson = await uploadRes.json();
-        if (!uploadRes.ok || !uploadJson.success) throw new Error(uploadJson.error || "Upload failed");
+        await uploadMediaFile(file, {
+          languageCode,
+          moduleCode,
+          recordId: json.data.id,
+          assetType: mediaType === "transcript" ? "document" : mediaType,
+        });
       }
 
       if (status === "submitted") {

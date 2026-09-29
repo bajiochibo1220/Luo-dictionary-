@@ -2,12 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { UserDetailPanel } from "@/components/admin/user-detail-panel";
+import { auth } from "@/lib/auth";
 
 export default async function UserDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await auth();
+  const isMasterSuperAdmin = session?.user?.isMasterSuperAdmin === true;
   const user = await prisma.user.findUnique({
     where: { id: params.id },
     select: {
@@ -15,6 +18,7 @@ export default async function UserDetailPage({
       email: true,
       name: true,
       isSuperAdmin: true,
+      isMasterSuperAdmin: true,
       status: true,
       createdAt: true,
       languageRoles: {
@@ -27,7 +31,7 @@ export default async function UserDetailPage({
   if (!user) notFound();
 
   const languages = await prisma.language.findMany({
-    where: { isActive: true },
+      where: { isActive: true, ...(isMasterSuperAdmin ? {} : { id: { in: (session?.user?.languageRoles ?? []).map((role) => role.languageId) } }) },
     orderBy: { displayOrder: "asc" },
     select: { id: true, code: true, nativeName: true },
   });
@@ -87,6 +91,7 @@ export default async function UserDetailPage({
           email: user.email,
           name: user.name,
           isSuperAdmin: user.isSuperAdmin,
+          isMasterSuperAdmin: user.isMasterSuperAdmin,
           status: user.status,
           languageRoles: user.languageRoles.map((r) => ({
             id: r.id,
@@ -96,6 +101,7 @@ export default async function UserDetailPage({
           })),
         }}
         languages={languages}
+        isMasterSuperAdmin={isMasterSuperAdmin}
       />
     </div>
   );

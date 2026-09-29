@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { uploadMediaFile } from "@/lib/media-upload-client";
 
 type FieldDef = {
   id: number;
@@ -24,6 +25,7 @@ export function DynamicContentForm({
   recordId,
   redirectTo = "/dashboard",
   isAdmin = false,
+  isTranslation = false,
 }: {
   moduleCode: string;
   languageId: number;
@@ -34,6 +36,7 @@ export function DynamicContentForm({
   recordId?: string;
   redirectTo?: string;
   isAdmin?: boolean;
+  isTranslation?: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -86,25 +89,19 @@ export function DynamicContentForm({
       const newId = recordId || json.data.id;
       for (const [assetType, file] of Object.entries(files)) {
         if (!file) continue;
-        const form = new FormData();
-        form.set("file", file);
-        form.set("languageCode", languageCode);
-        form.set("moduleCode", moduleCode);
-        form.set("recordId", newId);
-        form.set("assetType", assetType);
-        const upload = await fetch("/api/media/upload", { method: "POST", body: form });
-        const uploaded = await upload.json();
-        if (!upload.ok || !uploaded.success) throw new Error(uploaded.error || `Failed to upload ${assetType}`);
+        await uploadMediaFile(file, { languageCode, moduleCode, recordId: newId, assetType });
       }
 
-      if (isAdmin && json.data.status !== "published") {
+      if (isAdmin && !isTranslation && json.data.status !== "published") {
         const publish = await fetch(`/api/content/${newId}/approve`, { method: "POST" });
         const published = await publish.json();
         if (!publish.ok || !published.success) throw new Error(published.error || "Content could not be published");
       }
 
       toast.success(
-        isAdmin
+        isTranslation
+          ? "Translation saved"
+          : isAdmin
           ? "Content published"
           : status === "submitted"
           ? "Submitted for review — a moderator will check it shortly"
@@ -194,14 +191,14 @@ export function DynamicContentForm({
           disabled={loading}
           className="px-6 py-3 bg-amber-700 text-amber-50 rounded-full font-semibold hover:bg-amber-800 disabled:opacity-50 transition shadow-lg"
         >
-          {loading ? "Saving..." : isAdmin ? "Publish content" : "Submit for Review"}
+          {loading ? "Saving..." : isTranslation ? "Save translation" : isAdmin ? "Publish content" : "Submit for Review"}
         </button>
       </div>
 
       <p className="text-xs text-stone-800/60 mt-4 leading-relaxed">
-        Submitted content goes to the moderation queue. A moderator reviews
+        {!isTranslation && <>Submitted content goes to the moderation queue. A moderator reviews
         it, then a cultural expert validates language accuracy, then it is
-        published.
+        published.</>}
       </p>
     </div>
   );

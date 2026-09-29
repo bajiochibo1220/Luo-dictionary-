@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
 export default async function ReviewQueuePage() {
   const session = await auth();
@@ -16,7 +17,8 @@ export default async function ReviewQueuePage() {
         .map((r) => r.languageId);
 
   const where: any = { status: "submitted" };
-  if (managedLanguageIds) where.languageId = { in: managedLanguageIds };
+  if (isSuperAdmin) { const cultureId = await getSelectedAdminCultureId(); if (cultureId) where.languageId = cultureId; }
+  else if (managedLanguageIds) where.languageId = { in: managedLanguageIds };
 
   const records = await prisma.culturalRecord.findMany({
     where,

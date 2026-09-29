@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-translations";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function ArtifactDetailPage({
   params,
@@ -11,11 +13,9 @@ export default async function ArtifactDetailPage({
     where: { code: params.lang },
   });
   if (!language) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "artifacts" } },
-    include: { media: true },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "artifacts", cultureLanguageId);
   if (!record) notFound();
 
   const d = record.data as any;
@@ -23,14 +23,15 @@ export default async function ArtifactDetailPage({
 
   const related = await prisma.culturalRecord.findMany({
     where: {
-      languageId: language.id,
+      languageId: cultureLanguageId,
       moduleId: record.moduleId,
       status: "published",
       id: { not: record.id },
     },
     take: 3,
-    include: { media: true },
+    include: { media: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedRelated = related.map((item) => ({ ...item, data: item.languageId === language.id ? item.data : item.translations[0]?.data ?? {}, summary: item.languageId === language.id ? item.summary : item.translations[0]?.summary ?? null }));
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -42,6 +43,7 @@ export default async function ArtifactDetailPage({
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="md:col-span-2"><EnglishVersionLink langCode={language.code} href={`/${language.code}/gik-luo/${record.id}`} /></div>
         {/* Image */}
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
           {image ? (
@@ -135,7 +137,7 @@ export default async function ArtifactDetailPage({
             Related Artifacts
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {related.map((r) => {
+            {localizedRelated.map((r) => {
               const img = r.media.find((m) => m.type === "image");
               return (
                 <Link

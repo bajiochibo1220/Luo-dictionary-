@@ -28,7 +28,7 @@ async function generateWithRetry(
   prompt: string,
   systemInstruction: string
 ): Promise<{ text: string; model: string }> {
-  const genAI = getGemini();
+  const genAI = await getGemini();
   const models = [PRIMARY_MODEL, FALLBACK_MODEL];
 
   let lastError: any = null;
@@ -98,18 +98,28 @@ export type RAGAnswer = {
 
 export async function askQuestion(
   question: string,
-  languageId?: number
+  languageId?: number,
+  cultureLanguageId?: number
 ): Promise<RAGAnswer> {
   const start = Date.now();
   const mediaFilter = detectMediaIntent(question);
+  const responseLanguage = languageId
+    ? (await prisma.language.findUnique({ where: { id: languageId }, select: { nativeName: true } }))?.nativeName
+    : null;
 
   const queryVector = await embedText(question);
   const vectorStr = `[${queryVector.join(",")}]`;
-  const langFilter = languageId ? `AND cr."languageId" = ${languageId}` : "";
+  const langFilter = languageId ? `AND e."languageId" = ${languageId}` : "";
+  const cultureFilter = cultureLanguageId
+    ? `AND ((e."recordId" IS NOT NULL AND cr."languageId" = ${cultureLanguageId})
+        OR (e."dictionaryId" IS NOT NULL AND de."languageId" = ${cultureLanguageId})
+        OR (e."transcriptId" IS NOT NULL AND cr."languageId" = ${cultureLanguageId}))`
+    : "";
 
   const results = await prisma.$queryRawUnsafe<
     Array<{
       record_id: string;
+      is_dictionary: boolean;
       title: string;
       module: string;
       module_code: string;
@@ -118,24 +128,31 @@ export async function askQuestion(
     }>
   >(
     `SELECT
-       e."recordId" AS record_id,
-       cr.title AS title,
-       m."baseName" AS module,
-       m.code AS module_code,
+       COALESCE(e."recordId", e."dictionaryId", e."transcriptId") AS record_id,
+       (e."dictionaryId" IS NOT NULL) AS is_dictionary,
+       COALESCE(cr.title, de.dholuo, 'Transcript') AS title,
+       COALESCE(m."baseName", CASE WHEN de.id IS NOT NULL THEN 'Dictionary' ELSE 'Transcript' END) AS module,
+       COALESCE(m.code, CASE WHEN de.id IS NOT NULL THEN 'dictionary' ELSE 'transcripts' END) AS module_code,
        e.content AS content,
        1 - (e.vector <=> $1::vector) AS similarity
-     FROM embeddings e
-     JOIN cultural_records cr ON cr.id = e."recordId"
-     JOIN modules m ON m.id = cr."moduleId"
-     WHERE e."recordId" IS NOT NULL
-       AND cr.status = 'published'
-       ${langFilter}
-     ORDER BY e.vector <=> $1::vector
-     LIMIT 5`,
+       FROM embeddings e
+       LEFT JOIN transcripts t ON t.id = e."transcriptId"
+       LEFT JOIN cultural_records cr ON cr.id = COALESCE(e."recordId", t."recordId")
+       LEFT JOIN dictionary_entries de ON de.id = e."dictionaryId"
+       LEFT JOIN modules m ON m.id = cr."moduleId"
+       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published')
+          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published')
+          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'))
+         ${langFilter}
+         ${cultureFilter}
+       ORDER BY e.vector <=> $1::vector
+       LIMIT 10`,
     vectorStr
   );
 
-  if (results.length === 0) {
+  const rankedResults = results.sort((a, b) => b.similarity - a.similarity).slice(0, 5);
+
+  if (rankedResults.length === 0) {
     return {
       answer:
         "I don't have information on that in my current sources. Please try a different question or ask about our available content.",
@@ -147,8 +164,9 @@ export async function askQuestion(
     };
   }
 
-  const recordIds = results.map((r) => r.record_id);
-  const mediaQuery: any = { recordId: { in: recordIds } };
+  const recordIds = rankedResults.filter((r) => !r.is_dictionary).map((r) => r.record_id);
+  const dictionaryIds = rankedResults.filter((r) => r.is_dictionary).map((r) => r.record_id);
+  const mediaQuery: any = { OR: [{ recordId: { in: recordIds } }, { dictionaryId: { in: dictionaryIds } }] };
   if (mediaFilter) mediaQuery.type = mediaFilter;
 
   const mediaAssets = await prisma.mediaAsset.findMany({
@@ -159,13 +177,14 @@ export async function askQuestion(
 
   const mediaMap = new Map<string, typeof mediaAssets>();
   for (const a of mediaAssets) {
-    if (!a.recordId) continue;
-    if (!mediaMap.has(a.recordId)) mediaMap.set(a.recordId, []);
-    mediaMap.get(a.recordId)!.push(a);
+    const contentId = a.recordId ?? a.dictionaryId;
+    if (!contentId) continue;
+    if (!mediaMap.has(contentId)) mediaMap.set(contentId, []);
+    mediaMap.get(contentId)!.push(a);
   }
 
   const media: RAGMediaItem[] = [];
-  for (const r of results) {
+  for (const r of rankedResults) {
     const assets = mediaMap.get(r.record_id) ?? [];
     for (const a of assets) {
       media.push({
@@ -180,7 +199,7 @@ export async function askQuestion(
     }
   }
 
-  const context = results
+  const context = rankedResults
     .map(
       (r, i) =>
         `[Source ${i + 1}] (${r.module}) ${r.title}\n${r.content.slice(0, 800)}`
@@ -195,12 +214,12 @@ export async function askQuestion(
 
   const { text: answer, model: usedModel } = await generateWithRetry(
     prompt,
-    CULTURAL_ASSISTANT_PROMPT
+    `${CULTURAL_ASSISTANT_PROMPT}\nRespond in ${responseLanguage || "English"}.`
   );
 
   return {
     answer,
-    sources: results.map((r) => ({
+    sources: rankedResults.map((r) => ({
       id: r.record_id,
       title: r.title,
       module: r.module,

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 type Language = { id: number; code: string; nativeName: string };
 
 const ROLES = [
+  { value: "super_admin", label: "Super Admin" },
   { value: "language_admin", label: "Language Admin" },
   { value: "moderator", label: "Moderator" },
   { value: "content_editor", label: "Content Editor" },
@@ -15,9 +16,11 @@ const ROLES = [
 
 export function AddAdminModal({
   languages,
+  isMasterSuperAdmin,
   onClose,
 }: {
   languages: Language[];
+  isMasterSuperAdmin: boolean;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -27,6 +30,7 @@ export function AddAdminModal({
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("language_admin");
   const [languageId, setLanguageId] = useState(languages[0]?.id ?? 0);
+  const [languageIds, setLanguageIds] = useState<number[]>([]);
   const [busy, setBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
@@ -52,6 +56,7 @@ export function AddAdminModal({
           password,
           role,
           languageId,
+          languageIds,
         }),
       });
       const json = await res.json();
@@ -141,7 +146,7 @@ export function AddAdminModal({
               onChange={(e) => setRole(e.target.value)}
               className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
             >
-              {ROLES.map((r) => (
+              {ROLES.filter((r) => r.value !== "super_admin" || isMasterSuperAdmin).map((r) => (
                 <option key={r.value} value={r.value}>
                   {r.label}
                 </option>
@@ -149,7 +154,15 @@ export function AddAdminModal({
             </select>
           </div>
 
-          <div>
+          {role === "super_admin" ? <div>
+            <label className="block text-xs uppercase tracking-wider text-stone-500 mb-2">Languages this Super Admin oversees *</label>
+            <div className="max-h-40 overflow-y-auto rounded-lg border border-stone-300 p-3 space-y-2">
+              {languages.map((language) => <label key={language.id} className="flex items-center gap-2 text-sm text-stone-700">
+                <input type="checkbox" checked={languageIds.includes(language.id)} onChange={(event) => setLanguageIds((current) => event.target.checked ? [...current, language.id] : current.filter((id) => id !== language.id))} />
+                {language.nativeName} ({language.code})
+              </label>)}
+            </div>
+          </div> : <div>
             <label className="block text-xs uppercase tracking-wider text-stone-500 mb-1">
               Language *
             </label>
@@ -164,7 +177,7 @@ export function AddAdminModal({
                 </option>
               ))}
             </select>
-          </div>
+          </div>}
 
           <div className="flex gap-3 pt-3">
             <button

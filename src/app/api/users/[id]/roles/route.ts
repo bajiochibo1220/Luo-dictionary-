@@ -26,6 +26,19 @@ export async function POST(
     );
   }
 
+  const master = admin.isMasterSuperAdmin === true;
+  if (!["contributor", "elder", "researcher", "teacher", "language_admin", "moderator", "content_editor", "cultural_expert"].includes(role)) {
+    return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+  }
+  if (!master && !(admin.languageRoles ?? []).some((item: any) => item.languageId === Number(languageId))) {
+    return NextResponse.json({ error: "You can only manage roles for your assigned languages" }, { status: 403 });
+  }
+  const targetUser = await prisma.user.findUnique({ where: { id: params.id }, select: { isSuperAdmin: true, isMasterSuperAdmin: true } });
+  if (!targetUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (targetUser.isMasterSuperAdmin || (targetUser.isSuperAdmin && !master)) {
+    return NextResponse.json({ error: "You cannot change roles for this account" }, { status: 403 });
+  }
+
   const created = await prisma.userLanguageRole.upsert({
     where: {
       userId_languageId_role: {
@@ -65,6 +78,11 @@ export async function DELETE(
   if (!roleId) {
     return NextResponse.json({ error: "roleId required" }, { status: 400 });
   }
+
+  const targetRole = await prisma.userLanguageRole.findUnique({ where: { id: roleId }, include: { user: { select: { isSuperAdmin: true, isMasterSuperAdmin: true } } } });
+  if (!targetRole) return NextResponse.json({ error: "Role not found" }, { status: 404 });
+  if (targetRole.user.isMasterSuperAdmin || (targetRole.user.isSuperAdmin && !admin.isMasterSuperAdmin)) return NextResponse.json({ error: "You cannot change roles for this account" }, { status: 403 });
+  if (!admin.isMasterSuperAdmin && !(admin.languageRoles ?? []).some((item: any) => item.languageId === targetRole.languageId)) return NextResponse.json({ error: "You can only manage roles for your assigned languages" }, { status: 403 });
 
   await prisma.userLanguageRole.delete({ where: { id: roleId } });
   return NextResponse.json({ success: true });

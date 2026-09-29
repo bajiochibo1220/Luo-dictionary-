@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-translations";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function DictionaryDetailPage({
   params,
@@ -11,19 +13,18 @@ export default async function DictionaryDetailPage({
     where: { code: params.lang },
   });
   if (!language) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const [entry, authoredRecord] = await Promise.all([
-    prisma.dictionaryEntry.findFirst({ where: { id: params.id, languageId: language.id, status: "published" } }),
-    prisma.culturalRecord.findFirst({
-      where: { id: params.id, languageId: language.id, status: "published", module: { code: "dictionary" } },
-      include: { media: true },
-    }),
+    prisma.dictionaryEntry.findFirst({ where: { id: params.id, languageId: cultureLanguageId, status: "published" } }),
+    findLocalizedRecord(params.id, language.id, "dictionary"),
   ]);
   if (!entry && authoredRecord) {
     const data = authoredRecord.data as Record<string, any>;
     return (
       <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-stone-100 p-8 md:p-12">
         <Link href={`/${language.code}/muma`} className="text-sm text-amber-800 hover:underline">← Back to Dictionary</Link>
+        <div className="mt-5"><EnglishVersionLink langCode={language.code} href={`/${language.code}/muma/${params.id}`} /></div>
         <h1 className="text-5xl font-serif text-stone-800 mt-8">{data.dholuo || authoredRecord.title}</h1>
         {data.pronunciation && <p className="text-stone-400 italic mt-2">/{data.pronunciation}/</p>}
         {data.english && <p className="text-2xl text-stone-700 mt-6">{data.english}</p>}
@@ -42,7 +43,7 @@ export default async function DictionaryDetailPage({
   const examples = (entry.examples as any[]) ?? [];
   const related = await prisma.dictionaryEntry.findMany({
     where: {
-      languageId: language.id,
+      languageId: cultureLanguageId,
       grammarClass: entry.grammarClass ?? undefined,
       status: "published",
       id: { not: entry.id },
@@ -61,6 +62,7 @@ export default async function DictionaryDetailPage({
 
       <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12">
         <header className="mb-8">
+          <EnglishVersionLink langCode={language.code} href={`/${language.code}/muma/${params.id}`} />
           <div className="flex items-start justify-between gap-4 mb-3">
             <h1 className="text-5xl font-serif text-stone-800">
               {entry.dholuo}

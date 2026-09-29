@@ -18,6 +18,7 @@ export async function GET(
       email: true,
       name: true,
       isSuperAdmin: true,
+      isMasterSuperAdmin: true,
       status: true,
       emailVerified: true,
       avatarUrl: true,
@@ -52,10 +53,20 @@ export async function PATCH(
   }
 
   const body = await req.json();
+  const target = await prisma.user.findUnique({ where: { id: params.id }, select: { isMasterSuperAdmin: true } });
+  if (!target) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (target.isMasterSuperAdmin) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
+  if (body.isSuperAdmin !== undefined) {
+    return NextResponse.json({ error: "Create Super Admin accounts from the administrator management page" }, { status: 403 });
+  }
+  if (body.status !== undefined && !user.isMasterSuperAdmin) {
+    return NextResponse.json({ error: "Only the Master Super Admin can change account status" }, { status: 403 });
+  }
+  if (user.id === params.id && body.status === "suspended") return NextResponse.json({ error: "You cannot deactivate your own account" }, { status: 400 });
   const update: any = {};
   if (body.name !== undefined) update.name = body.name;
   if (body.status !== undefined) update.status = body.status;
-  if (body.isSuperAdmin !== undefined) update.isSuperAdmin = body.isSuperAdmin;
+  if (body.status !== undefined && !["active", "suspended"].includes(body.status)) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
 
   const updated = await prisma.user.update({
     where: { id: params.id },
@@ -88,6 +99,8 @@ export async function DELETE(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  if (!user.isMasterSuperAdmin) return NextResponse.json({ error: "Only the Master Super Admin can delete accounts" }, { status: 403 });
+
   // Prevent deleting yourself
   if (user.id === params.id) {
     return NextResponse.json(
@@ -96,6 +109,9 @@ export async function DELETE(
     );
   }
 
+  const target = await prisma.user.findUnique({ where: { id: params.id }, select: { isMasterSuperAdmin: true } });
+  if (!target) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (target.isMasterSuperAdmin) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
   await prisma.user.delete({ where: { id: params.id } });
   return NextResponse.json({ success: true });
 }

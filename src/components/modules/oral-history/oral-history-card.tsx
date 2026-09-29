@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type OralHistory = {
   id: string;
   title: string;
   summary?: string | null;
   tags: string[];
+  media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
   data: {
     narrator?: string;
     community?: string;
@@ -25,10 +27,15 @@ export function OralHistoryCard({
   const excerpt = (d.transcript || "").slice(0, 160);
 
   return (
-    <Link
-      href={`/${langCode}/sigana/${item.id}`}
-      className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
-    >
+    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+      {(item.media ?? []).map((asset) => asset.type === "audio" ? (
+        <audio key={asset.id} src={asset.url} controls className="w-full" />
+      ) : asset.type === "video" ? (
+        <video key={asset.id} src={asset.url} poster={asset.thumbnailUrl ?? undefined} controls className="max-h-56 w-full bg-stone-950" />
+      ) : asset.type === "image" ? (
+        <img key={asset.id} src={asset.url} alt={item.title} className="max-h-56 w-full object-contain" />
+      ) : null)}
+      <Link href={`/${langCode}/sigana/${item.id}`} className="block">
       <div className="p-6">
         <div className="flex items-start justify-between gap-3 mb-3">
           <span className="text-xs uppercase tracking-wider text-amber-600">
@@ -85,6 +92,8 @@ export function OralHistoryCard({
           </div>
         )}
       </div>
-    </Link>
+      </Link>
+      <div className="px-6 pb-5"><EnglishVersionLink langCode={langCode} href={`/${langCode}/sigana/${item.id}`} /></div>
+    </div>
   );
 }

@@ -15,7 +15,7 @@ export default async function SystemPage() {
   ]);
 
   const sensitive = [
-    "openai_api_key",
+    "gemini_api_key",
     "cloudinary_api_secret",
     "smtp_password",
   ];
@@ -39,7 +39,7 @@ export default async function SystemPage() {
     default_language_id: String(languages[0]?.id ?? 1),
     maintenance_mode: "off",
     maintenance_message: "We'll be back shortly...",
-    openai_api_key: "",
+    gemini_api_key: "",
     cloudinary_cloud_name: "",
     cloudinary_api_key: "",
     cloudinary_api_secret: "",

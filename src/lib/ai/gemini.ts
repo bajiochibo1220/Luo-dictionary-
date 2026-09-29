@@ -1,21 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getSystemSetting } from "@/lib/settings";
 
-let client: GoogleGenerativeAI | null = null;
-
-export function getGemini(): GoogleGenerativeAI {
-  if (!client) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey.startsWith("AIza...") || apiKey === "") {
-      throw new Error(
-        "GEMINI_API_KEY is not configured. Get one free at https://aistudio.google.com/apikey"
-      );
-    }
-    client = new GoogleGenerativeAI(apiKey);
+export async function getGemini(): Promise<GoogleGenerativeAI> {
+  const apiKey = process.env.GEMINI_API_KEY || await getSystemSetting("gemini_api_key");
+  if (!apiKey || apiKey.startsWith("AIza...")) {
+    throw new Error("Gemini API key is not configured. Set it in Super Admin → System → API Keys.");
   }
-  return client;
+  return new GoogleGenerativeAI(apiKey);
 }
 
-export function hasGemini(): boolean {
-  const key = process.env.GEMINI_API_KEY;
+export async function hasGemini(): Promise<boolean> {
+  const key = process.env.GEMINI_API_KEY || await getSystemSetting("gemini_api_key");
   return !!key && !key.startsWith("AIza...");
 }

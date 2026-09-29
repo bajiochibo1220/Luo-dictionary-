@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ContributeModal } from "./contribute-modal";
 
 export type MediaItem = {
@@ -15,6 +15,7 @@ export type ContentItem = {
   id: string;
   title: string;
   summary: string | null;
+  englishSummary?: string | null;
   media: MediaItem[];
   moduleCode?: string;
   moduleName?: string;
@@ -54,6 +55,7 @@ export function ModuleContent({
   const [filter, setFilter] = useState("all");
   const [category, setCategory] = useState("all");
   const [view, setView] = useState("feed");
+  const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
   const [showContribute, setShowContribute] = useState(false);
 
   const filteredItems = useMemo(() => {
@@ -91,6 +93,14 @@ export function ModuleContent({
             {title}
           </h2>
         </div>
+
+        <label className="inline-flex items-center gap-2 text-sm font-semibold text-stone-800">
+          View language
+          <select value={viewLanguageCode} onChange={(event) => setViewLanguageCode(event.target.value)} className="rounded-lg border border-stone-800/20 bg-white/70 px-3 py-2">
+            <option value={languageCode}>{languageName}</option>
+            {languageCode !== "eng" && <option value="eng">English — {languageName} culture</option>}
+          </select>
+        </label>
 
         {moduleCode !== "all" && <button
           onClick={() => setShowContribute(true)}
@@ -165,7 +175,7 @@ export function ModuleContent({
           </button>}
         </div>
       ) : view === "feed" ? (
-        <FeedView items={filteredItems} mediaForCard={mediaForCard} />
+        <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} />
       ) : (
         <GridView items={filteredItems} mediaForCard={mediaForCard} />
       )}
@@ -184,19 +194,22 @@ export function ModuleContent({
   );
 }
 
-function FeedView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[] }) {
+function FeedView({ items, mediaForCard, languageCode, viewLanguageCode }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string }) {
   return (
     <div className="space-y-8 max-w-6xl">
       {items.map((item) => (
-        <FeedCard key={item.id} item={item} media={mediaForCard(item)} />
+        <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} />
       ))}
     </div>
   );
 }
 
-function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
+function FeedCard({ item, media, languageCode, viewLanguageCode }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string }) {
   const [expanded, setExpanded] = useState(false);
+  const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
+  useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
   const primary = media[0];
+  const description = showEnglish ? item.englishSummary : item.summary;
   return (
     <article className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
       <div className="min-w-0 space-y-4">
@@ -213,7 +226,12 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
       <div className="min-w-0 py-2 md:py-4">
         {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
         <h3 className="font-serif text-2xl text-stone-900 mb-3 leading-snug underline underline-offset-4 decoration-stone-900/40">{item.title}</h3>
-        {item.summary && (
+        {languageCode !== "eng" && (
+          <button type="button" onClick={() => { setShowEnglish((value) => !value); setExpanded(true); }} aria-pressed={showEnglish} className="mb-3 block text-sm font-semibold text-amber-900 underline underline-offset-2">
+            {showEnglish ? "View in original language" : "See this in English"}
+          </button>
+        )}
+        {description && (
           <>
             <button
               type="button"
@@ -223,11 +241,12 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
             >
               {expanded ? "Hide description" : "See description"}
             </button>
-            {expanded && <p className="md:hidden text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap">{item.summary}</p>}
-            <p className={`hidden md:block text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-5"}`}>{item.summary}</p>
-            {item.summary.length > 240 && <button type="button" onClick={() => setExpanded((value) => !value)} className="hidden md:inline-block mt-2 text-sm font-semibold text-amber-900 underline underline-offset-2">{expanded ? "See less" : "See more"}</button>}
+            {expanded && <p className="md:hidden text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap">{description}</p>}
+            <p className={`hidden md:block text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-5"}`}>{description}</p>
+            {description.length > 240 && <button type="button" onClick={() => setExpanded((value) => !value)} className="hidden md:inline-block mt-2 text-sm font-semibold text-amber-900 underline underline-offset-2">{expanded ? "See less" : "See more"}</button>}
           </>
         )}
+        {showEnglish && !item.englishSummary && <p className="text-sm text-stone-700 italic">An English description has not been added yet.</p>}
       </div>
     </article>
   );

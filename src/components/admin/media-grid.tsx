@@ -21,7 +21,7 @@ type MediaAsset = {
   languageId: number;
   nrfMetadata?: unknown;
   language: { code: string; nativeName: string };
-  record?: { id: string; title: string; status: string; module: { code: string } } | null;
+  record?: { id: string; title: string; status: string; module: { code: string; baseName?: string } } | null;
 };
 
 type PublishedRecord = { id: string; title: string; module: { code: string } };
@@ -32,11 +32,24 @@ function getGenre(asset: MediaAsset): string | undefined {
   return typeof genre === "string" ? genre : undefined;
 }
 
+function getModuleLabel(asset: MediaAsset): string {
+  return asset.record?.module.baseName || getGenre(asset)?.replace(/[-_]/g, " ") || "Unassigned";
+}
+
 function formatBytes(bytes: number | string | bigint): string {
   const n = typeof bytes === "string" ? Number(bytes) : Number(bytes);
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatDuration(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainder = seconds % 60;
+  return hours > 0
+    ? `${hours}:${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`
+    : `${minutes}:${String(remainder).padStart(2, "0")}`;
 }
 
 export function MediaGrid({
@@ -152,7 +165,7 @@ export function MediaGrid({
               )}
             </div>
             <div className="p-3">
-              <p className="text-xs text-stone-500 truncate">{a.type}</p>
+              <p className="text-xs text-stone-600 truncate capitalize">{a.type} · {getModuleLabel(a)}</p>
               <p className="text-xs text-stone-400 truncate">{a.format}</p>
               <p className="text-xs text-stone-400">
                 {formatBytes(a.sizeBytes)}
@@ -237,8 +250,7 @@ export function MediaGrid({
                       Duration
                     </dt>
                     <dd className="text-stone-700">
-                      {Math.floor(selected.durationSecs / 60)}:
-                      {String(selected.durationSecs % 60).padStart(2, "0")}
+                      {formatDuration(selected.durationSecs)}
                     </dd>
                   </div>
                 )}

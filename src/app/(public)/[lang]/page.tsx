@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 const STUB_MODULES = ["games", "learning", "ai_tutor"];
 
@@ -21,6 +22,7 @@ export default async function LanguageHomePage({
   if (!language || !language.isActive) {
     notFound();
   }
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   // Greeting per language
   const greetings: Record<string, string> = {
@@ -43,11 +45,12 @@ export default async function LanguageHomePage({
 
   // Featured content — first 3 published records
   const featured = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, status: "published" },
+    where: { languageId: cultureLanguageId, status: "published" },
     take: 3,
     orderBy: { createdAt: "desc" },
-    include: { module: true },
+    include: { module: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedFeatured = featured.map((record) => localizeRecord(record, language.id));
 
   return (
     <div>
@@ -103,7 +106,7 @@ export default async function LanguageHomePage({
             Featured
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {featured.map((rec) => (
+            {localizedFeatured.map((rec) => (
               <div
                 key={rec.id}
                 className="p-6 bg-white rounded-xl shadow border border-stone-100"

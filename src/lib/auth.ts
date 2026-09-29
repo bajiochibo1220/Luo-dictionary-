@@ -17,6 +17,7 @@ declare module "next-auth" {
     user: {
       id: string;
       isSuperAdmin: boolean;
+      isMasterSuperAdmin: boolean;
       languageRoles: LanguageRole[];
     } & DefaultSession["user"];
   }
@@ -26,6 +27,7 @@ declare module "next-auth" {
     email?: string | null;
     name?: string | null;
     isSuperAdmin?: boolean;
+    isMasterSuperAdmin?: boolean;
     languageRoles?: LanguageRole[];
   }
 }
@@ -114,6 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           isSuperAdmin: user.isSuperAdmin,
+          isMasterSuperAdmin: user.isMasterSuperAdmin,
           languageRoles: user.languageRoles.map((lr) => ({
             languageId: lr.languageId,
             languageCode: lr.language.code,
@@ -129,20 +132,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id;
         token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
+        token.isMasterSuperAdmin = (user as any).isMasterSuperAdmin ?? false;
         token.languageRoles = (user as any).languageRoles ?? [];
       }
 
-      if (
-        (!token.languageRoles || (token.languageRoles as any[]).length === 0) &&
-        token.id
-      ) {
+      if (token.id && (!token.isMasterSuperAdmin || !token.languageRoles || (token.languageRoles as any[]).length === 0)) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
           });
           if (dbUser) {
-            token.isSuperAdmin = dbUser.isSuperAdmin;
+            const accountActive = dbUser.status === "active";
+            token.isSuperAdmin = dbUser.isSuperAdmin && accountActive;
+            token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin && accountActive;
             token.languageRoles = await loadUserRoles(dbUser.id);
+          } else {
+            token.isSuperAdmin = false;
+            token.isMasterSuperAdmin = false;
+            token.languageRoles = [];
           }
         } catch (err) {
           console.error("[auth] failed to reload roles:", err);
@@ -156,6 +163,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         (session.user as any).id = token.id as string;
         (session.user as any).isSuperAdmin =
           (token.isSuperAdmin as boolean) ?? false;
+        (session.user as any).isMasterSuperAdmin =
+          (token.isMasterSuperAdmin as boolean) ?? false;
         (session.user as any).languageRoles =
           (token.languageRoles as LanguageRole[]) ?? [];
       }

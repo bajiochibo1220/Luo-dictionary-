@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { RiddleGrid } from "@/components/modules/riddles/riddle-grid";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function RiddlesPage({
   params,
@@ -12,6 +13,7 @@ export default async function RiddlesPage({
     include: { moduleTranslations: { include: { module: true } } },
   });
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const mod = await prisma.module.findUnique({
     where: { code: "riddles" },
@@ -19,9 +21,11 @@ export default async function RiddlesPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
+    include: { media: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
@@ -42,7 +46,7 @@ export default async function RiddlesPage({
       </header>
 
       <RiddleGrid
-        initialRiddles={records as any}
+        initialRiddles={localizedRecords as any}
         langCode={language.code}
       />
     </div>

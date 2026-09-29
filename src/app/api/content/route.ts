@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
 import { canContribute, canReviewContent } from "@/lib/permissions";
+import { createDefaultRecordTranslations } from "@/lib/content-translations";
 
 export const dynamic = "force-dynamic";
 
@@ -129,7 +130,7 @@ export async function POST(req: NextRequest) {
     const record = await prisma.$transaction(async (tx) => {
       const r = await tx.culturalRecord.create({
         data: {
-          languageId,
+          languageId: language.id,
           moduleId: mod.id,
           title,
           data: data ?? {},
@@ -143,6 +144,8 @@ export async function POST(req: NextRequest) {
           contributorId: (session.user as any).id,
         },
       });
+
+      await createDefaultRecordTranslations(tx, r.id, language.id);
 
       return r;
     });

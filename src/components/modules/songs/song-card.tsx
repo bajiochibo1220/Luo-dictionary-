@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 const INSTRUMENT_ICONS: Record<string, string> = {
   nyatiti: "🎵",
@@ -47,10 +48,8 @@ export function SongCard({
     .filter(Boolean);
 
   return (
-    <Link
-      href={`/${langCode}/wende/${song.id}`}
-      className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
-    >
+    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+      <Link href={`/${langCode}/wende/${song.id}`} className="block">
       <div className="p-6">
         {(song.media ?? []).map((item) => item.type === "image" ? (
           <img key={item.id} src={item.url} alt={song.title} className="w-full max-h-64 object-cover rounded-lg mb-4" />
@@ -100,6 +99,8 @@ export function SongCard({
           </div>
         )}
       </div>
-    </Link>
+      </Link>
+      <div className="px-6 pb-5"><EnglishVersionLink langCode={langCode} href={`/${langCode}/wende/${song.id}`} /></div>
+    </div>
   );
 }

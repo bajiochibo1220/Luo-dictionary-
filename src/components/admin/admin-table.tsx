@@ -9,6 +9,7 @@ type Admin = {
   email: string;
   name: string | null;
   isSuperAdmin: boolean;
+  isMasterSuperAdmin: boolean;
   status: string;
   languageRoles: {
     id: number;
@@ -17,7 +18,7 @@ type Admin = {
   }[];
 };
 
-export function AdminTable({ admins }: { admins: Admin[] }) {
+export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; isMasterSuperAdmin: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -40,6 +41,26 @@ export function AdminTable({ admins }: { admins: Admin[] }) {
       router.refresh();
     } catch (e: any) {
       toast.error(e.message || "Failed");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function setStatus(admin: Admin) {
+    const nextStatus = admin.status === "suspended" ? "active" : "suspended";
+    setBusy(admin.id);
+    try {
+      const res = await fetch(`/api/super-admin/admins/${admin.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed");
+      toast.success(nextStatus === "active" ? "Account activated" : "Account deactivated");
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed");
     } finally {
       setBusy(null);
     }
@@ -85,6 +106,7 @@ export function AdminTable({ admins }: { admins: Admin[] }) {
                     Super Admin
                   </span>
                 )}
+                {a.isMasterSuperAdmin && <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 mr-1 mb-1">Master</span>}
                 {a.languageRoles.map((r) => (
                   <span
                     key={r.id}
@@ -109,13 +131,17 @@ export function AdminTable({ admins }: { admins: Admin[] }) {
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
+                {isMasterSuperAdmin && !a.isMasterSuperAdmin && <div className="flex justify-end gap-3">
+                <button onClick={() => setStatus(a)} disabled={busy === a.id} className="text-xs text-amber-700 hover:underline disabled:opacity-50">
+                  {a.status === "suspended" ? "Activate" : "Deactivate"}
+                </button>
                 <button
                   onClick={() => revoke(a.id, a.email)}
                   disabled={busy === a.id}
                   className="text-xs text-red-600 hover:underline disabled:opacity-50"
                 >
                   {busy === a.id ? "..." : "Revoke"}
-                </button>
+                </button></div>}
               </td>
             </tr>
           ))}

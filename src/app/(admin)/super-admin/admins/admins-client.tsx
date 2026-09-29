@@ -9,6 +9,7 @@ type Admin = {
   email: string;
   name: string | null;
   isSuperAdmin: boolean;
+  isMasterSuperAdmin: boolean;
   status: string;
   languageRoles: {
     id: number;
@@ -22,9 +23,11 @@ type Language = { id: number; code: string; nativeName: string };
 export function AdminsClient({
   admins,
   languages,
+  isMasterSuperAdmin,
 }: {
   admins: Admin[];
   languages: Language[];
+  isMasterSuperAdmin: boolean;
 }) {
   const [showModal, setShowModal] = useState(false);
 
@@ -36,7 +39,7 @@ export function AdminsClient({
             Administrators
           </h1>
           <p className="text-sm text-stone-500">
-            {admins.length} {admins.length === 1 ? "admin" : "admins"}
+            {admins.length} {admins.length === 1 ? "administrator" : "administrators"} · {admins.filter((admin) => admin.isSuperAdmin).length} Super Admins
           </p>
         </div>
         <button
@@ -52,7 +55,7 @@ export function AdminsClient({
           How admin accounts work
         </h2>
         <p className="text-sm text-stone-700 leading-relaxed">
-          Only the super admin can create other admins. Create their account
+          {isMasterSuperAdmin ? "You are the Master Super Admin. Create Super Admins and assign the languages they oversee, or create language administrators and moderators." : "As a Super Admin, you can create administrators only for languages assigned to you. Only the Master Super Admin can create, deactivate, or revoke Super Admin accounts."} Create accounts
           here, share the email and password with them directly, and they
           sign in at <code className="bg-white px-1.5 py-0.5 rounded text-amber-800">/admin-login</code>{" "}
           with those credentials. Social sign-in (Google, Microsoft) is not
@@ -60,11 +63,12 @@ export function AdminsClient({
         </p>
       </div>
 
-      <AdminTable admins={admins} />
+      <AdminTable admins={admins} isMasterSuperAdmin={isMasterSuperAdmin} />
 
       {showModal && (
         <AddAdminModal
           languages={languages}
+          isMasterSuperAdmin={isMasterSuperAdmin}
           onClose={() => setShowModal(false)}
         />
       )}

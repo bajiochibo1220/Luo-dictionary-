@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { prisma } from "@/lib/db";
 import { TranscriptViewer } from "@/components/modules/oral-history/transcript-viewer";
 import { SummarizeButton } from "@/components/admin/summarize-button";
+import { findLocalizedRecord } from "@/lib/content-translations";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 const LocationMap = dynamic(
   () =>
@@ -38,10 +40,7 @@ export default async function OralHistoryDetailPage({
   });
   if (!language) notFound();
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "oral_histories" } },
-    include: { media: true, transcripts: true },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "oral_histories");
   if (!record) notFound();
 
   const d = record.data as any;
@@ -57,6 +56,7 @@ export default async function OralHistoryDetailPage({
       </Link>
 
       <header className="mb-8">
+        <EnglishVersionLink langCode={language.code} href={`/${language.code}/sigana/${record.id}`} />
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Oral History
         </span>

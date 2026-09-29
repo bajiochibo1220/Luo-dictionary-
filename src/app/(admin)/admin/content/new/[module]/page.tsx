@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
 import { canReviewContent } from "@/lib/permissions";
 import { BulkMediaUploader } from "@/components/admin/bulk-media-uploader";
+import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
 export default async function NewContentPage({
   params,
@@ -24,12 +25,13 @@ export default async function NewContentPage({
     ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(role.role)
   );
   const allowedLanguageIds = adminRoles.map((role: any) => role.languageId);
+  const selectedAdminLanguageId = user.isSuperAdmin ? await getSelectedAdminCultureId() : undefined;
   const languages = await prisma.language.findMany({
-    where: { isActive: true, ...(user.isSuperAdmin ? {} : { id: { in: allowedLanguageIds } }) },
+    where: user.isSuperAdmin ? {} : { isActive: true, id: { in: allowedLanguageIds } },
     orderBy: { displayOrder: "asc" },
     select: { id: true, code: true, name: true, nativeName: true },
   });
-  const requestedLanguageId = Number(searchParams.languageId);
+  const requestedLanguageId = Number(searchParams.languageId) || selectedAdminLanguageId;
   const selectedLanguage = languages.find((language) => language.id === requestedLanguageId) ?? languages[0];
   if (!selectedLanguage) notFound();
   const languageId = selectedLanguage.id;

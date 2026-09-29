@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ContentTable } from "@/components/admin/content-table";
+import { getSelectedAdminCultureId, getSelectedAdminLanguageId } from "@/lib/admin-language";
 
 export default async function ContentPage({
   searchParams,
@@ -11,9 +12,11 @@ export default async function ContentPage({
   const session = await auth();
   const user = session!.user as any;
   const isSuperAdmin = !!user.isSuperAdmin;
+  const selectedLanguageId = isSuperAdmin ? await getSelectedAdminLanguageId() : undefined;
+  const selectedCultureId = isSuperAdmin ? await getSelectedAdminCultureId() : undefined;
 
   const managedLanguageIds = isSuperAdmin
-    ? undefined
+    ? [selectedLanguageId].filter((id): id is number => Boolean(id))
     : ((user.languageRoles ?? []) as any[])
         .filter((r) =>
           ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(r.role)
@@ -21,7 +24,11 @@ export default async function ContentPage({
         .map((r) => r.languageId);
 
   const where: any = {};
-  if (managedLanguageIds) where.languageId = { in: managedLanguageIds };
+  if (isSuperAdmin && selectedCultureId) where.languageId = selectedCultureId;
+  else where.OR = [
+    { languageId: { in: managedLanguageIds } },
+    { translations: { some: { languageId: { in: managedLanguageIds } } } },
+  ];
   if (searchParams.status) where.status = searchParams.status;
   if (searchParams.module) {
     const mod = await prisma.module.findUnique({
@@ -37,6 +44,7 @@ export default async function ContentPage({
     include: {
       language: { select: { code: true, nativeName: true } },
       module: { select: { code: true, baseName: true } },
+      translations: { where: { languageId: selectedLanguageId ?? { in: managedLanguageIds } }, include: { language: { select: { code: true, nativeName: true } } } },
     },
   });
 
@@ -44,14 +52,23 @@ export default async function ContentPage({
     orderBy: { displayOrder: "asc" },
   });
 
-  const formatted = records.map((r) => ({
-    id: r.id,
-    title: r.title,
-    status: r.status,
-    createdAt: r.createdAt.toISOString(),
-    language: r.language,
-    module: r.module,
-  }));
+  const formatted = records.map((r) => {
+    const translation = r.translations.find((item) => item.languageId !== r.languageId);
+    const nativeIsManaged = managedLanguageIds.includes(r.languageId);
+    const editLanguageId = isSuperAdmin && selectedLanguageId
+      ? (r.languageId === selectedLanguageId ? r.languageId : translation?.languageId ?? selectedLanguageId)
+      : nativeIsManaged ? r.languageId : translation?.languageId ?? r.languageId;
+    return {
+      id: r.id,
+      title: r.title,
+      status: r.status,
+      createdAt: r.createdAt.toISOString(),
+      language: editLanguageId === r.languageId ? r.language : translation?.language ?? r.language,
+      editLanguageId,
+      canModerate: isSuperAdmin || nativeIsManaged,
+      module: r.module,
+    };
+  });
 
   return (
     <div>
@@ -64,7 +81,7 @@ export default async function ContentPage({
         </div>
         <div className="flex flex-wrap justify-end gap-2">
           {modules.filter((module) => module.isActive && !module.isStub).map((module) => (
-            <Link key={module.code} href={`/admin/content/new/${module.code}`}
+            <Link key={module.code} href={`/admin/content/new/${module.code}${(selectedCultureId ?? selectedLanguageId) ? `?languageId=${selectedCultureId ?? selectedLanguageId}` : ""}`}
               className="px-3 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-medium">
               + {module.baseName}
             </Link>

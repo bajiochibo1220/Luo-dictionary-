@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import { prisma } from "@/lib/db";
+import { findLocalizedRecord } from "@/lib/content-translations";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 const LocationMap = dynamic(
   () =>
@@ -28,10 +30,7 @@ export default async function HeritageSiteDetailPage({
   });
   if (!language) notFound();
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "heritage_sites" } },
-    include: { media: true },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "heritage_sites");
   if (!record) notFound();
 
   const d = record.data as any;
@@ -47,6 +46,7 @@ export default async function HeritageSiteDetailPage({
       </Link>
 
       <header className="mb-8">
+        <EnglishVersionLink langCode={language.code} href={`/${language.code}/piny-luo/${record.id}`} />
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Heritage Site
         </span>

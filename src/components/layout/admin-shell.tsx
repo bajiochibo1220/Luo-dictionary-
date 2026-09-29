@@ -11,6 +11,9 @@ export function AdminShell({
   userImage,
   isSuperAdmin,
   notificationCount,
+  languages,
+  selectedLanguageId,
+  selectedCultureId,
 }: {
   children: React.ReactNode;
   userEmail: string;
@@ -18,6 +21,9 @@ export function AdminShell({
   userImage: string | null;
   isSuperAdmin: boolean;
   notificationCount: number;
+  languages: { id: number; code: string; nativeName: string; isActive: boolean }[];
+  selectedLanguageId: number | null;
+  selectedCultureId: number | null;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -72,6 +78,9 @@ export function AdminShell({
           userImage={userImage}
           isSuperAdmin={isSuperAdmin}
           notificationCount={notificationCount}
+          languages={languages}
+          selectedLanguageId={selectedLanguageId}
+          selectedCultureId={selectedCultureId}
           onMenuClick={() => setMobileOpen(true)}
         />
         <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#b89a68] p-4 md:p-8">

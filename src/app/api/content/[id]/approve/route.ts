@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
 import { canReviewContent } from "@/lib/permissions";
+import { embedRecord } from "@/lib/ai/embeddings";
+import { hasGemini } from "@/lib/ai/gemini";
 
 export async function POST(
   req: NextRequest,
@@ -58,6 +60,14 @@ export async function POST(
     ipAddress: req.headers.get("x-forwarded-for") || null,
     userAgent: req.headers.get("user-agent") || null,
   });
+
+  if (await hasGemini()) {
+    try {
+      await embedRecord(record.id, true);
+    } catch (error) {
+      console.error("[content approve] failed to update AI index:", error);
+    }
+  }
 
   return NextResponse.json({ success: true });
 }

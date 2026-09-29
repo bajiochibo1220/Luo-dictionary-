@@ -6,6 +6,7 @@ declare module "next-auth" {
     user: {
       id: string;
       isSuperAdmin: boolean;
+      isMasterSuperAdmin: boolean;
       languageRoles: LanguageRole[];
     } & DefaultSession["user"];
   }
@@ -15,6 +16,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
     isSuperAdmin?: boolean;
+    isMasterSuperAdmin?: boolean;
     languageRoles?: LanguageRole[];
   }
 }

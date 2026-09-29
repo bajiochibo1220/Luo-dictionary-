@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -139,11 +140,8 @@ export function SitesMap({
         {filtered.map((s) => {
           const img = s.media.find((m) => m.type === "image");
           return (
-            <Link
-              key={s.id}
-              href={`/${langCode}/piny-luo/${s.id}`}
-              className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition border border-stone-100 hover:border-amber-300 overflow-hidden"
-            >
+            <div key={s.id} className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition border border-stone-100 hover:border-amber-300 overflow-hidden">
+              <Link href={`/${langCode}/piny-luo/${s.id}`} className="block">
               {img && (
                 <div className="aspect-video bg-stone-100 overflow-hidden">
                   <img
@@ -161,7 +159,9 @@ export function SitesMap({
                   <p className="text-xs text-stone-500">{s.data.county}</p>
                 )}
               </div>
-            </Link>
+              </Link>
+              <div className="px-4 pb-4"><EnglishVersionLink langCode={langCode} href={`/${langCode}/piny-luo/${s.id}`} /></div>
+            </div>
           );
         })}
       </div>

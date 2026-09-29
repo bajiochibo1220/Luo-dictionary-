@@ -16,6 +16,7 @@ type UserInfo = {
   email: string;
   name: string | null;
   isSuperAdmin: boolean;
+  isMasterSuperAdmin: boolean;
   status: string;
   languageRoles: UserRole[];
 };
@@ -36,14 +37,15 @@ const ROLES = [
 export function UserDetailPanel({
   user,
   languages,
+  isMasterSuperAdmin,
 }: {
   user: UserInfo;
   languages: Language[];
+  isMasterSuperAdmin: boolean;
 }) {
   const router = useRouter();
   const [name, setName] = useState(user.name ?? "");
   const [status, setStatus] = useState(user.status);
-  const [isSuperAdmin, setIsSuperAdmin] = useState(user.isSuperAdmin);
   const [newRole, setNewRole] = useState("contributor");
   const [newLang, setNewLang] = useState(languages[0]?.id ?? 0);
   const [busy, setBusy] = useState(false);
@@ -54,7 +56,7 @@ export function UserDetailPanel({
       const res = await fetch(`/api/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, status, isSuperAdmin }),
+        body: JSON.stringify(isMasterSuperAdmin ? { name, status } : { name }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -143,7 +145,7 @@ export function UserDetailPanel({
               className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
             />
           </div>
-          <div>
+          {isMasterSuperAdmin && <div>
             <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1">
               Status
             </label>
@@ -156,26 +158,16 @@ export function UserDetailPanel({
               <option value="suspended">Suspended</option>
               <option value="pending">Pending</option>
             </select>
-          </div>
+          </div>}
         </div>
 
-        <label className="flex items-center gap-2 mt-4 cursor-pointer text-sm">
-          <input
-            type="checkbox"
-            checked={isSuperAdmin}
-            onChange={(e) => setIsSuperAdmin(e.target.checked)}
-            className="w-4 h-4 text-amber-600 rounded"
-          />
-          <span className="text-stone-700">Super Admin</span>
-        </label>
-
-        <button
+        {!user.isMasterSuperAdmin && <button
           onClick={saveProfile}
           disabled={busy}
           className="mt-4 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
         >
           {busy ? "Saving..." : "Save Profile"}
-        </button>
+        </button>}
       </div>
 
       {/* Roles */}
@@ -199,19 +191,19 @@ export function UserDetailPanel({
                   </span>
                   {r.role.replace("_", " ")}
                 </span>
-                <button
+                {isMasterSuperAdmin && <button
                   onClick={() => removeRole(r.id)}
                   disabled={busy}
                   className="text-xs text-red-600 hover:underline disabled:opacity-50"
                 >
                   Remove
-                </button>
+                </button>}
               </li>
             ))}
           </ul>
         )}
 
-        <div className="pt-4 border-t border-stone-100">
+        {(isMasterSuperAdmin || !user.isSuperAdmin) && <div className="pt-4 border-t border-stone-100">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
             Add Role
           </p>
@@ -246,11 +238,11 @@ export function UserDetailPanel({
               Add
             </button>
           </div>
-        </div>
+        </div>}
       </div>
 
       {/* Danger zone */}
-      <div className="bg-red-50 rounded-xl border border-red-100 p-6">
+      {isMasterSuperAdmin && !user.isMasterSuperAdmin && <div className="bg-red-50 rounded-xl border border-red-100 p-6">
         <h2 className="text-xs uppercase tracking-wider text-red-700 mb-2">
           Danger Zone
         </h2>
@@ -264,7 +256,7 @@ export function UserDetailPanel({
         >
           Delete User
         </button>
-      </div>
+      </div>}
     </div>
   );
 }

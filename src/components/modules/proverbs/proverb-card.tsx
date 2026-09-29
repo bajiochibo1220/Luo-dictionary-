@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Proverb = {
   id: string;
@@ -43,6 +44,7 @@ export function ProverbCard({
         ) : item.type === "audio" ? (
           <audio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}
+        <EnglishVersionLink langCode={langCode} href={`/${langCode}/ngero/${proverb.id}`} />
         <p className="text-xl md:text-2xl font-serif text-stone-800 mb-3 leading-snug">
           &ldquo;{original}&rdquo;
         </p>

@@ -24,6 +24,13 @@ export default async function UserDashboardPage({
   const primaryRole = languageRoles[0];
   const languageId = primaryRole?.languageId;
   const languageCode = primaryRole?.languageCode ?? "luo";
+  const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
+
+  const localizedSummary = (record: any, targetLanguageId: number) => {
+    if (record.languageId === targetLanguageId) return record.summary || getRecordText(record.data);
+    const translation = record.translations?.find((item: any) => item.languageId === targetLanguageId);
+    return translation?.summary || getRecordText(translation?.data);
+  };
 
   // ── Module view
   if (searchParams.module && languageId) {
@@ -36,19 +43,20 @@ export default async function UserDashboardPage({
       const title = mod.translations[0]?.title ?? mod.baseName;
 
       const records = await prisma.culturalRecord.findMany({
-        where: { languageId, moduleId: mod.id, status: "published" },
+        where: { moduleId: mod.id, languageId, status: "published" },
         orderBy: { createdAt: "desc" },
         take: 50,
-        include: { media: true },
+        include: { media: true, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } } },
       });
       const dictionaryEntries = mod.code === "dictionary"
-        ? await prisma.dictionaryEntry.findMany({ where: { languageId, status: "published" }, orderBy: { createdAt: "desc" }, take: 100, include: { media: true } })
+        ? await prisma.dictionaryEntry.findMany({ where: { ...(languageCode === "eng" ? {} : { languageId }), status: "published" }, orderBy: { createdAt: "desc" }, take: 100, include: { media: true } })
         : [];
 
       const items = records.map((r) => ({
         id: r.id,
         title: r.title,
-        summary: r.summary || getRecordText(r.data),
+        summary: localizedSummary(r, languageId),
+        englishSummary: englishLanguage ? localizedSummary(r, englishLanguage.id) : null,
         moduleCode: r.moduleId === mod.id ? mod.code : undefined,
         moduleName: mod.baseName,
         createdAt: r.createdAt.toISOString(),
@@ -63,7 +71,8 @@ export default async function UserDashboardPage({
       const dictionaryItems = dictionaryEntries.map((entry) => ({
         id: entry.id,
         title: entry.dholuo,
-        summary: [entry.english, entry.kiswahili, entry.pronunciation].filter(Boolean).join("\n"),
+        summary: (languageCode === "eng" ? [entry.english, entry.kiswahili] : [entry.pronunciation]).filter(Boolean).join("\n"),
+        englishSummary: [entry.english, entry.kiswahili].filter(Boolean).join("\n"),
         moduleCode: "dictionary",
         moduleName: "Dictionary",
         createdAt: entry.createdAt.toISOString(),
@@ -88,13 +97,13 @@ export default async function UserDashboardPage({
   if (!searchParams.module && languageId) {
     const [records, dictionaryEntries] = await Promise.all([
       prisma.culturalRecord.findMany({
-        where: { languageId, status: "published" },
+        where: { status: "published", languageId },
         orderBy: { createdAt: "desc" },
         take: 100,
-        include: { media: true, module: { select: { code: true, baseName: true } } },
+        include: { media: true, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } }, module: { select: { code: true, baseName: true } } },
       }),
       prisma.dictionaryEntry.findMany({
-        where: { languageId, status: "published" },
+        where: { ...(languageCode === "eng" ? {} : { languageId }), status: "published" },
         orderBy: { createdAt: "desc" },
         take: 100,
         include: { media: true },
@@ -103,7 +112,8 @@ export default async function UserDashboardPage({
     const items = records.map((record) => ({
       id: record.id,
       title: record.title,
-      summary: record.summary || getRecordText(record.data),
+      summary: localizedSummary(record, languageId),
+      englishSummary: englishLanguage ? localizedSummary(record, englishLanguage.id) : null,
       moduleCode: record.module.code,
       moduleName: record.module.baseName,
       createdAt: record.createdAt.toISOString(),
@@ -112,7 +122,8 @@ export default async function UserDashboardPage({
     const dictionaryItems = dictionaryEntries.map((entry) => ({
       id: entry.id,
       title: entry.dholuo,
-      summary: [entry.english, entry.kiswahili, entry.pronunciation].filter(Boolean).join("\n"),
+      summary: (languageCode === "eng" ? [entry.english, entry.kiswahili] : [entry.pronunciation]).filter(Boolean).join("\n"),
+      englishSummary: [entry.english, entry.kiswahili].filter(Boolean).join("\n"),
       moduleCode: "dictionary",
       moduleName: "Dictionary",
       createdAt: entry.createdAt.toISOString(),

@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { canContribute } from "@/lib/permissions";
+import { canContribute, canReviewContent } from "@/lib/permissions";
+import { createDefaultRecordTranslations, getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
+import { embedRecord } from "@/lib/ai/embeddings";
+import { hasGemini } from "@/lib/ai/gemini";
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,6 +30,7 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
+    const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
     const proverbsModule = await prisma.module.findUnique({
       where: { code: "proverbs" },
@@ -39,28 +43,33 @@ export async function GET(req: NextRequest) {
     }
 
     const where: any = {
-      languageId: language.id,
       moduleId: proverbsModule.id,
       status: "published",
+      languageId: cultureLanguageId,
     };
 
     if (theme) where.tags = { has: theme };
 
     if (q) {
-      where.OR = [
+      where.AND = [{ OR: [
         { title: { contains: q, mode: "insensitive" } },
         { data: { path: ["translation"], string_contains: q } },
         { data: { path: ["meaning"], string_contains: q } },
-      ];
+        { translations: { some: { languageId: language.id, OR: [
+          { data: { path: ["translation"], string_contains: q } },
+          { data: { path: ["meaning"], string_contains: q } },
+          { summary: { contains: q, mode: "insensitive" } },
+        ] } } },
+      ] }];
     }
 
     const records = await prisma.culturalRecord.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { media: true },
+      include: { media: true, translations: { where: { languageId: language.id } } },
     });
 
-    return NextResponse.json({ success: true, data: records });
+    return NextResponse.json({ success: true, data: records.map((record) => localizeRecord(record, language.id)) });
   } catch (err: any) {
     console.error("[proverbs GET]", err);
     return NextResponse.json(
@@ -105,24 +114,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const record = await prisma.culturalRecord.create({
-      data: {
-        languageId: data.languageId,
-        moduleId: proverbsModule.id,
-        title: data.original_text,
+    const canPublish = canReviewContent(session, data.languageId);
+    const record = await prisma.$transaction(async (tx) => {
+      const created = await tx.culturalRecord.create({
         data: {
-          original_text: data.original_text,
-          translation: data.translation,
-          meaning: data.meaning,
-          interpretation: data.interpretation,
-          context: data.context,
-          usage: data.usage,
+          languageId: data.languageId,
+          moduleId: proverbsModule.id,
+          title: data.original_text,
+          data: {
+            original_text: data.original_text,
+            translation: data.translation,
+            meaning: data.meaning,
+            interpretation: data.interpretation,
+            context: data.context,
+            usage: data.usage,
+          },
+          tags: data.themes ?? [],
+          status: canPublish ? "published" : "submitted",
+          publishedAt: canPublish ? new Date() : null,
+          reviewerId: canPublish ? (session.user as any).id : null,
+          contributorId: (session.user as any).id,
         },
-        tags: data.themes ?? [],
-        status: "submitted",
-        contributorId: (session.user as any).id,
-      },
+      });
+      await createDefaultRecordTranslations(tx, created.id, data.languageId);
+      return created;
     });
+
+    if (canPublish && await hasGemini()) {
+      try { await embedRecord(record.id, true); }
+      catch (error) { console.error("[proverbs POST] failed to update AI index:", error); }
+    }
 
     return NextResponse.json({ success: true, data: record });
   } catch (err: any) {

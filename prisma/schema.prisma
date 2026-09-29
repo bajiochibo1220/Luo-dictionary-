@@ -25,8 +25,10 @@ model Language {
   moduleTranslations ModuleTranslation[]
   fieldTranslations  FieldTranslation[]
   culturalRecords    CulturalRecord[]
+  contentTranslations CulturalRecordTranslation[]
   dictionaryEntries  DictionaryEntry[]
   mediaAssets        MediaAsset[]
+  embeddings         Embedding[]
   transcripts        Transcript[]
   userRoles          UserLanguageRole[]
   settings           LanguageSetting[]
@@ -107,6 +109,7 @@ model User {
   age           Int?
   dateOfBirth   DateTime?
   isSuperAdmin  Boolean   @default(false)
+  isMasterSuperAdmin Boolean @default(false)
   status        String    @default("active")
   emailVerified DateTime?
   avatarUrl     String?
@@ -225,6 +228,7 @@ model CulturalRecord {
   reviewer    User?            @relation("Reviewer", fields: [reviewerId], references: [id])
   validator   User?            @relation("Validator", fields: [validatorId], references: [id])
   media       MediaAsset[]
+  translations CulturalRecordTranslation[]
   transcripts Transcript[]
   reviews     ReviewHistory[]
   embeddings  Embedding[]
@@ -234,6 +238,23 @@ model CulturalRecord {
   @@index([languageId, moduleId, status])
   @@index([status])
   @@map("cultural_records")
+}
+
+model CulturalRecordTranslation {
+  id         String   @id @default(uuid())
+  recordId   String
+  languageId Int
+  summary    String?  @db.Text
+  data       Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  record   CulturalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  language Language       @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([recordId, languageId])
+  @@index([languageId])
+  @@map("cultural_record_translations")
 }
 model DictionaryEntry {
   id            String    @id @default(uuid())
@@ -393,6 +414,7 @@ model SystemSetting {
 
 model Embedding {
   id           String                       @id @default(uuid())
+  languageId   Int?
   recordId     String?
   dictionaryId String?
   transcriptId String?
@@ -402,10 +424,12 @@ model Embedding {
   createdAt    DateTime                     @default(now())
 
   record     CulturalRecord?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  language   Language?        @relation(fields: [languageId], references: [id], onDelete: Cascade)
   dictionary DictionaryEntry? @relation(fields: [dictionaryId], references: [id], onDelete: Cascade)
   transcript Transcript?      @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
 
   @@index([recordId])
+  @@index([languageId])
   @@index([dictionaryId])
   @@index([transcriptId])
   @@map("embeddings")

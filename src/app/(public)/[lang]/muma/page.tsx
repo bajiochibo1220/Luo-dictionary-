@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { DictionarySearch } from "@/components/modules/dictionary/dictionary-search";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function DictionaryPage({
   params,
@@ -15,6 +16,7 @@ export default async function DictionaryPage({
   });
 
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
@@ -24,18 +26,18 @@ export default async function DictionaryPage({
 
   const [entries, records] = await Promise.all([
     prisma.dictionaryEntry.findMany({
-      where: { languageId: language.id, status: "published" },
+      where: { languageId: cultureLanguageId, status: "published" },
       orderBy: { dholuo: "asc" },
       take: 50,
     }),
     prisma.culturalRecord.findMany({
-      where: { languageId: language.id, status: "published", module: { code: "dictionary" } },
+      where: { languageId: cultureLanguageId, status: "published", module: { code: "dictionary" } },
       orderBy: { createdAt: "desc" },
       take: 50,
-      include: { media: true },
+      include: { media: true, translations: { where: { languageId: language.id } } },
     }),
   ]);
-  const authoredEntries = records.map((record) => {
+  const authoredEntries = records.map((record) => localizeRecord(record, language.id)).map((record) => {
     const data = record.data as Record<string, any>;
     const audio = record.media.find((item) => item.type === "audio");
     return {

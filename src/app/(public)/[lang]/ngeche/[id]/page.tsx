@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { findLocalizedRecord } from "@/lib/content-translations";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function RiddleDetailPage({
   params,
@@ -12,9 +14,7 @@ export default async function RiddleDetailPage({
   });
   if (!language) notFound();
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "riddles" } },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "riddles");
   if (!record) notFound();
 
   const d = record.data as any;
@@ -29,6 +29,7 @@ export default async function RiddleDetailPage({
       </Link>
 
       <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12">
+        <EnglishVersionLink langCode={language.code} href={`/${language.code}/ngeche/${record.id}`} />
         <div className="mb-8">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
             Riddle

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Props = {
   song: {
@@ -46,6 +47,7 @@ export function SongDetail({ song, langCode }: Props) {
       </Link>
 
       <header className="mb-8">
+        <EnglishVersionLink langCode={langCode} href={`/${langCode}/wende/${song.id}`} />
         <span className="text-xs uppercase tracking-wider text-amber-600">
           Traditional Song
         </span>

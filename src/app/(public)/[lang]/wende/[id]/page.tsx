@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { SongDetail } from "@/components/modules/songs/song-detail";
+import { findLocalizedRecord } from "@/lib/content-translations";
 
 export default async function SongDetailPage({
   params,
@@ -12,10 +13,7 @@ export default async function SongDetailPage({
   });
   if (!language) notFound();
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "songs" } },
-    include: { media: true },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "songs");
   if (!record) notFound();
 
   return <SongDetail song={record as any} langCode={language.code} />;

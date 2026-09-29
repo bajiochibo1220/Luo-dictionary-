@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { OralHistoryCard } from "@/components/modules/oral-history/oral-history-card";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function OralHistoriesPage({
   params,
@@ -12,6 +13,7 @@ export default async function OralHistoriesPage({
     include: { moduleTranslations: { include: { module: true } } },
   });
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const mod = await prisma.module.findUnique({
     where: { code: "oral_histories" },
@@ -19,9 +21,11 @@ export default async function OralHistoriesPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
+    include: { media: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
@@ -31,7 +35,7 @@ export default async function OralHistoriesPage({
 
   const counties = Array.from(
     new Set(
-      records
+      localizedRecords
         .map((r) => (r.data as any)?.county)
         .filter((x) => typeof x === "string")
     )
@@ -71,7 +75,7 @@ export default async function OralHistoriesPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {records.map((r) => (
+          {localizedRecords.map((r) => (
             <OralHistoryCard
               key={r.id}
               item={r as any}

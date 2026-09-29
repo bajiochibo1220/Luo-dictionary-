@@ -47,6 +47,26 @@ export function SystemClient({
     }
   }
 
+  async function rebuildAiIndex() {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/ai/reembed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.error || "AI indexing failed");
+      const { succeeded, skipped, failed } = result.data;
+      toast.success(`AI index ready: ${succeeded} updated, ${skipped} already current, ${failed} failed`);
+      if (failed) console.error("AI reindex failures:", result.data.errors);
+    } catch (error: any) {
+      toast.error(error.message || "AI indexing failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function Field({
     label,
     settingKey,
@@ -166,10 +186,10 @@ export function SystemClient({
             </div>
 
             <Field
-              label="OpenAI API Key"
-              settingKey="openai_api_key"
-              placeholder="sk-..."
-              helpText="Used for chatbot and embeddings (Phase 8)"
+              label="Gemini API Key"
+              settingKey="gemini_api_key"
+              placeholder="AIza..."
+              helpText="Used by the AI chatbot, semantic search, and content embeddings."
             />
 
             <Field
@@ -194,7 +214,7 @@ export function SystemClient({
             <button
               onClick={() =>
                 save([
-                  "openai_api_key",
+                  "gemini_api_key",
                   "cloudinary_cloud_name",
                   "cloudinary_api_key",
                   "cloudinary_api_secret",
@@ -205,6 +225,14 @@ export function SystemClient({
             >
               {busy ? "Saving..." : "Save API Keys"}
             </button>
+
+            <div className="mt-8 border-t border-stone-100 pt-6">
+              <h3 className="text-sm font-semibold text-stone-700">AI content index</h3>
+              <p className="mt-1 mb-3 text-xs text-stone-500">Rebuild missing language indexes for published records, dictionary entries, and transcripts after the database migration.</p>
+              <button onClick={rebuildAiIndex} disabled={busy} className="px-5 py-2.5 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 disabled:opacity-50">
+                {busy ? "Working..." : "Rebuild AI Index"}
+              </button>
+            </div>
 
             <div className="mt-8 pt-6 border-t border-stone-100">
               <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">

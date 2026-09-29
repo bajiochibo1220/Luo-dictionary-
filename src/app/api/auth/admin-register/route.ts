@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
         dateOfBirth: dob,
         age,
         isSuperAdmin: true,
+        isMasterSuperAdmin: true,
         status: "active",
         emailVerified: new Date(),
         languageRoles: {

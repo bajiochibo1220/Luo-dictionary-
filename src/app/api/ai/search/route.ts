@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { embedText } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
+import { getContentCultureLanguageId } from "@/lib/content-translations";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!hasGemini()) {
+    if (!(await hasGemini())) {
       return NextResponse.json(
         { success: false, error: "AI is not configured" },
         { status: 400 }
@@ -41,23 +42,33 @@ export async function POST(req: NextRequest) {
 
     const queryVector = await embedText(query);
     const vectorStr = `[${queryVector.join(",")}]`;
-    const langFilter = languageId ? `AND cr."languageId" = ${languageId}` : "";
+    // Content has a source locale plus separate translation vectors. Filter on
+    // the vector locale so translated records are searchable in that language.
+    const langFilter = languageId ? `AND e."languageId" = ${languageId}` : "";
+    const cultureLanguageId = languageId ? await getContentCultureLanguageId(languageId) : undefined;
+    const cultureFilter = cultureLanguageId
+      ? `AND ((e."recordId" IS NOT NULL AND cr."languageId" = ${cultureLanguageId}) OR (e."dictionaryId" IS NOT NULL AND de."languageId" = ${cultureLanguageId}) OR (e."transcriptId" IS NOT NULL AND cr."languageId" = ${cultureLanguageId}))`
+      : "";
     const take = Math.min(20, Math.max(1, Number(limit)));
 
     const results = await prisma.$queryRawUnsafe(
       `SELECT
-         cr.id,
-         cr.title,
-         m."baseName" AS module,
-         m.code AS "moduleCode",
+         COALESCE(cr.id, t."recordId", de.id) AS id,
+         COALESCE(cr.title, de.dholuo, 'Transcript') AS title,
+         COALESCE(m."baseName", CASE WHEN de.id IS NOT NULL THEN 'Dictionary' ELSE 'Transcript' END) AS module,
+         COALESCE(m.code, CASE WHEN de.id IS NOT NULL THEN 'dictionary' ELSE 'oral_histories' END) AS "moduleCode",
          1 - (e.vector <=> $1::vector) AS similarity,
          LEFT(e.content, 240) AS excerpt
        FROM embeddings e
-       JOIN cultural_records cr ON cr.id = e."recordId"
-       JOIN modules m ON m.id = cr."moduleId"
-       WHERE e."recordId" IS NOT NULL
-         AND cr.status = 'published'
+       LEFT JOIN transcripts t ON t.id = e."transcriptId"
+       LEFT JOIN cultural_records cr ON cr.id = COALESCE(e."recordId", t."recordId")
+       LEFT JOIN dictionary_entries de ON de.id = e."dictionaryId"
+       LEFT JOIN modules m ON m.id = cr."moduleId"
+       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published')
+          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published')
+          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'))
          ${langFilter}
+         ${cultureFilter}
        ORDER BY e.vector <=> $1::vector
        LIMIT $2`,
       vectorStr,

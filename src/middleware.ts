@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   "/register",
   "/admin-login",
   "/admin-register",
+  "/mobile-apps",
 ];
 
 function isPublic(pathname: string): boolean {
@@ -21,7 +22,7 @@ function isPublic(pathname: string): boolean {
   if (["/api/songs", "/api/proverbs", "/api/riddles", "/api/dictionary", "/api/artifacts", "/api/folktales", "/api/oral-histories", "/api/heritage-sites"].some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
   if (pathname.startsWith("/_next")) return true;
   if (pathname.startsWith("/favicon")) return true;
-  if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js)$/i.test(pathname)) {
+  if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js|webmanifest)$/i.test(pathname)) {
     return true;
   }
   return false;
@@ -32,6 +33,19 @@ export async function middleware(req: NextRequest) {
 
   // Public routes always allowed
   if (isPublic(pathname)) {
+    const culture = req.nextUrl.searchParams.get("culture");
+    if (culture && /^[a-z]{2,8}(?:-[a-z0-9]+)?$/i.test(culture)) {
+      req.cookies.set("content-culture", culture.toLowerCase());
+      const response = NextResponse.next({ request: { headers: req.headers } });
+      response.cookies.set("content-culture", culture.toLowerCase(), {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: req.nextUrl.protocol === "https:",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+      });
+      return response;
+    }
     return NextResponse.next();
   }
 

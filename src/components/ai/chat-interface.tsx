@@ -44,7 +44,8 @@ const SUGGESTED = [
   "What does nyathi mean?",
 ];
 
-export function ChatInterface({ languageCode = "luo" }: { languageCode?: string }) {
+export function ChatInterface({ languageCode = "luo", cultureCode = languageCode }: { languageCode?: string; cultureCode?: string }) {
+  const [answerLanguageCode, setAnswerLanguageCode] = useState(languageCode);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -197,13 +198,14 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
     const userMessage: Message = { role: "user", content: question };
     setMessages((m) => [...m, userMessage]);
     setInput("");
+    setMediaPanel([]);
     setBusy(true);
 
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, languageCode, conversationId }),
+        body: JSON.stringify({ question, languageCode: answerLanguageCode, cultureCode, conversationId }),
       });
 
       const json = await res.json();
@@ -225,9 +227,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
       ]);
 
       if (json.data.conversationId) setConversationId(json.data.conversationId);
-      if (json.data.media && json.data.media.length > 0) {
-        setMediaPanel(json.data.media);
-      }
+      setMediaPanel(json.data.media ?? []);
 
       loadConversations();
     } catch (err: any) {
@@ -368,7 +368,7 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
                 <span className="text-white text-sm">💬</span>
               </div>
-              <div>
+            <div>
                 <h1 className="font-serif text-base md:text-lg text-stone-900 leading-tight">
                   Chat with Luo Lingua
                 </h1>
@@ -377,7 +377,8 @@ export function ChatInterface({ languageCode = "luo" }: { languageCode?: string 
                 </p>
               </div>
             </div>
-          </div>
+            </div>
+            {cultureCode !== "eng" && <label className="text-xs font-semibold text-stone-800">Answer language <select value={answerLanguageCode} onChange={(event) => setAnswerLanguageCode(event.target.value)} className="ml-2 rounded-md border border-stone-800/20 bg-white/70 px-2 py-1"><option value={cultureCode}>Original language</option><option value="eng">English — {cultureCode} culture</option></select></label>}
         </header>
 
         <div className="flex-1 flex min-h-0">

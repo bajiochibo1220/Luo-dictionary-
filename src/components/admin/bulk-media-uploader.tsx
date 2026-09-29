@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { finalizeMediaUpload, getMediaUploadSignature, uploadMediaInChunks } from "@/lib/media-upload-client";
 
 type QueueItem = {
   key: string;
   file: File;
   title: string;
   recordId?: string;
+  cloudUpload?: any;
   uploaded: boolean;
   error?: string;
 };
@@ -17,6 +19,9 @@ function mediaType(file: File): string | null {
   if (file.type.startsWith("image/")) return "image";
   if (file.type.startsWith("video/")) return "video";
   if (file.type.startsWith("audio/")) return "audio";
+  if (/\.(avif|bmp|gif|heic|heif|jpeg|jpg|png|svg|tif|tiff|webp)$/i.test(file.name)) return "image";
+  if (/\.(3gp|avi|m4v|mkv|mov|mp4|mpeg|mpg|ogv|webm|wmv)$/i.test(file.name)) return "video";
+  if (/\.(aac|aif|aiff|flac|m4a|mp3|oga|ogg|wav|wma)$/i.test(file.name)) return "audio";
   if (["application/pdf", "text/plain", "application/rtf", "text/rtf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type) || /\.(pdf|txt|rtf|doc|docx|srt|vtt)$/i.test(file.name)) return "document";
   return null;
 }
@@ -45,7 +50,7 @@ export function BulkMediaUploader({
   function addFiles(list: FileList | null) {
     if (!list?.length) return;
     if (started) return toast.error("Finish or retry this batch before starting another");
-    if (list.length > 5) return toast.error("Select no more than 5 files per batch");
+    if (list.length > 20) return toast.error("Select no more than 20 files per batch");
     const files = Array.from(list);
     const invalid = files.find((file) => !mediaType(file));
     if (invalid) return toast.error(`${invalid.name} is not a supported image, video, audio, or document file`);
@@ -73,18 +78,21 @@ export function BulkMediaUploader({
           working[index] = item;
           setQueue([...working]);
         }
-        if (!item.uploaded) {
+        if (!item.uploaded && !item.cloudUpload) {
           setProgress(`Uploading ${index + 1} of ${working.length}: ${item.file.name}`);
-          const form = new FormData();
-          form.set("file", item.file);
-          form.set("languageCode", languageCode);
-          form.set("moduleCode", moduleCode);
-          form.set("recordId", item.recordId!);
-          form.set("assetType", mediaType(item.file)!);
-          const upload = await fetch("/api/media/upload", { method: "POST", body: form });
-          const uploaded = await upload.json();
-          if (!upload.ok || !uploaded.success) throw new Error(uploaded.error || `Could not upload ${item.file.name}`);
-          item = { ...item, uploaded: true, error: undefined };
+          const details = { languageCode, moduleCode, recordId: item.recordId!, assetType: mediaType(item.file)! };
+          const signed = await getMediaUploadSignature(item.file, details);
+          const cloudUpload = await uploadMediaInChunks(item.file, signed, () => getMediaUploadSignature(item.file, details, signed.publicId));
+          item = { ...item, cloudUpload, error: undefined };
+          working[index] = item;
+          setQueue([...working]);
+        }
+        if (!item.uploaded && item.cloudUpload) {
+          await finalizeMediaUpload(
+            { languageCode, moduleCode, recordId: item.recordId!, assetType: mediaType(item.file)! },
+            item.cloudUpload,
+          );
+          item = { ...item, uploaded: true, cloudUpload: undefined, error: undefined };
           working[index] = item;
           setQueue([...working]);
         }
@@ -119,7 +127,7 @@ export function BulkMediaUploader({
         <div>
           <h2 className="text-xl font-serif text-stone-900">Bulk media upload</h2>
           <p className="mt-1 max-w-2xl text-sm text-stone-700">
-            Select up to five images, videos, audio files, or transcripts for {moduleName}. Each filename becomes its title. The batch publishes together; add descriptions later from Content → Edit.
+            Select up to twenty images, videos, audio files, or transcripts for {moduleName}. Large files upload directly in chunks. Each filename becomes its title. The batch publishes together; add descriptions later from Content → Edit.
           </p>
         </div>
         <label className={`cursor-pointer rounded-full bg-amber-800 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-900 ${started ? "pointer-events-none opacity-50" : ""}`}>

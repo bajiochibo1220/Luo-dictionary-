@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { embedRecord } from "@/lib/ai/embeddings";
+import { embedRecord, embedDictionaryEntry, embedTranscript } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 
 export async function POST(req: NextRequest) {
@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!hasGemini()) {
+  if (!(await hasGemini())) {
     return NextResponse.json(
-      { error: "GEMINI_API_KEY not configured. Add to .env" },
+      { error: "Gemini API key is not configured. Add it in Super Admin → System → API Credentials." },
       { status: 400 }
     );
   }
@@ -24,35 +24,47 @@ export async function POST(req: NextRequest) {
   const languageId = body.languageId as number | undefined;
   const force = !!body.force;
 
-  const records = await prisma.culturalRecord.findMany({
+  const [records, dictionaryEntries, transcripts] = await Promise.all([
+    prisma.culturalRecord.findMany({
     where: {
       status: "published",
-      ...(languageId ? { languageId } : {}),
+      ...(languageId ? { OR: [{ languageId }, { translations: { some: { languageId } } }] } : {}),
     },
     select: { id: true },
-  });
+    }),
+    // Each dictionary entry may produce an English vector as well as its
+    // source-language vector, so include all entries when rebuilding one locale.
+    prisma.dictionaryEntry.findMany({ where: { status: "published" }, select: { id: true } }),
+    prisma.transcript.findMany({ where: { ...(languageId ? { languageId } : {}), record: { status: "published" } }, select: { id: true } }),
+  ]);
 
   let succeeded = 0;
   let skipped = 0;
   let failed = 0;
   const errors: string[] = [];
 
-  for (const r of records) {
+  const jobs = [
+    ...records.map((item) => ({ id: item.id, run: () => embedRecord(item.id, force) })),
+    ...dictionaryEntries.map((item) => ({ id: item.id, run: () => embedDictionaryEntry(item.id, force) })),
+    ...transcripts.map((item) => ({ id: item.id, run: () => embedTranscript(item.id, force) })),
+  ];
+
+  for (const job of jobs) {
     try {
-      const result = await embedRecord(r.id, force);
+      const result = await job.run();
       if (result.skipped) skipped++;
       else succeeded++;
       await new Promise((res) => setTimeout(res, 200));
     } catch (err: any) {
       failed++;
-      errors.push(`${r.id}: ${err.message}`);
+      errors.push(`${job.id}: ${err.message}`);
     }
   }
 
   return NextResponse.json({
     success: true,
     data: {
-      total: records.length,
+      total: jobs.length,
       succeeded,
       skipped,
       failed,

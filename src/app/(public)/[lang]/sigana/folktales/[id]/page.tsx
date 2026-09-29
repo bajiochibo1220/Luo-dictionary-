@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { FolktaleDetail } from "@/components/modules/folktales/folktale-detail";
+import { findLocalizedRecord } from "@/lib/content-translations";
 
 export default async function FolktaleDetailPage({
   params,
@@ -12,10 +13,7 @@ export default async function FolktaleDetailPage({
   });
   if (!language) notFound();
 
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, languageId: language.id, status: "published", module: { code: "folktales" } },
-    include: { media: true },
-  });
+  const record = await findLocalizedRecord(params.id, language.id, "folktales");
   if (!record) notFound();
 
   return (

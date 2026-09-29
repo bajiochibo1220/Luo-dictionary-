@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ProverbGrid } from "@/components/modules/proverbs/proverb-grid";
+import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function ProverbsPage({
   params,
@@ -12,6 +13,7 @@ export default async function ProverbsPage({
     include: { moduleTranslations: { include: { module: true } } },
   });
   if (!language || !language.isActive) notFound();
+  const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const mod = await prisma.module.findUnique({
     where: { code: "proverbs" },
@@ -19,14 +21,15 @@ export default async function ProverbsPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: language.id, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
     orderBy: { createdAt: "desc" },
-    include: { media: true },
+    include: { media: true, translations: { where: { languageId: language.id } } },
   });
+  const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
   // collect unique themes
   const themeSet = new Set<string>();
-  for (const r of records) {
+  for (const r of localizedRecords) {
     for (const t of r.tags) themeSet.add(t);
   }
   const allThemes = Array.from(themeSet).sort();
@@ -50,7 +53,7 @@ export default async function ProverbsPage({
       </header>
 
       <ProverbGrid
-        initialProverbs={records as any}
+        initialProverbs={localizedRecords as any}
         langCode={language.code}
         allThemes={allThemes}
       />

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    if (!hasGemini()) {
+    if (!(await hasGemini())) {
       return NextResponse.json(
         { success: false, error: "AI is not configured." },
         { status: 400 }
@@ -54,11 +54,19 @@ export async function POST(req: NextRequest) {
     }
 
     let languageId: number | undefined;
+    let cultureLanguageId: number | undefined;
     if (languageCode) {
       const lang = await prisma.language.findUnique({
         where: { code: languageCode },
       });
       if (lang) languageId = lang.id;
+    }
+    const chatUser = session.user as any;
+    if (chatUser.isSuperAdmin) {
+      const { getSelectedAdminCultureId } = await import("@/lib/admin-language");
+      cultureLanguageId = await getSelectedAdminCultureId();
+    } else {
+      cultureLanguageId = chatUser.languageRoles?.[0]?.languageId;
     }
 
     let convId = conversationId;
@@ -82,7 +90,7 @@ export async function POST(req: NextRequest) {
       convId = conv.id;
     }
 
-    const result = await askQuestion(question, languageId);
+    const result = await askQuestion(question, languageId, cultureLanguageId);
 
     await prisma.$transaction([
       prisma.aIResponse.create({

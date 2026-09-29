@@ -2,11 +2,12 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { MediaGrid } from "@/components/admin/media-grid";
+import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
 export default async function MediaLibraryPage({
   searchParams,
 }: {
-  searchParams: { type?: string; lang?: string };
+  searchParams: { type?: string; module?: string; lang?: string };
 }) {
   const session = await auth();
   const user = session!.user as any;
@@ -21,8 +22,26 @@ export default async function MediaLibraryPage({
         .map((r) => r.languageId);
 
   const where: any = {};
-  if (managedLanguageIds) where.languageId = { in: managedLanguageIds };
-  if (searchParams.type) where.type = searchParams.type;
+  const filters: any[] = [];
+  if (isSuperAdmin) {
+    const cultureId = await getSelectedAdminCultureId();
+    if (cultureId) filters.push({ OR: [
+      { languageId: cultureId },
+      { record: { languageId: cultureId } },
+    ] });
+  } else if (managedLanguageIds) filters.push({ languageId: { in: managedLanguageIds } });
+  if (searchParams.type) filters.push({ type: searchParams.type });
+  if (searchParams.module) filters.push({ OR: [
+    { record: { module: { code: searchParams.module } } },
+    { recordId: null, nrfMetadata: { path: ["genre"], equals: searchParams.module } },
+  ] });
+  if (filters.length) where.AND = filters;
+
+  const modules = await prisma.module.findMany({
+    where: { isActive: true, isStub: false },
+    orderBy: { displayOrder: "asc" },
+    select: { code: true, baseName: true },
+  });
 
   const assets = await prisma.mediaAsset.findMany({
     where,
@@ -35,7 +54,7 @@ export default async function MediaLibraryPage({
           id: true,
           title: true,
           status: true,
-          module: { select: { code: true } },
+          module: { select: { code: true, baseName: true } },
         },
       },
     },
@@ -79,7 +98,7 @@ export default async function MediaLibraryPage({
         <Link
           href="/admin/media"
           className={`text-xs px-3 py-1.5 rounded-full ${
-            !searchParams.type
+            !searchParams.type && !searchParams.module
               ? "bg-amber-600 text-white"
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
@@ -89,7 +108,7 @@ export default async function MediaLibraryPage({
         {["image", "video", "audio", "document"].map((t) => (
           <Link
             key={t}
-            href={`/admin/media?type=${t}`}
+            href={`/admin/media?${new URLSearchParams({ ...(searchParams.module ? { module: searchParams.module } : {}), type: t })}`}
             className={`text-xs px-3 py-1.5 rounded-full capitalize ${
               searchParams.type === t
                 ? "bg-amber-600 text-white"
@@ -100,6 +119,16 @@ export default async function MediaLibraryPage({
           </Link>
         ))}
       </div>
+
+      <form method="GET" action="/admin/media" className="mb-5 flex flex-wrap items-center gap-3">
+        {searchParams.type && <input type="hidden" name="type" value={searchParams.type} />}
+        <label htmlFor="media-module" className="text-sm font-medium text-stone-700">Content module</label>
+        <select id="media-module" name="module" defaultValue={searchParams.module ?? ""} className="min-w-52 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800">
+          <option value="">All modules</option>
+          {modules.map((module) => <option key={module.code} value={module.code}>{module.baseName}</option>)}
+        </select>
+        <button type="submit" className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800">Filter</button>
+      </form>
 
       <MediaGrid assets={formatted} canDelete={isSuperAdmin} />
     </div>

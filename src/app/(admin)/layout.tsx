@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AdminShell } from "@/components/layout/admin-shell";
+import { cookies } from "next/headers";
+import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
 export default async function AdminLayout({
   children,
@@ -25,15 +27,15 @@ export default async function AdminLayout({
 
   if (!isAdmin) redirect("/");
 
-  // Unread notifications count
-  let notificationCount = 0;
-  try {
-    notificationCount = await prisma.notification.count({
-      where: { userId: user.id, read: false },
-    });
-  } catch {
-    notificationCount = 0;
-  }
+  const [notificationCount, languages] = await Promise.all([
+    prisma.notification.count({ where: { userId: user.id, read: false } }).catch(() => 0),
+    prisma.language.findMany({ orderBy: { displayOrder: "asc" }, select: { id: true, code: true, nativeName: true, isActive: true } }),
+  ]);
+  const cookieLanguageId = Number(cookies().get("admin-language-id")?.value);
+  const selectedLanguageId = languages.some((language) => language.id === cookieLanguageId)
+    ? cookieLanguageId
+    : languages.find((language) => language.code === "eng")?.id ?? languages[0]?.id ?? null;
+  const selectedCultureId = isSuperAdmin ? await getSelectedAdminCultureId() ?? null : null;
 
   return (
     <AdminShell
@@ -42,6 +44,9 @@ export default async function AdminLayout({
       userImage={user.image ?? null}
       isSuperAdmin={isSuperAdmin}
       notificationCount={notificationCount}
+      languages={languages}
+      selectedLanguageId={selectedLanguageId}
+      selectedCultureId={selectedCultureId}
     >
       {children}
     </AdminShell>

@@ -7,7 +7,7 @@ import {
 import { logAction } from "@/lib/audit";
 
 const SENSITIVE_KEYS = [
-  "openai_api_key",
+  "gemini_api_key",
   "cloudinary_api_secret",
   "smtp_password",
 ];

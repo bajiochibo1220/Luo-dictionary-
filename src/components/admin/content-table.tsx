@@ -10,6 +10,8 @@ type ContentRecord = {
   title: string;
   status: string;
   createdAt: string;
+  editLanguageId: number;
+  canModerate: boolean;
   language: { code: string; nativeName: string };
   module: { code: string; baseName: string };
 };
@@ -104,7 +106,7 @@ export function ContentTable({
             >
               <td className="px-4 py-3">
                 <Link
-                  href={`/admin/content/${r.id}/edit`}
+                  href={`/admin/content/${r.id}/edit?languageId=${r.editLanguageId}`}
                   className="text-stone-800 hover:text-amber-600 font-medium"
                 >
                   {r.title}
@@ -126,7 +128,7 @@ export function ContentTable({
                 </span>
               </td>
               <td className="px-4 py-3 text-right space-x-2">
-                {r.status === "submitted" && (
+                {r.canModerate && r.status === "submitted" && (
                   <>
                     <button
                       onClick={() => action(r.id, "approve", "approved")}
@@ -144,7 +146,7 @@ export function ContentTable({
                     </button>
                   </>
                 )}
-                {r.status === "draft" && (
+                {r.canModerate && r.status === "draft" && (
                   <button
                     onClick={() => action(r.id, "submit", "submitted")}
                     disabled={busy === r.id}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 type Artifact = {
   id: string;
@@ -65,6 +66,7 @@ export function ArtifactGrid({
               </button>
 
               <div className="p-5">
+                <EnglishVersionLink langCode={langCode} href={`/${langCode}/gik-luo/${a.id}`} />
                 <h3 className="text-lg font-serif text-stone-800 mb-1">
                   {a.title}
                 </h3>

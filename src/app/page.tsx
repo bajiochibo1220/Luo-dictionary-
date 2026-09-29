@@ -44,6 +44,10 @@ export default function HomePage() {
           >
             Super Admin
           </Link>
+          <span className="text-stone-500">·</span>
+          <Link href="/mobile-apps" className="hover:text-amber-900 transition font-semibold">
+            Mobile apps
+          </Link>
         </div>
       </div>
     </AuthShell>
