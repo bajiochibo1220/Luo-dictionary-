@@ -55,7 +55,7 @@ export function DynamicContentForm({
     }
 
     for (const f of fieldDefs) {
-      if (f.isRequired && !values[f.fieldCode]) {
+      if (!recordId && f.isRequired && !values[f.fieldCode]) {
         toast.error(`${f.label} is required`);
         return;
       }
@@ -134,6 +134,19 @@ export function DynamicContentForm({
           placeholder="Give this contribution a title"
         />
       </div>
+
+      {!fieldDefs.some((field) => field.fieldCode === "description") && (
+        <div className="mb-6">
+          <label className="mb-1.5 block text-sm font-semibold text-stone-800">Description</label>
+          <textarea
+            value={values.description ?? ""}
+            onChange={(event) => update("description", event.target.value)}
+            rows={4}
+            className="w-full rounded-xl border border-stone-900/20 bg-white px-4 py-3 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-700"
+            placeholder="Add a description now or come back to it later"
+          />
+        </div>
+      )}
 
       {fieldDefs.map((f) => (
         <div key={f.id} className="mb-5">

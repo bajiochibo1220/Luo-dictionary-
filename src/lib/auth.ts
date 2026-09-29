@@ -44,7 +44,17 @@ async function loadUserRoles(userId: string): Promise<LanguageRole[]> {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    // Prisma's default adapter uses an exact email match. Normalize Google
+    // addresses here so an existing password account can be linked even when
+    // its stored email casing differs from Google's verified address.
+    async getUserByEmail(email) {
+      return prisma.user.findFirst({
+        where: { email: { equals: email.trim(), mode: "insensitive" } },
+      });
+    },
+  },
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -55,6 +65,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
       allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        return {
+          ...profile,
+          email: profile.email?.trim().toLowerCase(),
+        };
+      },
     }),
     CredentialsProvider({
       name: "credentials",

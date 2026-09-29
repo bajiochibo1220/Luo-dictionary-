@@ -1,0 +1,160 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+type QueueItem = {
+  key: string;
+  file: File;
+  title: string;
+  recordId?: string;
+  uploaded: boolean;
+  error?: string;
+};
+
+function mediaType(file: File): string | null {
+  if (file.type.startsWith("image/")) return "image";
+  if (file.type.startsWith("video/")) return "video";
+  if (file.type.startsWith("audio/")) return "audio";
+  if (["application/pdf", "text/plain", "application/rtf", "text/rtf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type) || /\.(pdf|txt|rtf|doc|docx|srt|vtt)$/i.test(file.name)) return "document";
+  return null;
+}
+
+function titleFromFilename(name: string): string {
+  return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim() || name;
+}
+
+export function BulkMediaUploader({
+  moduleCode,
+  moduleName,
+  languageId,
+  languageCode,
+}: {
+  moduleCode: string;
+  moduleName: string;
+  languageId: number;
+  languageCode: string;
+}) {
+  const router = useRouter();
+  const [queue, setQueue] = useState<QueueItem[]>([]);
+  const [processing, setProcessing] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [progress, setProgress] = useState("");
+
+  function addFiles(list: FileList | null) {
+    if (!list?.length) return;
+    if (started) return toast.error("Finish or retry this batch before starting another");
+    if (list.length > 5) return toast.error("Select no more than 5 files per batch");
+    const files = Array.from(list);
+    const invalid = files.find((file) => !mediaType(file));
+    if (invalid) return toast.error(`${invalid.name} is not a supported image, video, audio, or document file`);
+    setQueue(files.map((file) => ({ key: crypto.randomUUID(), file, title: titleFromFilename(file.name), uploaded: false })));
+  }
+
+  async function publishBatch() {
+    if (!queue.length || processing) return;
+    setProcessing(true);
+    setStarted(true);
+    let working = [...queue];
+    try {
+      for (let index = 0; index < working.length; index += 1) {
+        let item = working[index];
+        setProgress(`Preparing ${index + 1} of ${working.length}: ${item.title}`);
+        if (!item.recordId) {
+          const create = await fetch("/api/content", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ languageId, moduleCode, title: item.title, data: { description: "" }, tags: [] }),
+          });
+          const result = await create.json();
+          if (!create.ok || !result.success || !result.data?.id) throw new Error(result.error || `Could not prepare ${item.title}`);
+          item = { ...item, recordId: result.data.id, error: undefined };
+          working[index] = item;
+          setQueue([...working]);
+        }
+        if (!item.uploaded) {
+          setProgress(`Uploading ${index + 1} of ${working.length}: ${item.file.name}`);
+          const form = new FormData();
+          form.set("file", item.file);
+          form.set("languageCode", languageCode);
+          form.set("moduleCode", moduleCode);
+          form.set("recordId", item.recordId!);
+          form.set("assetType", mediaType(item.file)!);
+          const upload = await fetch("/api/media/upload", { method: "POST", body: form });
+          const uploaded = await upload.json();
+          if (!upload.ok || !uploaded.success) throw new Error(uploaded.error || `Could not upload ${item.file.name}`);
+          item = { ...item, uploaded: true, error: undefined };
+          working[index] = item;
+          setQueue([...working]);
+        }
+      }
+
+      setProgress("Publishing all items...");
+      const response = await fetch("/api/content/bulk-publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recordIds: working.map((item) => item.recordId) }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || "Could not publish this batch");
+      toast.success(`${result.count} ${moduleName} item${result.count === 1 ? "" : "s"} published`);
+      setQueue([]);
+      setStarted(false);
+      router.push("/admin/content");
+      router.refresh();
+    } catch (error: any) {
+      const message = error.message || "Batch upload failed";
+      setQueue((current) => current.map((item) => ({ ...item, error: item.uploaded ? undefined : message })));
+      toast.error(`${message}. Retry this batch to continue; completed uploads will not be repeated.`);
+    } finally {
+      setProcessing(false);
+      setProgress("");
+    }
+  }
+
+  return (
+    <section className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm md:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-serif text-stone-900">Bulk media upload</h2>
+          <p className="mt-1 max-w-2xl text-sm text-stone-700">
+            Select up to five images, videos, audio files, or transcripts for {moduleName}. Each filename becomes its title. The batch publishes together; add descriptions later from Content → Edit.
+          </p>
+        </div>
+        <label className={`cursor-pointer rounded-full bg-amber-800 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-900 ${started ? "pointer-events-none opacity-50" : ""}`}>
+          Select files
+          <input
+            type="file"
+            multiple
+            accept="image/*,video/*,audio/*,.pdf,.txt,.rtf,.doc,.docx,.srt,.vtt"
+            className="sr-only"
+            disabled={started || processing}
+            onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ""; }}
+          />
+        </label>
+      </div>
+
+      {queue.length > 0 && (
+        <div className="mt-5 space-y-2">
+          {queue.map((item, index) => (
+            <div key={item.key} className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-3 py-2.5">
+              <span className="w-6 text-xs text-stone-400">{index + 1}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800" title={item.file.name}>{item.title}</span>
+              <span className="hidden text-xs capitalize text-stone-500 sm:inline">{mediaType(item.file)} · {(item.file.size / (1024 * 1024)).toFixed(1)} MB</span>
+              <span className={`text-xs font-medium ${item.uploaded ? "text-green-700" : item.error ? "text-red-600" : "text-stone-400"}`}>
+                {item.uploaded ? "Ready to publish" : item.error ? "Retry pending" : item.recordId ? "Prepared" : "Queued"}
+              </span>
+              {!started && <button type="button" onClick={() => setQueue((current) => current.filter((queued) => queued.key !== item.key))} className="px-2 text-lg text-stone-400 hover:text-red-600" aria-label={`Remove ${item.file.name}`}>×</button>}
+            </div>
+          ))}
+          {progress && <p className="text-sm text-stone-600" aria-live="polite">{progress}</p>}
+          <button type="button" onClick={() => void publishBatch()} disabled={processing} className="mt-2 rounded-full bg-stone-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-stone-800 disabled:opacity-50">
+            {processing ? "Uploading and publishing…" : started ? "Retry batch" : `Upload and publish ${queue.length} item${queue.length === 1 ? "" : "s"}`}
+          </button>
+          <p className="text-xs text-stone-500">Files upload one at a time for reliability. Use multiple batches for larger collections.</p>
+        </div>
+      )}
+    </section>
+  );
+}

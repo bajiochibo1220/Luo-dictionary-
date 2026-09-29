@@ -199,12 +199,12 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
   return (
     <article className="bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 overflow-hidden shadow-lg hover:shadow-xl hover:border-amber-800/40 transition-all">
       {primary && (
-        <div className="bg-stone-900 relative">
+      <div className="bg-[#b89a68] relative">
           {primary.type === "image" && (
-            <img src={primary.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-stone-950" />
+            <img src={primary.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-[#b89a68]" />
           )}
           {primary.type === "video" && (
-            <video src={primary.url} poster={primary.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-stone-950" />
+            <video src={primary.url} poster={primary.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-[#b89a68]" />
           )}
           {primary.type === "audio" && (
             <div className="p-8 flex items-center justify-center bg-gradient-to-br from-stone-800 to-stone-950">
@@ -226,9 +226,9 @@ function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
       )}
       {primary && (primary.type === "document" || primary.type === "transcript") && <a href={primary.url} target="_blank" rel="noreferrer" className="block p-5 bg-stone-900 text-amber-100 underline">Open transcript or document</a>}
       {media.slice(1).map((asset) => (
-        <div key={asset.id} className="bg-stone-900">
-          {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-stone-950" />}
-          {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-stone-950" />}
+        <div key={asset.id} className="bg-[#b89a68]">
+          {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-[#b89a68]" />}
+          {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-[#b89a68]" />}
           {asset.type === "audio" && <div className="p-6 bg-gradient-to-br from-stone-800 to-stone-950"><p className="text-sm text-amber-100 mb-3">Audio recording{asset.format ? ` · ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
           {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="block p-5 text-amber-100 underline">Open transcript or document</a>}
         </div>
@@ -270,12 +270,12 @@ function GridView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
         const icons = Array.from(new Set(media.map((m) => m.type)));
         return (
           <div key={item.id} className="bg-black/5 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
-            <div className="aspect-square bg-stone-900 relative overflow-hidden">
+            <div className="aspect-square bg-[#b89a68] relative overflow-hidden">
               {thumb?.type === "image" && (
-                <img src={thumb.url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={thumb.url} alt={item.title} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
               )}
               {thumb?.type === "video" && thumb.thumbnailUrl && (
-                <img src={thumb.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={thumb.thumbnailUrl} alt={item.title} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
               )}
               {(!thumb || (thumb.type === "video" && !thumb.thumbnailUrl)) && (
                 <div className="w-full h-full flex items-center justify-center text-5xl text-amber-200/30">

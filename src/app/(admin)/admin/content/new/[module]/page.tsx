@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
 import { canReviewContent } from "@/lib/permissions";
+import { BulkMediaUploader } from "@/components/admin/bulk-media-uploader";
 
 export default async function NewContentPage({
   params,
@@ -70,6 +71,15 @@ export default async function NewContentPage({
           {language.nativeName}
         </a>)}
       </nav>}
+
+      {canReviewContent(session, languageId) && (
+        <BulkMediaUploader
+          moduleCode={mod.code}
+          moduleName={mod.baseName}
+          languageId={languageId}
+          languageCode={selectedLanguage.code}
+        />
+      )}
 
       <DynamicContentForm
         moduleCode={mod.code}
