@@ -186,7 +186,7 @@ export function ModuleContent({
 
 function FeedView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[] }) {
   return (
-    <div className="space-y-5 max-w-3xl">
+    <div className="space-y-8 max-w-6xl">
       {items.map((item) => (
         <FeedCard key={item.id} item={item} media={mediaForCard(item)} />
       ))}
@@ -195,72 +195,43 @@ function FeedView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
 }
 
 function FeedCard({ item, media }: { item: ContentItem; media: MediaItem[] }) {
+  const [expanded, setExpanded] = useState(false);
   const primary = media[0];
   return (
-    <article className="bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 overflow-hidden shadow-lg hover:shadow-xl hover:border-amber-800/40 transition-all">
-      {primary && (
-      <div className="bg-[#b89a68] relative">
-          {primary.type === "image" && (
-            <img src={primary.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-[#b89a68]" />
-          )}
-          {primary.type === "video" && (
-            <video src={primary.url} poster={primary.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-[#b89a68]" />
-          )}
-          {primary.type === "audio" && (
-            <div className="p-8 flex items-center justify-center bg-gradient-to-br from-stone-800 to-stone-950">
-              <div className="w-full max-w-md">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center">
-                    <span className="text-2xl">🎵</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-amber-100">Audio Recording</p>
-                    <p className="text-xs text-amber-100/60">{primary.format || "audio"}</p>
-                  </div>
-                </div>
-                <audio src={primary.url} controls className="w-full" />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      {primary && (primary.type === "document" || primary.type === "transcript") && <a href={primary.url} target="_blank" rel="noreferrer" className="block p-5 bg-stone-900 text-amber-100 underline">Open transcript or document</a>}
-      {media.slice(1).map((asset) => (
-        <div key={asset.id} className="bg-[#b89a68]">
-          {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[500px] object-contain bg-[#b89a68]" />}
-          {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[500px] bg-[#b89a68]" />}
-          {asset.type === "audio" && <div className="p-6 bg-gradient-to-br from-stone-800 to-stone-950"><p className="text-sm text-amber-100 mb-3">Audio recording{asset.format ? ` · ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
-          {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="block p-5 text-amber-100 underline">Open transcript or document</a>}
-        </div>
-      ))}
-      <div className="p-6">
-        {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
-        <h3 className="font-serif text-2xl text-stone-900 mb-2 leading-snug">{item.title}</h3>
-        {item.summary && (
-          <p className="text-sm text-stone-800/80 leading-relaxed mb-4">{item.summary}</p>
-        )}
-        {media.length > 1 && (
-          <div className="flex flex-wrap gap-2 pt-3 border-t border-stone-900/10">
-            {media.slice(1).map((m) => (
-              <MediaChip key={m.id} media={m} />
-            ))}
+    <article className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
+      <div className="min-w-0 space-y-4">
+        {media.map((asset) => (
+          <div key={asset.id} className="w-full min-h-24 flex items-center justify-center bg-transparent">
+            {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+            {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3">Audio recording{asset.format ? ` - ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
+            {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline">Open transcript or document</a>}
           </div>
+        ))}
+        {!primary && <div className="min-h-24" />}
+      </div>
+      <div className="min-w-0 py-2 md:py-4">
+        {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
+        <h3 className="font-serif text-2xl text-stone-900 mb-3 leading-snug underline underline-offset-4 decoration-stone-900/40">{item.title}</h3>
+        {item.summary && (
+          <>
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={expanded}
+              className="md:hidden mb-2 text-sm font-semibold text-amber-900 underline underline-offset-2"
+            >
+              {expanded ? "Hide description" : "See description"}
+            </button>
+            {expanded && <p className="md:hidden text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap">{item.summary}</p>}
+            <p className={`hidden md:block text-sm text-stone-800/80 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-5"}`}>{item.summary}</p>
+            {item.summary.length > 240 && <button type="button" onClick={() => setExpanded((value) => !value)} className="hidden md:inline-block mt-2 text-sm font-semibold text-amber-900 underline underline-offset-2">{expanded ? "See less" : "See more"}</button>}
+          </>
         )}
       </div>
     </article>
   );
 }
-
-function MediaChip({ media }: { media: MediaItem }) {
-  const icons: Record<string, string> = { image: "🖼️", audio: "🎵", video: "🎬", document: "📄" };
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-black/5 border border-stone-900/15 text-stone-800">
-      <span>{icons[media.type] || "📎"}</span>
-      <span className="capitalize">{media.type}</span>
-    </span>
-  );
-}
-
 function GridView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[] }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
