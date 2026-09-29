@@ -103,6 +103,27 @@ export async function askQuestion(
 ): Promise<RAGAnswer> {
   const start = Date.now();
   const mediaFilter = detectMediaIntent(question);
+  const normalizedQuestion = question.trim().toLowerCase();
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening|how are you)[!.?\s]*$/.test(normalizedQuestion)) {
+    return { answer: "Hello! I’m Luo Lingua, your guide to Luo language and culture. How may I help you? You can ask about proverbs, songs, stories, artifacts, or request available images, audio, and videos.", sources: [], media: [], mediaFilter, model: "friendly-greeting", latencyMs: Date.now() - start };
+  }
+
+  if (/\b(all|list|show|available|what).{0,35}\b(contents?|artifacts?|items?)\b|\b(contents?|artifacts?)\s+(available|in the system)\b/.test(normalizedQuestion)) {
+    const module = await prisma.module.findUnique({ where: { code: "artifacts" }, select: { id: true } });
+    const artifacts = module ? await prisma.culturalRecord.findMany({
+      where: { moduleId: module.id, status: "published", languageId: cultureLanguageId ?? languageId },
+      orderBy: { title: "asc" }, take: 100,
+      select: { id: true, title: true, media: { where: { type: "image" }, take: 3, orderBy: { createdAt: "desc" } } },
+    }) : [];
+    const media: RAGMediaItem[] = artifacts.flatMap((artifact) => artifact.media.map((item) => ({
+      recordId: artifact.id, title: artifact.title, module: "Cultural Artifacts", mediaType: "image", url: item.url, thumbnailUrl: item.thumbnailUrl, format: item.format,
+    })));
+    const answer = artifacts.length
+      ? `Here are the ${artifacts.length} published cultural artifacts I can find${media.length ? `, with ${media.length} images` : ""}:\n${artifacts.map((item, index) => `${index + 1}. ${item.title}`).join("\n")}`
+      : "I don’t see any published cultural artifacts for this language yet. Try another category, such as proverbs, songs, or stories.";
+    return { answer, sources: artifacts.map((item) => ({ id: item.id, title: item.title, module: "Cultural Artifacts", similarity: 1 })), media, mediaFilter: "image", model: "content-catalog", latencyMs: Date.now() - start };
+  }
+
   const responseLanguage = languageId
     ? (await prisma.language.findUnique({ where: { id: languageId }, select: { nativeName: true } }))?.nativeName
     : null;

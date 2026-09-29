@@ -66,6 +66,7 @@ export default async function ContentPage({
       language: editLanguageId === r.languageId ? r.language : translation?.language ?? r.language,
       editLanguageId,
       canModerate: isSuperAdmin || nativeIsManaged,
+      canDelete: isSuperAdmin || ((user.languageRoles ?? []) as any[]).some((role) => role.languageId === r.languageId && role.role === "language_admin"),
       module: r.module,
     };
   });
@@ -116,7 +117,7 @@ export default async function ContentPage({
         ))}
       </div>
 
-      <ContentTable records={formatted} canDelete={isSuperAdmin} />
+      <ContentTable records={formatted} canDelete={isSuperAdmin || ((user.languageRoles ?? []) as any[]).some((role) => role.role === "language_admin")} />
     </div>
   );
 }

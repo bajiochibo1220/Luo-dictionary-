@@ -381,7 +381,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
             {cultureCode !== "eng" && <label className="text-xs font-semibold text-stone-800">Answer language <select value={answerLanguageCode} onChange={(event) => setAnswerLanguageCode(event.target.value)} className="ml-2 rounded-md border border-stone-800/20 bg-white/70 px-2 py-1"><option value={cultureCode}>Original language</option><option value="eng">English — {cultureCode} culture</option></select></label>}
         </header>
 
-        <div className="flex-1 flex min-h-0">
+        <div className="flex-1 flex min-h-0 flex-col lg:flex-row">
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto overscroll-contain px-4 md:px-8 py-6"
@@ -470,7 +470,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
           </div>
 
           {mediaPanel.length > 0 && (
-            <div className="hidden lg:flex w-80 border-l border-stone-900/15 bg-[#a9895a] flex-col">
+            <div className="flex w-full max-h-56 lg:max-h-none lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-stone-900/15 bg-[#a9895a] flex-col">
               <div className="px-4 py-3 border-b border-stone-900/15 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-stone-800/60">

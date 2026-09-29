@@ -190,6 +190,9 @@ export function LoginForm() {
           Create new account
         </Link>
       </div>
+      <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
+        <Link href="/terms" className="hover:underline">Terms</Link><Link href="/privacy" className="hover:underline">Privacy</Link><Link href="/about" className="hover:underline">About</Link><Link href="/" className="hover:underline">Home</Link>
+      </nav>
     </div>
   );
 }

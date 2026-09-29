@@ -11,6 +11,7 @@ export const registerSchema = z.object({
   }),
   role: z.enum(["registered", "contributor", "elder", "researcher", "teacher"]),
   languageId: z.number().int().positive(),
+  acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Please accept the Terms and Privacy Policy" }) }),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

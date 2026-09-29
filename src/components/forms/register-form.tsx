@@ -15,6 +15,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [dob, setDob] = useState<DateOfBirth>({
     day: null,
@@ -47,6 +48,7 @@ export function RegisterForm() {
       dateOfBirth: { day: dob.day, month: dob.month, year: dob.year },
       role: formData.get("role") as string,
       languageId: Number(formData.get("languageId")),
+      acceptedTerms: formData.get("acceptedTerms") === "on",
     };
 
     let data: any;
@@ -199,7 +201,8 @@ export function RegisterForm() {
         <button
           type="button"
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition"
+          disabled={!acceptedTerms}
+          className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -222,10 +225,13 @@ export function RegisterForm() {
         </button>
       </div>
 
-      <p className="text-xs text-stone-600 text-center leading-relaxed pt-2">
-        By creating an account you agree to help preserve Luo language and
-        culture respectfully.
-      </p>
+      <label className="flex items-start gap-2 text-xs text-stone-700 leading-relaxed pt-2">
+        <input type="checkbox" name="acceptedTerms" required checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-0.5 accent-amber-700" />
+        <span>I accept the <a className="font-semibold underline" href="/terms" target="_blank">Terms of Service</a> and <a className="font-semibold underline" href="/privacy" target="_blank">Privacy Policy</a>, and agree to contribute respectfully.</span>
+      </label>
+      <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
+        <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><a href="/" className="hover:underline">Home</a>
+      </nav>
     </div>
   );
 }

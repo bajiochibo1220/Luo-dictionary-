@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { canReviewContent } from "@/lib/permissions";
+import { canReviewContent, isLanguageAdmin } from "@/lib/permissions";
 import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 
@@ -103,8 +103,9 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = session.user as any;
-  if (!user.isSuperAdmin) {
+  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { languageId: true } });
+  if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!isLanguageAdmin(session, record.languageId)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

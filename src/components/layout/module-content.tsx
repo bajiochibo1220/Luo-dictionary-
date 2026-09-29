@@ -140,6 +140,8 @@ export function ModuleContent({
               key={v.key}
               onClick={() => setView(v.key)}
               title={v.label}
+              aria-label={`${v.label} view`}
+              aria-pressed={view === v.key}
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
                 view === v.key
                   ? "bg-stone-900 text-amber-50 shadow"
@@ -196,7 +198,7 @@ export function ModuleContent({
 
 function FeedView({ items, mediaForCard, languageCode, viewLanguageCode }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string }) {
   return (
-    <div className="space-y-8 max-w-6xl">
+      <div className="space-y-4 md:space-y-8 max-w-6xl">
       {items.map((item) => (
         <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} />
       ))}
@@ -212,18 +214,18 @@ function FeedCard({ item, media, languageCode, viewLanguageCode }: { item: Conte
   const description = showEnglish ? item.englishSummary : item.summary;
   return (
     <article className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
-      <div className="min-w-0 space-y-4">
+      <div className="min-w-0 space-y-2 md:space-y-4">
         {media.map((asset) => (
-          <div key={asset.id} className="w-full min-h-24 flex items-center justify-center bg-transparent">
-            {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
-            {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+          <div key={asset.id} className="w-full flex items-center justify-center bg-black/5 overflow-hidden rounded-lg">
+            {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-cover md:object-contain" />}
+            {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-cover md:object-contain" />}
             {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3">Audio recording{asset.format ? ` - ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
             {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline">Open transcript or document</a>}
           </div>
         ))}
-        {!primary && <div className="min-h-24" />}
+        {!primary && <div className="hidden md:block min-h-24" />}
       </div>
-      <div className="min-w-0 py-2 md:py-4">
+      <div className="min-w-0 py-1 md:py-4">
         {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
         <h3 className="font-serif text-2xl text-stone-900 mb-3 leading-snug underline underline-offset-4 decoration-stone-900/40">{item.title}</h3>
         {languageCode !== "eng" && (

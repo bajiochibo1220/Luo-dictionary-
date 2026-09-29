@@ -12,6 +12,7 @@ type ContentRecord = {
   createdAt: string;
   editLanguageId: number;
   canModerate: boolean;
+  canDelete: boolean;
   language: { code: string; nativeName: string };
   module: { code: string; baseName: string };
 };
@@ -34,6 +35,8 @@ export function ContentTable({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   async function action(id: string, endpoint: string, label: string) {
     setBusy(id);
@@ -68,6 +71,26 @@ export function ContentTable({
     }
   }
 
+  async function deleteSelected() {
+    if (!selected.length || !confirm(`Delete ${selected.length} selected records permanently?`)) return;
+    setBulkBusy(true);
+    try {
+      const res = await fetch("/api/content/bulk-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selected }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      toast.success(`${selected.length} records deleted`);
+      setSelected([]);
+      router.refresh();
+    } catch {
+      toast.error("Bulk delete failed");
+    } finally {
+      setBulkBusy(false);
+    }
+  }
+
   if (records.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
@@ -78,9 +101,18 @@ export function ContentTable({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-      <table className="w-full text-sm">
+      {canDelete && <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-stone-100">
+        <label className="flex items-center gap-2 text-sm text-stone-600">
+          <input type="checkbox" checked={records.filter((r) => r.canDelete).length > 0 && selected.length === records.filter((r) => r.canDelete).length} onChange={(e) => setSelected(e.target.checked ? records.filter((r) => r.canDelete).map((r) => r.id) : [])} aria-label="Select all deletable records" />
+          {selected.length ? `${selected.length} selected` : "Select records"}
+        </label>
+        {selected.length > 0 && <button onClick={deleteSelected} disabled={bulkBusy} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50">{bulkBusy ? "Deleting…" : `Delete selected (${selected.length})`}</button>}
+      </div>}
+      <div className="w-full overflow-x-auto overscroll-x-contain">
+      <table className="w-full min-w-[760px] text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
+            {canDelete && <th className="w-10 px-3 py-3" aria-label="Select" />}
             <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
               Title
             </th>
@@ -104,6 +136,7 @@ export function ContentTable({
               key={r.id}
               className="border-b border-stone-100 hover:bg-stone-50 transition"
             >
+              {canDelete && <td className="px-3 py-3">{r.canDelete && <input type="checkbox" checked={selected.includes(r.id)} onChange={(e) => setSelected((current) => e.target.checked ? [...current, r.id] : current.filter((id) => id !== r.id))} aria-label={`Select ${r.title}`} />}</td>}
               <td className="px-4 py-3">
                 <Link
                   href={`/admin/content/${r.id}/edit?languageId=${r.editLanguageId}`}
@@ -155,7 +188,7 @@ export function ContentTable({
                     Submit
                   </button>
                 )}
-                {canDelete && (
+                {r.canDelete && (
                   <button
                     onClick={() => deleteRecord(r.id)}
                     disabled={busy === r.id}
@@ -169,6 +202,7 @@ export function ContentTable({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

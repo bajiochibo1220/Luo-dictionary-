@@ -2,19 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { askQuestion } from "@/lib/ai/rag";
-import { hasGemini } from "@/lib/ai/gemini";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    if (!(await hasGemini())) {
-      return NextResponse.json(
-        { success: false, error: "AI is not configured." },
-        { status: 400 }
-      );
-    }
-
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
