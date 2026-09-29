@@ -121,7 +121,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Super-admin routes
-  if (pathname.indexOf("/super-admin") === 0 && !isSuperAdmin) {
+  if (pathname.indexOf("/super-admin") === 0 && user.isMasterSuperAdmin !== true) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

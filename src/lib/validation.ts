@@ -9,7 +9,7 @@ export const registerSchema = z.object({
     month: z.number().int().min(1).max(12),
     year: z.number().int().min(1900).max(new Date().getFullYear()),
   }),
-  role: z.enum(["registered", "contributor", "elder", "researcher", "teacher"]),
+  role: z.enum(["registered", "student", "contributor", "elder", "researcher", "teacher"]),
   languageId: z.number().int().positive(),
   acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Please accept the Terms and Privacy Policy" }) }),
 });

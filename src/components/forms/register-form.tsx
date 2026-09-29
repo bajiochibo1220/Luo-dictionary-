@@ -175,6 +175,11 @@ export function RegisterForm() {
         >
           {loading ? "Creating account..." : "Create account"}
         </button>
+
+        <label className="flex items-start gap-2 text-xs text-stone-700 leading-relaxed pt-2">
+          <input type="checkbox" name="acceptedTerms" required checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-0.5 accent-amber-700" />
+          <span>I accept the <a className="font-semibold underline" href="/terms" target="_blank">Terms of Service</a> and <a className="font-semibold underline" href="/privacy" target="_blank">Privacy Policy</a>, and agree to contribute respectfully.</span>
+        </label>
       </form>
 
       <div className="relative py-3">
@@ -225,10 +230,6 @@ export function RegisterForm() {
         </button>
       </div>
 
-      <label className="flex items-start gap-2 text-xs text-stone-700 leading-relaxed pt-2">
-        <input type="checkbox" name="acceptedTerms" required checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-0.5 accent-amber-700" />
-        <span>I accept the <a className="font-semibold underline" href="/terms" target="_blank">Terms of Service</a> and <a className="font-semibold underline" href="/privacy" target="_blank">Privacy Policy</a>, and agree to contribute respectfully.</span>
-      </label>
       <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
         <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><a href="/" className="hover:underline">Home</a>
       </nav>

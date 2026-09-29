@@ -32,19 +32,6 @@ declare module "next-auth" {
   }
 }
 
-async function loadUserRoles(userId: string): Promise<LanguageRole[]> {
-  const rows = await prisma.userLanguageRole.findMany({
-    where: { userId },
-    include: { language: true },
-  });
-  return rows.map((lr) => ({
-    languageId: lr.languageId,
-    languageCode: lr.language.code,
-    languageName: lr.language.name,
-    role: lr.role,
-  }));
-}
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: {
     ...PrismaAdapter(prisma),
@@ -66,6 +53,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      // Google verifies the email address, so allow its account to attach to
+      // an existing password account with the same normalized email.
+      allowDangerousEmailAccountLinking: true,
       profile(profile) {
         return {
           ...profile,
@@ -130,22 +120,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
-        token.isMasterSuperAdmin = (user as any).isMasterSuperAdmin ?? false;
-        token.languageRoles = (user as any).languageRoles ?? [];
       }
 
-      if (token.id && (!token.isMasterSuperAdmin || !token.languageRoles || (token.languageRoles as any[]).length === 0)) {
+      if (token.id) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
+            include: { languageRoles: { include: { language: true } } },
           });
           if (dbUser) {
             const accountActive = dbUser.status === "active";
             token.isSuperAdmin = dbUser.isSuperAdmin && accountActive;
             token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin && accountActive;
-            token.languageRoles = await loadUserRoles(dbUser.id);
+            token.languageRoles = accountActive
+              ? dbUser.languageRoles.map((lr) => ({
+                  languageId: lr.languageId,
+                  languageCode: lr.language.code,
+                  languageName: lr.language.name,
+                  role: lr.role,
+                }))
+              : [];
           } else {
+            token.id = undefined;
             token.isSuperAdmin = false;
             token.isMasterSuperAdmin = false;
             token.languageRoles = [];
@@ -168,6 +164,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           (token.languageRoles as LanguageRole[]) ?? [];
       }
       return session;
+    },
+    async signIn({ user }) {
+      if (!user.id) return false;
+      const account = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { status: true },
+      });
+      return account?.status === "active";
     },
   },
   trustHost: true,
