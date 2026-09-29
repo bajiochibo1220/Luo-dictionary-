@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: { id: user.id, email: user.email },
+      data: { id: user.id, email: user.email, status: user.status },
     });
   } catch (err: any) {
     if (err.name === "ZodError") {

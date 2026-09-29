@@ -130,16 +130,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
           if (dbUser) {
             const accountActive = dbUser.status === "active";
+            const nonPrivilegedRoles = [
+              "registered",
+              "student",
+              "teacher",
+              "researcher",
+              "contributor",
+              "elder",
+            ];
             token.isSuperAdmin = dbUser.isSuperAdmin && accountActive;
             token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin && accountActive;
-            token.languageRoles = accountActive
-              ? dbUser.languageRoles.map((lr) => ({
+            token.languageRoles = dbUser.languageRoles
+              .filter((lr) => accountActive || nonPrivilegedRoles.includes(lr.role))
+              .map((lr) => ({
                   languageId: lr.languageId,
                   languageCode: lr.language.code,
                   languageName: lr.language.name,
                   role: lr.role,
-                }))
-              : [];
+                }));
           } else {
             token.id = undefined;
             token.isSuperAdmin = false;
@@ -171,7 +179,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         where: { id: user.id },
         select: { status: true },
       });
-      return account?.status === "active";
+      // Match credentials authorization: pending accounts may authenticate,
+      // but suspended or missing accounts may not. Pending users are kept out
+      // of privileged routes because JWT role claims are only loaded as active.
+      return !!account && account.status !== "suspended";
     },
   },
   trustHost: true,

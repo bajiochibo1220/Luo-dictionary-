@@ -71,6 +71,12 @@ export function RegisterForm() {
       return;
     }
 
+    if (data.data?.status === "pending") {
+      toast.success("Account created. It is awaiting approval before you can continue.");
+      router.push("/login?registered=pending");
+      return;
+    }
+
     toast.success("Account created. Signing in...");
     const signInResult = await signIn("credentials", {
       email: body.email,
