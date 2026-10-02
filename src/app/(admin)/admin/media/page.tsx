@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { MediaGrid } from "@/components/admin/media-grid";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
+import { redirect } from "next/navigation";
 
 export default async function MediaLibraryPage({
   searchParams,
@@ -11,13 +12,14 @@ export default async function MediaLibraryPage({
 }) {
   const session = await auth();
   const user = session!.user as any;
-  const isSuperAdmin = !!user.isSuperAdmin;
+  const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
+  if (!isSuperAdmin && !(user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
 
   const managedLanguageIds = isSuperAdmin
     ? undefined
     : ((user.languageRoles ?? []) as any[])
         .filter((r) =>
-          ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(r.role)
+          ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(r.role)
         )
         .map((r) => r.languageId);
 

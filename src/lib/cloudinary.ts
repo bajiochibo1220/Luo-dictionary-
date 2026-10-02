@@ -32,6 +32,7 @@ export async function uploadToCloudinary(
   folder: string,
   options?: {
     resourceType?: "image" | "video" | "raw" | "auto";
+    deliveryType?: "upload" | "authenticated";
     publicId?: string;
     tags?: string[];
   }
@@ -45,6 +46,7 @@ export async function uploadToCloudinary(
         {
           folder,
           resource_type: resourceType,
+          type: options?.deliveryType ?? "authenticated",
           public_id: options?.publicId,
           tags: options?.tags,
           overwrite: false,
@@ -96,10 +98,36 @@ export async function uploadToCloudinary(
  */
 export async function deleteFromCloudinary(
   publicId: string,
-  resourceType: "image" | "video" | "raw" = "image"
+  resourceType: "image" | "video" | "raw" = "image",
+  deliveryType: "upload" | "authenticated" = "authenticated"
 ) {
   return cloudinary.uploader.destroy(publicId, {
     resource_type: resourceType,
+    type: deliveryType,
     invalidate: true,
   });
+}
+
+export async function calculateCloudinarySha256(
+  publicId: string,
+  format: string,
+  resourceType: "image" | "video" | "raw"
+): Promise<string> {
+  const expiresAt = Math.floor(Date.now() / 1000) + 120;
+  const downloadUrl = cloudinary.utils.private_download_url(publicId, format, {
+    resource_type: resourceType,
+    type: "authenticated",
+    expires_at: expiresAt,
+  });
+  const response = await fetch(downloadUrl, { cache: "no-store" });
+  if (!response.ok || !response.body) throw new Error("Could not read uploaded file for integrity verification");
+
+  const hash = crypto.createHash("sha256");
+  const reader = response.body.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    hash.update(value);
+  }
+  return hash.digest("hex");
 }

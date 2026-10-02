@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
   VisitorTrend,
@@ -12,12 +14,20 @@ export default async function AnalyticsPage({
 }: {
   searchParams: { days?: string; lang?: string };
 }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  const user = session.user as any;
+  const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
+  const assignedLanguageIds = [...new Set<number>((user.languageRoles ?? [])
+    .filter((role: any) => role.role === "language_admin")
+    .map((role: any) => Number(role.languageId)))];
+  if (!isSuperAdmin && !assignedLanguageIds.length) redirect("/admin/dashboard");
   const days = Math.max(1, Math.min(90, Number(searchParams.days) || 30));
   const since = new Date();
   since.setDate(since.getDate() - days);
 
   const languages = await prisma.language.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ...(!isSuperAdmin ? { id: { in: assignedLanguageIds } } : {}) },
     orderBy: { displayOrder: "asc" },
   });
 
@@ -26,7 +36,7 @@ export default async function AnalyticsPage({
     ? languages.find((l) => l.code === langCode)
     : null;
 
-  const where: any = { createdAt: { gte: since } };
+  const where: any = { createdAt: { gte: since }, ...(!isSuperAdmin ? { languageId: { in: assignedLanguageIds } } : {}) };
   if (language) where.languageId = language.id;
 
   const [totalEvents, uniqueUserIds] = await Promise.all([
@@ -150,7 +160,7 @@ export default async function AnalyticsPage({
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
         >
-          All languages
+          {isSuperAdmin ? "All languages" : "All assigned languages"}
         </Link>
         {languages.map((l) => (
           <Link

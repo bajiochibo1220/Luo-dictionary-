@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
-import { canReviewContent } from "@/lib/permissions";
+import { canUploadContent } from "@/lib/permissions";
 import { BulkMediaUploader } from "@/components/admin/bulk-media-uploader";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
@@ -21,9 +21,7 @@ export default async function NewContentPage({
   });
   if (!mod) notFound();
 
-  const adminRoles = (user.languageRoles ?? []).filter((role: any) =>
-    ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(role.role)
-  );
+  const adminRoles = (user.languageRoles ?? []).filter((role: any) => ["uploader", "language_admin"].includes(role.role));
   const allowedLanguageIds = adminRoles.map((role: any) => role.languageId);
   const selectedAdminLanguageId = user.isSuperAdmin ? await getSelectedAdminCultureId() : undefined;
   const languages = await prisma.language.findMany({
@@ -35,6 +33,7 @@ export default async function NewContentPage({
   const selectedLanguage = languages.find((language) => language.id === requestedLanguageId) ?? languages[0];
   if (!selectedLanguage) notFound();
   const languageId = selectedLanguage.id;
+  if (!canUploadContent(session, languageId)) notFound();
 
   // Load field definitions + translations for this module + language
   const fieldDefs = await prisma.fieldDefinition.findMany({
@@ -74,14 +73,12 @@ export default async function NewContentPage({
         </a>)}
       </nav>}
 
-      {canReviewContent(session, languageId) && (
-        <BulkMediaUploader
-          moduleCode={mod.code}
-          moduleName={mod.baseName}
-          languageId={languageId}
-          languageCode={selectedLanguage.code}
-        />
-      )}
+      <BulkMediaUploader
+        moduleCode={mod.code}
+        moduleName={mod.baseName}
+        languageId={languageId}
+        languageCode={selectedLanguage.code}
+      />
 
       <DynamicContentForm
         moduleCode={mod.code}
@@ -89,7 +86,8 @@ export default async function NewContentPage({
         languageName={selectedLanguage.nativeName}
         languageCode={selectedLanguage.code}
         fieldDefs={formatted}
-        isAdmin={canReviewContent(session, languageId)}
+        isAdmin
+        redirectTo="/admin/content"
       />
     </div>
   );

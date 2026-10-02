@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     }
 
     const user = session.user as any;
-    if (!user.isSuperAdmin) {
+    if (!user.isSuperAdmin && !user.isMasterSuperAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     const where: any = {
       moduleId: mod.id,
-      status: "published",
+      ...publicRecordWhere(),
       languageId: cultureLanguageId,
     };
     if (q) {
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
     const records = await prisma.culturalRecord.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { media: true, translations: { where: { languageId: language.id } } },
+      include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: language.id } } },
     });
 
     return NextResponse.json({ success: true, data: records.map((record) => localizeRecord(record, language.id)) });

@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { AuditLogTable } from "@/components/admin/audit-log-table";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function AuditLogsPage({
   searchParams,
 }: {
   searchParams: { days?: string; action?: string; entityType?: string };
 }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin) redirect("/admin/dashboard");
   const days = Math.max(1, Math.min(365, Number(searchParams.days) || 30));
   const since = new Date();
   since.setDate(since.getDate() - days);

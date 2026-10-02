@@ -14,13 +14,13 @@ export default async function AdminLayout({
   if (!session?.user) redirect("/login");
 
   const user = session.user as any;
-  const isSuperAdmin = !!user.isSuperAdmin;
+  const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const languageRoles = (user.languageRoles ?? []) as any[];
 
   const isAdmin =
     isSuperAdmin ||
     languageRoles.some((r: any) =>
-      ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(
+      ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(
         r.role
       )
     );
@@ -43,6 +43,8 @@ export default async function AdminLayout({
       userName={user.name ?? null}
       userImage={user.image ?? null}
       isSuperAdmin={isSuperAdmin}
+      isMasterSuperAdmin={!!user.isMasterSuperAdmin}
+      roles={languageRoles}
       notificationCount={notificationCount}
       languages={languages}
       selectedLanguageId={selectedLanguageId}

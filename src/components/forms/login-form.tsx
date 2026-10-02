@@ -3,13 +3,21 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const googleError = searchParams.get("error");
+
+  function startGoogleLogin() {
+    document.cookie = `google-auth-intent=login; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
+    void signIn("google", { callbackUrl: "/dashboard" });
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,11 +50,19 @@ export function LoginForm() {
       const session = await sessionRes.json();
       const user = session?.user as any;
 
+      if (user?.isMasterSuperAdmin === true) {
+        toast.success("Welcome back, Master Super Admin");
+        router.push("/super-admin/dashboard");
+        router.refresh();
+        return;
+      }
+
       const isSuperAdmin = user?.isSuperAdmin === true;
       const hasAdminRole = (user?.languageRoles ?? []).some((r: any) =>
         [
           "language_admin",
-          "moderator",
+          "uploader",
+          "publisher",
           "content_editor",
           "cultural_expert",
         ].includes(r.role)
@@ -73,14 +89,21 @@ export function LoginForm() {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={onSubmit} className="space-y-3">
+      {googleError && <div role="alert" className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+        {googleError === "GoogleAccountNotFound"
+          ? <>We could not find an account for this Google email. <Link href="/register" className="font-semibold underline">Create an account to continue.</Link></>
+          : googleError === "AccountSuspended"
+          ? "This account is not available. Please contact an administrator."
+          : "We could not sign you in with Google. Please try again or create an account."}
+      </div>}
+      <form onSubmit={onSubmit} className="space-y-3" autoComplete="off">
         <input
           id="email"
           name="email"
           type="email"
           required
           placeholder="Email address"
-          autoComplete="email"
+          autoComplete="off"
           className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400"
         />
 
@@ -91,7 +114,7 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             required
             placeholder="Password"
-            autoComplete="current-password"
+            autoComplete="off"
             className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400 pr-16"
           />
           <button
@@ -146,7 +169,7 @@ export function LoginForm() {
         </button>
         <button
           type="button"
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          onClick={startGoogleLogin}
           className="flex items-center justify-center gap-2 py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition text-sm font-medium text-stone-700"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">

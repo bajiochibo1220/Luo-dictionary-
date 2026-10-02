@@ -9,9 +9,10 @@ type Language = { id: number; code: string; nativeName: string };
 const ROLES = [
   { value: "super_admin", label: "Super Admin" },
   { value: "language_admin", label: "Language Admin" },
-  { value: "moderator", label: "Moderator" },
+  { value: "uploader", label: "Uploader" },
   { value: "content_editor", label: "Content Editor" },
   { value: "cultural_expert", label: "Cultural Expert" },
+  { value: "publisher", label: "Publisher" },
 ];
 
 export function AddAdminModal({

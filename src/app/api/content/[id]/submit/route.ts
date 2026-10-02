@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
+import { canUploadContent } from "@/lib/permissions";
+import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 
 export const dynamic = "force-dynamic";
 
@@ -16,37 +18,69 @@ export async function POST(
 
   const record = await prisma.culturalRecord.findUnique({
     where: { id: params.id },
+    include: { transcripts: { select: { text: true } } },
   });
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (record.contributorId !== (session.user as any).id) {
+  const userId = (session.user as any).id as string;
+  const isUploader = canUploadContent(session, record.languageId);
+  if (record.contributorId !== userId && !isUploader) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  const uploaderResubmittingInternal = record.status === "curated" && isUploader;
+  if (!["draft", "rejected", "needs_edit"].includes(record.status) && !uploaderResubmittingInternal) {
+    return NextResponse.json(
+      { success: false, error: "Only drafts, returned items, or internal items selected by a reviewer can enter cultural review." },
+      { status: 409 }
+    );
+  }
+
+  const module = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
+  const hasLinkedTranscript = record.transcripts.some((item) => item.text.trim().length > 0);
+  const requiredError = validatePhaseOneSubmission(module?.code ?? "", record.title, record.data, hasLinkedTranscript);
+  if (requiredError) return NextResponse.json({ success: false, error: requiredError }, { status: 400 });
+  const recordData = record.data && typeof record.data === "object" ? record.data as Record<string, unknown> : {};
+  if (recordData.sourcePermission === "not_granted") {
+    return NextResponse.json({ success: false, error: "Permission has not been granted. Keep this contribution as a draft." }, { status: 400 });
   }
 
   const oldStatus = record.status;
 
-  const updated = await prisma.culturalRecord.update({
-    where: { id: params.id },
-    data: { status: "submitted" },
+  // Make the transition conditional so concurrent requests cannot resubmit a
+  // record after a reviewer has already acted on it.
+  const transition = await prisma.culturalRecord.updateMany({
+    where: {
+      id: params.id,
+      ...(!isUploader ? { contributorId: userId } : {}),
+      status: { in: uploaderResubmittingInternal ? ["curated"] : ["draft", "rejected", "needs_edit"] },
+    },
+    data: { status: "submitted", publishedAt: null, validatorId: null },
   });
+  if (transition.count !== 1) {
+    return NextResponse.json(
+      { success: false, error: "This contribution changed while you were submitting it. Refresh and try again." },
+      { status: 409 }
+    );
+  }
+  const updated = await prisma.culturalRecord.findUniqueOrThrow({ where: { id: params.id } });
 
-  // Notify moderators and admins for this language
-  const moderators = await prisma.userLanguageRole.findMany({
+  // Notify cultural experts first. Language admins are notified as overseers.
+  const reviewers = await prisma.userLanguageRole.findMany({
     where: {
       languageId: record.languageId,
-      role: { in: ["moderator", "language_admin"] },
+      role: "cultural_expert",
     },
     select: { userId: true },
   });
 
-  if (moderators.length > 0) {
+  if (reviewers.length > 0) {
     await prisma.notification.createMany({
-      data: moderators.map((m) => ({
-        userId: m.userId,
+      data: reviewers.map(({ userId }) => ({
+        userId,
         type: "content_submitted",
-        message: `New contribution submitted: "${record.title}"`,
-        link: `/admin/review-queue/${record.id}`,
+        message: `New contribution waiting for cultural review: "${record.title}"`,
+        link: `/admin/validation-queue/${record.id}`,
       })),
     });
   }

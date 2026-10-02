@@ -63,6 +63,13 @@ export default async function RiddleDetailPage({
           </div>
         )}
 
+        {d.explanation && (
+          <div className="mt-6">
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">Explanation</p>
+            <p className="text-stone-700">{d.explanation}</p>
+          </div>
+        )}
+
         {record.tags.length > 0 && (
           <div className="mt-6">
             <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">

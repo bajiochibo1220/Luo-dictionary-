@@ -18,19 +18,17 @@ type UserInfo = {
   isSuperAdmin: boolean;
   isMasterSuperAdmin: boolean;
   status: string;
+  profileTypes: string[];
   languageRoles: UserRole[];
 };
 
 type Language = { id: number; code: string; nativeName: string };
 
 const ROLES = [
-  "contributor",
-  "elder",
-  "researcher",
-  "teacher",
-  "moderator",
+  "uploader",
   "content_editor",
   "cultural_expert",
+  "publisher",
   "language_admin",
 ];
 
@@ -170,10 +168,14 @@ export function UserDetailPanel({
         </button>}
       </div>
 
-      {/* Roles */}
       <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public profile</h2>
+        <p className="text-sm text-stone-700">{user.profileTypes.length ? user.profileTypes.map((type) => type.replaceAll("_", " ")).join(", ") : "No interests selected"}</p>
+      </div>
+
+      {(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-sm">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-          Language Roles ({user.languageRoles.length})
+          Admin Roles ({user.languageRoles.length})
         </h2>
 
         {user.languageRoles.length === 0 ? (
@@ -239,7 +241,7 @@ export function UserDetailPanel({
             </button>
           </div>
         </div>}
-      </div>
+      </div>}
 
       {/* Danger zone */}
       {isMasterSuperAdmin && !user.isMasterSuperAdmin && <div className="bg-red-50 rounded-xl border border-red-100 p-6">

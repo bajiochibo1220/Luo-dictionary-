@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -22,14 +23,19 @@ function labelFor(code: string, t: (c: string) => string): string {
 
 export function Header() {
   const { language, t } = useLanguage();
+  const pathname = usePathname();
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const isAdmin = Boolean(
     session?.user?.isSuperAdmin ||
     session?.user?.languageRoles?.some((role) =>
-      ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(role.role)
+      ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role)
     )
   );
+  const alternateCode = language.code === "luo" ? "eng" : "luo";
+  const alternatePath = pathname.startsWith(`/${language.code}`)
+    ? pathname.replace(`/${language.code}`, `/${alternateCode}`)
+    : `/${alternateCode}`;
 
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
@@ -57,10 +63,10 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/"
+            href={alternatePath}
             className="text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded px-2 py-1"
           >
-            🌐 Switch
+            {alternateCode === "luo" ? "Dholuo" : "English"}
           </Link>
 
           {session?.user ? (

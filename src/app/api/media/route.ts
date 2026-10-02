@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { canReviewGovernedItem } from "@/lib/governance";
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       ? undefined
       : ((user.languageRoles ?? []) as any[])
           .filter((r) =>
-            ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(r.role)
+            ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(r.role)
           )
           .map((r) => r.languageId);
 
@@ -39,15 +40,24 @@ export async function GET(req: NextRequest) {
       take: 200,
       include: {
         language: { select: { code: true, nativeName: true } },
-        record: { select: { id: true, title: true } },
+        record: { select: { id: true, title: true, languageId: true, status: true, consentScope: true, restrictionLevel: true, embargoUntil: true, contributorId: true } },
+        dictionary: { select: { id: true, languageId: true, status: true, consentScope: true, restrictionLevel: true, embargoUntil: true, contributorId: true } },
       },
+    });
+
+    const accessUser = { isSuperAdmin, languageRoles: user.languageRoles };
+    const visibleAssets = assets.filter((asset) => {
+      const parent = asset.record ?? asset.dictionary;
+      return canReviewGovernedItem(accessUser, asset, asset.languageId) &&
+        (!parent || canReviewGovernedItem(accessUser, parent, parent.languageId));
     });
 
     return NextResponse.json({
       success: true,
-      data: assets.map((a) => ({
-        ...a,
-        sizeBytes: Number(a.sizeBytes),
+      data: visibleAssets.map(({ record, dictionary, ...asset }) => ({
+        ...asset,
+        record: record ? { id: record.id, title: record.title } : null,
+        sizeBytes: Number(asset.sizeBytes),
       })),
     });
   } catch (err: any) {

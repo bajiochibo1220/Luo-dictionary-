@@ -17,7 +17,11 @@ export function isAuthenticated(session: Session | null): boolean {
 }
 
 export function isSuperAdmin(session: Session | null): boolean {
-  return !!(session?.user as any)?.isSuperAdmin;
+  return !!((session?.user as any)?.isSuperAdmin || (session?.user as any)?.isMasterSuperAdmin);
+}
+
+export function isMasterSuperAdmin(session: Session | null): boolean {
+  return !!(session?.user as any)?.isMasterSuperAdmin;
 }
 
 export function hasRole(
@@ -42,9 +46,7 @@ export function isModerator(
   languageId: number
 ): boolean {
   return (
-    isSuperAdmin(session) ||
-    hasRole(session, languageId, "moderator") ||
-    hasRole(session, languageId, "language_admin")
+    isSuperAdmin(session) || hasRole(session, languageId, "language_admin")
   );
 }
 
@@ -60,8 +62,7 @@ export function canReviewContent(
   languageId: number
 ): boolean {
   return (
-    isSuperAdmin(session) ||
-    hasRole(session, languageId, "moderator") ||
+    isMasterSuperAdmin(session) ||
     hasRole(session, languageId, "language_admin") ||
     hasRole(session, languageId, "content_editor") ||
     hasRole(session, languageId, "cultural_expert")
@@ -72,29 +73,37 @@ export function canValidateCulture(
   session: Session | null,
   languageId: number
 ): boolean {
-  return (
-    isSuperAdmin(session) ||
-    hasRole(session, languageId, "cultural_expert") ||
-    hasRole(session, languageId, "language_admin")
-  );
+  // Cultural review is a required workflow stage. Super admins can oversee
+  // every queue, but must also hold this language role to perform this review.
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "cultural_expert");
+}
+
+export function canSendToFinalReview(session: Session | null, languageId: number): boolean {
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "content_editor");
+}
+
+export function canEditContent(session: Session | null, languageId: number): boolean {
+  // A Super Admin can edit in a language only when explicitly assigned the
+  // editor role there; system-wide visibility does not grant editorial duties.
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "content_editor");
+}
+
+export function canFinalizeContent(session: Session | null, languageId: number): boolean {
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "publisher");
+}
+
+export function canUploadContent(session: Session | null, languageId: number): boolean {
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "uploader");
 }
 
 export function canContribute(
   session: Session | null,
   languageId: number
 ): boolean {
-  return (
-    isSuperAdmin(session) ||
-    hasRole(session, languageId, "contributor") ||
-    hasRole(session, languageId, "elder") ||
-    hasRole(session, languageId, "moderator") ||
-    hasRole(session, languageId, "content_editor") ||
-    hasRole(session, languageId, "language_admin") ||
-    hasRole(session, languageId, "registered") ||
-    hasRole(session, languageId, "student") ||
-    hasRole(session, languageId, "teacher") ||
-    hasRole(session, languageId, "researcher")
-  );
+  // Public account profile types describe interests, not authorization roles.
+  // Authenticated contributors can submit their own work; uploader privileges
+  // are checked separately for language-scoped administrative uploads.
+  return isAuthenticated(session);
 }
 
 export function getManagedLanguageIds(session: Session | null): number[] {
@@ -107,7 +116,7 @@ export function getManagedLanguageIds(session: Session | null): number[] {
 export function hasAnyAdminRole(session: Session | null): boolean {
   if (isSuperAdmin(session)) return true;
   return getRoles(session).some((lr) =>
-    ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(
+    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(
       lr.role
     )
   );

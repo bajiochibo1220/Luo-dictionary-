@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { AiTabs } from "@/components/admin/ai-tabs";
 import { AiFlagButton } from "@/components/admin/ai-flag-button";
 import { StatCard } from "@/components/admin/stat-card";
+import { redirect } from "next/navigation";
 
 export default async function AiMonitoringPage({
   searchParams,
@@ -11,26 +12,25 @@ export default async function AiMonitoringPage({
 }) {
   const session = await auth();
   const user = session!.user as any;
-  const isSuperAdmin = !!user.isSuperAdmin;
+  const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
+  const assignedLanguageIds = [...new Set<number>((user.languageRoles ?? [])
+    .filter((role: any) => role.role === "language_admin")
+    .map((role: any) => Number(role.languageId)))];
+  if (!isSuperAdmin && !assignedLanguageIds.length) redirect("/admin/dashboard");
 
   const tab = searchParams.tab || "chatbot";
 
   const languages = await prisma.language.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ...(!isSuperAdmin ? { id: { in: assignedLanguageIds } } : {}) },
     orderBy: { displayOrder: "asc" },
   });
 
   const langCode = searchParams.lang;
   const language = langCode ? languages.find((l) => l.code === langCode) : null;
 
-  const where: any = {};
+  const where: any = isSuperAdmin ? {} : { languageId: { in: assignedLanguageIds } };
   if (language) where.languageId = language.id;
-  else if (!isSuperAdmin) {
-    const managed = ((user.languageRoles ?? []) as any[]).map(
-      (r) => r.languageId
-    );
-    where.languageId = { in: managed };
-  }
+
 
   // Chatbot stats
   const [totalQueries, avgLatency, ratedCount, upCount, flaggedCount] =
@@ -53,10 +53,10 @@ export default async function AiMonitoringPage({
 
   // Embedding coverage
   const totalRecords = await prisma.culturalRecord.count({
-    where: { ...(language ? { languageId: language.id } : {}), status: "published" },
+    where: { ...where, ...(language ? { languageId: language.id } : {}), status: "published" },
   });
   const totalEmbeddings = await prisma.embedding.count({
-    where: language ? { record: { languageId: language.id } } : {},
+    where: language ? { record: { languageId: language.id } } : isSuperAdmin ? {} : { record: { languageId: { in: assignedLanguageIds } } },
   });
   const coveragePct =
     totalRecords === 0 ? 0 : Math.round((totalEmbeddings / totalRecords) * 100);
@@ -88,7 +88,7 @@ export default async function AiMonitoringPage({
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
         >
-          All languages
+          {isSuperAdmin ? "All languages" : "All assigned languages"}
         </a>
         {languages.map((l) => (
           <a

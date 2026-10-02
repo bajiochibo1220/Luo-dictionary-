@@ -112,6 +112,7 @@ export default async function ContributePage({
           languageName={languageName}
           languageCode={languageCode}
           fieldDefs={formatted}
+          isElderContributor={primaryRole?.role === "elder"}
         />
       )}
     </div>

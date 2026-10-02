@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { getGemini } from "./gemini";
+import { isPubliclyEligible } from "@/lib/governance";
 
 const MODEL = "gemini-embedding-001";
 
@@ -23,7 +24,8 @@ function buildRecordText(record: {
   if (record.summary) parts.push(record.summary);
   const d = record.data as any;
   if (d) {
-    for (const [, v] of Object.entries(d)) {
+    for (const [key, v] of Object.entries(d)) {
+      if (["sourcePermission", "attributionPreference"].includes(key)) continue;
       if (typeof v === "string") parts.push(v);
       else if (Array.isArray(v))
         parts.push(v.filter((x) => typeof x === "string").join(" "));
@@ -42,6 +44,11 @@ export async function embedRecord(recordId: string, force = false) {
   });
   if (!record) throw new Error("Record not found");
 
+  if (record.status !== "published" || !isPubliclyEligible(record)) {
+    await prisma.$executeRawUnsafe(`DELETE FROM embeddings WHERE "recordId" = $1`, recordId);
+    return { skipped: true, id: recordId, reason: "not_publicly_eligible" };
+  }
+
   if (!force) {
     const existing = await prisma.$queryRawUnsafe<Array<{ languageId: number | null }>>(
       `SELECT "languageId" FROM embeddings WHERE "recordId" = $1`,
@@ -54,14 +61,14 @@ export async function embedRecord(recordId: string, force = false) {
   }
 
   const variants = [
-    { languageId: record.languageId, data: record.data, summary: record.summary },
-    ...record.translations.map((translation) => ({ languageId: translation.languageId, data: translation.data, summary: translation.summary })),
+    { languageId: record.languageId, title: record.title, data: record.data, summary: record.summary },
+    ...record.translations.map((translation) => ({ languageId: translation.languageId, title: translation.title ?? record.title, data: translation.data, summary: translation.summary })),
   ];
 
   await prisma.$executeRawUnsafe(`DELETE FROM embeddings WHERE "recordId" = $1`, recordId);
   for (const variant of variants) {
     const text = buildRecordText({
-      title: record.title,
+      title: variant.title,
       data: variant.data ?? {},
       summary: variant.summary,
       media: variant.languageId === record.languageId ? record.media : [],
@@ -87,6 +94,11 @@ export async function embedDictionaryEntry(entryId: string, force = false) {
     where: { id: entryId },
   });
   if (!entry) throw new Error("Entry not found");
+
+  if (entry.status !== "published" || !isPubliclyEligible(entry)) {
+    await prisma.$executeRawUnsafe(`DELETE FROM embeddings WHERE "dictionaryId" = $1`, entryId);
+    return { skipped: true, id: entryId, reason: "not_publicly_eligible" };
+  }
 
   const english = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
   const languageIds = Array.from(new Set([entry.languageId, ...(english ? [english.id] : [])]));
@@ -129,34 +141,43 @@ export async function embedDictionaryEntry(entryId: string, force = false) {
 export async function embedTranscript(transcriptId: string, force = false) {
   const transcript = await prisma.transcript.findUnique({
     where: { id: transcriptId },
+    include: { record: { include: { translations: { include: { language: { select: { code: true } } } } } } },
   });
   if (!transcript) throw new Error("Transcript not found");
 
-  if (!force) {
-    const existing = await prisma.embedding.findFirst({
-      where: { transcriptId },
-    });
-    if (existing) return { skipped: true, id: existing.id };
+  if (!transcript.record || transcript.record.status !== "published" || !isPubliclyEligible(transcript) || !isPubliclyEligible(transcript.record)) {
+    await prisma.$executeRawUnsafe(`DELETE FROM embeddings WHERE "transcriptId" = $1`, transcriptId);
+    return { skipped: true, id: transcriptId, reason: "not_publicly_eligible" };
   }
 
-  const text = transcript.text.slice(0, 8000);
-  const vector = await embedText(text);
-  const vectorStr = `[${vector.join(",")}]`;
+  const variants = new Map<number, string>([[transcript.languageId, transcript.text]]);
+  const englishTranslation = transcript.record.translations.find((item) => item.language.code === "eng");
+  const englishText = (englishTranslation?.data as any)?.transcript;
+  if (typeof englishText === "string" && englishText.trim()) {
+    variants.set(englishTranslation!.languageId, englishText.trim());
+  }
 
-  await prisma.$executeRawUnsafe(
-    `DELETE FROM embeddings WHERE "transcriptId" = $1`,
-    transcriptId
-  );
+  if (!force) {
+    const existing = await prisma.embedding.findMany({ where: { transcriptId }, select: { languageId: true } });
+    if ([...variants.keys()].every((languageId) => existing.some((entry) => entry.languageId === languageId))) {
+      return { skipped: true, id: transcriptId };
+    }
+  }
 
-  await prisma.$executeRawUnsafe(
-    `INSERT INTO embeddings (id, "transcriptId", "languageId", content, vector, model, "createdAt")
-     VALUES (gen_random_uuid(), $1, $2, $3, $4::vector, $5, NOW())`,
-    transcriptId,
-    transcript.languageId,
-    text,
-    vectorStr,
-    MODEL
-  );
+  await prisma.$executeRawUnsafe(`DELETE FROM embeddings WHERE "transcriptId" = $1`, transcriptId);
+  for (const [languageId, text] of variants) {
+    const vector = await embedText(text.slice(0, 8000));
+    const vectorStr = `[${vector.join(",")}]`;
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO embeddings (id, "transcriptId", "languageId", content, vector, model, "createdAt")
+       VALUES (gen_random_uuid(), $1, $2, $3, $4::vector, $5, NOW())`,
+      transcriptId,
+      languageId,
+      text.slice(0, 8000),
+      vectorStr,
+      MODEL
+    );
+  }
 
   return { skipped: false };
 }

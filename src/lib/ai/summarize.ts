@@ -1,13 +1,19 @@
 import { prisma } from "@/lib/db";
 import { getGemini } from "./gemini";
+import { isPubliclyEligible } from "@/lib/governance";
 
 const MODEL = "gemini-3.8-flash";
 
 export async function summarizeTranscript(transcriptId: string) {
   const transcript = await prisma.transcript.findUnique({
     where: { id: transcriptId },
+    include: { record: true },
   });
   if (!transcript) throw new Error("Transcript not found");
+  if (!transcript.record || transcript.record.status !== "published" ||
+      !isPubliclyEligible(transcript) || !isPubliclyEligible(transcript.record)) {
+    throw new Error("Transcript is not approved for external AI processing");
+  }
 
   const genAI = await getGemini();
   const model = genAI.getGenerativeModel({ model: MODEL });
@@ -33,8 +39,13 @@ Return ONLY the 3-sentence summary, nothing else.`;
 export async function extractEntities(transcriptId: string) {
   const transcript = await prisma.transcript.findUnique({
     where: { id: transcriptId },
+    include: { record: true },
   });
   if (!transcript) throw new Error("Transcript not found");
+  if (!transcript.record || transcript.record.status !== "published" ||
+      !isPubliclyEligible(transcript) || !isPubliclyEligible(transcript.record)) {
+    throw new Error("Transcript is not approved for external AI processing");
+  }
 
   const genAI = await getGemini();
   const model = genAI.getGenerativeModel({ model: MODEL });

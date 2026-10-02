@@ -22,18 +22,18 @@ model Language {
   createdAt    DateTime @default(now())
   createdBy    String?
 
-  moduleTranslations ModuleTranslation[]
-  fieldTranslations  FieldTranslation[]
-  culturalRecords    CulturalRecord[]
+  moduleTranslations  ModuleTranslation[]
+  fieldTranslations   FieldTranslation[]
+  culturalRecords     CulturalRecord[]
   contentTranslations CulturalRecordTranslation[]
-  dictionaryEntries  DictionaryEntry[]
-  mediaAssets        MediaAsset[]
-  embeddings         Embedding[]
-  transcripts        Transcript[]
-  userRoles          UserLanguageRole[]
-  settings           LanguageSetting[]
-  trainingDatasets   TrainingDataset[]
-  consentRecords     ConsentRecord[]
+  dictionaryEntries   DictionaryEntry[]
+  mediaAssets         MediaAsset[]
+  embeddings          Embedding[]
+  transcripts         Transcript[]
+  userRoles           UserLanguageRole[]
+  settings            LanguageSetting[]
+  trainingDatasets    TrainingDataset[]
+  consentRecords      ConsentRecord[]
 
   @@map("languages")
 }
@@ -101,34 +101,37 @@ model FieldTranslation {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  name          String?
-  passwordHash  String?
-  image         String?
-  age           Int?
-  dateOfBirth   DateTime?
-  isSuperAdmin  Boolean   @default(false)
-  isMasterSuperAdmin Boolean @default(false)
-  status        String    @default("active")
-  emailVerified DateTime?
-  avatarUrl     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                 String    @id @default(uuid())
+  email              String    @unique
+  name               String?
+  passwordHash       String?
+  image              String?
+  age                Int?
+  dateOfBirth        DateTime?
+  isSuperAdmin       Boolean   @default(false)
+  isMasterSuperAdmin Boolean   @default(false)
+  status             String    @default("active")
+  profileTypes       String[]  @default([])
+  emailVerified      DateTime?
+  avatarUrl          String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  languageRoles UserLanguageRole[]
-  contributions CulturalRecord[]   @relation("Contributor")
-  reviews       CulturalRecord[]   @relation("Reviewer")
-  validations   CulturalRecord[]   @relation("Validator")
-  notifications Notification[]
-  auditLogs     AuditLog[]
-  reviewActions ReviewHistory[]
-  accounts      Account[]
-  sessions      Session[]
-  conversations Conversation[]
+  languageRoles    UserLanguageRole[]
+  contributions    CulturalRecord[]   @relation("Contributor")
+  reviews          CulturalRecord[]   @relation("Reviewer")
+  validations      CulturalRecord[]   @relation("Validator")
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  reviewActions    ReviewHistory[]
+  accounts         Account[]
+  sessions         Session[]
+  conversations    Conversation[]
+  reviewedConsents ConsentRecord[]    @relation("ConsentReviewer")
 
   @@map("users")
 }
+
 model Role {
   id          Int     @id @default(autoincrement())
   name        String  @unique
@@ -213,6 +216,13 @@ model CulturalRecord {
   status           String    @default("draft")
   nrfUri           String?   @unique
   nrfMetadata      Json?
+  consentScope     String    @default("pending")
+  restrictionLevel String    @default("internal")
+  embargoUntil     DateTime?
+  countyCode       String?
+  siteName         String?
+  sourceReference  String?
+  sessionId        String?
   contributorId    String?
   contributorAge   Int?
   primaryMediaType String?
@@ -222,21 +232,23 @@ model CulturalRecord {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  language    Language         @relation(fields: [languageId], references: [id])
-  module      Module           @relation(fields: [moduleId], references: [id])
-  contributor User?            @relation("Contributor", fields: [contributorId], references: [id])
-  reviewer    User?            @relation("Reviewer", fields: [reviewerId], references: [id])
-  validator   User?            @relation("Validator", fields: [validatorId], references: [id])
-  media       MediaAsset[]
-  translations CulturalRecordTranslation[]
-  transcripts Transcript[]
-  reviews     ReviewHistory[]
-  embeddings  Embedding[]
-  provenance  Provenance[]
-  versions    VersionHistory[]
+  language       Language                    @relation(fields: [languageId], references: [id])
+  module         Module                      @relation(fields: [moduleId], references: [id])
+  contributor    User?                       @relation("Contributor", fields: [contributorId], references: [id])
+  reviewer       User?                       @relation("Reviewer", fields: [reviewerId], references: [id])
+  validator      User?                       @relation("Validator", fields: [validatorId], references: [id])
+  media          MediaAsset[]
+  translations   CulturalRecordTranslation[]
+  transcripts    Transcript[]
+  reviews        ReviewHistory[]
+  embeddings     Embedding[]
+  provenance     Provenance[]
+  versions       VersionHistory[]
+  consentRecords ConsentRecord[]
 
   @@index([languageId, moduleId, status])
   @@index([status])
+  @@index([consentScope, restrictionLevel])
   @@map("cultural_records")
 }
 
@@ -244,6 +256,7 @@ model CulturalRecordTranslation {
   id         String   @id @default(uuid())
   recordId   String
   languageId Int
+  title      String?  @db.Text
   summary    String?  @db.Text
   data       Json?
   createdAt  DateTime @default(now())
@@ -256,27 +269,35 @@ model CulturalRecordTranslation {
   @@index([languageId])
   @@map("cultural_record_translations")
 }
+
 model DictionaryEntry {
-  id            String    @id @default(uuid())
-  languageId    Int
-  dholuo        String
-  english       String
-  kiswahili     String?
-  pronunciation String?
-  grammarClass  String?
-  wordOrigin    String?
-  synonyms      String[]
-  antonyms      String[]
-  examples      Json?
-  audioUrl      String?
-  status        String    @default("draft")
-  nrfUri        String?   @unique
-  nrfMetadata   Json?
-  contributorId String?
-  reviewerId    String?
-  publishedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  languageId       Int
+  dholuo           String
+  english          String
+  kiswahili        String?
+  pronunciation    String?
+  grammarClass     String?
+  wordOrigin       String?
+  synonyms         String[]
+  antonyms         String[]
+  examples         Json?
+  audioUrl         String?
+  status           String    @default("draft")
+  nrfUri           String?   @unique
+  nrfMetadata      Json?
+  consentScope     String    @default("pending")
+  restrictionLevel String    @default("internal")
+  embargoUntil     DateTime?
+  countyCode       String?
+  siteName         String?
+  sourceReference  String?
+  sessionId        String?
+  contributorId    String?
+  reviewerId       String?
+  publishedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   language   Language     @relation(fields: [languageId], references: [id])
   media      MediaAsset[]
@@ -284,62 +305,90 @@ model DictionaryEntry {
 
   @@index([languageId, dholuo])
   @@index([languageId, english])
+  @@index([consentScope, restrictionLevel])
   @@map("dictionary_entries")
 }
 
 model MediaAsset {
-  id           String   @id @default(uuid())
-  languageId   Int
-  recordId     String?
-  dictionaryId String?
-  type         String
-  url          String
-  publicId     String
-  resourceType String
-  checksum     String
-  format       String
-  sizeBytes    BigInt
-  durationSecs Int?
-  width        Int?
-  height       Int?
-  caption      String?
-  altText      String?
-  thumbnailUrl String?
-  nrfMetadata  Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String    @id @default(uuid())
+  languageId       Int
+  recordId         String?
+  dictionaryId     String?
+  type             String
+  url              String
+  publicId         String
+  resourceType     String
+  deliveryType     String    @default("upload")
+  checksum         String
+  format           String
+  sizeBytes        BigInt
+  durationSecs     Int?
+  width            Int?
+  height           Int?
+  caption          String?
+  altText          String?
+  thumbnailUrl     String?
+  nrfMetadata      Json?
+  assetId          String?   @unique
+  nrfUri           String?   @unique
+  consentScope     String    @default("pending")
+  restrictionLevel String    @default("internal")
+  embargoUntil     DateTime?
+  countyCode       String?
+  siteName         String?
+  sourceReference  String?
+  sessionId        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  language   Language         @relation(fields: [languageId], references: [id])
-  record     CulturalRecord?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  dictionary DictionaryEntry? @relation(fields: [dictionaryId], references: [id], onDelete: Cascade)
+  language     Language             @relation(fields: [languageId], references: [id])
+  record       CulturalRecord?      @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  dictionary   DictionaryEntry?     @relation(fields: [dictionaryId], references: [id], onDelete: Cascade)
+  consentLinks ConsentRecordAsset[]
 
   @@index([recordId])
   @@index([dictionaryId])
   @@index([publicId])
+  @@index([consentScope, restrictionLevel])
   @@map("media_assets")
 }
 
 model Transcript {
-  id           String    @id @default(uuid())
-  languageId   Int
-  recordId     String?
-  text         String    @db.Text
-  languageCode String
-  speaker      String?
-  speakerRole  String?
-  recordedAt   DateTime?
-  location     String?
-  timestamps   Json?
-  isAligned    Boolean   @default(false)
-  aiSummary    String?   @db.Text
-  aiEntities   Json?
-  createdAt    DateTime  @default(now())
+  id               String    @id @default(uuid())
+  languageId       Int
+  recordId         String?
+  text             String    @db.Text
+  languageCode     String
+  speaker          String?
+  speakerRole      String?
+  recordedAt       DateTime?
+  location         String?
+  timestamps       Json?
+  isAligned        Boolean   @default(false)
+  aiSummary        String?   @db.Text
+  aiEntities       Json?
+  consentScope     String    @default("pending")
+  restrictionLevel String    @default("internal")
+  embargoUntil     DateTime?
+  countyCode       String?
+  siteName         String?
+  sourceReference  String?
+  sourceChecksum   String?
+  sourceId         String?   @unique
+  sourceUri        String?
+  sessionId        String?
+  domain           String?
+  genre            String?
+  versionNo        Int       @default(1)
+  createdAt        DateTime  @default(now())
 
   language   Language        @relation(fields: [languageId], references: [id])
   record     CulturalRecord? @relation(fields: [recordId], references: [id], onDelete: Cascade)
   embeddings Embedding[]
 
   @@index([recordId])
+  @@index([consentScope, restrictionLevel])
+  @@index([sessionId])
   @@map("transcripts")
 }
 
@@ -413,15 +462,15 @@ model SystemSetting {
 }
 
 model Embedding {
-  id           String                       @id @default(uuid())
+  id           String                      @id @default(uuid())
   languageId   Int?
   recordId     String?
   dictionaryId String?
   transcriptId String?
-  content      String                       @db.Text
+  content      String                      @db.Text
   vector       Unsupported("vector(768)")?
   model        String
-  createdAt    DateTime                     @default(now())
+  createdAt    DateTime                    @default(now())
 
   record     CulturalRecord?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
   language   Language?        @relation(fields: [languageId], references: [id], onDelete: Cascade)
@@ -470,33 +519,61 @@ model TrainingExample {
 }
 
 model ConsentRecord {
-  id              String    @id @default(uuid())
-  languageId      Int
-  contributorName String
-  contributorType String
-  consentType     String
-  consentGiven    Boolean   @default(false)
-  consentDate     DateTime?
-  witnessName     String?
-  documentUrl     String?
-  notes           String?   @db.Text
-  createdAt       DateTime  @default(now())
+  id                     String    @id @default(uuid())
+  languageId             Int
+  recordId               String?
+  projectRef             String?
+  contributorName        String
+  contributorType        String
+  consentType            String
+  consentGiven           Boolean   @default(false)
+  consentDate            DateTime?
+  sourcePermissionStatus String?
+  attributionPreference  String?
+  consentScope           String?
+  restrictionLevel       String?
+  embargoUntil           DateTime?
+  witnessName            String?
+  documentUrl            String?
+  notes                  String?   @db.Text
+  reviewedById           String?
+  reviewedAt             DateTime?
+  createdAt              DateTime  @default(now())
 
-  language Language @relation(fields: [languageId], references: [id])
+  language    Language             @relation(fields: [languageId], references: [id])
+  record      CulturalRecord?      @relation(fields: [recordId], references: [id], onDelete: SetNull)
+  reviewedBy  User?                @relation("ConsentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  mediaAssets ConsentRecordAsset[]
 
+  @@index([recordId, consentType, createdAt])
+  @@index([projectRef])
   @@map("consent_records")
 }
 
+model ConsentRecordAsset {
+  id              String   @id @default(uuid())
+  consentRecordId String
+  mediaAssetId    String
+  createdAt       DateTime @default(now())
+
+  consentRecord ConsentRecord @relation(fields: [consentRecordId], references: [id], onDelete: Cascade)
+  mediaAsset    MediaAsset    @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  @@unique([consentRecordId, mediaAssetId])
+  @@index([mediaAssetId])
+  @@map("consent_record_assets")
+}
+
 model Provenance {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   recordId       String
   sourceType     String
   sourceName     String
   sourceDate     DateTime?
   sourceLocation String?
   collector      String?
-  notes          String?  @db.Text
-  createdAt      DateTime @default(now())
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now())
 
   record CulturalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
 
@@ -550,21 +627,22 @@ model Conversation {
   @@index([userId, archived, pinned, updatedAt])
   @@map("conversations")
 }
+
 model AIResponse {
-  id             String        @id @default(uuid())
+  id             String   @id @default(uuid())
   conversationId String?
   languageId     Int?
   userId         String?
-  query          String        @db.Text
-  response       String        @db.Text
+  query          String   @db.Text
+  response       String   @db.Text
   sources        Json?
   model          String?
   latencyMs      Int?
   rating         String?
-  flagged        Boolean       @default(false)
-  createdAt      DateTime      @default(now())
+  flagged        Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
-  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([languageId, createdAt])
   @@index([conversationId])

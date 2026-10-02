@@ -20,6 +20,7 @@ export default async function UserDetailPage({
       isSuperAdmin: true,
       isMasterSuperAdmin: true,
       status: true,
+      profileTypes: true,
       createdAt: true,
       languageRoles: {
         include: { language: true },
@@ -93,6 +94,7 @@ export default async function UserDetailPage({
           isSuperAdmin: user.isSuperAdmin,
           isMasterSuperAdmin: user.isMasterSuperAdmin,
           status: user.status,
+          profileTypes: user.profileTypes,
           languageRoles: user.languageRoles.map((r) => ({
             id: r.id,
             role: r.role,

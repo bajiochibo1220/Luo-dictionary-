@@ -1,9 +1,20 @@
 import Link from "next/link";
+import { publicRecordWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
-const STUB_MODULES = ["games", "learning", "ai_tutor"];
+const MODULE_PATHS: Record<string, string> = {
+  dictionary: "muma",
+  proverbs: "ngero",
+  riddles: "ngeche",
+  oral_histories: "sigana",
+  folktales: "sigana/folktales",
+  songs: "wende",
+  artifacts: "gik-luo",
+  heritage_sites: "piny-luo",
+  chatbot: "/chatbot",
+};
 
 export default async function LanguageHomePage({
   params,
@@ -45,7 +56,7 @@ export default async function LanguageHomePage({
 
   // Featured content — first 3 published records
   const featured = await prisma.culturalRecord.findMany({
-    where: { languageId: cultureLanguageId, status: "published" },
+    where: { languageId: cultureLanguageId, ...publicRecordWhere() },
     take: 3,
     orderBy: { createdAt: "desc" },
     include: { module: true, translations: { where: { languageId: language.id } } },
@@ -71,13 +82,19 @@ export default async function LanguageHomePage({
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {modules.map((mod) => {
-            const isStub = STUB_MODULES.includes(mod.code);
+            const modulePath = MODULE_PATHS[mod.code];
+            const isStub = !modulePath;
+            const href = !modulePath
+              ? "#"
+              : modulePath.startsWith("/")
+              ? modulePath
+              : `/${language.code}/${modulePath}`;
             const title = titleMap[mod.code] || mod.baseName;
 
             return (
               <Link
                 key={mod.id}
-                href={isStub ? "#" : `/${language.code}/${mod.code}`}
+                href={href}
                 className={`group block p-6 bg-white rounded-xl shadow hover:shadow-lg transition border border-stone-100 hover:border-amber-300 ${
                   isStub ? "opacity-60 cursor-not-allowed" : ""
                 }`}

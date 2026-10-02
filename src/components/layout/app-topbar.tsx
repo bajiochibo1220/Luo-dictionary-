@@ -110,6 +110,7 @@ export function AppTopbar({
                   <p className="text-xs text-stone-500 truncate">{userEmail}</p>
                 </div>
                 <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My dashboard</Link>
+                <Link href="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Profile options</Link>
                 {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Admin dashboard</Link>}
                 <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">Sign out</button>
               </div>

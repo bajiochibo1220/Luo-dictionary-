@@ -11,6 +11,7 @@ type Riddle = {
     question: string;
     answer: string;
     answer_translation?: string;
+    explanation?: string;
     translation?: string;
     context?: string;
   };
@@ -66,6 +67,7 @@ export function RiddleCard({
             {d.answer_translation && (
               <p className="text-sm text-stone-500">{d.answer_translation}</p>
             )}
+            {d.explanation && <p className="mt-3 text-sm leading-relaxed text-stone-700">{d.explanation}</p>}
           </div>
         )}
       </div>

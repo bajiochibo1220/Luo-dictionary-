@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { finalizeMediaUpload, getMediaUploadSignature, uploadMediaInChunks } from "@/lib/media-upload-client";
+import { checksumSha256, finalizeMediaUpload, getMediaUploadSignature, uploadMediaInChunks } from "@/lib/media-upload-client";
 
 type QueueItem = {
   key: string;
@@ -62,15 +62,17 @@ export function BulkMediaUploader({
     setProcessing(true);
     setStarted(true);
     let working = [...queue];
+    let activeKey: string | null = null;
     try {
       for (let index = 0; index < working.length; index += 1) {
         let item = working[index];
+        activeKey = item.key;
         setProgress(`Preparing ${index + 1} of ${working.length}: ${item.title}`);
         if (!item.recordId) {
           const create = await fetch("/api/content", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ languageId, moduleCode, title: item.title, data: { description: "" }, tags: [] }),
+            body: JSON.stringify({ languageId, moduleCode, title: item.title, data: { description: "", sourcePermission: "needs_review", attributionPreference: "ask_later" }, tags: [] }),
           });
           const result = await create.json();
           if (!create.ok || !result.success || !result.data?.id) throw new Error(result.error || `Could not prepare ${item.title}`);
@@ -91,29 +93,23 @@ export function BulkMediaUploader({
           await finalizeMediaUpload(
             { languageCode, moduleCode, recordId: item.recordId!, assetType: mediaType(item.file)! },
             item.cloudUpload,
+            await checksumSha256(item.file),
           );
           item = { ...item, uploaded: true, cloudUpload: undefined, error: undefined };
           working[index] = item;
           setQueue([...working]);
         }
+        activeKey = null;
       }
 
-      setProgress("Publishing all items...");
-      const response = await fetch("/api/content/bulk-publish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recordIds: working.map((item) => item.recordId) }),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.success) throw new Error(result.error || "Could not publish this batch");
-      toast.success(`${result.count} ${moduleName} item${result.count === 1 ? "" : "s"} published`);
+      toast.success(`${working.length} ${moduleName} upload${working.length === 1 ? "" : "s"} saved as drafts for governance and review`);
       setQueue([]);
       setStarted(false);
       router.push("/admin/content");
       router.refresh();
     } catch (error: any) {
       const message = error.message || "Batch upload failed";
-      setQueue((current) => current.map((item) => ({ ...item, error: item.uploaded ? undefined : message })));
+      setQueue((current) => current.map((item) => item.key === activeKey ? { ...item, error: message } : item));
       toast.error(`${message}. Retry this batch to continue; completed uploads will not be repeated.`);
     } finally {
       setProcessing(false);
@@ -127,7 +123,7 @@ export function BulkMediaUploader({
         <div>
           <h2 className="text-xl font-serif text-stone-900">Bulk media upload</h2>
           <p className="mt-1 max-w-2xl text-sm text-stone-700">
-            Select up to twenty images, videos, audio files, or transcripts for {moduleName}. Large files upload directly in chunks. Each filename becomes its title. The batch publishes together; add descriptions later from Content → Edit.
+            Upload up to twenty images, videos, audio files, or documents for {moduleName}. Each file is saved once as a draft. Review the items later without uploading the files again.
           </p>
         </div>
         <label className={`cursor-pointer rounded-full bg-amber-800 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-900 ${started ? "pointer-events-none opacity-50" : ""}`}>
@@ -151,16 +147,16 @@ export function BulkMediaUploader({
               <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800" title={item.file.name}>{item.title}</span>
               <span className="hidden text-xs capitalize text-stone-500 sm:inline">{mediaType(item.file)} · {(item.file.size / (1024 * 1024)).toFixed(1)} MB</span>
               <span className={`text-xs font-medium ${item.uploaded ? "text-green-700" : item.error ? "text-red-600" : "text-stone-400"}`}>
-                {item.uploaded ? "Ready to publish" : item.error ? "Retry pending" : item.recordId ? "Prepared" : "Queued"}
+                {item.uploaded ? "Uploaded draft" : item.error ? "Retry pending" : item.recordId ? "Prepared" : "Queued"}
               </span>
-              {!started && <button type="button" onClick={() => setQueue((current) => current.filter((queued) => queued.key !== item.key))} className="px-2 text-lg text-stone-400 hover:text-red-600" aria-label={`Remove ${item.file.name}`}>×</button>}
+              {(!started || (item.error && !item.uploaded)) && <button type="button" onClick={() => setQueue((current) => current.filter((queued) => queued.key !== item.key))} className="rounded px-2 text-lg text-stone-400 hover:bg-red-50 hover:text-red-700" aria-label={`Remove ${item.file.name} from upload batch`} title={item.error && started ? "Remove failed upload from batch" : "Remove from batch"}>×</button>}
             </div>
           ))}
           {progress && <p className="text-sm text-stone-600" aria-live="polite">{progress}</p>}
           <button type="button" onClick={() => void publishBatch()} disabled={processing} className="mt-2 rounded-full bg-stone-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-stone-800 disabled:opacity-50">
-            {processing ? "Uploading and publishing…" : started ? "Retry batch" : `Upload and publish ${queue.length} item${queue.length === 1 ? "" : "s"}`}
+            {processing ? "Uploading…" : started ? "Retry batch" : `Upload ${queue.length} item${queue.length === 1 ? "" : "s"} as drafts`}
           </button>
-          <p className="text-xs text-stone-500">Files upload one at a time for reliability. Use multiple batches for larger collections.</p>
+          <p className="text-xs text-stone-500">Files upload one at a time for reliability. Items remain drafts until a reviewer records their consent, access level, and publication decision.</p>
         </div>
       )}
     </section>

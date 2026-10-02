@@ -44,6 +44,9 @@ export default async function OralHistoryDetailPage({
   if (!record) notFound();
 
   const d = record.data as any;
+  const publicTranscriptText = typeof d.transcript === "string" && d.transcript.trim()
+    ? d.transcript
+    : (record as typeof record & { transcripts?: { text: string }[] }).transcripts?.map((item) => item.text.trim()).filter(Boolean).join("\n\n") ?? "";
   const coords = d.county ? COUNTY_COORDS[d.county] : undefined;
 
   return (
@@ -145,7 +148,7 @@ export default async function OralHistoryDetailPage({
               Transcript
             </p>
             <div className="max-h-96 overflow-y-auto pr-2">
-              <TranscriptViewer text={d.transcript || ""} />
+              <TranscriptViewer text={publicTranscriptText} />
             </div>
           </div>
         </div>

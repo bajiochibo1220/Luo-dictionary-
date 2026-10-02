@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { DictionarySearch } from "@/components/modules/dictionary/dictionary-search";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
@@ -26,15 +27,13 @@ export default async function DictionaryPage({
 
   const [entries, records] = await Promise.all([
     prisma.dictionaryEntry.findMany({
-      where: { languageId: cultureLanguageId, status: "published" },
+      where: { languageId: cultureLanguageId, ...publicRecordWhere() },
       orderBy: { dholuo: "asc" },
-      take: 50,
     }),
     prisma.culturalRecord.findMany({
-      where: { languageId: cultureLanguageId, status: "published", module: { code: "dictionary" } },
+      where: { languageId: cultureLanguageId, ...publicRecordWhere(), module: { code: "dictionary" } },
       orderBy: { createdAt: "desc" },
-      take: 50,
-      include: { media: true, translations: { where: { languageId: language.id } } },
+      include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: language.id } } },
     }),
   ]);
   const authoredEntries = records.map((record) => localizeRecord(record, language.id)).map((record) => {
@@ -52,8 +51,7 @@ export default async function DictionaryPage({
     };
   });
   const publicEntries = [...entries, ...authoredEntries]
-    .sort((a, b) => a.dholuo.localeCompare(b.dholuo))
-    .slice(0, 50);
+    .sort((a, b) => a.dholuo.localeCompare(b.dholuo));
 
   const emptyMessage =
     language.code === "luo"

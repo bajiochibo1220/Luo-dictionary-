@@ -36,7 +36,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   if (target.isMasterSuperAdmin) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
   await prisma.$transaction([
     prisma.user.update({ where: { id: params.id }, data: { isSuperAdmin: false } }),
-    prisma.userLanguageRole.deleteMany({ where: { userId: params.id, role: { in: ["language_admin", "moderator", "content_editor", "cultural_expert"] } } }),
+    prisma.userLanguageRole.deleteMany({ where: { userId: params.id, role: { in: ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"] } } }),
   ]);
   await logAction({ userId: session.user.id, action: "admin.revoked", entityType: "user", entityId: params.id });
   return NextResponse.json({ success: true });

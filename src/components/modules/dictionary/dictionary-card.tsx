@@ -10,6 +10,7 @@ type Entry = {
   kiswahili?: string | null;
   pronunciation?: string | null;
   grammarClass?: string | null;
+  meaning?: string | null;
   audioUrl?: string | null;
   media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
@@ -42,6 +43,7 @@ export function DictionaryCard({
       )}
 
       <p className="text-stone-600">{entry.english}</p>
+      {entry.meaning && <p className="mt-2 text-sm text-stone-500">{entry.meaning}</p>}
       {(entry.media ?? []).map((item) => item.type === "image" ? (
         <img key={item.id} src={item.url} alt={entry.dholuo} className="mt-3 max-h-40 w-full object-cover rounded-lg" />
       ) : item.type === "audio" ? (

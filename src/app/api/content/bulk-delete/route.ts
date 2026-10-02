@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const ids = Array.from(new Set<string>(rawIds.filter((id): id is string => typeof id === "string")));
   if (!ids.length || ids.length > 100) return NextResponse.json({ error: "Select between 1 and 100 records" }, { status: 400 });
 
-  if (!(session.user as any).isSuperAdmin) {
+  if (!(session.user as any).isSuperAdmin && !(session.user as any).isMasterSuperAdmin) {
     const records = await prisma.culturalRecord.findMany({ where: { id: { in: ids } }, select: { id: true, languageId: true } });
     if (records.length !== ids.length || records.some((record) => !isLanguageAdmin(session, record.languageId))) {
       return NextResponse.json({ error: "You can only delete records in languages you administer" }, { status: 403 });

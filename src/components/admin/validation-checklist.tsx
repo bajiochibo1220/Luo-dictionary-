@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const CHECKS = [
   { key: "spelling", label: "Spelling is correct" },
-  { key: "translation", label: "Translation is accurate" },
+  { key: "translation", label: "English version matches the Indigenous-language content" },
   { key: "grammar", label: "Grammar classification is correct" },
   { key: "pronunciation", label: "Pronunciation is correct" },
   { key: "examples", label: "Example sentences are natural" },

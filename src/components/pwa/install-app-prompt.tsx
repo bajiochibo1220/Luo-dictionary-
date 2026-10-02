@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -9,7 +8,6 @@ type InstallPromptEvent = Event & {
 };
 
 export function InstallAppPrompt() {
-  const pathname = usePathname();
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
@@ -47,7 +45,7 @@ export function InstallAppPrompt() {
       onClick={() => void install()}
       className="fixed bottom-4 left-1/2 z-[100] -translate-x-1/2 rounded-full bg-amber-800 px-5 py-3 text-sm font-semibold text-white shadow-xl ring-1 ring-amber-200/50 hover:bg-amber-900"
     >
-      Install {pathname === "/admin-login" ? "Super Admin" : "LuoLinguaAI"} app
+      Install LuoLinguaAI app
     </button>
   );
 }

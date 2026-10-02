@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicRecordWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     const where: any = {
       moduleId: mod.id,
-      status: "published",
+      ...publicRecordWhere(),
       languageId: cultureLanguageId,
     };
 

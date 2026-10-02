@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { canReviewContent } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,8 +12,22 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const languageId = Number(searchParams.get("languageId") || 0);
+    const user = session.user as any;
+    const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
+    const reviewLanguageIds = Array.from(new Set<number>(
+      (user.languageRoles ?? [])
+        .filter((role: any) => ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role))
+        .map((role: any) => Number(role.languageId))
+        .filter(Number.isInteger)
+    ));
+    if (!isSuperAdmin && !reviewLanguageIds.length) {
+      return NextResponse.json({ error: "Curator access is required." }, { status: 403 });
+    }
+    if (languageId > 0 && !isSuperAdmin && !canReviewContent(session, languageId)) {
+      return NextResponse.json({ error: "You cannot view AI activity for this language." }, { status: 403 });
+    }
 
-    const where: any = {};
+    const where: any = isSuperAdmin ? {} : { languageId: { in: reviewLanguageIds } };
     if (languageId > 0) where.languageId = languageId;
 
     const [totalQueries, avgLatency, ratedCount, upCount, flaggedCount] =
@@ -50,10 +65,10 @@ export async function GET(req: NextRequest) {
 
     const [totalRecords, totalEmbeddings] = await Promise.all([
       prisma.culturalRecord.count({
-        where: { ...(languageId > 0 ? { languageId } : {}), status: "published" },
+        where: { ...(!isSuperAdmin ? { languageId: { in: reviewLanguageIds } } : {}), ...(languageId > 0 ? { languageId } : {}), status: "published" },
       }),
       prisma.embedding.count({
-        where: languageId > 0 ? { record: { languageId } } : {},
+        where: languageId > 0 ? { record: { languageId } } : isSuperAdmin ? {} : { record: { languageId: { in: reviewLanguageIds } } },
       }),
     ]);
 

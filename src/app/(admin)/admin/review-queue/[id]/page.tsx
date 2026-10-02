@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ReviewActions } from "@/components/admin/review-actions";
+import { canFinalizeContent } from "@/lib/permissions";
 
 export default async function ReviewDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await auth();
+  if (!session?.user) notFound();
   const record = await prisma.culturalRecord.findUnique({
     where: { id: params.id },
     include: {
@@ -17,6 +21,7 @@ export default async function ReviewDetailPage({
       contributor: {
         select: { id: true, name: true, email: true, age: true },
       },
+      validator: { select: { name: true, email: true } },
       reviews: {
         include: { reviewer: { select: { name: true, email: true } } },
         orderBy: { createdAt: "desc" },
@@ -24,6 +29,12 @@ export default async function ReviewDetailPage({
     },
   });
   if (!record) notFound();
+  const user = session.user as any;
+  const canSee = user.isSuperAdmin || user.isMasterSuperAdmin || (user.languageRoles ?? []).some((role: any) =>
+    role.languageId === record.languageId && ["language_admin", "publisher"].includes(role.role)
+  );
+  if (!canSee || record.status !== "under_review" || !record.validatorId) notFound();
+  const canAct = canFinalizeContent(session, record.languageId);
 
   const d = record.data as any;
   const fieldDefs = await prisma.fieldDefinition.findMany({
@@ -38,7 +49,7 @@ export default async function ReviewDetailPage({
         href="/admin/review-queue"
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
       >
-        ← Back to queue
+        â† Back to queue
       </Link>
 
       <header className="mb-8">
@@ -59,7 +70,7 @@ export default async function ReviewDetailPage({
       {/* Contributor info with age */}
       <section className="bg-amber-50 border-2 border-amber-200 rounded-xl p-5 mb-6">
         <h2 className="text-xs uppercase tracking-wider text-amber-800 mb-3 font-bold">
-          Contributor (for authenticity assessment)
+            Contributor and cultural review
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -67,7 +78,7 @@ export default async function ReviewDetailPage({
               Name
             </p>
             <p className="text-stone-800 font-medium">
-              {record.contributor?.name || "—"}
+              {record.contributor?.name || "â€”"}
             </p>
           </div>
           <div>
@@ -75,7 +86,7 @@ export default async function ReviewDetailPage({
               Email
             </p>
             <p className="text-stone-700 text-sm">
-              {record.contributor?.email || "—"}
+              {record.contributor?.email || "â€”"}
             </p>
           </div>
           <div>
@@ -83,14 +94,23 @@ export default async function ReviewDetailPage({
               Age at submission
             </p>
             <p className="text-amber-800 font-bold text-lg">
-              {record.contributorAge ?? record.contributor?.age ?? "—"}
+              {record.contributorAge ?? record.contributor?.age ?? "â€”"}
             </p>
           </div>
         </div>
-        <p className="text-xs text-stone-600 mt-3 pt-3 border-t border-amber-200">
-          Elders (60+) generally provide authentic traditional knowledge. For
-          younger contributors, verify sources carefully.
+        <p className="mt-3 border-t border-amber-200 pt-3 text-xs text-stone-700">
+          Cultural review passed by {record.validator?.name || record.validator?.email || "a cultural expert"}. Age alone does not prove or disprove authenticity.
         </p>
+      </section>
+
+      <section className="mb-6 rounded-xl border border-stone-100 bg-white p-5 shadow-sm">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">Final access check</h2>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+          <div><dt className="text-xs text-stone-500">Consent</dt><dd className="font-medium text-stone-800">{record.consentScope.replaceAll("_", " ")}</dd></div>
+          <div><dt className="text-xs text-stone-500">Restriction</dt><dd className="font-medium text-stone-800">{record.restrictionLevel}</dd></div>
+          <div><dt className="text-xs text-stone-500">Source permission</dt><dd className="font-medium text-stone-800">{String(d?.sourcePermission || "not confirmed").replaceAll("_", " ")}</dd></div>
+        </dl>
+        {record.media.length > 0 && <p className="mt-3 text-xs text-stone-600">Final approval also releases the {record.media.length} attached file{record.media.length === 1 ? "" : "s"}. Check every file and its source permission before approving. You do not need to upload the files again.</p>}
       </section>
 
       {/* Content fields */}
@@ -138,7 +158,7 @@ export default async function ReviewDetailPage({
                   <div className="px-3 py-2 text-xs text-stone-500 border-t border-stone-200">
                     <p className="font-medium text-stone-700 capitalize">{m.type}</p>
                     <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
-                      Open original →
+                      Open original â†’
                     </a>
                   </div>
                 </div>
@@ -177,7 +197,7 @@ export default async function ReviewDetailPage({
         </section>
       )}
 
-      <ReviewActions recordId={record.id} />
+      <ReviewActions recordId={record.id} canAct={canAct} />
     </div>
   );
 }

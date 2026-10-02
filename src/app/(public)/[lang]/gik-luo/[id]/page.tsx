@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-translations";
@@ -25,11 +26,11 @@ export default async function ArtifactDetailPage({
     where: {
       languageId: cultureLanguageId,
       moduleId: record.moduleId,
-      status: "published",
+      ...publicRecordWhere(),
       id: { not: record.id },
     },
     take: 3,
-    include: { media: true, translations: { where: { languageId: language.id } } },
+    include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: language.id } } },
   });
   const localizedRelated = related.map((item) => ({ ...item, data: item.languageId === language.id ? item.data : item.translations[0]?.data ?? {}, summary: item.languageId === language.id ? item.summary : item.translations[0]?.summary ?? null }));
 

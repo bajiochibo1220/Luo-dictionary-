@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
-import { SitesMap } from "@/components/modules/heritage-sites/sites-map";
+import { SitesMapLoader } from "@/components/modules/heritage-sites/sites-map-loader";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function HeritageSitesPage({
@@ -21,9 +22,9 @@ export default async function HeritageSitesPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, ...publicRecordWhere() },
     orderBy: { createdAt: "desc" },
-    include: { media: true, translations: { where: { languageId: language.id } } },
+    include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: language.id } } },
   });
   const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 
@@ -45,7 +46,7 @@ export default async function HeritageSitesPage({
         </p>
       </header>
 
-      <SitesMap sites={localizedRecords as any} langCode={language.code} />
+      <SitesMapLoader sites={localizedRecords as any} langCode={language.code} />
     </div>
   );
 }

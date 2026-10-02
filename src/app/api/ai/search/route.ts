@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     const results = await prisma.$queryRawUnsafe(
       `SELECT
          COALESCE(cr.id, t."recordId", de.id) AS id,
-         COALESCE(cr.title, de.dholuo, 'Transcript') AS title,
+         COALESCE(crt.title, cr.title, de.dholuo, 'Transcript') AS title,
          COALESCE(m."baseName", CASE WHEN de.id IS NOT NULL THEN 'Dictionary' ELSE 'Transcript' END) AS module,
          COALESCE(m.code, CASE WHEN de.id IS NOT NULL THEN 'dictionary' ELSE 'oral_histories' END) AS "moduleCode",
          1 - (e.vector <=> $1::vector) AS similarity,
@@ -62,11 +62,20 @@ export async function POST(req: NextRequest) {
        FROM embeddings e
        LEFT JOIN transcripts t ON t.id = e."transcriptId"
        LEFT JOIN cultural_records cr ON cr.id = COALESCE(e."recordId", t."recordId")
+         LEFT JOIN cultural_record_translations crt ON crt."recordId" = cr.id AND crt."languageId" = e."languageId"
        LEFT JOIN dictionary_entries de ON de.id = e."dictionaryId"
        LEFT JOIN modules m ON m.id = cr."moduleId"
-       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published')
-          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published')
-          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'))
+       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published'
+              AND cr."consentScope" = 'public_excerpt' AND cr."restrictionLevel" = 'public'
+              AND (cr."embargoUntil" IS NULL OR cr."embargoUntil" <= NOW()))
+          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published'
+              AND de."consentScope" = 'public_excerpt' AND de."restrictionLevel" = 'public'
+              AND (de."embargoUntil" IS NULL OR de."embargoUntil" <= NOW()))
+          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'
+              AND cr."consentScope" = 'public_excerpt' AND cr."restrictionLevel" = 'public'
+              AND (cr."embargoUntil" IS NULL OR cr."embargoUntil" <= NOW())
+              AND t."consentScope" = 'public_excerpt' AND t."restrictionLevel" = 'public'
+              AND (t."embargoUntil" IS NULL OR t."embargoUntil" <= NOW())))
          ${langFilter}
          ${cultureFilter}
        ORDER BY e.vector <=> $1::vector

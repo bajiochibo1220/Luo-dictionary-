@@ -55,9 +55,9 @@ export function AdminsClient({
           How admin accounts work
         </h2>
         <p className="text-sm text-stone-700 leading-relaxed">
-          {isMasterSuperAdmin ? "You are the Master Super Admin. Create Super Admins and assign the languages they oversee, or create language administrators and moderators." : "As a Super Admin, you can create administrators only for languages assigned to you. Only the Master Super Admin can create, deactivate, or revoke Super Admin accounts."} Create accounts
+          {isMasterSuperAdmin ? "You are the Master Super Admin. Create Super Admins and assign the languages they oversee, or create uploaders, cultural experts, editors, and publishers for specific languages." : "As a Super Admin, you can create administrators only for languages assigned to you. Only the Master Super Admin can create, deactivate, or revoke Super Admin accounts."} Create accounts
           here, share the email and password with them directly, and they
-          sign in at <code className="bg-white px-1.5 py-0.5 rounded text-amber-800">/admin-login</code>{" "}
+          sign in at <code className="bg-white px-1.5 py-0.5 rounded text-amber-800">/login</code>{" "}
           with those credentials. Social sign-in (Google, Microsoft) is not
           available for administrative accounts.
         </p>

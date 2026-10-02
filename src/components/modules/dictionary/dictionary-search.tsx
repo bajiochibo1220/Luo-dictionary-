@@ -10,6 +10,7 @@ type Entry = {
   kiswahili?: string | null;
   pronunciation?: string | null;
   grammarClass?: string | null;
+  meaning?: string | null;
   audioUrl?: string | null;
   media?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
 };
@@ -26,16 +27,21 @@ export function DictionarySearch({
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Entry[]>(initialEntries);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(initialEntries.length);
 
   const search = useCallback(
-    async (q: string) => {
+    async (q: string, nextPage = 1) => {
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/dictionary?lang=${langCode}&q=${encodeURIComponent(q)}`
+          `/api/dictionary?lang=${langCode}&q=${encodeURIComponent(q)}&page=${nextPage}&limit=50`
         );
         const data = await res.json();
-        setResults(data.data || []);
+        const nextResults = data.data || [];
+        setResults((current) => nextPage === 1 ? nextResults : [...current, ...nextResults]);
+        setPage(nextPage);
+        setTotal(data.meta?.total ?? nextResults.length);
       } finally {
         setLoading(false);
       }
@@ -44,9 +50,7 @@ export function DictionarySearch({
   );
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      search(query);
-    }, 250);
+    const t = setTimeout(() => search(query, 1), 250);
     return () => clearTimeout(t);
   }, [query, search]);
 
@@ -87,6 +91,11 @@ export function DictionarySearch({
           ))}
         </div>
       )}
+      {results.length < total && <div className="mt-8 text-center">
+        <button type="button" onClick={() => search(query, page + 1)} disabled={loading} className="rounded-full border border-amber-800 px-5 py-3 text-sm font-semibold text-amber-900 disabled:opacity-50">
+          {loading ? "Loading..." : "Show more entries"}
+        </button>
+      </div>}
     </div>
   );
 }

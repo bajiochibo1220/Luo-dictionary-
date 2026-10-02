@@ -10,7 +10,7 @@ import { QuickActions } from "@/components/admin/quick-actions";
 export default async function SuperAdminDashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!(session.user as any).isSuperAdmin) redirect("/");
+  if (!(session.user as any).isSuperAdmin && !(session.user as any).isMasterSuperAdmin) redirect("/");
 
   // Stats
   const [languages, totalUsers, totalRecords, totalMedia, totalAI] =

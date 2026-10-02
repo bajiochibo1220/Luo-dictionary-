@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ModuleContent } from "@/components/layout/module-content";
+import { publicMediaWhere, publicRecordWhere } from "@/lib/governance";
 
 function getRecordText(data: unknown): string {
   if (!data || typeof data !== "object") return "";
@@ -43,13 +44,13 @@ export default async function UserDashboardPage({
       const title = mod.translations[0]?.title ?? mod.baseName;
 
       const records = await prisma.culturalRecord.findMany({
-        where: { moduleId: mod.id, languageId, status: "published" },
+        where: { moduleId: mod.id, languageId, ...publicRecordWhere() },
         orderBy: { createdAt: "desc" },
         take: 50,
-        include: { media: true, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } } },
+        include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } } },
       });
       const dictionaryEntries = mod.code === "dictionary"
-        ? await prisma.dictionaryEntry.findMany({ where: { ...(languageCode === "eng" ? {} : { languageId }), status: "published" }, orderBy: { createdAt: "desc" }, take: 100, include: { media: true } })
+        ? await prisma.dictionaryEntry.findMany({ where: { ...(languageCode === "eng" ? {} : { languageId }), ...publicRecordWhere() }, orderBy: { createdAt: "desc" }, take: 100, include: { media: { where: publicMediaWhere() } } })
         : [];
 
       const items = records.map((r) => ({
@@ -97,16 +98,16 @@ export default async function UserDashboardPage({
   if (!searchParams.module && languageId) {
     const [records, dictionaryEntries] = await Promise.all([
       prisma.culturalRecord.findMany({
-        where: { status: "published", languageId },
+        where: { languageId, ...publicRecordWhere() },
         orderBy: { createdAt: "desc" },
         take: 100,
-        include: { media: true, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } }, module: { select: { code: true, baseName: true } } },
+        include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } }, module: { select: { code: true, baseName: true } } },
       }),
       prisma.dictionaryEntry.findMany({
-        where: { ...(languageCode === "eng" ? {} : { languageId }), status: "published" },
+        where: { ...(languageCode === "eng" ? {} : { languageId }), ...publicRecordWhere() },
         orderBy: { createdAt: "desc" },
         take: 100,
-        include: { media: true },
+        include: { media: { where: publicMediaWhere() } },
       }),
     ]);
     const items = records.map((record) => ({

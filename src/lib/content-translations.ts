@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { cookies } from "next/headers";
+import { publicMediaWhere, publicRecordWhere, publicGovernanceWhere } from "@/lib/governance";
 
 export async function getContentCultureLanguageId(defaultLanguageId: number): Promise<number> {
   const defaultLanguage = await prisma.language.findUnique({ where: { id: defaultLanguageId }, select: { code: true } });
@@ -24,15 +25,24 @@ export function localizedRecordWhere(languageId: number) {
  * Deliberately never falls back to source-language descriptions. */
 export function localizeRecord<T extends {
   languageId: number;
+  title: string;
   data: unknown;
   summary: string | null;
-  translations?: { languageId: number; data: unknown; summary: string | null }[];
+  translations?: { languageId: number; title?: string | null; data: unknown; summary: string | null }[];
 }>(record: T, languageId: number) {
-  if (record.languageId === languageId) return record;
+  const stripPrivateContributionFields = (data: unknown) => {
+    if (!data || typeof data !== "object" || Array.isArray(data)) return data;
+    const { sourcePermission: _sourcePermission, attributionPreference: _attributionPreference, ...publicData } = data as Record<string, unknown>;
+    return publicData;
+  };
+  if (record.languageId === languageId) {
+    return { ...record, data: stripPrivateContributionFields(record.data) };
+  }
   const translation = record.translations?.find((item) => item.languageId === languageId);
   return {
     ...record,
-    data: translation?.data ?? {},
+    title: translation?.title ?? record.title,
+    data: stripPrivateContributionFields(translation?.data ?? {}),
     summary: translation?.summary ?? null,
   };
 }
@@ -43,12 +53,12 @@ export async function findLocalizedRecord(recordId: string, languageId: number, 
     where: {
       id: recordId,
       languageId: selectedCultureLanguageId,
-      status: "published",
+      ...publicRecordWhere(),
       module: { code: moduleCode },
     },
     include: {
-      media: true,
-      transcripts: true,
+      media: { where: publicMediaWhere() },
+      transcripts: { where: publicGovernanceWhere() },
       translations: { where: { languageId } },
     },
   });

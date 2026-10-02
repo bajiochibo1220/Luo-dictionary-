@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 
 export type LanguageRole = {
@@ -44,10 +45,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       });
     },
   },
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 10 * 60 },
+  jwt: { maxAge: 10 * 60 },
   pages: {
     signIn: "/login",
     error: "/login",
+    newUser: "/register/complete-google",
   },
   providers: [
     Google({
@@ -174,6 +177,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
     async signIn({ user, account: providerAccount, profile }) {
+      if (providerAccount?.provider === "google") {
+        const cookieStore = cookies();
+        const googleIntent = cookieStore.get("google-auth-intent")?.value;
+        cookieStore.delete("google-auth-intent");
+        const email = user.email?.trim();
+        const googleProfile = profile as { email_verified?: boolean } | undefined;
+        if (!googleProfile?.email_verified || !email) {
+          return "/login?error=GoogleVerificationFailed";
+        }
+
+        const linkedAccount = await prisma.account.findUnique({
+          where: {
+            provider_providerAccountId: {
+              provider: "google",
+              providerAccountId: providerAccount.providerAccountId,
+            },
+          },
+          select: { userId: true },
+        });
+        const accountUser = linkedAccount
+          ? await prisma.user.findUnique({ where: { id: linkedAccount.userId }, select: { status: true } })
+          : await prisma.user.findFirst({
+              where: { email: { equals: email, mode: "insensitive" } },
+              select: { status: true },
+            });
+
+        if (accountUser?.status === "suspended") return "/login?error=AccountSuspended";
+        if (accountUser) return true;
+
+        return googleIntent === "register"
+          ? true
+          : "/login?error=GoogleAccountNotFound";
+      }
+
       let accountUser = user.id
         ? await prisma.user.findUnique({
             where: { id: user.id },
@@ -181,23 +218,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           })
         : null;
 
-      // Auth.js calls this callback before linking OAuth accounts. A first-time
-      // Google profile therefore has no local user ID yet. Resolve a possible
-      // existing account by its verified email before deciding whether to
-      // allow the OAuth flow to create/link the account.
-      if (!accountUser && providerAccount?.provider === "google" && user.email) {
-        accountUser = await prisma.user.findFirst({
-          where: { email: { equals: user.email.trim(), mode: "insensitive" } },
-          select: { status: true },
-        });
-      }
-
       if (accountUser?.status === "suspended") return false;
-
-      if (providerAccount?.provider === "google" && !user.id) {
-        const googleProfile = profile as { email_verified?: boolean } | undefined;
-        return googleProfile?.email_verified === true && !!user.email;
-      }
 
       // Keep credentials and already-linked provider accounts consistent with
       // authorize(): missing and suspended local accounts cannot sign in.

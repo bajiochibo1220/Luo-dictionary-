@@ -3,10 +3,6 @@ import { getToken } from "next-auth/jwt";
 
 const PUBLIC_PATHS = [
   "/",
-  "/login",
-  "/register",
-  "/admin-login",
-  "/admin-register",
   "/mobile-apps",
 ];
 
@@ -19,7 +15,7 @@ function isPublic(pathname: string): boolean {
   const firstSegment = pathname.split("/")[1];
   const reservedSegments = ["admin", "api", "super-admin", "dashboard", "onboarding", "chatbot", "my-submissions", "contribute", "admin-login", "admin-register"];
   if (!reservedSegments.includes(firstSegment) && /^\/[a-z]{2,8}(?:-[a-z0-9]+)?(?:\/|$)/i.test(pathname)) return true;
-  if (["/api/songs", "/api/proverbs", "/api/riddles", "/api/dictionary", "/api/artifacts", "/api/folktales", "/api/oral-histories", "/api/heritage-sites"].some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
+  if (["/api/songs", "/api/proverbs", "/api/riddles", "/api/dictionary", "/api/artifacts", "/api/folktales", "/api/oral-histories", "/api/heritage-sites", "/api/media"].some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
   if (pathname.startsWith("/_next")) return true;
   if (pathname.startsWith("/favicon")) return true;
   if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js|webmanifest)$/i.test(pathname)) {
@@ -30,9 +26,10 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  const isAuthEntry = pathname === "/" || pathname === "/login" || pathname === "/register";
 
   // Public routes always allowed
-  if (isPublic(pathname)) {
+  if (isPublic(pathname) && !isAuthEntry) {
     const culture = req.nextUrl.searchParams.get("culture");
     if (culture && /^[a-z]{2,8}(?:-[a-z0-9]+)?$/i.test(culture)) {
       req.cookies.set("content-culture", culture.toLowerCase());
@@ -70,11 +67,7 @@ export async function middleware(req: NextRequest) {
 
   // Not logged in
   if (!token) {
-    if (
-      pathname === "/" ||
-      pathname === "/login" ||
-      pathname === "/register"
-    ) {
+    if (isAuthEntry) {
       return NextResponse.next();
     }
     return NextResponse.redirect(
@@ -84,40 +77,39 @@ export async function middleware(req: NextRequest) {
 
   // Logged in
   const user = token as any;
-  const isSuperAdmin = user && user.isSuperAdmin === true;
+  const isSuperAdmin = user && (user.isSuperAdmin === true || user.isMasterSuperAdmin === true);
   const roles = (user && user.languageRoles) || [];
   const isAdmin =
     isSuperAdmin ||
     roles.some(function (lr: any) {
       return (
         lr.role === "language_admin" ||
-        lr.role === "moderator" ||
+        lr.role === "uploader" ||
+        lr.role === "publisher" ||
         lr.role === "content_editor" ||
         lr.role === "cultural_expert"
       );
     });
 
   // Logged-in user on public home → dashboard
-  if (
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/register"
-  ) {
+  if (isAuthEntry) {
+    const landingPath = user.isMasterSuperAdmin === true
+      ? "/super-admin/dashboard"
+      : isAdmin
+      ? "/admin/dashboard"
+      : "/dashboard";
     return NextResponse.redirect(
-      new URL(isAdmin ? "/admin/dashboard" : "/dashboard", req.url)
+      new URL(landingPath, req.url)
     );
   }
 
-  // Force onboarding for users without a language role
-  const needsOnboarding = !isSuperAdmin && roles.length === 0;
-  if (
-    needsOnboarding &&
-    pathname !== "/onboarding" &&
-    !pathname.startsWith("/api/onboarding") &&
-    !pathname.startsWith("/api/auth") &&
-    !pathname.startsWith("/api/languages")
-  ) {
-    return NextResponse.redirect(new URL("/onboarding", req.url));
+  // OAuth sign-in returns to the shared dashboard URL; route staff accounts
+  // to their admin area based on the authenticated account's permissions.
+  if (pathname === "/dashboard" && user.isMasterSuperAdmin === true) {
+    return NextResponse.redirect(new URL("/super-admin/dashboard", req.url));
+  }
+  if (pathname === "/dashboard" && isAdmin) {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
   // Super-admin routes
@@ -125,7 +117,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Admin routes (use exact match to avoid /admin-login clash)
+  // Administrative routes are protected by account permissions.
   const isAdminRoute =
     pathname === "/admin" || pathname.indexOf("/admin/") === 0;
   if (isAdminRoute && !isAdmin) {

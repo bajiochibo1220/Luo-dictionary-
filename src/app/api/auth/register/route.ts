@@ -70,19 +70,19 @@ export async function POST(req: NextRequest) {
           passwordHash,
           dateOfBirth: dob,
           age,
-          status: data.role === "registered" ? "active" : "pending",
-          languageRoles: { create: { languageId: data.languageId, role: data.role } },
+          profileTypes: data.interests,
+          status: "active",
         },
       });
       await tx.consentRecord.create({
         data: {
           languageId: data.languageId,
           contributorName: data.name,
-          contributorType: data.role,
+          contributorType: "community_member",
           consentType: "platform_terms_privacy",
           consentGiven: true,
           consentDate: new Date(),
-          notes: `Accepted Terms and Privacy Policy version sha256:${legalVersion}`,
+          notes: `Accepted Terms and Privacy Policy version sha256:${legalVersion}; interests: ${data.interests.join(", ") || "not specified"}`,
         },
       });
       return createdUser;

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { canContribute, canReviewContent, isSuperAdmin } from "@/lib/permissions";
+import { canContribute, canReviewContent, canUploadContent, isSuperAdmin } from "@/lib/permissions";
 import { generateFolderPath } from "@/lib/cloudinary";
 
 export async function authorizeMediaUpload(
@@ -19,7 +19,13 @@ export async function authorizeMediaUpload(
 
   const record = await prisma.culturalRecord.findUnique({
     where: { id: input.recordId },
-    select: { id: true, languageId: true, moduleId: true, contributorId: true, language: { select: { code: true } } },
+    select: {
+      id: true, languageId: true, moduleId: true, contributorId: true,
+      consentScope: true, restrictionLevel: true, embargoUntil: true,
+      countyCode: true, siteName: true, sourceReference: true, sessionId: true,
+      createdAt: true,
+      language: { select: { code: true } },
+    },
   });
   const sourceLocale = record?.languageId === language.id;
   const hasTranslation = record && !sourceLocale
@@ -27,8 +33,8 @@ export async function authorizeMediaUpload(
     : null;
   const permitted = record && (
     sourceLocale
-      ? record.contributorId === session.user.id || canReviewContent(session, language.id)
-      : !!hasTranslation && canReviewContent(session, language.id)
+      ? record.contributorId === session.user.id || canUploadContent(session, language.id)
+      : !!hasTranslation && canUploadContent(session, language.id)
   );
   if (!record || record.moduleId !== module.id || !permitted) {
     throw Object.assign(new Error("Invalid content record or insufficient permission"), { status: 403 });

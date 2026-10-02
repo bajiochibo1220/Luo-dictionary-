@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicRecordWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-translations";
@@ -16,11 +17,14 @@ export default async function DictionaryDetailPage({
   const cultureLanguageId = await getContentCultureLanguageId(language.id);
 
   const [entry, authoredRecord] = await Promise.all([
-    prisma.dictionaryEntry.findFirst({ where: { id: params.id, languageId: cultureLanguageId, status: "published" } }),
+    prisma.dictionaryEntry.findFirst({ where: { id: params.id, languageId: cultureLanguageId, ...publicRecordWhere() } }),
     findLocalizedRecord(params.id, language.id, "dictionary"),
   ]);
   if (!entry && authoredRecord) {
     const data = authoredRecord.data as Record<string, any>;
+    const examples = parseUsageExamples(data.examples);
+    const synonyms = splitTerms(data.synonyms);
+    const antonyms = splitTerms(data.antonyms);
     return (
       <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-stone-100 p-8 md:p-12">
         <Link href={`/${language.code}/muma`} className="text-sm text-amber-800 hover:underline">← Back to Dictionary</Link>
@@ -29,6 +33,11 @@ export default async function DictionaryDetailPage({
         {data.pronunciation && <p className="text-stone-400 italic mt-2">/{data.pronunciation}/</p>}
         {data.english && <p className="text-2xl text-stone-700 mt-6">{data.english}</p>}
         {data.kiswahili && <p className="text-lg text-stone-600 mt-2">Kiswahili: {data.kiswahili}</p>}
+        {data.meaning && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-1">Meaning</h2><p className="text-stone-700">{data.meaning}</p></section>}
+        {examples.length > 0 && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Usage examples</h2><ul className="space-y-2">{examples.map((example, index) => <li key={index} className="rounded-lg border-l-4 border-amber-400 bg-stone-50 p-3"><p className="font-medium text-stone-800">{example.dholuo}</p>{example.english && <p className="text-sm text-stone-500">{example.english}</p>}</li>)}</ul></section>}
+        {synonyms.length > 0 && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Synonyms</h2><p className="text-stone-700">{synonyms.join(", ")}</p></section>}
+        {antonyms.length > 0 && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Antonyms</h2><p className="text-stone-700">{antonyms.join(", ")}</p></section>}
+        {data.wordOrigin && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-1">Word origin</h2><p className="text-stone-700">{data.wordOrigin}</p></section>}
         {authoredRecord.media.map((item) => <div key={item.id} className="mt-6">
           {item.type === "image" ? <img src={item.url} alt={authoredRecord.title} className="max-h-96 rounded-lg" /> :
             item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
@@ -45,7 +54,7 @@ export default async function DictionaryDetailPage({
     where: {
       languageId: cultureLanguageId,
       grammarClass: entry.grammarClass ?? undefined,
-      status: "published",
+      ...publicRecordWhere(),
       id: { not: entry.id },
     },
     take: 4,
@@ -187,4 +196,22 @@ export default async function DictionaryDetailPage({
       )}
     </div>
   );
+}
+
+function splitTerms(value: unknown): string[] {
+  if (Array.isArray(value)) return value.filter((item): item is string => typeof item === "string" && !!item.trim());
+  return typeof value === "string" ? value.split(/[\n,;]/).map((item) => item.trim()).filter(Boolean) : [];
+}
+
+function parseUsageExamples(value: unknown): { dholuo: string; english: string }[] {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => item && typeof item === "object" && typeof item.dholuo === "string"
+      ? [{ dholuo: item.dholuo, english: typeof item.english === "string" ? item.english : "" }]
+      : []);
+  }
+  if (typeof value !== "string") return [];
+  return value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).map((line) => {
+    const [dholuo, ...english] = line.split("|");
+    return { dholuo: dholuo.trim(), english: english.join("|").trim() };
+  });
 }

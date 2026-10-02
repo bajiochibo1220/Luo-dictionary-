@@ -19,6 +19,7 @@ export function AdminTopbar({
   userName,
   userImage,
   isSuperAdmin,
+  isMasterSuperAdmin,
   notificationCount,
   languages,
   selectedLanguageId,
@@ -29,6 +30,7 @@ export function AdminTopbar({
   userName: string | null;
   userImage: string | null;
   isSuperAdmin: boolean;
+  isMasterSuperAdmin: boolean;
   notificationCount: number;
   languages: { id: number; code: string; nativeName: string; isActive: boolean }[];
   selectedLanguageId: number | null;
@@ -108,7 +110,7 @@ export function AdminTopbar({
         </Link>
         {isSuperAdmin && (
           <span className="hidden md:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded">
-            Super Admin
+            {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
           </span>
         )}
       </div>

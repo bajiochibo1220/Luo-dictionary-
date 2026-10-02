@@ -30,12 +30,13 @@ export async function POST(req: NextRequest) {
     }
     const publicId = requestedPublicId || `${baseName}-${crypto.randomUUID()}`;
     const tags = [languageCode, moduleCode, assetType].join(",");
-    const paramsToSign = { folder: context.folder, public_id: publicId, tags, timestamp };
+    const deliveryType = "authenticated" as const;
+    const paramsToSign = { folder: context.folder, public_id: publicId, tags, type: deliveryType, timestamp };
     const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
 
     return NextResponse.json({
       success: true,
-      data: { cloudName, apiKey, timestamp, signature, folder: context.folder, publicId, tags, resourceType },
+      data: { cloudName, apiKey, timestamp, signature, folder: context.folder, publicId, tags, resourceType, deliveryType },
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message || "Could not prepare upload" }, { status: error.status || 500 });

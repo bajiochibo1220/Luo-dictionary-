@@ -56,6 +56,7 @@ export function UserMenu({
             >
               My dashboard
             </Link>
+            <Link href="/profile" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50">Profile options</Link>
             {isAdmin && (
               <Link
                 href="/admin/dashboard"

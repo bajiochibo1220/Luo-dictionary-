@@ -35,6 +35,7 @@ export function ContributeModal({
   const [transcript, setTranscript] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const requiresStructuredForm = ["dictionary", "proverbs", "riddles", "oral_histories"].includes(moduleCode);
 
   async function handleSubmit(status: "draft" | "submitted") {
     if (!title.trim()) {
@@ -89,7 +90,7 @@ export function ContributeModal({
 
       toast.success(
         status === "submitted"
-          ? "Submitted for review — a moderator will check it"
+          ? "Submitted for cultural review"
           : "Saved as draft"
       );
 
@@ -100,6 +101,29 @@ export function ContributeModal({
     } finally {
       setUploading(false);
     }
+  }
+
+  if (requiresStructuredForm) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-amber-50 rounded-2xl shadow-2xl max-w-lg w-full p-6">
+          <p className="text-xs uppercase tracking-widest text-stone-600 font-semibold mb-2">Structured contribution</p>
+          <h2 className="font-serif text-2xl text-stone-900 mb-3">Add to {moduleName}</h2>
+          <p className="text-sm text-stone-700 leading-relaxed mb-6">
+            This collection needs specific language and cultural details. The contribution form will guide you through the required fields and consent choices.
+          </p>
+          <div className="flex justify-end gap-3">
+            <button onClick={onClose} className="px-4 py-2 rounded-full border border-stone-900/20 text-stone-800">Cancel</button>
+            <button
+              onClick={() => { onClose(); router.push(`/contribute/${moduleCode}`); }}
+              className="px-5 py-2 rounded-full bg-stone-900 text-amber-50 font-semibold"
+            >
+              Open contribution form
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

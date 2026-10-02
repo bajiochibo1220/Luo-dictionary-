@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAction } from "@/lib/audit";
 
 export async function GET(
   _req: NextRequest,
@@ -48,6 +49,21 @@ export async function PATCH(
   }
 
   const user = session.user as any;
+  if ((user.id === params.id || params.id === "me") && req.headers.get("content-type")?.includes("application/json")) {
+    const body = await req.json().catch(() => null);
+    if (body && Object.keys(body).length === 1 && Array.isArray(body.profileTypes)) {
+      const allowed = new Set(["community_member", "student", "contributor", "researcher", "teacher"]);
+      const profileTypes: unknown[] = body.profileTypes;
+      if (profileTypes.length > 5 || profileTypes.some((type) => typeof type !== "string" || !allowed.has(type)) || new Set(profileTypes).size !== profileTypes.length) {
+        return NextResponse.json({ error: "Choose up to five different profile options." }, { status: 400 });
+      }
+      const current = await prisma.user.findUnique({ where: { id: user.id }, select: { profileTypes: true } });
+      if (!current) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      const updated = await prisma.user.update({ where: { id: user.id }, data: { profileTypes: profileTypes as string[] }, select: { id: true, profileTypes: true } });
+      await logAction({ userId: user.id, action: "user.profile_types_updated", entityType: "user", entityId: user.id, oldValue: { profileTypes: current.profileTypes }, newValue: { profileTypes: updated.profileTypes } });
+      return NextResponse.json({ success: true, data: updated });
+    }
+  }
   if (!user.isSuperAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

@@ -19,7 +19,8 @@ export default async function AdminsPage() {
                 role: {
                   in: [
                     "language_admin",
-                    "moderator",
+                    "uploader",
+                    "publisher",
                     "content_editor",
                     "cultural_expert",
                   ],

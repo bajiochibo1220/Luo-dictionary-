@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { UserTable } from "@/components/admin/user-table";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function UsersPage({
   searchParams,
 }: {
   searchParams: { status?: string; role?: string };
 }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin && !(session.user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
   const where: any = {};
   if (searchParams.status) where.status = searchParams.status;
   if (searchParams.role) {
@@ -72,7 +77,7 @@ export default async function UsersPage({
             {s}
           </Link>
         ))}
-        {["language_admin", "moderator", "elder", "contributor"].map((r) => (
+        {["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].map((r) => (
           <Link
             key={r}
             href={`/admin/users?role=${r}`}
@@ -87,7 +92,7 @@ export default async function UsersPage({
         ))}
       </div>
 
-      <UserTable users={formatted} />
+      <UserTable users={formatted} canBulkManage={!!((session?.user as any)?.isSuperAdmin || (session?.user as any)?.isMasterSuperAdmin)} />
     </div>
   );
 }

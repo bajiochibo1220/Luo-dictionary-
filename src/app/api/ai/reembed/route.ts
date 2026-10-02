@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { embedRecord, embedDictionaryEntry, embedTranscript } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
+import { publicGovernanceWhere, publicRecordWhere } from "@/lib/governance";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -27,15 +28,15 @@ export async function POST(req: NextRequest) {
   const [records, dictionaryEntries, transcripts] = await Promise.all([
     prisma.culturalRecord.findMany({
     where: {
-      status: "published",
+      ...publicRecordWhere(),
       ...(languageId ? { OR: [{ languageId }, { translations: { some: { languageId } } }] } : {}),
     },
     select: { id: true },
     }),
     // Each dictionary entry may produce an English vector as well as its
     // source-language vector, so include all entries when rebuilding one locale.
-    prisma.dictionaryEntry.findMany({ where: { status: "published" }, select: { id: true } }),
-    prisma.transcript.findMany({ where: { ...(languageId ? { languageId } : {}), record: { status: "published" } }, select: { id: true } }),
+    prisma.dictionaryEntry.findMany({ where: { ...publicRecordWhere() }, select: { id: true } }),
+    prisma.transcript.findMany({ where: { ...publicGovernanceWhere(), ...(languageId ? { languageId } : {}), record: { ...publicRecordWhere() } }, select: { id: true } }),
   ]);
 
   let succeeded = 0;

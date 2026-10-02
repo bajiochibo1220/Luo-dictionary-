@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { FolktaleCard } from "@/components/modules/folktales/folktale-card";
@@ -21,9 +22,9 @@ export default async function FolktalesPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, ...publicRecordWhere() },
     orderBy: { createdAt: "desc" },
-    include: { media: true, translations: { where: { languageId: language.id } } },
+    include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: language.id } } },
   });
   const localizedRecords = records.map((record) => localizeRecord(record, language.id));
 

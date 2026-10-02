@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { TranslationEditor } from "@/components/admin/translation-editor";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function TranslationsPage({
   searchParams,
 }: {
   searchParams: { lang?: string; module?: string; tab?: string };
 }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin && !(session.user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
   const tab = searchParams.tab === "fields" ? "fields" : "modules";
 
   const languages = await prisma.language.findMany({

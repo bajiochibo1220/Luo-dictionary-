@@ -54,7 +54,7 @@ export default async function DashboardLayout({
   const isAdmin =
     user.isSuperAdmin ||
     (user.languageRoles ?? []).some((r: any) =>
-      ["language_admin", "moderator", "content_editor", "cultural_expert"].includes(
+      ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(
         r.role
       )
     );

@@ -16,6 +16,7 @@ export type SignedMediaUpload = {
   publicId: string;
   tags: string;
   resourceType: "image" | "video" | "raw";
+  deliveryType: "authenticated";
 };
 
 export async function getMediaUploadSignature(file: File, details: MediaUploadDetails, publicId?: string): Promise<SignedMediaUpload> {
@@ -54,6 +55,7 @@ export async function uploadMediaInChunks(
     form.set("folder", signed.folder);
     form.set("public_id", signed.publicId);
     form.set("tags", signed.tags);
+    form.set("type", signed.deliveryType);
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "X-Unique-Upload-Id": uploadId, "Content-Range": `bytes ${start}-${end - 1}/${file.size}` },
@@ -66,11 +68,16 @@ export async function uploadMediaInChunks(
   return result;
 }
 
-export async function finalizeMediaUpload(details: MediaUploadDetails, upload: any) {
+export async function checksumSha256(file: File): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function finalizeMediaUpload(details: MediaUploadDetails, upload: any, checksum: string) {
   const response = await fetch("/api/media/upload/finalize", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...details, upload }),
+    body: JSON.stringify({ ...details, upload, checksum }),
   });
   const result = await response.json();
   if (!response.ok || !result.success) throw new Error(result.error || "Could not save uploaded file");
@@ -78,7 +85,8 @@ export async function finalizeMediaUpload(details: MediaUploadDetails, upload: a
 }
 
 export async function uploadMediaFile(file: File, details: MediaUploadDetails) {
+  const checksum = await checksumSha256(file);
   const signed = await getMediaUploadSignature(file, details);
   const upload = await uploadMediaInChunks(file, signed, () => getMediaUploadSignature(file, details, signed.publicId));
-  return finalizeMediaUpload(details, upload);
+  return finalizeMediaUpload(details, upload, checksum);
 }

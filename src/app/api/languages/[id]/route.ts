@@ -8,6 +8,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const id = Number(params.id);
+  if (!Number.isSafeInteger(id) || id < 1) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const language = await prisma.language.findUnique({
     where: { id },
     include: {
@@ -45,6 +48,9 @@ export async function PATCH(
   }
 
   const id = Number(params.id);
+  if (!Number.isSafeInteger(id) || id < 1) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const body = await req.json();
   const update: any = {};
   if (body.name !== undefined) update.name = body.name;
@@ -80,6 +86,9 @@ export async function DELETE(
   }
 
   const id = Number(params.id);
+  if (!Number.isSafeInteger(id) || id < 1) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
   const count = await prisma.culturalRecord.count({ where: { languageId: id } });
   if (count > 0) {

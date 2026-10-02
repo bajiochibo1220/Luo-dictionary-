@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { publicRecordWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { RiddleQuiz } from "@/components/modules/riddles/riddle-quiz";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
@@ -20,7 +21,7 @@ export default async function RiddleQuizPage({
   if (!mod) notFound();
 
   const records = await prisma.culturalRecord.findMany({
-    where: { languageId: cultureLanguageId, moduleId: mod.id, status: "published" },
+    where: { languageId: cultureLanguageId, moduleId: mod.id, ...publicRecordWhere() },
     include: { translations: { where: { languageId: language.id } } },
   });
   const localizedRecords = records.map((record) => localizeRecord(record, language.id));

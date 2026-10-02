@@ -121,7 +121,9 @@ export async function POST(req: NextRequest) {
       data: { ...result, conversationId: convId },
     });
   } catch (err: any) {
-    console.error("[ai/chat]", err);
+    // Provider errors can contain request headers or credentials. Keep them
+    // out of logs and user-visible API responses.
+    console.error("[ai/chat] request failed", { name: err?.name || "Error" });
 
     // Catch Prisma FK error just in case
     if (err?.code === "P2003") {
@@ -137,7 +139,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { success: false, error: err.message || "Chat failed" },
+      {
+        success: false,
+        error: "Sorry, something went wrong. Please try again in a moment.",
+      },
       { status: 500 }
     );
   }

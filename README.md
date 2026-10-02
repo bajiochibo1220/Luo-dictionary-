@@ -19,3 +19,13 @@ AI-powered digital platform for the preservation, learning, and promotion of the
 3. Run migrations: `pnpm prisma migrate dev`
 4. Seed database: `pnpm tsx scripts/seed-database.ts`
 5. Start dev server: `pnpm dev`
+
+## Importing the prepared Luo transcript corpus
+
+After applying database migrations and seeding the `luo` language and `oral_histories` module, an authorized operator can import the prepared NLP corpus:
+
+```sh
+npm run corpus:import -- "path/to/corpus_validated.jsonl"
+```
+
+The import is repeatable by source segment ID, preserves source/session IDs and SHA-256 values, and stores corpus records as `research_only` / `internal`. It does not publish the transcripts or send them to Gemini. Changing their access scope requires a separate curator decision and record update.

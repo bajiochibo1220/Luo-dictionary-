@@ -46,7 +46,7 @@ export function RegisterForm() {
       email: (formData.get("email") as string).trim().toLowerCase(),
       password: formData.get("password") as string,
       dateOfBirth: { day: dob.day, month: dob.month, year: dob.year },
-      role: formData.get("role") as string,
+      interests: formData.getAll("interests") as string[],
       languageId: Number(formData.get("languageId")),
       acceptedTerms: formData.get("acceptedTerms") === "on",
     };
@@ -95,6 +95,11 @@ export function RegisterForm() {
 
   function comingSoon(p: string) {
     toast.info(`${p} signup is coming soon`);
+  }
+
+  function startGoogleSignup() {
+    document.cookie = `google-auth-intent=register; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
+    void signIn("google", { callbackUrl: "/dashboard" });
   }
 
   return (
@@ -160,19 +165,14 @@ export function RegisterForm() {
           ))}
         </select>
 
-        <select
-          name="role"
-          required
-          defaultValue="registered"
-          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-[15px] text-stone-700"
-        >
-          <option value="registered">Community member</option>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-          <option value="researcher">Researcher</option>
-          <option value="contributor">Contributor</option>
-          <option value="elder">Elder</option>
-        </select>
+        <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
+          <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use LuoLinguaAI? (Choose any)</legend>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-stone-700">
+            {["Student", "Researcher", "Contributor", "Teacher", "Community member"].map((interest) => (
+              <label key={interest} className="flex items-center gap-2"><input type="checkbox" name="interests" value={interest.toLowerCase().replaceAll(" ", "_")} />{interest}</label>
+            ))}
+          </div>
+        </fieldset>
 
         <button
           type="submit"
@@ -211,7 +211,7 @@ export function RegisterForm() {
         </button>
         <button
           type="button"
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          onClick={startGoogleSignup}
           disabled={!acceptedTerms}
           className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
         >

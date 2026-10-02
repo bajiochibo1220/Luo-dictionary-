@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
-const ADMIN_ROLES = ["language_admin", "moderator", "content_editor", "cultural_expert"];
+const ADMIN_ROLES = ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"];
 
 export async function GET() {
   const session = await auth();

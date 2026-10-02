@@ -4,73 +4,39 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export function ReviewActions({ recordId }: { recordId: string }) {
+export function ReviewActions({ recordId, canAct }: { recordId: string; canAct: boolean }) {
   const router = useRouter();
   const [comments, setComments] = useState("");
-  const [busy, setBusy] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  async function doAction(action: "approve" | "reject" | "revision") {
-    setBusy(action);
+  async function publish() {
+    setBusy(true);
     try {
-      const res = await fetch(`/api/content/${recordId}/${action}`, {
+      const res = await fetch(`/api/content/${recordId}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comments }),
       });
-      if (!res.ok) throw new Error("Failed");
-
-      const labels = {
-        approve: "approved",
-        reject: "rejected",
-        revision: "sent back for revision",
-      };
-
-      toast.success(`Content ${labels[action]}`);
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.error || "Publishing failed");
+      toast.success(result.publicRelease ? "Published" : "Approved for internal curation. It remains private until release conditions are met.");
       router.push("/admin/review-queue");
       router.refresh();
-    } catch {
-      toast.error(`${action} failed`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Publishing failed");
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
-      <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Reviewer Notes
-      </h2>
-      <textarea
-        value={comments}
-        onChange={(e) => setComments(e.target.value)}
-        rows={3}
-        placeholder="Optional feedback for the contributor..."
-        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 mb-4"
-      />
-
-      <div className="grid grid-cols-3 gap-3">
-        <button
-          onClick={() => doAction("approve")}
-          disabled={!!busy}
-          className="px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-        >
-          {busy === "approve" ? "..." : "✓ Approve"}
-        </button>
-        <button
-          onClick={() => doAction("revision")}
-          disabled={!!busy}
-          className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-        >
-          {busy === "revision" ? "..." : "↩ Revision"}
-        </button>
-        <button
-          onClick={() => doAction("reject")}
-          disabled={!!busy}
-          className="px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-        >
-          {busy === "reject" ? "..." : "✕ Reject"}
-        </button>
-      </div>
+    <div className="rounded-xl border border-stone-100 bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xs uppercase tracking-wider text-stone-400">Publisher</h2>
+      <p className="mb-4 text-sm leading-6 text-stone-700">Check source permission and attached files before publishing. Only an assigned publisher can release content publicly.</p>
+      {canAct ? <>
+        <textarea value={comments} onChange={(event) => setComments(event.target.value)} rows={3} placeholder="Optional publishing note..." className="mb-4 w-full rounded-lg border border-stone-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        <button onClick={() => void publish()} disabled={busy} className="w-full rounded-lg bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50">{busy ? "Publishing…" : "Publish"}</button>
+      </> : <p className="text-sm text-blue-900">You can view this item, but only an assigned publisher can publish it.</p>}
     </div>
   );
 }

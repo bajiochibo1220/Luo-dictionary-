@@ -17,6 +17,7 @@ type AuditLog = {
 const ACTION_COLORS: Record<string, string> = {
   approve: "bg-green-100 text-green-700",
   approved: "bg-green-100 text-green-700",
+  published: "bg-green-100 text-green-700",
   reject: "bg-red-100 text-red-700",
   rejected: "bg-red-100 text-red-700",
   revision: "bg-amber-100 text-amber-700",

@@ -129,15 +129,21 @@ const FIELDS_BY_MODULE: Record<string, FieldDef[]> = {
   riddles: [
     { fieldCode: "question", baseLabel: "Question", fieldType: "textarea", isRequired: true, displayOrder: 1, luoLabel: "Penjo" },
     { fieldCode: "answer", baseLabel: "Answer", fieldType: "text", isRequired: true, displayOrder: 2, luoLabel: "Duoko" },
-    { fieldCode: "translation", baseLabel: "Translation", fieldType: "textarea", isRequired: false, displayOrder: 3, luoLabel: "Lokruok" },
-    { fieldCode: "context", baseLabel: "Context", fieldType: "textarea", isRequired: false, displayOrder: 4, luoLabel: "Kaka inyalo tiyo go" },
+    { fieldCode: "explanation", baseLabel: "Explanation", fieldType: "textarea", isRequired: true, displayOrder: 3, luoLabel: "Explanation" },
+    { fieldCode: "translation", baseLabel: "Translation", fieldType: "textarea", isRequired: false, displayOrder: 4, luoLabel: "Lokruok" },
+    { fieldCode: "context", baseLabel: "Context", fieldType: "textarea", isRequired: false, displayOrder: 5, luoLabel: "Kaka inyalo tiyo go" },
   ],
   dictionary: [
     { fieldCode: "dholuo", baseLabel: "Dholuo Word", fieldType: "text", isRequired: true, displayOrder: 1, luoLabel: "Wach Dholuo" },
-    { fieldCode: "english", baseLabel: "English", fieldType: "text", isRequired: true, displayOrder: 2, luoLabel: "Sikukuu" },
+    { fieldCode: "english", baseLabel: "English meaning", fieldType: "text", isRequired: true, displayOrder: 2, luoLabel: "English meaning" },
     { fieldCode: "kiswahili", baseLabel: "Kiswahili", fieldType: "text", isRequired: false, displayOrder: 3, luoLabel: "Kiswahili" },
     { fieldCode: "pronunciation", baseLabel: "Pronunciation", fieldType: "text", isRequired: false, displayOrder: 4, luoLabel: "Kaka iluongo" },
     { fieldCode: "grammarClass", baseLabel: "Grammar Class", fieldType: "text", isRequired: false, displayOrder: 5, luoLabel: "Kit wach" },
+    { fieldCode: "meaning", baseLabel: "Detailed meaning", fieldType: "textarea", isRequired: false, displayOrder: 6, luoLabel: "Tiende" },
+    { fieldCode: "wordOrigin", baseLabel: "Word origin", fieldType: "textarea", isRequired: false, displayOrder: 7, luoLabel: "Word origin" },
+    { fieldCode: "synonyms", baseLabel: "Synonyms (separate with commas or new lines)", fieldType: "textarea", isRequired: false, displayOrder: 8, luoLabel: "Synonyms" },
+    { fieldCode: "antonyms", baseLabel: "Antonyms (separate with commas or new lines)", fieldType: "textarea", isRequired: false, displayOrder: 9, luoLabel: "Antonyms" },
+    { fieldCode: "examples", baseLabel: "Usage examples (Dholuo | English, one per line)", fieldType: "textarea", isRequired: false, displayOrder: 10, luoLabel: "Examples" },
   ],
   songs: [
     { fieldCode: "title", baseLabel: "Title", fieldType: "text", isRequired: true, displayOrder: 1, luoLabel: "Nying wende" },
@@ -227,7 +233,12 @@ async function main() {
         where: {
           moduleId_fieldCode: { moduleId: modId, fieldCode: f.fieldCode },
         },
-        update: {},
+        update: {
+          baseLabel: f.baseLabel,
+          fieldType: f.fieldType,
+          isRequired: f.isRequired,
+          displayOrder: f.displayOrder,
+        },
         create: {
           moduleId: modId,
           fieldCode: f.fieldCode,
@@ -266,8 +277,10 @@ async function main() {
       });
       if (existing) continue;
 
+      const id = crypto.randomUUID();
       await prisma.dictionaryEntry.create({
         data: {
+          id,
           languageId: luoId,
           dholuo: entry.dholuo,
           english: entry.english,
@@ -279,12 +292,14 @@ async function main() {
           antonyms: entry.antonyms ?? [],
           examples: entry.examples ?? [],
           status: "published",
-          nrfUri: `JOOUST/NRF/LuoAI_Repository/luo/dictionary/${crypto.randomUUID()}`,
+          nrfUri: `/JOOUST/NRF/LuoAI_Repository/03_repository_products/records/public/${id}/record-v1.json`,
+          consentScope: "public_excerpt",
+          restrictionLevel: "public",
           nrfMetadata: {
             domain: "culture",
             genre: "dictionary",
-            consent: "granted",
-            restriction: "none",
+            consentScope: "public_excerpt",
+            restrictionLevel: "public",
           },
         },
       });
@@ -338,20 +353,24 @@ async function seedModuleContent(
     });
     if (existing) continue;
 
+    const id = crypto.randomUUID();
     await prisma.culturalRecord.create({
       data: {
+        id,
         languageId: langId,
         moduleId: modId,
         title,
         data: item,
         tags: item.themes ?? [],
         status: "published",
-        nrfUri: `JOOUST/NRF/LuoAI_Repository/${languageCode}/${moduleCode}/${crypto.randomUUID()}`,
+        nrfUri: `/JOOUST/NRF/LuoAI_Repository/03_repository_products/records/public/${id}/record-v1.json`,
+        consentScope: "public_excerpt",
+        restrictionLevel: "public",
         nrfMetadata: {
           domain: "culture",
           genre: moduleCode,
-          consent: "granted",
-          restriction: "none",
+          consentScope: "public_excerpt",
+          restrictionLevel: "public",
         },
       },
     });

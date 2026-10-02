@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { embedRecord } from "@/lib/ai/embeddings";
+import { embedDictionaryEntry, embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
+import { prisma } from "@/lib/db";
+import { canReviewContent } from "@/lib/permissions";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -24,8 +26,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const [record, dictionaryEntry] = await Promise.all([
+    prisma.culturalRecord.findUnique({ where: { id: recordId }, select: { languageId: true } }),
+    prisma.dictionaryEntry.findUnique({ where: { id: recordId }, select: { languageId: true } }),
+  ]);
+  const languageId = record?.languageId ?? dictionaryEntry?.languageId;
+  if (languageId === undefined) return NextResponse.json({ error: "Content not found" }, { status: 404 });
+  if (!canReviewContent(session, languageId)) return NextResponse.json({ error: "Curator access is required to manage AI indexing." }, { status: 403 });
+
   try {
-    const result = await embedRecord(recordId, !!force);
+    const result = record
+      ? await embedRecord(recordId, !!force)
+      : await embedDictionaryEntry(recordId, !!force);
     return NextResponse.json({ success: true, data: result });
   } catch (err: any) {
     console.error("[ai/embed]", err);

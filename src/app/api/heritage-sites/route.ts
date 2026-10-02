@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     const where: any = {
       languageId: language.id,
       moduleId: mod.id,
-      status: "published",
+      ...publicRecordWhere(),
     };
 
     if (county) where.tags = { has: county };
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
     const records = await prisma.culturalRecord.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { media: true },
+      include: { media: { where: publicMediaWhere() } },
     });
 
     return NextResponse.json({ success: true, data: records });

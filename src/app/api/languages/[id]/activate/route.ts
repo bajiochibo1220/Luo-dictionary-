@@ -16,6 +16,9 @@ export async function POST(
   }
 
   const id = Number(params.id);
+  if (!Number.isSafeInteger(id) || id < 1) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const current = await prisma.language.findUnique({ where: { id } });
   if (!current) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });

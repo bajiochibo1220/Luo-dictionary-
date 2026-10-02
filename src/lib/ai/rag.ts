@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { getGemini } from "./gemini";
 import { embedText } from "./embeddings";
 import { CULTURAL_ASSISTANT_PROMPT } from "./prompts";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 
 const PRIMARY_MODEL = "gemini-3.8-flash";
 const FALLBACK_MODEL = "gemini-2.5-flash";
@@ -132,14 +133,14 @@ export async function askQuestion(
     const contentLanguageId = cultureLanguageId ?? languageId;
     const chosenModules = requestedModule ? modules.filter((module) => module.id === requestedModule.id) : modules;
     const records = await prisma.culturalRecord.findMany({
-      where: { status: "published", moduleId: { in: chosenModules.map((module) => module.id) }, ...(contentLanguageId ? { languageId: contentLanguageId } : {}) },
+      where: { ...publicRecordWhere(), moduleId: { in: chosenModules.map((module) => module.id) }, ...(contentLanguageId ? { languageId: contentLanguageId } : {}) },
       orderBy: [{ moduleId: "asc" }, { title: "asc" }], take: 250,
-      include: { module: { select: { baseName: true } }, media: { where: mediaFilter ? { type: mediaFilter } : { type: "image" }, take: 2, orderBy: { createdAt: "desc" } } },
+      include: { module: { select: { baseName: true } }, media: { where: { ...publicMediaWhere(), ...(mediaFilter ? { type: mediaFilter } : { type: "image" }) }, take: 2, orderBy: { createdAt: "desc" } } },
     });
     const dictionaryModule = chosenModules.some((module) => module.code === "dictionary");
     const dictionary = dictionaryModule ? await prisma.dictionaryEntry.findMany({
-      where: { status: "published", ...(contentLanguageId ? { languageId: contentLanguageId } : {}) }, orderBy: { dholuo: "asc" }, take: 250,
-      include: { media: { where: mediaFilter ? { type: mediaFilter } : { type: "image" }, take: 2 } },
+      where: { ...publicRecordWhere(), ...(contentLanguageId ? { languageId: contentLanguageId } : {}) }, orderBy: { dholuo: "asc" }, take: 250,
+      include: { media: { where: { ...publicMediaWhere(), ...(mediaFilter ? { type: mediaFilter } : { type: "image" }) }, take: 2 } },
     }) : [];
     const sources: RAGSource[] = [
       ...records.map((record) => ({ id: record.id, title: record.title, module: record.module.baseName, similarity: 1 })),
@@ -183,9 +184,9 @@ export async function askQuestion(
     }>
   >(
     `SELECT
-       COALESCE(e."recordId", e."dictionaryId", e."transcriptId") AS record_id,
+       COALESCE(e."recordId", t."recordId", e."dictionaryId", e."transcriptId") AS record_id,
        (e."dictionaryId" IS NOT NULL) AS is_dictionary,
-       COALESCE(cr.title, de.dholuo, 'Transcript') AS title,
+       COALESCE(crt.title, cr.title, de.dholuo, 'Transcript') AS title,
        COALESCE(m."baseName", CASE WHEN de.id IS NOT NULL THEN 'Dictionary' ELSE 'Transcript' END) AS module,
        COALESCE(m.code, CASE WHEN de.id IS NOT NULL THEN 'dictionary' ELSE 'transcripts' END) AS module_code,
        e.content AS content,
@@ -193,11 +194,20 @@ export async function askQuestion(
        FROM embeddings e
        LEFT JOIN transcripts t ON t.id = e."transcriptId"
        LEFT JOIN cultural_records cr ON cr.id = COALESCE(e."recordId", t."recordId")
+       LEFT JOIN cultural_record_translations crt ON crt."recordId" = cr.id AND crt."languageId" = e."languageId"
        LEFT JOIN dictionary_entries de ON de.id = e."dictionaryId"
        LEFT JOIN modules m ON m.id = cr."moduleId"
-       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published')
-          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published')
-          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'))
+       WHERE ((e."recordId" IS NOT NULL AND cr.status = 'published'
+              AND cr."consentScope" = 'public_excerpt' AND cr."restrictionLevel" = 'public'
+              AND (cr."embargoUntil" IS NULL OR cr."embargoUntil" <= NOW()))
+          OR (e."dictionaryId" IS NOT NULL AND de.status = 'published'
+              AND de."consentScope" = 'public_excerpt' AND de."restrictionLevel" = 'public'
+              AND (de."embargoUntil" IS NULL OR de."embargoUntil" <= NOW()))
+          OR (e."transcriptId" IS NOT NULL AND t."recordId" IS NOT NULL AND cr.status = 'published'
+              AND cr."consentScope" = 'public_excerpt' AND cr."restrictionLevel" = 'public'
+              AND (cr."embargoUntil" IS NULL OR cr."embargoUntil" <= NOW())
+              AND t."consentScope" = 'public_excerpt' AND t."restrictionLevel" = 'public'
+              AND (t."embargoUntil" IS NULL OR t."embargoUntil" <= NOW())))
          ${langFilter}
          ${cultureFilter}
        ORDER BY e.vector <=> $1::vector
@@ -221,7 +231,7 @@ export async function askQuestion(
   if (mediaFilter) mediaQuery.type = mediaFilter;
 
   const mediaAssets = await prisma.mediaAsset.findMany({
-    where: mediaQuery,
+    where: { ...mediaQuery, ...publicMediaWhere() },
     orderBy: { createdAt: "desc" },
     take: 30,
   });
