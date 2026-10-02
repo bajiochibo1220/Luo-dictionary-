@@ -8,22 +8,15 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Please sign in to use the AI assistant." },
-        { status: 401 }
-      );
-    }
-
-    const userId = (session.user as any).id;
+    const userId = (session?.user as any)?.id as string | undefined;
 
     // ── Guard: user might be stale (deleted after DB reset)
-    const dbUser = await prisma.user.findUnique({
+    const dbUser = userId ? await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true },
-    });
+    }) : null;
 
-    if (!dbUser) {
+    if (userId && !dbUser) {
       return NextResponse.json(
         {
           success: false,
@@ -36,11 +29,11 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { question, languageCode, conversationId } = body;
+    const { question, languageCode, cultureCode, conversationId } = body;
 
-    if (!question || question.length < 2) {
+    if (typeof question !== "string" || question.trim().length < 2 || question.length > 2000) {
       return NextResponse.json(
-        { success: false, error: "Question required" },
+        { success: false, error: "Enter a question between 2 and 2000 characters." },
         { status: 400 }
       );
     }
@@ -53,19 +46,31 @@ export async function POST(req: NextRequest) {
       });
       if (lang) languageId = lang.id;
     }
-    const chatUser = session.user as any;
-    if (chatUser.isSuperAdmin) {
+    const chatUser = session?.user as any;
+    if (chatUser?.isSuperAdmin) {
       const { getSelectedAdminCultureId } = await import("@/lib/admin-language");
       cultureLanguageId = await getSelectedAdminCultureId();
     } else {
-      cultureLanguageId = chatUser.languageRoles?.[0]?.languageId;
+      cultureLanguageId = chatUser?.languageRoles?.[0]?.languageId;
+    }
+    if (!cultureLanguageId && cultureCode) {
+      cultureLanguageId = (await prisma.language.findFirst({
+        where: { code: cultureCode, isActive: true },
+        select: { id: true },
+      }))?.id;
     }
 
-    let convId = conversationId;
+    let convId = userId ? conversationId : null;
     let history: Array<{ role: "user" | "assistant"; content: string }> = [];
+    if (!userId && Array.isArray(body.history)) {
+      history = body.history
+        .filter((turn: any) => (turn?.role === "user" || turn?.role === "assistant") && typeof turn?.content === "string")
+        .slice(-8)
+        .map((turn: any) => ({ role: turn.role, content: turn.content.slice(0, 2000) }));
+    }
 
     // Verify the conversation exists and belongs to this user
-    if (convId) {
+    if (convId && userId) {
       const owned = await prisma.conversation.findFirst({
         where: { id: convId, userId },
         select: { id: true },
@@ -86,7 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create a new conversation if none
-    if (!convId) {
+    if (!convId && userId) {
       const title =
         question.length > 60 ? question.slice(0, 60) + "…" : question;
       const conv = await prisma.conversation.create({
@@ -97,8 +102,8 @@ export async function POST(req: NextRequest) {
 
     const result = await askQuestion(question, languageId, cultureLanguageId, history);
 
-    await prisma.$transaction([
-      prisma.aIResponse.create({
+    if (userId) {
+      await prisma.aIResponse.create({
         data: {
           conversationId: convId,
           languageId: languageId ?? null,
@@ -109,12 +114,14 @@ export async function POST(req: NextRequest) {
           model: result.model,
           latencyMs: result.latencyMs,
         },
-      }),
-      prisma.conversation.update({
+      });
+    }
+    if (convId) {
+      await prisma.conversation.update({
         where: { id: convId },
         data: { updatedAt: new Date() },
-      }),
-    ]);
+      });
+    }
 
     return NextResponse.json({
       success: true,

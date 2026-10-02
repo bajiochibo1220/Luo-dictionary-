@@ -53,7 +53,9 @@ export default async function UsersPage({
         </p>
       </header>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter users <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status || searchParams.role ? "· filters active" : "· all users"}</span></summary>
+      <div className="mt-3 flex flex-wrap gap-2">
         <Link
           href="/admin/users"
           className={`text-xs px-3 py-1.5 rounded-full ${
@@ -91,6 +93,7 @@ export default async function UsersPage({
           </Link>
         ))}
       </div>
+      </details>
 
       <UserTable users={formatted} canBulkManage={!!((session?.user as any)?.isSuperAdmin || (session?.user as any)?.isMasterSuperAdmin)} />
     </div>

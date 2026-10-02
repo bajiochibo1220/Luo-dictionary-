@@ -53,6 +53,35 @@
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
 }
+
+/* Keep wide data tables usable on phones without shrinking their columns. */
+@media (max-width: 767px) {
+  .mobile-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-table-scroll table,
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-filter-group > summary::-webkit-details-marker { display: none; }
+  .mobile-filter-group > summary::after {
+    content: "+";
+    float: right;
+    color: #a16207;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .mobile-filter-group[open] > summary::after { content: "−"; }
+}
 /* Contribute button pulse */
 @keyframes blinkContribute {
   0%, 100% {

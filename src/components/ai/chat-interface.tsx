@@ -44,7 +44,7 @@ const SUGGESTED = [
   "What does nyathi mean?",
 ];
 
-export function ChatInterface({ languageCode = "luo", cultureCode = languageCode }: { languageCode?: string; cultureCode?: string }) {
+export function ChatInterface({ languageCode = "luo", cultureCode = languageCode, guest = false }: { languageCode?: string; cultureCode?: string; guest?: boolean }) {
   const [answerLanguageCode, setAnswerLanguageCode] = useState(languageCode);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -64,6 +64,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
   }, []);
 
   const loadConversations = useCallback(async () => {
+    if (guest) return;
     try {
       const url = `/api/conversations${showArchived ? "?archived=true" : ""}`;
       const res = await fetch(url);
@@ -74,7 +75,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
       }
       if (json.success) setConversations(json.data);
     } catch {}
-  }, [showArchived, handleStale]);
+  }, [showArchived, handleStale, guest]);
 
   useEffect(() => {
     loadConversations();
@@ -205,7 +206,13 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, languageCode: answerLanguageCode, cultureCode, conversationId }),
+        body: JSON.stringify({
+          question,
+          languageCode: answerLanguageCode,
+          cultureCode,
+          conversationId,
+          history: guest ? messages.slice(-8).map(({ role, content }) => ({ role, content })) : undefined,
+        }),
       });
 
       const json = await res.json();
@@ -247,13 +254,13 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
   return (
     <div className="h-[calc(100vh-4rem)] flex bg-[#b89a68] relative overflow-hidden">
       <aside
-        className={`${
+          className={`${guest ? "hidden" : ""} ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 absolute md:relative inset-y-0 left-0 z-30 w-72 bg-[#6b4724] border-r border-black/20 transition-transform flex flex-col`}
       >
         <div className="p-3 border-b border-amber-100/15 space-y-2">
           <div className="md:hidden mb-2">
-            <BackLink href="/dashboard" label="Back" variant="on-dark" />
+            <BackLink href={`/${cultureCode}`} label="Back to language home" variant="on-dark" />
           </div>
           <button
             onClick={startNewChat}
@@ -355,11 +362,11 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
         <header className="flex items-center justify-between px-4 py-3 border-b border-stone-900/15 bg-[#a9895a]">
           <div className="flex items-center gap-2 md:gap-3">
             <div className="hidden md:block">
-              <BackLink href="/dashboard" label="Back" variant="on-sand" />
+              <BackLink href={`/${cultureCode}`} label="Back to language home" variant="on-sand" />
             </div>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden text-stone-900 text-2xl leading-none"
+              className={`${guest ? "hidden" : ""} md:hidden text-stone-900 text-2xl leading-none`}
               aria-label="Menu"
             >
               ☰

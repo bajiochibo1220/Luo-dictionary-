@@ -23,8 +23,14 @@ export default async function UserDashboardPage({
   const user = session.user as any;
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
-  const languageId = primaryRole?.languageId;
-  const languageCode = primaryRole?.languageCode ?? "luo";
+  const fallbackLanguage = primaryRole ? null : await prisma.language.findFirst({
+    where: { isActive: true },
+    orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
+    select: { id: true, code: true, nativeName: true },
+  });
+  const languageId = primaryRole?.languageId ?? fallbackLanguage?.id;
+  const languageCode = primaryRole?.languageCode ?? fallbackLanguage?.code ?? "luo";
+  const languageName = primaryRole?.languageName ?? fallbackLanguage?.nativeName ?? "Dholuo";
   const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
 
   const localizedSummary = (record: any, targetLanguageId: number) => {
@@ -84,7 +90,7 @@ export default async function UserDashboardPage({
         <ModuleContent
           title={title}
           baseName={mod.baseName}
-          languageName={primaryRole?.languageName ?? "Dholuo"}
+          languageName={languageName}
           languageCode={languageCode}
           languageId={languageId}
           moduleCode={mod.code}
@@ -131,14 +137,14 @@ export default async function UserDashboardPage({
       media: entry.media.map((media) => ({ id: media.id, type: media.type, url: media.url, thumbnailUrl: media.thumbnailUrl, format: media.format })),
     }));
     const feedItems = [...items, ...dictionaryItems].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
-    return <ModuleContent title="Community content" baseName="All modules" languageName={primaryRole?.languageName ?? "Dholuo"} languageCode={languageCode} languageId={languageId} moduleCode="all" items={feedItems} />;
+    return <ModuleContent title="Community content" baseName="All modules" languageName={languageName} languageCode={languageCode} languageId={languageId} moduleCode="all" items={feedItems} />;
   }
 
   return (
     <div className="p-6 md:p-10 pt-20 md:pt-12">
       <header className="mb-8">
         <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-2">
-          {primaryRole?.languageName ?? "Dholuo"} · Overview
+          {languageName} · Overview
         </p>
         <h2 className="font-serif text-4xl md:text-5xl text-stone-900 leading-tight mb-3">
           Welcome{user.name ? `, ${user.name.split(" ")[0]}` : ""}
@@ -160,7 +166,7 @@ export default async function UserDashboardPage({
         <p className="text-base text-stone-800/80 leading-relaxed">
           Your language:{" "}
           <strong className="text-amber-900 font-semibold">
-            {primaryRole?.languageName ?? "Dholuo"}
+            {languageName}
           </strong>
         </p>
       </div>

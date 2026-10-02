@@ -83,7 +83,7 @@ export default async function LanguageHomePage({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {modules.map((mod) => {
             const modulePath = MODULE_PATHS[mod.code];
-            const isStub = !modulePath;
+            const isStub = mod.isStub || !modulePath;
             const href = !modulePath
               ? "#"
               : modulePath.startsWith("/")

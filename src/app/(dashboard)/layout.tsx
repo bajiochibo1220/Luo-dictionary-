@@ -18,15 +18,21 @@ export default async function DashboardLayout({
   const user = session.user as any;
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
-  const languageCode = primaryRole?.languageCode ?? "luo";
+  const fallbackLanguage = primaryRole ? null : await prisma.language.findFirst({
+    where: { isActive: true },
+    orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
+    select: { id: true, code: true, nativeName: true },
+  });
+  const languageCode = primaryRole?.languageCode ?? fallbackLanguage?.code ?? "luo";
+  const languageId = primaryRole?.languageId ?? fallbackLanguage?.id;
 
   const [modules, stats] = await Promise.all([
-    primaryRole?.languageId
+    languageId
       ? prisma.module.findMany({
           where: { isActive: true, isStub: false },
           orderBy: { displayOrder: "asc" },
           include: {
-            translations: { where: { languageId: primaryRole.languageId } },
+            translations: { where: { languageId } },
           },
         })
       : Promise.resolve([]),

@@ -95,26 +95,35 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
         </div>
       </header>
 
-      {isSuperAdmin && <nav aria-label="Filter by language" className="mb-4 flex flex-wrap gap-2">
+      {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by language <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.languageId ? "· selected" : "· all"}</span></summary>
+        <nav aria-label="Filter by language" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ languageId: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All languages</Link>
         {(await prisma.language.findMany({ where: { isActive: true }, orderBy: { displayOrder: "asc" }, select: { id: true, nativeName: true } })).map((language) => (
           <Link key={language.id} href={paramsFor({ languageId: String(language.id) })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.languageId === String(language.id) ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{language.nativeName}</Link>
         ))}
-      </nav>}
+        </nav>
+      </details>}
 
-      <nav aria-label="Filter by content area" className="mb-3 flex flex-wrap gap-2">
+      <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by content area <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((module) => module.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
+        <nav aria-label="Filter by content area" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ module: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.module ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All content areas</Link>
         {modules.filter((module) => module.isActive && !module.isStub).map((module) => (
           <Link key={module.code} href={paramsFor({ module: module.code })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.module === module.code ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{module.baseName}</Link>
         ))}
-      </nav>
+        </nav>
+      </details>
 
-      <nav aria-label="Filter by status" className="mb-4 flex flex-wrap gap-2">
+      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by status <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status ? `· ${searchParams.status.replaceAll("_", " ")}` : "· all"}</span></summary>
+        <nav aria-label="Filter by status" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ status: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All statuses</Link>
         {["draft", "submitted", "needs_edit", "under_review", "curated", "published", "rejected"].map((status) => (
           <Link key={status} href={paramsFor({ status })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.status === status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{status.replaceAll("_", " ")}</Link>
         ))}
-      </nav>
+        </nav>
+      </details>
 
       <ContentTable records={formatted} canDelete={isSuperAdmin || roles.some((role) => role.role === "language_admin")} canBulkWorkflow={canBulkWorkflow} />
     </div>
