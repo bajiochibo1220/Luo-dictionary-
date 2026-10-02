@@ -3,6 +3,7 @@ import { getToken } from "next-auth/jwt";
 
 const PUBLIC_PATHS = [
   "/",
+  "/chatbot",
   "/mobile-apps",
 ];
 
@@ -13,9 +14,10 @@ function isPublic(pathname: string): boolean {
   // The language library is readable without an account. Contributions and
   // dashboard/admin endpoints still require a session.
   const firstSegment = pathname.split("/")[1];
-  const reservedSegments = ["admin", "api", "super-admin", "dashboard", "onboarding", "chatbot", "my-submissions", "contribute", "admin-login", "admin-register"];
+  const reservedSegments = ["admin", "api", "super-admin", "dashboard", "onboarding", "my-submissions", "contribute", "admin-login", "admin-register"];
   if (!reservedSegments.includes(firstSegment) && /^\/[a-z]{2,8}(?:-[a-z0-9]+)?(?:\/|$)/i.test(pathname)) return true;
   if (["/api/songs", "/api/proverbs", "/api/riddles", "/api/dictionary", "/api/artifacts", "/api/folktales", "/api/oral-histories", "/api/heritage-sites", "/api/media"].some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
+  if (pathname === "/api/ai/chat") return true;
   if (pathname.startsWith("/_next")) return true;
   if (pathname.startsWith("/favicon")) return true;
   if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js|webmanifest)$/i.test(pathname)) {
@@ -26,7 +28,7 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  const isAuthEntry = pathname === "/" || pathname === "/login" || pathname === "/register";
+  const isAuthEntry = pathname === "/login" || pathname === "/register";
 
   // Public routes always allowed
   if (isPublic(pathname) && !isAuthEntry) {

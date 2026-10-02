@@ -91,25 +91,33 @@ export default async function LanguageHomePage({
               : `/${language.code}/${modulePath}`;
             const title = titleMap[mod.code] || mod.baseName;
 
-            return (
-              <Link
-                key={mod.id}
-                href={href}
-                className={`group block p-6 bg-white rounded-xl shadow hover:shadow-lg transition border border-stone-100 hover:border-amber-300 ${
-                  isStub ? "opacity-60 cursor-not-allowed" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-serif text-stone-800 group-hover:text-amber-700 transition">
+            const card = (
+              <>
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <h3 className="min-h-[3.5rem] line-clamp-2 text-lg font-serif text-stone-800 group-hover:text-amber-700 transition">
                     {title}
                   </h3>
                   {isStub && (
-                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
-                      Soon
+                    <span className="shrink-0 rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                      Coming soon
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-stone-500">{mod.baseName}</p>
+              </>
+            );
+
+            return isStub ? (
+              <div key={mod.id} aria-disabled="true" className="block cursor-not-allowed rounded-xl border border-stone-100 bg-white p-6 opacity-70 shadow-sm">
+                {card}
+              </div>
+            ) : (
+              <Link
+                key={mod.id}
+                href={href}
+                className="group block rounded-xl border border-stone-100 bg-white p-6 shadow-sm transition hover:border-amber-300 hover:shadow-lg"
+              >
+                {card}
               </Link>
             );
           })}
