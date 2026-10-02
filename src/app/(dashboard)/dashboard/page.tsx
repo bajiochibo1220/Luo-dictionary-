@@ -100,46 +100,8 @@ export default async function UserDashboardPage({
     }
   }
 
-  // ── Overview: text sits directly on the sand background
-  if (!searchParams.module && languageId) {
-    const [records, dictionaryEntries] = await Promise.all([
-      prisma.culturalRecord.findMany({
-        where: { languageId, ...publicRecordWhere() },
-        orderBy: { createdAt: "desc" },
-        take: 100,
-        include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } }, module: { select: { code: true, baseName: true } } },
-      }),
-      prisma.dictionaryEntry.findMany({
-        where: { ...(languageCode === "eng" ? {} : { languageId }), ...publicRecordWhere() },
-        orderBy: { createdAt: "desc" },
-        take: 100,
-        include: { media: { where: publicMediaWhere() } },
-      }),
-    ]);
-    const items = records.map((record) => ({
-      id: record.id,
-      title: record.title,
-      summary: localizedSummary(record, languageId),
-      englishSummary: englishLanguage ? localizedSummary(record, englishLanguage.id) : null,
-      moduleCode: record.module.code,
-      moduleName: record.module.baseName,
-      createdAt: record.createdAt.toISOString(),
-      media: record.media.map((media) => ({ id: media.id, type: media.type, url: media.url, thumbnailUrl: media.thumbnailUrl, format: media.format })),
-    }));
-    const dictionaryItems = dictionaryEntries.map((entry) => ({
-      id: entry.id,
-      title: entry.dholuo,
-      summary: (languageCode === "eng" ? [entry.english, entry.kiswahili] : [entry.pronunciation]).filter(Boolean).join("\n"),
-      englishSummary: [entry.english, entry.kiswahili].filter(Boolean).join("\n"),
-      moduleCode: "dictionary",
-      moduleName: "Dictionary",
-      createdAt: entry.createdAt.toISOString(),
-      media: entry.media.map((media) => ({ id: media.id, type: media.type, url: media.url, thumbnailUrl: media.thumbnailUrl, format: media.format })),
-    }));
-    const feedItems = [...items, ...dictionaryItems].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
-    return <ModuleContent title="Community content" baseName="All modules" languageName={languageName} languageCode={languageCode} languageId={languageId} moduleCode="all" items={feedItems} />;
-  }
-
+  // Keep the overview as the dashboard landing page; selected modules render
+  // their content above, in the main panel beside the working sidebar.
   return (
     <div className="p-6 md:p-10 pt-20 md:pt-12">
       <header className="mb-8">

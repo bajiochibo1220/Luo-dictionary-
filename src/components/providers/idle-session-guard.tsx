@@ -30,7 +30,7 @@ export function IdleSessionGuard() {
     const startIdleTimer = () => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => {
-        void signOut({ callbackUrl: "/login" });
+        void signOut({ redirectTo: "/login" });
       }, IDLE_TIMEOUT_MS);
     };
 

@@ -60,7 +60,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
   // If session is stale, force sign out
   const handleStale = useCallback(async () => {
     toast.error("Your session expired. Signing you out...");
-    setTimeout(() => signOut({ callbackUrl: "/" }), 1200);
+    setTimeout(() => signOut({ redirectTo: "/login" }), 1200);
   }, []);
 
   const loadConversations = useCallback(async () => {
