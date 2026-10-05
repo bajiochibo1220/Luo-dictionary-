@@ -283,12 +283,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { languageId: true } });
+  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { id: true, languageId: true, contributorId: true, status: true } });
   if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (!isLanguageAdmin(session, record.languageId)) {
+  if (record.status === "published") return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
+  const userId = (session.user as any).id;
+  const isUploaderOwner = record.contributorId === userId && canUploadContent(session, record.languageId);
+  if (!isUploaderOwner && !isLanguageAdmin(session, record.languageId)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  await prisma.culturalRecord.delete({ where: { id: params.id } });
+  const deleted = await prisma.culturalRecord.deleteMany({ where: { id: params.id, status: { not: "published" } } });
+  if (!deleted.count) return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
   return NextResponse.json({ success: true });
 }

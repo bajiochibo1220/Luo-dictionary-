@@ -29,7 +29,7 @@ export default async function ValidationDetailPage({
   if (!record) notFound();
   const user = session.user as any;
   const canSee = user.isSuperAdmin || user.isMasterSuperAdmin || (user.languageRoles ?? []).some((role: any) =>
-    role.languageId === record.languageId && role.role === "cultural_expert"
+    role.languageId === record.languageId && ["cultural_expert", "language_admin"].includes(role.role)
   );
   const waitingForCulture = record.status === "submitted" || record.status === "rejection_review" || (record.status === "under_review" && !record.validatorId);
   if (!canSee || !waitingForCulture) notFound();

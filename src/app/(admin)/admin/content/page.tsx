@@ -44,6 +44,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
 
   const formatted = records.map((record) => ({
     id: record.id,
+    contributorId: record.contributorId,
     title: record.title,
     status: record.status,
     validatorId: record.validatorId,
@@ -54,7 +55,11 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
     module: record.module,
     canModerate: canUploadContent(session, record.languageId),
     canEdit: canEditContent(session, record.languageId),
-    canDelete: isSuperAdmin || roles.some((role) => role.languageId === record.languageId && role.role === "language_admin"),
+    canDelete: record.status !== "published" && (
+      isSuperAdmin ||
+      roles.some((role) => role.languageId === record.languageId && role.role === "language_admin") ||
+      (record.contributorId === user.id && canUploadContent(session, record.languageId))
+    ),
     canCultureReview: canValidateCulture(session, record.languageId),
     canForward: canSendToFinalReview(session, record.languageId),
     canFinalReview: !!record.validatorId && canFinalizeContent(session, record.languageId),
@@ -125,7 +130,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
         </nav>
       </details>
 
-      <ContentTable records={formatted} canDelete={isSuperAdmin || roles.some((role) => role.role === "language_admin")} canBulkWorkflow={canBulkWorkflow} />
+      <ContentTable records={formatted} canDelete={formatted.some((record) => record.canDelete)} canBulkWorkflow={canBulkWorkflow} />
     </div>
   );
 }
