@@ -1,9 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "../assets/fonts/fonts.css";
+@import "tailwindcss" source(none);
+@config "../../tailwind.config.ts";
+@source "../";
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (min-width: 1536px) { max-width: 1400px; }
+}
 
 @layer base {
   :root {
+    --font-sans: "Inter";
+    --font-serif: "Lora";
     --background: 30 20% 98%;
     --foreground: 20 14% 10%;
     --card: 0 0% 100%;
@@ -52,6 +61,7 @@
 @layer base {
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
 }
 
 /* Keep wide data tables usable on phones without shrinking their columns. */

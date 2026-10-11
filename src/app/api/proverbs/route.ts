@@ -1,3 +1,5 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { auth } from "@/lib/auth";
@@ -9,7 +11,8 @@ import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, generateCollectionSessionId, getRepositoryDomain, parseGovernanceMetadata, publicGovernanceWhere, publicRecordWhere } from "@/lib/governance";
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
+  await assertServiceAvailable();
   try {
     const { searchParams } = new URL(req.url);
     const langCode = searchParams.get("lang");
@@ -131,7 +134,7 @@ export async function POST(req: NextRequest) {
       const sessionId = await generateCollectionSessionId(tx, governance.data);
       const domain = getRepositoryDomain("proverbs");
       const publicReady = governance.data.consentScope === "public_excerpt" && governance.data.restrictionLevel === "public" && (!governance.data.embargoUntil || governance.data.embargoUntil <= new Date());
-      const status = canPublish && publicReady ? "published" : canPublish ? "draft" : "submitted";
+      const status = canPublish ? "draft" : "submitted";
       const created = await tx.culturalRecord.create({
         data: {
           id: recordId,
@@ -148,8 +151,8 @@ export async function POST(req: NextRequest) {
           },
           tags: data.themes ?? [],
           status,
-          publishedAt: status === "published" ? new Date() : null,
-          reviewerId: status === "published" ? (session.user as any).id : null,
+          publishedAt: null,
+          reviewerId: null,
           contributorId: (session.user as any).id,
           ...governance.data,
           sessionId,
@@ -190,3 +193,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const GET = withApiErrors(handleGET);

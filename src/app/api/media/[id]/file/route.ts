@@ -1,16 +1,20 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { assertServiceAvailable } from "@/lib/maintenance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { cloudinary } from "@/lib/cloudinary";
-import { canAccessGovernedItem, canReviewGovernedItem, isPubliclyEligible } from "@/lib/governance";
+import { cloudinary, configureCloudinary } from "@/lib/cloudinary";
+import { canReadMedia, isPubliclyEligible } from "@/lib/governance";
 import { logAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
+async function handleGET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
+  await assertServiceAvailable();
   const asset = await prisma.mediaAsset.findUnique({
     where: { id: params.id },
     include: {
@@ -26,13 +30,11 @@ export async function GET(
   const parent = asset.record ?? asset.dictionary;
   const parentPublic = !parent || (parent.status === "published" && isPubliclyEligible(parent));
   const accessUser = user ? {
+    id: user.id,
     isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin),
     languageRoles: user.languageRoles ?? [],
   } : null;
-  const mayRead = assetPublic && parentPublic
-    ? true
-    : (canAccessGovernedItem(accessUser, asset, asset.languageId) || canReviewGovernedItem(accessUser, asset, asset.languageId)) &&
-      (!parent || parent.contributorId === user?.id || canAccessGovernedItem(accessUser, parent, parent.languageId) || canReviewGovernedItem(accessUser, parent, parent.languageId));  if (!mayRead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!canReadMedia(accessUser, asset, parent)) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   if (!(assetPublic && parentPublic)) {
     await logAction({
@@ -50,6 +52,8 @@ export async function GET(
     return NextResponse.redirect(asset.url, 302);
   }
 
+  await configureCloudinary();
+
   const expiresAt = Math.floor(Date.now() / 1000) + 120;
   const signedUrl = cloudinary.utils.private_download_url(asset.publicId, asset.format, {
     resource_type: asset.resourceType,
@@ -65,11 +69,14 @@ export async function GET(
     return NextResponse.json({ error: "Media is temporarily unavailable" }, { status: 502 });
   }
 
+  const contentType = upstream.headers.get("content-type") || "application/octet-stream";
+  const safeInline = /^(?:image\/(?:jpeg|png|gif|webp|avif|bmp)|audio\/[a-z0-9.+-]+|video\/[a-z0-9.+-]+)(?:;|$)/i.test(contentType);
+  const filename = `${asset.assetId || asset.id}.${asset.format}`.replace(/[^a-zA-Z0-9_.-]/g, "_");
   const headers = new Headers({
-    "Content-Type": upstream.headers.get("content-type") || "application/octet-stream",
-    "Cache-Control": assetPublic && parentPublic ? "public, max-age=60" : "private, no-store",
+    "Content-Type": safeInline ? contentType : "application/octet-stream",
+    "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",
-    "Content-Disposition": "inline",
+    "Content-Disposition": safeInline ? "inline" : `attachment; filename="${filename}"`,
   });
   for (const name of ["accept-ranges", "content-length", "content-range"]) {
     const value = upstream.headers.get(name);
@@ -77,3 +84,5 @@ export async function GET(
   }
   return new NextResponse(upstream.body, { status: upstream.status, headers });
 }
+
+export const GET = withApiErrors(handleGET);

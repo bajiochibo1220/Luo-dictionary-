@@ -1,15 +1,16 @@
+import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { canFinalizeContent } from "@/lib/permissions";
 import { logAction } from "@/lib/audit";
-import { buildRecordUri, isPubliclyEligible } from "@/lib/governance";
+import { buildRecordUri, isPubliclyEligible, mayReviewRecord } from "@/lib/governance";
 import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { hasGemini } from "@/lib/ai/gemini";
 import { embedRecord, embedTranscript } from "@/lib/ai/embeddings";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 
-export async function POST(req: NextRequest) {
+async function handlePOST(req: NextRequest) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Sign in first." }, { status: 401 });
 
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
   if (!canFinalizeContent(session, languageId)) return NextResponse.json({ success: false, error: "Only a publisher assigned to this language can publish these items." }, { status: 403 });
 
   for (const record of records) {
+    if (record.contributorId === session.user.id || !mayReviewRecord(session.user, record)) return NextResponse.json({ success: false, error: "You cannot publish your own contribution or material outside your access permissions." }, { status: 403 });
     if (record.language.code !== "eng") {
       const missing = missingEnglishTranslation(record.title, record.data, record.translations[0]);
       if (missing.length) return NextResponse.json({ success: false, error: `${record.title}: the English version must be completed and culturally reviewed before publishing. Missing: ${missing.join(", ")}.` }, { status: 400 });
@@ -49,7 +51,7 @@ export async function POST(req: NextRequest) {
   await prisma.$transaction(async (tx) => {
     for (const record of records) {
       const moved = await tx.culturalRecord.updateMany({
-        where: { id: record.id, status: "under_review", validatorId: { not: null } },
+        where: { id: record.id, status: "under_review", updatedAt: record.updatedAt, validatorId: { not: null } },
         data: {
           status: "published",
           publishedAt,
@@ -152,3 +154,5 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ success: true, count: records.length });
 }
+
+export const POST = withApiErrors(handlePOST);

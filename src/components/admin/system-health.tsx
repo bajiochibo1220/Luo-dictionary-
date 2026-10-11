@@ -5,8 +5,8 @@ export function SystemHealth({
   backup,
 }: {
   database: "healthy" | "warning" | "error";
-  storage: "healthy" | "warning" | "error";
-  ai: "healthy" | "warning" | "error";
+  storage: "healthy" | "warning" | "error" | "configured";
+  ai: "healthy" | "warning" | "error" | "configured";
   backup: "healthy" | "warning" | "error";
 }) {
   const items = [
@@ -18,12 +18,13 @@ export function SystemHealth({
 
   const dotColor: Record<string, string> = {
     healthy: "bg-green-500",
+    configured: "bg-blue-500",
     warning: "bg-amber-500",
     error: "bg-red-500",
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         System Health
       </h3>

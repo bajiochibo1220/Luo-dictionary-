@@ -6,10 +6,11 @@ import { getSelectedAdminCultureId } from "@/lib/admin-language";
 import { redirect } from "next/navigation";
 
 export default async function MediaLibraryPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { type?: string; module?: string; lang?: string };
+  searchParams: Promise<{ type?: string; module?: string; lang?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   const user = session!.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);

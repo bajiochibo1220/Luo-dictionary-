@@ -118,7 +118,7 @@ export function BulkMediaUploader({
   }
 
   return (
-    <section className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm md:p-6">
+    <section className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-xs md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-xl font-serif text-stone-900">Bulk media upload</h2>
@@ -149,7 +149,7 @@ export function BulkMediaUploader({
               <span className={`text-xs font-medium ${item.uploaded ? "text-green-700" : item.error ? "text-red-600" : "text-stone-400"}`}>
                 {item.uploaded ? "Uploaded draft" : item.error ? "Retry pending" : item.recordId ? "Prepared" : "Queued"}
               </span>
-              {(!started || (item.error && !item.uploaded)) && <button type="button" onClick={() => setQueue((current) => current.filter((queued) => queued.key !== item.key))} className="rounded px-2 text-lg text-stone-400 hover:bg-red-50 hover:text-red-700" aria-label={`Remove ${item.file.name} from upload batch`} title={item.error && started ? "Remove failed upload from batch" : "Remove from batch"}>×</button>}
+              {(!started || (item.error && !item.uploaded)) && <button type="button" onClick={() => setQueue((current) => current.filter((queued) => queued.key !== item.key))} className="rounded-sm px-2 text-lg text-stone-400 hover:bg-red-50 hover:text-red-700" aria-label={`Remove ${item.file.name} from upload batch`} title={item.error && started ? "Remove failed upload from batch" : "Remove from batch"}>×</button>}
             </div>
           ))}
           {progress && <p className="text-sm text-stone-600" aria-live="polite">{progress}</p>}

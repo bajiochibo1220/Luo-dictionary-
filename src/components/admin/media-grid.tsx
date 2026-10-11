@@ -126,7 +126,7 @@ export function MediaGrid({
 
   if (assets.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
         No media files yet
       </div>
     );
@@ -139,7 +139,7 @@ export function MediaGrid({
           <button
             key={a.id}
             onClick={() => void loadPublishedRecords(a)}
-            className="group bg-white rounded-xl shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-lg transition overflow-hidden text-left"
+            className="group bg-white rounded-xl shadow-xs border border-stone-100 hover:border-amber-300 hover:shadow-lg transition overflow-hidden text-left"
           >
             <div className="aspect-square bg-stone-100 flex items-center justify-center overflow-hidden">
               {a.resourceType === "image" ? (

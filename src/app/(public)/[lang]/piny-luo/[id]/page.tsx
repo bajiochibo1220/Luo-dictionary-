@@ -1,30 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
+import { ClientLocationMap as LocationMap } from "@/components/modules/oral-history/client-location-map";
 import { prisma } from "@/lib/db";
 import { findLocalizedRecord } from "@/lib/content-translations";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
-const LocationMap = dynamic(
-  () =>
-    import("@/components/modules/oral-history/location-map").then(
-      (m) => m.LocationMap
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-80 bg-stone-100 rounded-xl flex items-center justify-center text-stone-400 text-sm">
-        Loading map...
-      </div>
-    ),
-  }
-);
 
 export default async function HeritageSiteDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });
@@ -90,7 +77,7 @@ export default async function HeritageSiteDetailPage({
       )}
 
       {d.description && (
-        <section className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 mb-8">
+        <section className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 mb-8">
           <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
             Description
           </h2>
@@ -108,7 +95,7 @@ export default async function HeritageSiteDetailPage({
       )}
 
       {d.visiting_info && (
-        <section className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
+        <section className="bg-linear-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
           <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2">
             Visiting Information
           </h2>

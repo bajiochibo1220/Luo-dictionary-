@@ -16,7 +16,7 @@ export function LoginForm() {
 
   function startGoogleLogin() {
     document.cookie = `google-auth-intent=login; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
-    void signIn("google", { callbackUrl: "/dashboard" });
+    void signIn("google", { callbackUrl: "/auth/continue" });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -104,7 +104,7 @@ export function LoginForm() {
           required
           placeholder="Email address"
           autoComplete="off"
-          className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400"
+          className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400"
         />
 
         <div className="relative">
@@ -115,7 +115,7 @@ export function LoginForm() {
             required
             placeholder="Password"
             autoComplete="off"
-            className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400 pr-16"
+            className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400 pr-16"
           />
           <button
             type="button"

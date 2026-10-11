@@ -8,7 +8,7 @@ export function AiUsageCard({
   satisfactionPct: number;
 }) {
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
+    <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-amber-700 mb-4">
         AI Usage
       </h3>

@@ -6,10 +6,11 @@ import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function DictionaryDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });
@@ -69,7 +70,7 @@ export default async function DictionaryDetailPage({
         ← Back to Dictionary
       </Link>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12">
+      <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12">
         <header className="mb-8">
           <EnglishVersionLink langCode={language.code} href={`/${language.code}/muma/${params.id}`} />
           <div className="flex items-start justify-between gap-4 mb-3">
@@ -183,7 +184,7 @@ export default async function DictionaryDetailPage({
               <Link
                 key={r.id}
                 href={`/${language.code}/muma/${r.id}`}
-                className="block p-4 bg-white rounded-lg border border-stone-100 hover:border-amber-300 hover:shadow transition"
+                className="block p-4 bg-white rounded-lg border border-stone-100 hover:border-amber-300 hover:shadow-sm transition"
               >
                 <p className="font-serif text-lg text-stone-800">
                   {r.dholuo}

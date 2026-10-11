@@ -25,7 +25,7 @@ export function ContentBarChart({
             </div>
             <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all"
+                className="h-full bg-linear-to-r from-amber-400 to-amber-600 rounded-full transition-all"
                 style={{ width: `${pct}%` }}
               />
             </div>

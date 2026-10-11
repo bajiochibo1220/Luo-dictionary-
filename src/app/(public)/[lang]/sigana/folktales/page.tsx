@@ -6,10 +6,11 @@ import { FolktaleCard } from "@/components/modules/folktales/folktale-card";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function FolktalesPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });

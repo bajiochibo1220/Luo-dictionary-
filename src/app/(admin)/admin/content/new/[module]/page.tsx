@@ -7,12 +7,14 @@ import { BulkMediaUploader } from "@/components/admin/bulk-media-uploader";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
 export default async function NewContentPage({
-  params,
-  searchParams,
+  params: promisedParams,
+  searchParams: promisedSearchParams,
 }: {
-  params: { module: string };
-  searchParams: { languageId?: string };
+  params: Promise<{ module: string }>;
+  searchParams: Promise<{ languageId?: string }>;
 }) {
+  const params = await promisedParams;
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   const user = session!.user as any;
 

@@ -1,3 +1,5 @@
+import { maintenanceMessage } from "@/lib/maintenance";
+import { MaintenanceNotice } from "@/components/layout/maintenance-notice";
 import { auth } from "@/lib/auth";
 import { ChatInterface } from "@/components/ai/chat-interface";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
@@ -6,6 +8,8 @@ import { prisma } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function ChatbotPage() {
+  const message = await maintenanceMessage();
+  if (message) return <MaintenanceNotice message={message} />;
   const session = await auth();
   const user = session?.user as any;
   const primaryRole = ((user?.languageRoles ?? []) as any[])[0];

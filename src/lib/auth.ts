@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { cacheForRender } from "@/lib/render-cache";
 import { prisma } from "@/lib/db";
 
 export type LanguageRole = {
@@ -33,7 +34,7 @@ declare module "next-auth" {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
   adapter: {
     ...PrismaAdapter(prisma),
     // Prisma's default adapter uses an exact email match. Normalize Google
@@ -61,8 +62,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       allowDangerousEmailAccountLinking: true,
       profile(profile) {
         return {
-          ...profile,
+          id: profile.sub,
+          name: profile.name,
           email: profile.email?.trim().toLowerCase(),
+          image: profile.picture,
         };
       },
     }),
@@ -129,22 +132,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
-            include: { languageRoles: { include: { language: true } } },
+            select: {
+              status: true,
+              isSuperAdmin: true,
+              isMasterSuperAdmin: true,
+              languageRoles: { select: { languageId: true, role: true, language: { select: { code: true, name: true } } } },
+            },
           });
-          if (dbUser) {
-            const accountActive = dbUser.status === "active";
-            const nonPrivilegedRoles = [
-              "registered",
-              "student",
-              "teacher",
-              "researcher",
-              "contributor",
-              "elder",
-            ];
-            token.isSuperAdmin = dbUser.isSuperAdmin && accountActive;
-            token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin && accountActive;
+          if (dbUser?.status === "active") {
+            token.isSuperAdmin = dbUser.isSuperAdmin || dbUser.isMasterSuperAdmin;
+            token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin;
             token.languageRoles = dbUser.languageRoles
-              .filter((lr) => accountActive || nonPrivilegedRoles.includes(lr.role))
               .map((lr) => ({
                   languageId: lr.languageId,
                   languageCode: lr.language.code,
@@ -152,17 +150,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                   role: lr.role,
                 }));
           } else {
-            token.id = undefined;
-            token.isSuperAdmin = false;
-            token.isMasterSuperAdmin = false;
-            token.languageRoles = [];
+            return null;
           }
         } catch (err) {
-          console.error("[auth] failed to reload roles:", err);
+          console.error("[auth] could not verify account access");
+          return null;
         }
       }
 
-      return token;
+      return token.id ? token : null;
     },
     async session({ session, token }) {
       if (session.user) {
@@ -178,7 +174,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async signIn({ user, account: providerAccount, profile }) {
       if (providerAccount?.provider === "google") {
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         const googleIntent = cookieStore.get("google-auth-intent")?.value;
         cookieStore.delete("google-auth-intent");
         const email = user.email?.trim();
@@ -227,3 +223,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   trustHost: true,
 });
+
+// React memoizes only within one server render. Each new request still checks
+// the current account and roles; no session or privileges are shared between users.
+export const auth = cacheForRender(() => uncachedAuth());

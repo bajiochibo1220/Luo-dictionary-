@@ -35,7 +35,7 @@ export default async function LanguagesPage() {
         </Link>
       </header>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-200">
             <tr>

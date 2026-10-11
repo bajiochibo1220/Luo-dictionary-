@@ -1,14 +1,17 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { canReviewContent } from "@/lib/permissions";
-import { buildMediaAssetId, buildMediaUri, canAccessGovernedItem, canReviewGovernedItem, ensureRecordCollectionSessionId, getRepositoryDomain, isPubliclyEligible, linkRecordConsentToMedia, lockMediaAssetSequence } from "@/lib/governance";
+import { lockEditableRecord, withApiErrors } from "@/lib/content-workflow";
+import { buildMediaAssetId, buildMediaUri, canReadMedia, mayReviewRecord, ensureRecordCollectionSessionId, getRepositoryDomain, linkRecordConsentToMedia, lockMediaAssetSequence } from "@/lib/governance";
 
-export async function PATCH(
+async function handlePATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,7 +25,7 @@ export async function PATCH(
 
   const asset = await prisma.mediaAsset.findUnique({
     where: { id: params.id },
-    include: { record: { select: { id: true } } },
+    include: { record: true, dictionary: true },
   });
   if (!asset) return NextResponse.json({ error: "Media not found" }, { status: 404 });
 
@@ -30,10 +33,10 @@ export async function PATCH(
     where: { id: recordId },
     include: { module: { select: { code: true } } },
   });
-  if (!record || record.status !== "published") {
-    return NextResponse.json({ error: "Choose a published content record" }, { status: 400 });
+  if (!record || !["draft", "needs_edit", "rejected", "curated"].includes(record.status)) {
+    return NextResponse.json({ error: "Choose a draft or returned content record. Reviewed packages cannot accept new media." }, { status: 409 });
   }
-  if (!canReviewContent(session, record.languageId)) {
+  if (!canReviewContent(session, record.languageId) || !mayReviewRecord(session.user, record) || !canReadMedia(session.user, asset, asset.record ?? asset.dictionary)) {
     return NextResponse.json({ error: "You cannot manage this content" }, { status: 403 });
   }
   if (asset.languageId !== record.languageId) {
@@ -44,8 +47,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Media and content must belong to the same content area" }, { status: 400 });
   }
 
+  if (asset.record && !["draft", "needs_edit", "rejected", "curated"].includes(asset.record.status) || asset.dictionary && !["draft", "needs_edit", "rejected", "curated"].includes(asset.dictionary.status)) return NextResponse.json({ error: "Reviewed media cannot be moved. Return its source item for changes first." }, { status: 409 });
   const domain = getRepositoryDomain(record.module.code);
   await prisma.$transaction(async (tx) => {
+    const current = await lockEditableRecord(tx, record.id);
+    if (!mayReviewRecord(session.user, current)) throw Object.assign(new Error("Content access changed."), { status: 403 });
+    if (asset.record && asset.record.id !== record.id) await lockEditableRecord(tx, asset.record.id);
+    Object.assign(record, current);
     const sessionId = await ensureRecordCollectionSessionId(tx, record.id, { countyCode: record.countyCode, siteName: record.siteName, date: record.createdAt });
     const sequence = await lockMediaAssetSequence(tx, sessionId, asset.type);
     const assetId = buildMediaAssetId(sessionId, asset.type, sequence);
@@ -84,10 +92,12 @@ export async function PATCH(
   });
 }
 
-export async function GET(
+async function handleGET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
+  await assertServiceAvailable();
   const asset = await prisma.mediaAsset.findUnique({
     where: { id: params.id },
     include: {
@@ -102,24 +112,22 @@ export async function GET(
   const session = await auth();
   const user = session?.user as any;
   const parent = asset.record ?? asset.dictionary;
-  const publicItem = isPubliclyEligible(asset) && (!parent || (parent.status === "published" && isPubliclyEligible(parent)));
   const accessUser = user ? {
+    id: user.id,
     isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin),
     languageRoles: user.languageRoles ?? [],
   } : null;
-  const mayRead = publicItem || (
-    (canAccessGovernedItem(accessUser, asset, asset.languageId) || canReviewGovernedItem(accessUser, asset, asset.languageId)) &&
-    (!parent || parent.contributorId === user?.id || canAccessGovernedItem(accessUser, parent, parent.languageId) || canReviewGovernedItem(accessUser, parent, parent.languageId))
-  );  if (!mayRead) {
+  if (!canReadMedia(accessUser, asset, parent)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json({ success: true, data: asset });
+  return NextResponse.json({ success: true, data: { ...asset, sizeBytes: Number(asset.sizeBytes) } });
 }
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -137,18 +145,23 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Delete from Cloudinary first
   try {
-    await deleteFromCloudinary(
-      asset.publicId,
-      (asset.resourceType as "image" | "video" | "raw") || "image",
-      asset.deliveryType === "authenticated" ? "authenticated" : "upload"
-    );
-  } catch (err) {
-    console.error("[cloudinary delete]", err);
-    // Continue even if Cloudinary fails — remove DB row anyway
+    await prisma.$transaction(async tx => {
+      if (asset.recordId) await lockEditableRecord(tx, asset.recordId);
+      else if (asset.dictionaryId) {
+        await tx.$queryRawUnsafe('SELECT id FROM dictionary_entries WHERE id = $1 FOR UPDATE', asset.dictionaryId);
+        const parent = await tx.dictionaryEntry.findUnique({ where: { id: asset.dictionaryId } });
+        if (parent && !["draft", "needs_edit", "rejected", "curated"].includes(parent.status)) throw Object.assign(new Error("Reviewed media cannot be deleted."), { status: 409 });
+      }
+      await deleteFromCloudinary(asset.publicId, (asset.resourceType as "image" | "video" | "raw") || "image", asset.deliveryType === "authenticated" ? "authenticated" : "upload");
+      await tx.mediaAsset.delete({ where: { id: params.id } });
+    }, { timeout: 30_000 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.status === 409 ? error.message : "Media deletion failed. Please retry." }, { status: error.status || 502 });
   }
-
-  await prisma.mediaAsset.delete({ where: { id: params.id } });
   return NextResponse.json({ success: true });
 }
+
+export const PATCH = withApiErrors(handlePATCH);
+
+export const GET = withApiErrors(handleGET);

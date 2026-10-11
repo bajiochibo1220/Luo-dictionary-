@@ -17,7 +17,7 @@ function isPublic(pathname: string): boolean {
   const reservedSegments = ["admin", "api", "super-admin", "dashboard", "onboarding", "my-submissions", "contribute", "admin-login", "admin-register"];
   if (!reservedSegments.includes(firstSegment) && /^\/[a-z]{2,8}(?:-[a-z0-9]+)?(?:\/|$)/i.test(pathname)) return true;
   if (["/api/songs", "/api/proverbs", "/api/riddles", "/api/dictionary", "/api/artifacts", "/api/folktales", "/api/oral-histories", "/api/heritage-sites", "/api/media"].some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
-  if (pathname === "/api/ai/chat") return true;
+  if (pathname === "/api/ai/chat" || pathname === "/api/ai/search") return true;
   if (pathname.startsWith("/_next")) return true;
   if (pathname.startsWith("/favicon")) return true;
   if (/\.(svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|css|js|webmanifest)$/i.test(pathname)) {
@@ -28,7 +28,16 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  // Older bookmarks and installed launch URLs must bypass the retired
+  // language landing layout. The root selects login or the current dashboard.
+  if (pathname === "/luo" || pathname === "/eng") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
   const isAuthEntry = pathname === "/login" || pathname === "/register";
+
+  // Login pages verify the current account on the server. A stale JWT must
+  // never bounce a suspended account between login and its old dashboard.
+  if (isAuthEntry) return NextResponse.next();
 
   // Public routes always allowed
   if (isPublic(pathname) && !isAuthEntry) {
@@ -57,7 +66,7 @@ export async function middleware(req: NextRequest) {
   try {
     token = await getToken({
       req,
-      secret: process.env.NEXTAUTH_SECRET,
+      secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
       cookieName: cookieName,
       salt: cookieName,
       secureCookie: isSecure,
@@ -72,6 +81,7 @@ export async function middleware(req: NextRequest) {
     if (isAuthEntry) {
       return NextResponse.next();
     }
+    if (pathname.startsWith("/api/")) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     return NextResponse.redirect(
       new URL("/login?callbackUrl=" + encodeURIComponent(pathname), req.url)
     );
@@ -93,29 +103,8 @@ export async function middleware(req: NextRequest) {
       );
     });
 
-  // Logged-in user on public home → dashboard
-  if (isAuthEntry) {
-    const landingPath = user.isMasterSuperAdmin === true
-      ? "/super-admin/dashboard"
-      : isAdmin
-      ? "/admin/dashboard"
-      : "/dashboard";
-    return NextResponse.redirect(
-      new URL(landingPath, req.url)
-    );
-  }
-
-  // OAuth sign-in returns to the shared dashboard URL; route staff accounts
-  // to their admin area based on the authenticated account's permissions.
-  if (pathname === "/dashboard" && user.isMasterSuperAdmin === true) {
-    return NextResponse.redirect(new URL("/super-admin/dashboard", req.url));
-  }
-  if (pathname === "/dashboard" && isAdmin) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-  }
-
   // Super-admin routes
-  if (pathname.indexOf("/super-admin") === 0 && user.isMasterSuperAdmin !== true) {
+  if (pathname.indexOf("/super-admin") === 0 && !isSuperAdmin) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

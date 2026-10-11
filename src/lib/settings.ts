@@ -9,7 +9,7 @@ export async function getSystemSettings(): Promise<Record<string, string>> {
   }
 
   const rows = await prisma.$queryRaw<{ key: string; value: string }[]>`
-    SELECT key, value FROM system_settings
+    SELECT key, value FROM system_settings WHERE key NOT LIKE 'rate-limit:%'
   `;
 
   const map: Record<string, string> = {};
@@ -28,19 +28,13 @@ export async function getSystemSetting(
 }
 
 export async function setSystemSetting(key: string, value: string) {
-  await prisma.$executeRaw`
-    INSERT INTO system_settings (key, value, updated_at)
-    VALUES (${key}, ${value}, NOW())
-    ON CONFLICT (key)
-    DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-  `;
+  await prisma.systemSetting.upsert({ where: { key }, create: { key, value }, update: { value } });
   cache = null;
 }
 
 export async function setSystemSettings(entries: Record<string, string>) {
-  for (const [key, value] of Object.entries(entries)) {
-    await setSystemSetting(key, value);
-  }
+  await prisma.$transaction(Object.entries(entries).map(([key, value]) => prisma.systemSetting.upsert({ where: { key }, create: { key, value }, update: { value } })));
+  cache = null;
 }
 
 export function invalidateSettingsCache() {

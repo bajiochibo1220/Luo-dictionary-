@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { ContributeModal } from "./contribute-modal";
+import { NavigationLink } from "./navigation-link";
 
 export type MediaItem = {
   id: string;
@@ -43,6 +43,7 @@ export function ModuleContent({
   languageId,
   moduleCode,
   items,
+  canContribute = true,
 }: {
   title: string;
   baseName: string;
@@ -51,12 +52,12 @@ export function ModuleContent({
   languageId: number;
   moduleCode: string;
   items: ContentItem[];
+  canContribute?: boolean;
 }) {
   const [filter, setFilter] = useState("all");
   const [category, setCategory] = useState("all");
   const [view, setView] = useState("feed");
   const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
-  const [showContribute, setShowContribute] = useState(false);
 
   const filteredItems = useMemo(() => {
     const byCategory = moduleCode !== "all" || category === "all"
@@ -80,8 +81,6 @@ export function ModuleContent({
     return item.media.filter((m) => m.type === filter);
   };
 
-  const defaultMediaType = filter === "all" ? "text" : filter;
-
   return (
     <div className="p-6 md:p-8 pt-20 md:pt-8">
       <header className="mb-4 flex items-start justify-between gap-4 flex-wrap">
@@ -102,13 +101,13 @@ export function ModuleContent({
           </select>
         </label>
 
-        {moduleCode !== "all" && <button
-          onClick={() => setShowContribute(true)}
-          className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-5 py-2.5 rounded-full font-semibold shadow-lg hover:bg-[#5c3a1c] transition flex-shrink-0 blink-contribute"
+        {moduleCode !== "all" && canContribute && <NavigationLink
+          href={`/contribute/${encodeURIComponent(moduleCode)}`}
+          className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-5 py-2.5 rounded-full font-semibold shadow-lg hover:bg-[#5c3a1c] transition shrink-0 blink-contribute"
         >
           <span className="text-lg leading-none">+</span>
           Contribute
-        </button>}
+        </NavigationLink>}
       </header>
 
       {moduleCode === "all" && <div className="flex flex-wrap gap-2 mb-4">
@@ -126,7 +125,7 @@ export function ModuleContent({
               className={`text-xs font-semibold px-4 py-1.5 rounded-full border transition-all ${
                 filter === f.key
                   ? "bg-stone-900 text-amber-50 border-stone-900 shadow-md"
-                  : "bg-black/5 backdrop-blur text-stone-900 border-stone-800/25 hover:border-stone-900 hover:bg-black/10"
+                  : "bg-black/5 backdrop-blur-sm text-stone-900 border-stone-800/25 hover:border-stone-900 hover:bg-black/10"
               }`}
             >
               {f.label}
@@ -134,7 +133,7 @@ export function ModuleContent({
           ))}
         </div>
 
-        <div className="ml-auto flex gap-1 bg-black/5 backdrop-blur rounded-full p-1 border border-stone-900/15">
+        <div className="ml-auto flex gap-1 bg-black/5 backdrop-blur-sm rounded-full p-1 border border-stone-900/15">
           {VIEW_MODES.map((v) => (
             <button
               key={v.key}
@@ -144,7 +143,7 @@ export function ModuleContent({
               aria-pressed={view === v.key}
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
                 view === v.key
-                  ? "bg-stone-900 text-amber-50 shadow"
+                  ? "bg-stone-900 text-amber-50 shadow-sm"
                   : "text-stone-800 hover:bg-black/10"
               }`}
             >
@@ -164,17 +163,18 @@ export function ModuleContent({
             No {title} entries yet
           </h3>
           <p className="text-base text-stone-800/70 mb-8 leading-relaxed">
-            Be the first to share something with the community. Your
-            contribution will be reviewed and published.
+            {canContribute && moduleCode !== "all"
+              ? "Be the first to share something with the community. Your contribution will be reviewed and published."
+              : "Published community content will appear here when it is available."}
           </p>
 
-          {moduleCode !== "all" && <button
-            onClick={() => setShowContribute(true)}
+          {moduleCode !== "all" && canContribute && <NavigationLink
+            href={`/contribute/${encodeURIComponent(moduleCode)}`}
             className="inline-flex items-center gap-2 bg-[#6b4724] text-amber-50 px-7 py-3 rounded-full text-sm font-semibold hover:bg-[#5c3a1c] transition shadow-lg blink-contribute"
           >
             <span className="text-lg leading-none">+</span>
             Add the first {title}
-          </button>}
+          </NavigationLink>}
         </div>
       ) : view === "feed" ? (
         <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} />
@@ -182,16 +182,6 @@ export function ModuleContent({
         <GridView items={filteredItems} mediaForCard={mediaForCard} />
       )}
 
-      {showContribute && (
-        <ContributeModal
-          languageCode={languageCode}
-          languageId={languageId}
-          moduleCode={moduleCode}
-          moduleName={title}
-          defaultMediaType={defaultMediaType}
-          onClose={() => setShowContribute(false)}
-        />
-      )}
     </div>
   );
 }
@@ -261,7 +251,7 @@ function GridView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
         const thumb = media.find((m) => m.type === "image" || m.type === "video");
         const icons = Array.from(new Set(media.map((m) => m.type)));
         return (
-          <div key={item.id} className="bg-black/5 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
+          <div key={item.id} className="bg-black/5 backdrop-blur-sm rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
             <div className="aspect-square bg-[#b89a68] relative overflow-hidden">
               {thumb?.type === "image" && (
                 <img src={thumb.url} alt={item.title} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
@@ -277,7 +267,7 @@ function GridView({ items, mediaForCard }: { items: ContentItem[]; mediaForCard:
               {icons.length > 0 && (
                 <div className="absolute top-2 right-2 flex gap-1">
                   {icons.map((t) => (
-                    <span key={t} className="w-6 h-6 rounded-full bg-black/60 backdrop-blur flex items-center justify-center text-xs">
+                    <span key={t} className="w-6 h-6 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-xs">
                       {t === "image" && "🖼️"}
                       {t === "audio" && "🎵"}
                       {t === "video" && "🎬"}

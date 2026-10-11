@@ -35,7 +35,7 @@ export function ContributeModal({
   const [transcript, setTranscript] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const requiresStructuredForm = ["dictionary", "proverbs", "riddles", "oral_histories"].includes(moduleCode);
+  const requiresStructuredForm = true;
 
   async function handleSubmit(status: "draft" | "submitted") {
     if (!title.trim()) {
@@ -105,7 +105,7 @@ export function ContributeModal({
 
   if (requiresStructuredForm) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div className="bg-amber-50 rounded-2xl shadow-2xl max-w-lg w-full p-6">
           <p className="text-xs uppercase tracking-widest text-stone-600 font-semibold mb-2">Structured contribution</p>
           <h2 className="font-serif text-2xl text-stone-900 mb-3">Add to {moduleName}</h2>
@@ -127,7 +127,7 @@ export function ContributeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-[#cfc09a] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-900/15 bg-[#a9895a]">
@@ -185,7 +185,7 @@ export function ContributeModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Give this a clear, short title"
-              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
             />
           </div>
 
@@ -222,7 +222,7 @@ export function ContributeModal({
                 onChange={(e) => setTranscript(e.target.value)}
                 rows={8}
                 placeholder="Type or paste the content here..."
-                className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+                className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
               />
             </div>
           )}
@@ -237,7 +237,7 @@ export function ContributeModal({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Add context, meaning, or any details that help others understand."
-              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
             />
           </div>
 

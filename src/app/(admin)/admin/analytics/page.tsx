@@ -10,10 +10,11 @@ import {
 } from "@/components/admin/analytics-charts";
 
 export default async function AnalyticsPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { days?: string; lang?: string };
+  searchParams: Promise<{ days?: string; lang?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
   const user = session.user as any;

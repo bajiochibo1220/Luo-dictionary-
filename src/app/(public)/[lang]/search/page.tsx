@@ -3,10 +3,11 @@ import { prisma } from "@/lib/db";
 import { SemanticSearch } from "@/components/ai/semantic-search";
 
 export default async function SearchPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });

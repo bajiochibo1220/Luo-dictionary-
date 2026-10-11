@@ -71,7 +71,7 @@ export function DateOfBirthPicker({
           onChange={(e) =>
             onChange({ ...value, day: e.target.value ? Number(e.target.value) : null })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <option value="">Day</option>
           {days.map((d) => (
@@ -90,7 +90,7 @@ export function DateOfBirthPicker({
               month: e.target.value ? Number(e.target.value) : null,
             })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <option value="">Month</option>
           {MONTHS.map((m, i) => (
@@ -109,7 +109,7 @@ export function DateOfBirthPicker({
               year: e.target.value ? Number(e.target.value) : null,
             })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <option value="">Year</option>
           {years.map((y) => (

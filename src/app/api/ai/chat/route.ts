@@ -1,12 +1,15 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { assertAiQuota } from "@/lib/ai/quota";
 import { askQuestion } from "@/lib/ai/rag";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    await assertServiceAvailable();
     const session = await auth();
     const userId = (session?.user as any)?.id as string | undefined;
 
@@ -38,6 +41,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    await assertAiQuota(req, userId);
     let languageId: number | undefined;
     let cultureLanguageId: number | undefined;
     if (languageCode) {
@@ -102,12 +106,12 @@ export async function POST(req: NextRequest) {
 
     const result = await askQuestion(question, languageId, cultureLanguageId, history);
 
-    if (userId) {
+    {
       await prisma.aIResponse.create({
         data: {
           conversationId: convId,
           languageId: languageId ?? null,
-          userId,
+          userId: userId ?? null,
           query: question,
           response: result.answer,
           sources: result.sources as any,
@@ -148,9 +152,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: "Sorry, something went wrong. Please try again in a moment.",
+        error: [429, 503].includes(err.status) ? err.message : "Sorry, something went wrong. Please try again in a moment.",
       },
-      { status: 500 }
+      { status: err.status || 500, headers: err.retryAfter ? { "Retry-After": String(err.retryAfter) } : undefined }
     );
   }
 }

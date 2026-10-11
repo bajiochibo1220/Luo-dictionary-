@@ -40,7 +40,7 @@ export default async function AdminDashboardPage() {
     const languageNames = [...new Set<string>(userRoles.map((role) => role.languageName).filter(Boolean))];
     return <main className="mx-auto max-w-6xl">
       <header className="mb-8"><p className="text-xs uppercase tracking-widest text-amber-900">Role workspace</p><h1 className="mt-1 font-serif text-3xl text-stone-900">{languageNames.length ? languageNames.join(", ") : "Your"} Dashboard</h1><p className="mt-2 text-sm text-stone-700">This workspace shows the tasks and records available to your assigned role.</p></header>
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{roleWork.map((item) => <Link key={item.title} href={item.href} className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition hover:border-amber-500 hover:shadow-md"><p className="text-sm font-semibold text-stone-700">{item.title}</p><p className="mt-2 text-4xl font-semibold text-amber-900">{item.count}</p><p className="mt-2 text-sm text-stone-600">{item.description}</p><p className="mt-4 text-xs font-semibold uppercase tracking-wide text-amber-800">Open workspace →</p></Link>)}</section>
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{roleWork.map((item) => <Link key={item.title} href={item.href} className="rounded-xl border border-stone-200 bg-white p-6 shadow-xs transition hover:border-amber-500 hover:shadow-md"><p className="text-sm font-semibold text-stone-700">{item.title}</p><p className="mt-2 text-4xl font-semibold text-amber-900">{item.count}</p><p className="mt-2 text-sm text-stone-600">{item.description}</p><p className="mt-4 text-xs font-semibold uppercase tracking-wide text-amber-800">Open workspace →</p></Link>)}</section>
       {roleWork.length === 0 && <p className="rounded-xl border border-stone-200 bg-white p-6 text-sm text-stone-600">No workflow role is assigned to this account yet.</p>}
     </main>;
   }
@@ -72,129 +72,36 @@ export default async function AdminDashboardPage() {
     ? {}
     : { languageId: { in: managedLanguageIds } };
 
-  // Stats
-  const [
-    totalRecords,
-    pendingRecords,
-    mediaCount,
-    userCount,
-    aiQueries,
-  ] = await Promise.all([
-    prisma.culturalRecord.count({
-      where: recordScope,
+  const hasLanguageAdminRole = userRoles.some((role) => role.role === "language_admin");
+  const hasCultureRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "cultural_expert");
+  const hasEditorRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "content_editor");
+  const hasFinalRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "publisher");
+  const hasUploaderRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "uploader");
+  const aiScope = { languageId: { in: managedLanguageIds } };
+
+  // Aggregate every module/status in one query instead of two counts per module.
+  // Independent dashboard data is fetched together, preserving language scope.
+  const [modules, recordGroups, mediaCount, userCount, contributorsRaw, aiStats, ratings, cultureQueueCount, editorQueueCount, finalQueueCount] = await Promise.all([
+    prisma.module.findMany({
+      orderBy: { displayOrder: "asc" },
+      include: { translations: { where: selectedLanguageId ? { languageId: selectedLanguageId } : undefined } },
     }),
-    prisma.culturalRecord.count({
-      where: {
-        ...recordScope,
-        status: "submitted",
-      },
-    }),
+    prisma.culturalRecord.groupBy({ by: ["moduleId", "status"], where: recordScope, _count: { _all: true } }),
     prisma.mediaAsset.count({
       where: isSuperAdmin && selectedCultureId
         ? { OR: [{ languageId: selectedCultureId }, { record: { languageId: selectedCultureId } }] }
         : isSuperAdmin ? {} : { OR: [{ languageId: { in: managedLanguageIds } }, { record: { languageId: { in: managedLanguageIds } } }] },
     }),
     prisma.user.count({ where: isSuperAdmin && selectedLanguageId ? { languageRoles: { some: { languageId: selectedLanguageId } } } : isSuperAdmin ? {} : { languageRoles: { some: { languageId: { in: managedLanguageIds } } } } }),
-    prisma.aIResponse.count({
-      where: { languageId: { in: managedLanguageIds } },
+    prisma.culturalRecord.groupBy({
+      by: ["contributorId"],
+      where: { ...recordScope, contributorId: { not: null } },
+      _count: { contributorId: true },
+      orderBy: { _count: { contributorId: "desc" } },
+      take: 5,
     }),
-  ]);
-
-  // Content by module
-  const modules = await prisma.module.findMany({
-    orderBy: { displayOrder: "asc" },
-    include: { translations: { where: selectedLanguageId ? { languageId: selectedLanguageId } : undefined } },
-  });
-
-  const contentByModule = await Promise.all(
-    modules.map(async (m) => ({
-      label: m.translations[0]?.title ?? m.baseName,
-      count: await prisma.culturalRecord.count({
-        where: {
-          ...recordScope,
-          moduleId: m.id,
-        },
-      }),
-    }))
-  );
-  const activeModules = contentByModule.filter((m) => m.count > 0);
-
-  // Pending by module
-  const pendingByModule = await Promise.all(
-    modules.map(async (m) => ({
-      label: m.translations[0]?.title ?? m.baseName,
-      count: await prisma.culturalRecord.count({
-        where: {
-          ...recordScope,
-          moduleId: m.id,
-          status: "submitted",
-        },
-      }),
-    }))
-  );
-  const pendingActive = pendingByModule.filter((m) => m.count > 0);
-
-  // Recent contributors
-  const contributorsRaw = await prisma.culturalRecord.groupBy({
-    by: ["contributorId"],
-    where: {
-          ...recordScope,
-      contributorId: { not: null },
-    },
-    _count: { contributorId: true },
-    orderBy: { _count: { contributorId: "desc" } },
-    take: 5,
-  });
-
-  const contributorIds = contributorsRaw
-    .map((c) => c.contributorId)
-    .filter(Boolean) as string[];
-
-  const contributorUsers = await prisma.user.findMany({
-    where: { id: { in: contributorIds } },
-    select: { id: true, name: true, email: true },
-  });
-
-  const contributors = contributorsRaw.map((c) => {
-    const u = contributorUsers.find((x) => x.id === c.contributorId);
-    return {
-      name: u?.name ?? "",
-      email: u?.email ?? "",
-      count: c._count.contributorId,
-    };
-  });
-
-  // AI metrics
-  const aiStats = await prisma.aIResponse.aggregate({
-    where: { languageId: { in: managedLanguageIds } },
-    _avg: { latencyMs: true },
-    _count: { id: true },
-  });
-
-  const avgLatency = Math.round(aiStats._avg.latencyMs ?? 0);
-  const totalAiQueries = aiStats._count.id;
-
-  // Satisfaction: rating "up" vs total rated
-  const rated = await prisma.aIResponse.count({
-    where: {
-      languageId: { in: managedLanguageIds },
-      rating: { not: null },
-    },
-  });
-  const up = await prisma.aIResponse.count({
-    where: {
-      languageId: { in: managedLanguageIds },
-      rating: "up",
-    },
-  });
-  const satisfactionPct = rated === 0 ? 0 : Math.round((up / rated) * 100);
-
-  const hasLanguageAdminRole = userRoles.some((role) => role.role === "language_admin");
-  const hasCultureRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "cultural_expert");
-  const hasEditorRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "content_editor");
-  const hasFinalRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "publisher");
-  const hasUploaderRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "uploader");
-  const [cultureQueueCount, editorQueueCount, finalQueueCount] = await Promise.all([
+    prisma.aIResponse.aggregate({ where: aiScope, _avg: { latencyMs: true }, _count: { id: true } }),
+    prisma.aIResponse.groupBy({ by: ["rating"], where: { ...aiScope, rating: { not: null } }, _count: { _all: true } }),
     hasCultureRole ? prisma.culturalRecord.count({
       where: {
         ...recordScope,
@@ -205,6 +112,32 @@ export default async function AdminDashboardPage() {
     hasEditorRole ? prisma.culturalRecord.count({ where: { ...recordScope, status: "needs_edit", validatorId: { not: null } } }) : Promise.resolve(0),
     hasFinalRole ? prisma.culturalRecord.count({ where: { ...recordScope, status: "under_review", validatorId: { not: null } } }) : Promise.resolve(0),
   ]);
+
+  const totalRecords = recordGroups.reduce((total, group) => total + group._count._all, 0);
+  const pendingRecords = recordGroups.filter((group) => group.status === "submitted").reduce((total, group) => total + group._count._all, 0);
+  const moduleTotals = new Map<number, number>();
+  const modulePending = new Map<number, number>();
+  for (const group of recordGroups) {
+    moduleTotals.set(group.moduleId, (moduleTotals.get(group.moduleId) ?? 0) + group._count._all);
+    if (group.status === "submitted") modulePending.set(group.moduleId, (modulePending.get(group.moduleId) ?? 0) + group._count._all);
+  }
+  const activeModules = modules.map((module) => ({ label: module.translations[0]?.title ?? module.baseName, count: moduleTotals.get(module.id) ?? 0 })).filter((module) => module.count > 0);
+  const pendingActive = modules.map((module) => ({ label: module.translations[0]?.title ?? module.baseName, count: modulePending.get(module.id) ?? 0 })).filter((module) => module.count > 0);
+  const contributorIds = contributorsRaw.map((group) => group.contributorId).filter(Boolean) as string[];
+  const contributorUsers = contributorIds.length ? await prisma.user.findMany({
+    where: { id: { in: contributorIds } },
+    select: { id: true, name: true, email: true },
+  }) : [];
+  const contributors = contributorsRaw.map((group) => {
+    const contributor = contributorUsers.find((user) => user.id === group.contributorId);
+    return { name: contributor?.name ?? "", email: contributor?.email ?? "", count: group._count.contributorId };
+  });
+  const avgLatency = Math.round(aiStats._avg.latencyMs ?? 0);
+  const totalAiQueries = aiStats._count.id;
+  const rated = ratings.reduce((total, group) => total + group._count._all, 0);
+  const up = ratings.find((group) => group.rating === "up")?._count._all ?? 0;
+  const satisfactionPct = rated === 0 ? 0 : Math.round((up / rated) * 100);
+
   const workQueues = [
     ...(hasCultureRole ? [{ title: isSuperAdmin && !userRoles.some((role) => role.role === "cultural_expert") ? "Cultural review oversight" : "Cultural review", count: cultureQueueCount, href: "/admin/validation-queue", help: "A cultural expert must check each item first." }] : []),
     ...(hasEditorRole ? [{ title: "Editor work", count: editorQueueCount, href: "/admin/editor-queue", help: "Edit items returned by cultural reviewers." }] : []),
@@ -244,7 +177,7 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {workQueues.map((queue) => <Link key={queue.title} href={queue.href} className="rounded-xl border border-stone-200 bg-white p-4 transition hover:border-amber-400 hover:shadow-sm">
+          {workQueues.map((queue) => <Link key={queue.title} href={queue.href} className="rounded-xl border border-stone-200 bg-white p-4 transition hover:border-amber-400 hover:shadow-xs">
             <div className="flex items-center justify-between gap-3">
               <h3 className="font-semibold text-stone-800">{queue.title}</h3>
               <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">{queue.count}</span>
@@ -269,7 +202,7 @@ export default async function AdminDashboardPage() {
 
       {/* Charts + summaries */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-xs border border-stone-100 p-6">
           <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-6">
             Content by Module
           </h3>

@@ -56,7 +56,7 @@ export function TranscriptSegments({ segments }: { segments: TranscriptSegmentIt
           ].filter(Boolean).join(" · ");
 
           return (
-            <section key={segment.id} className="overflow-hidden rounded-xl border border-stone-900/10 bg-white/90 shadow-sm">
+            <section key={segment.id} className="overflow-hidden rounded-xl border border-stone-900/10 bg-white/90 shadow-xs">
               <h2>
                 <button
                   type="button"

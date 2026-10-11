@@ -18,7 +18,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         {/* Mobile logo */}
         <div className="absolute top-6 left-6 lg:hidden flex items-center gap-2 z-10">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-br from-amber-600 to-amber-800 flex items-center justify-center">
             <span className="text-white font-serif text-sm font-bold">L</span>
           </div>
           <p className="font-serif text-lg text-stone-900">LuoLinguaAI</p>
@@ -28,7 +28,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* RIGHT — brand story */}
-      <aside className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#3d1a0a] via-[#6b3416] to-[#8f4e1f] text-white">
+      <aside className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-[#3d1a0a] via-[#6b3416] to-[#8f4e1f] text-white">
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
@@ -42,7 +42,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         <div className="relative z-10 flex flex-col justify-between p-16 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur border border-white/20 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center">
               <span className="text-white font-serif text-2xl font-bold">L</span>
             </div>
             <div>
@@ -103,7 +103,7 @@ function FeatureRow({
 }) {
   return (
     <div className="flex items-start gap-4">
-      <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center text-lg flex-shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center text-lg shrink-0">
         {icon}
       </div>
       <div>

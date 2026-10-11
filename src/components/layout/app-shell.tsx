@@ -80,7 +80,7 @@ export function AppShell({
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-40"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -93,7 +93,7 @@ export function AppShell({
           transition-transform duration-300 ease-out
           md:translate-x-0
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-          flex-shrink-0`}
+          shrink-0`}
       >
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -107,7 +107,7 @@ export function AppShell({
         {/* Close button — mobile only */}
         <button
           onClick={() => setMobileOpen(false)}
-          className="md:hidden absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur text-amber-100 hover:bg-black/50 flex items-center justify-center text-lg"
+          className="md:hidden absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm text-amber-100 hover:bg-black/50 flex items-center justify-center text-lg"
           aria-label="Close menu"
         >
           ✕
@@ -121,7 +121,7 @@ export function AppShell({
       {/* Drag handle — desktop only */}
       <div
         onMouseDown={onMouseDown}
-        className={`hidden md:block w-1 flex-shrink-0 cursor-col-resize transition-colors relative z-20 ${
+        className={`hidden md:block w-1 shrink-0 cursor-col-resize transition-colors relative z-20 ${
           dragging ? "bg-amber-400" : "bg-black/30 hover:bg-amber-400/70"
         }`}
         title="Drag to resize"

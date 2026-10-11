@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { canViewAnalytics, isSuperAdmin, getManagedLanguageIds } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,15 +10,20 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!canViewAnalytics(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const { searchParams } = new URL(req.url);
     const days = Math.max(1, Math.min(90, Number(searchParams.get("days") || 30)));
     const languageId = Number(searchParams.get("languageId") || 0);
 
+    if (!Number.isInteger(days) || !Number.isInteger(languageId)) return NextResponse.json({ error: "Invalid filters" }, { status: 400 });
     const since = new Date();
     since.setDate(since.getDate() - days);
 
     const where: any = { createdAt: { gte: since } };
+    const managed = getManagedLanguageIds(session);
+    if (!isSuperAdmin(session) && languageId > 0 && !managed.includes(languageId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     if (languageId > 0) where.languageId = languageId;
+    else if (!isSuperAdmin(session)) where.languageId = { in: managed };
 
     // Total events
     const totalEvents = await prisma.analyticsEvent.count({ where });
@@ -32,7 +38,7 @@ export async function GET(req: NextRequest) {
     // Trend — events per day
     const events = await prisma.analyticsEvent.findMany({
       where,
-      select: { createdAt: true, eventType: true },
+      select: { createdAt: true, eventType: true, metadata: true },
       orderBy: { createdAt: "asc" },
     });
 
@@ -129,8 +135,8 @@ export async function GET(req: NextRequest) {
       const ua = e.userAgent ?? "";
       let device = "desktop";
       if (typeof d === "string") device = d;
-      else if (/Mobile|Android|iPhone/i.test(ua)) device = "mobile";
       else if (/iPad|Tablet/i.test(ua)) device = "tablet";
+      else if (/Mobile|Android|iPhone/i.test(ua)) device = "mobile";
       deviceMap.set(device, (deviceMap.get(device) ?? 0) + 1);
     }
     const devices = Array.from(deviceMap.entries()).map(
@@ -142,6 +148,8 @@ export async function GET(req: NextRequest) {
       data: {
         totalEvents,
         uniqueVisitors: uniqueUsers.length,
+        identifiedVisitors: uniqueUsers.length,
+        visitorCountScope: "Distinct signed-in accounts only; anonymous events are included in event totals.",
         trend,
         topSearches,
         topContent,

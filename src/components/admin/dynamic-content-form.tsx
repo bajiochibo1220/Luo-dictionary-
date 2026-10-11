@@ -49,6 +49,7 @@ export function DynamicContentForm({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [savedRecordId, setSavedRecordId] = useState(recordId);
   const [title, setTitle] = useState(initialData?.__title || "");
   const [values, setValues] = useState<Record<string, any>>(
     initialData ?? {}
@@ -92,6 +93,7 @@ export function DynamicContentForm({
   }
 
   async function save(status: "draft" | "submitted") {
+    if (loading) return;
     if (requiresSourcePermission && status === "submitted" && sourcePermission === "not_granted") {
       toast.error("Keep this as a draft until permission is granted.");
       return;
@@ -103,7 +105,7 @@ export function DynamicContentForm({
     }
 
     for (const f of fieldDefs) {
-      if (!recordId && f.isRequired && !String(values[f.fieldCode] ?? "").trim()) {
+      if (status === "submitted" && !isTranslation && f.isRequired && !String(values[f.fieldCode] ?? "").trim()) {
         toast.error(`${f.label} is required`);
         return;
       }
@@ -115,12 +117,12 @@ export function DynamicContentForm({
         languageId,
         moduleCode,
         title,
-        status,
+        status: "draft",
         data: {
-          ...values,
+          ...Object.fromEntries(Object.entries(values).filter(([key]) => !key.startsWith("__") && !["consentScope", "restrictionLevel", "embargoUntil", "countyCode", "siteName", "sourceReference", "sessionId"].includes(key))),
           ...(requiresSourcePermission ? { sourcePermission, attributionPreference } : {}),
         },
-        tags: [],
+        tags: Array.isArray(initialData?.__tags) ? initialData.__tags : [],
         ...governance,
         provenance: !isTranslation && provenance.sourceName.trim() ? {
           ...provenance,
@@ -136,8 +138,8 @@ export function DynamicContentForm({
         sessionId: governance.sessionId || null,
       };
 
-      const url = recordId ? `/api/content/${recordId}` : "/api/content";
-      const method = recordId ? "PATCH" : "POST";
+      const url = savedRecordId ? `/api/content/${savedRecordId}` : "/api/content";
+      const method = savedRecordId ? "PATCH" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -148,13 +150,15 @@ export function DynamicContentForm({
       const json = await res.json();
       if (!json.success) throw new Error(json.error || "Failed");
 
-      const newId = recordId || json.data.id;
+      const newId = savedRecordId || json.data.id;
+      setSavedRecordId(newId);
       for (const [assetType, file] of Object.entries(files)) {
         if (!file) continue;
         await uploadMediaFile(file, { languageCode, moduleCode, recordId: newId, assetType });
+        setFiles(previous => ({ ...previous, [assetType]: null }));
       }
 
-      if (recordId && !isAdmin && status === "submitted") {
+      if (!isTranslation && !isAdmin && status === "submitted") {
         const submit = await fetch(`/api/content/${newId}/submit`, { method: "POST" });
         const submitted = await submit.json();
         if (!submit.ok || !submitted.success) throw new Error(submitted.error || "Could not submit for review");
@@ -223,16 +227,17 @@ export function DynamicContentForm({
   }
 
   return (
-    <div className="bg-amber-50/95 backdrop-blur rounded-2xl border border-stone-900/10 p-6 md:p-8 shadow-lg">
+    <form onSubmit={(event) => { event.preventDefault(); void save(isAdmin ? "draft" : "submitted"); }} className="bg-amber-50/95 backdrop-blur-sm rounded-2xl border border-stone-900/10 p-6 md:p-8 shadow-lg">
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-stone-800 mb-1.5">
+        <label htmlFor="contribution-title" className="block text-sm font-semibold text-stone-800 mb-1.5">
           Title <span className="text-red-600">*</span>
         </label>
         <input
+          id="contribution-title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+          className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
           placeholder="Give this contribution a title"
         />
       </div>
@@ -244,7 +249,7 @@ export function DynamicContentForm({
             value={values.description ?? ""}
             onChange={(event) => update("description", event.target.value)}
             rows={4}
-            className="w-full rounded-xl border border-stone-900/20 bg-white px-4 py-3 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-700"
+            className="w-full rounded-xl border border-stone-900/20 bg-white px-4 py-3 text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-amber-700"
             placeholder="Add a description now or come back to it later"
           />
         </div>
@@ -262,14 +267,14 @@ export function DynamicContentForm({
               value={values[f.fieldCode] ?? ""}
               onChange={(e) => update(f.fieldCode, e.target.value)}
               rows={4}
-              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
             />
           ) : (
             <input
               type="text"
               value={values[f.fieldCode] ?? ""}
               onChange={(e) => update(f.fieldCode, e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700 text-stone-900"
+              className="w-full px-4 py-3 bg-white border border-stone-900/20 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-700 text-stone-900"
             />
           )}
         </div>
@@ -323,7 +328,7 @@ export function DynamicContentForm({
           {requiresSourcePermission && <label className="text-sm font-medium text-stone-800">Source credit
             <select value={attributionPreference} onChange={(event) => setAttributionPreference(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
               <option value="ask_later">Decide with a reviewer</option>
-              <option value="name">Use the source's name (with permission)</option>
+              <option value="name">Use the source&rsquo;s name (with permission)</option>
               <option value="anonymous">Keep the source anonymous</option>
               <option value="community">Credit the community</option>
             </select>
@@ -396,8 +401,7 @@ export function DynamicContentForm({
           {loading ? "Saving..." : "Save private draft"}
         </button>}
         <button
-          type="button"
-          onClick={() => save(isAdmin ? "draft" : "submitted")}
+          type="submit"
           disabled={loading}
           className="px-6 py-3 bg-amber-700 text-amber-50 rounded-full font-semibold hover:bg-amber-800 disabled:opacity-50 transition shadow-lg"
         >
@@ -408,6 +412,6 @@ export function DynamicContentForm({
       <p className="text-xs text-stone-800/60 mt-4 leading-relaxed">
         {!isTranslation && <>New submissions go to cultural review, then to a content editor, then to a language administrator for final approval.</>}
       </p>
-    </div>
+    </form>
   );
 }

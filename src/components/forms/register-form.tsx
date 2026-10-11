@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -111,7 +113,7 @@ export function RegisterForm() {
           minLength={2}
           placeholder="Full name"
           autoComplete="name"
-          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
+          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
         />
 
         <input
@@ -120,7 +122,7 @@ export function RegisterForm() {
           required
           placeholder="Email address"
           autoComplete="email"
-          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
+          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
         />
 
         <DateOfBirthPicker
@@ -138,7 +140,7 @@ export function RegisterForm() {
             minLength={8}
             placeholder="Password (min 8 characters)"
             autoComplete="new-password"
-            className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400 pr-16"
+            className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400 pr-16"
           />
           <button
             type="button"
@@ -153,7 +155,7 @@ export function RegisterForm() {
           name="languageId"
           required
           defaultValue=""
-          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-[15px] text-stone-700"
+          className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] text-stone-700"
         >
           <option value="" disabled>
             Select your language
@@ -237,7 +239,7 @@ export function RegisterForm() {
       </div>
 
       <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
-        <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><a href="/" className="hover:underline">Home</a>
+        <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><Link href="/" className="hover:underline">Home</Link>
       </nav>
     </div>
   );

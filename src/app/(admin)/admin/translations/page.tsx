@@ -5,10 +5,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function TranslationsPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { lang?: string; module?: string; tab?: string };
+  searchParams: Promise<{ lang?: string; module?: string; tab?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin && !(session.user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
@@ -105,7 +106,7 @@ export default async function TranslationsPage({
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         {!language ? (
           <p className="text-center text-stone-400 py-8">
             No active languages

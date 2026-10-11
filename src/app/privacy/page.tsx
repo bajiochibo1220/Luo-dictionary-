@@ -9,7 +9,7 @@ export default async function PrivacyPage() {
   const privacy = await getSystemSetting("privacy_content", DEFAULT_PRIVACY);
   return (
     <main className="min-h-screen bg-[#cfc09a] px-5 py-12 text-stone-900">
-      <article className="mx-auto max-w-3xl rounded-2xl bg-white/80 p-6 shadow-sm md:p-10">
+      <article className="mx-auto max-w-3xl rounded-2xl bg-white/80 p-6 shadow-xs md:p-10">
         <Link href="/register" className="text-sm text-amber-800 underline">← Back to registration</Link>
         <p className="mt-8 text-xs uppercase tracking-[0.25em] text-amber-800">LuoLinguaAI</p>
         <h1 className="mt-2 font-serif text-4xl">Privacy Policy</h1>

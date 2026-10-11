@@ -57,8 +57,8 @@ async function main() {
 
   if (!segments.length) throw new Error("The corpus contains no transcript segments");
   const language = await prisma.language.findUnique({ where: { code: "luo" } });
-  const module = await prisma.module.findUnique({ where: { code: "oral_histories" } });
-  if (!language || !module) throw new Error("Seed the Luo language and oral_histories module before importing");
+  const contentModule = await prisma.module.findUnique({ where: { code: "oral_histories" } });
+  if (!language || !contentModule) throw new Error("Seed the Luo language and oral_histories contentModule before importing");
 
   const bySession = new Map<string, CorpusSegment[]>();
   for (const segment of segments) {
@@ -80,7 +80,7 @@ async function main() {
           data: {
             id: recordId,
             languageId: language.id,
-            moduleId: module.id,
+            moduleId: contentModule.id,
             title: `Oral history ${sessionId}`,
             summary: `${first.county} - ${first.domain}`,
             data: { sessionId, sourceUri: first.source_uri, sourceVersion: first.version ?? null, segmentCount: rows.length },

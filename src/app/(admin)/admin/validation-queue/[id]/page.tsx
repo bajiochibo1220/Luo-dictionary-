@@ -1,3 +1,4 @@
+import { mayReviewRecord, canReadMedia } from "@/lib/governance";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -7,10 +8,11 @@ import { canValidateCulture } from "@/lib/permissions";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 
 export default async function ValidationDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) notFound();
   const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
@@ -26,7 +28,8 @@ export default async function ValidationDetailPage({
       reviews: { orderBy: { createdAt: "asc" }, include: { reviewer: { select: { name: true } } } },
     },
   });
-  if (!record) notFound();
+  if (!record || !mayReviewRecord(session.user, record)) notFound();
+  record.media = record.media.filter((asset) => canReadMedia(session.user, asset, record));
   const user = session.user as any;
   const canSee = user.isSuperAdmin || user.isMasterSuperAdmin || (user.languageRoles ?? []).some((role: any) =>
     role.languageId === record.languageId && ["cultural_expert", "language_admin"].includes(role.role)
@@ -78,7 +81,7 @@ export default async function ValidationDetailPage({
 
       <header className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+          <span className="text-xs uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-sm">
             {record.module.baseName}
           </span>
           <span className="text-xs text-stone-400">
@@ -124,7 +127,7 @@ export default async function ValidationDetailPage({
         {(user.languageRoles ?? []).some((role: any) => role.languageId === record.languageId && ["uploader", "content_editor"].includes(role.role)) && englishLanguage && <Link href={`/admin/content/${record.id}/edit?languageId=${englishLanguage.id}`} className="mt-4 inline-flex text-sm font-semibold text-blue-800 underline">Open English version</Link>}
       </section>}
 
-      <section className="bg-white rounded-xl shadow-sm border border-stone-100 p-8 mb-6">
+      <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-8 mb-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
           Content
         </h2>
@@ -147,7 +150,7 @@ export default async function ValidationDetailPage({
         </dl>
       </section>
 
-      {record.media.length > 0 && <section className="mb-6 rounded-xl border border-stone-100 bg-white p-6 shadow-sm">
+      {record.media.length > 0 && <section className="mb-6 rounded-xl border border-stone-100 bg-white p-6 shadow-xs">
         <h2 className="mb-4 text-xs uppercase tracking-wider text-stone-500">Attached files ({record.media.length}) · check these with the story</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {record.media.map((asset) => <article key={asset.id} className="overflow-hidden rounded-lg border border-stone-200 bg-stone-50">

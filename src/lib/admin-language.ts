@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 
 export async function getSelectedAdminLanguageId(): Promise<number | undefined> {
-  const cookieId = Number(cookies().get("admin-language-id")?.value);
+  const cookieId = Number((await cookies()).get("admin-language-id")?.value);
   if (Number.isInteger(cookieId) && cookieId > 0) {
     const exists = await prisma.language.findUnique({ where: { id: cookieId }, select: { id: true } });
     if (exists) return exists.id;
@@ -12,7 +12,7 @@ export async function getSelectedAdminLanguageId(): Promise<number | undefined> 
 }
 
 export async function getSelectedAdminCultureId(): Promise<number | undefined> {
-  const cookieId = Number(cookies().get("admin-culture-id")?.value);
+  const cookieId = Number((await cookies()).get("admin-culture-id")?.value);
   if (Number.isInteger(cookieId) && cookieId > 0) {
     const exists = await prisma.language.findUnique({ where: { id: cookieId }, select: { id: true } });
     if (exists) return exists.id;

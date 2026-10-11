@@ -52,7 +52,7 @@ export function ProverbGrid({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search proverbs..."
-          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white shadow-sm"
+          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 bg-white shadow-xs"
         />
 
         {allThemes.length > 0 && (

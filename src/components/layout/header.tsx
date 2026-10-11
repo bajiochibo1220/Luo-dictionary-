@@ -44,7 +44,7 @@ export function Header() {
           <span className="text-2xl font-serif text-stone-800">
             LuoLinguaAI
           </span>
-          <span className="hidden md:inline text-xs text-amber-600 font-medium px-2 py-0.5 bg-amber-50 rounded">
+          <span className="hidden md:inline text-xs text-amber-600 font-medium px-2 py-0.5 bg-amber-50 rounded-sm">
             {language.nativeName}
           </span>
         </Link>
@@ -64,7 +64,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Link
             href={alternatePath}
-            className="text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded px-2 py-1"
+            className="text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded-sm px-2 py-1"
           >
             {alternateCode === "luo" ? "Dholuo" : "English"}
           </Link>
@@ -75,6 +75,7 @@ export function Header() {
               userEmail={session.user.email ?? ""}
               userImage={session.user.image ?? null}
               isAdmin={isAdmin}
+              isSuperAdmin={!!(session.user.isSuperAdmin || session.user.isMasterSuperAdmin)}
             />
           ) : (
             <div className="flex items-center gap-2">

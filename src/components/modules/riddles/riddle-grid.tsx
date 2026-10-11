@@ -47,7 +47,7 @@ export function RiddleGrid({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search riddles..."
-          className="flex-1 px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white shadow-sm"
+          className="flex-1 px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 bg-white shadow-xs"
         />
         <Link
           href={`/${langCode}/ngeche/quiz`}

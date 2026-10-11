@@ -10,7 +10,7 @@ export function RecentActivity({
   }[];
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Recent Activity
       </h3>
@@ -23,7 +23,7 @@ export function RecentActivity({
         <ul className="space-y-3">
           {entries.map((e) => (
             <li key={e.id} className="flex items-start gap-3 text-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-stone-700">
                   <span className="font-medium">{e.userName}</span>{" "}

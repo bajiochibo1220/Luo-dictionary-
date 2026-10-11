@@ -50,14 +50,14 @@ export function AdminsClient({
         </button>
       </header>
 
-      <div className="mb-6 bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-5">
+      <div className="mb-6 bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-5">
         <h2 className="text-xs uppercase tracking-wider text-amber-800 mb-2 font-bold">
           How admin accounts work
         </h2>
         <p className="text-sm text-stone-700 leading-relaxed">
           {isMasterSuperAdmin ? "You are the Master Super Admin. Create Super Admins and assign the languages they oversee, or create uploaders, cultural experts, editors, and publishers for specific languages." : "As a Super Admin, you can create administrators only for languages assigned to you. Only the Master Super Admin can create, deactivate, or revoke Super Admin accounts."} Create accounts
           here, share the email and password with them directly, and they
-          sign in at <code className="bg-white px-1.5 py-0.5 rounded text-amber-800">/login</code>{" "}
+          sign in at <code className="bg-white px-1.5 py-0.5 rounded-sm text-amber-800">/login</code>{" "}
           with those credentials. Social sign-in (Google, Microsoft) is not
           available for administrative accounts.
         </p>

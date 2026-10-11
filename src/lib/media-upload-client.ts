@@ -17,6 +17,7 @@ export type SignedMediaUpload = {
   tags: string;
   resourceType: "image" | "video" | "raw";
   deliveryType: "authenticated";
+  overwrite: false;
 };
 
 export async function getMediaUploadSignature(file: File, details: MediaUploadDetails, publicId?: string): Promise<SignedMediaUpload> {
@@ -56,6 +57,7 @@ export async function uploadMediaInChunks(
     form.set("public_id", signed.publicId);
     form.set("tags", signed.tags);
     form.set("type", signed.deliveryType);
+    form.set("overwrite", "false");
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "X-Unique-Upload-Id": uploadId, "Content-Range": `bytes ${start}-${end - 1}/${file.size}` },

@@ -6,7 +6,7 @@ import { publicMediaWhere, publicRecordWhere, publicGovernanceWhere } from "@/li
 export async function getContentCultureLanguageId(defaultLanguageId: number): Promise<number> {
   const defaultLanguage = await prisma.language.findUnique({ where: { id: defaultLanguageId }, select: { code: true } });
   if (defaultLanguage?.code !== "eng") return defaultLanguageId;
-  const cultureCode = cookies().get("content-culture")?.value;
+  const cultureCode = (await cookies()).get("content-culture")?.value;
   if (!cultureCode) return defaultLanguageId;
   const language = await prisma.language.findUnique({ where: { code: cultureCode }, select: { id: true } });
   return language?.id ?? defaultLanguageId;
@@ -33,7 +33,7 @@ export function localizeRecord<T extends {
   const stripPrivateContributionFields = (data: unknown) => {
     if (!data || typeof data !== "object" || Array.isArray(data)) return data;
     const { sourcePermission: _sourcePermission, attributionPreference: _attributionPreference, ...publicData } = data as Record<string, unknown>;
-    return publicData;
+    return Object.fromEntries(Object.entries(publicData).filter(([key]) => !key.startsWith("__")));
   };
   if (record.languageId === languageId) {
     return { ...record, data: stripPrivateContributionFields(record.data) };

@@ -1,3 +1,4 @@
+import { canReadRecord } from "@/lib/governance";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -14,7 +15,7 @@ export default async function ReviewQueuePage() {
 
   const where: any = { status: "under_review", validatorId: { not: null } };
   if (!isSuperAdmin) where.languageId = { in: managedLanguageIds };
-  const records = await prisma.culturalRecord.findMany({
+  const candidates = await prisma.culturalRecord.findMany({
     where,
     orderBy: [{ moduleId: "asc" }, { createdAt: "asc" }],
     include: {
@@ -23,6 +24,7 @@ export default async function ReviewQueuePage() {
       media: true,
     },
   });
+  const records = candidates.filter((record) => canReadRecord(session!.user, record));
   const grouped = new Map<string, typeof records>();
   for (const record of records) {
     grouped.set(record.module.code, [...(grouped.get(record.module.code) ?? []), record]);

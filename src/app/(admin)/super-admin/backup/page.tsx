@@ -1,8 +1,12 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { BackupActions } from "@/components/admin/backup-actions";
 import { BackupTable } from "@/components/admin/backup-table";
 
 export default async function BackupPage() {
+  const session = await auth();
+  if (!session?.user?.isMasterSuperAdmin) redirect("/super-admin/dashboard");
   const backups = await prisma.backup.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -25,7 +29,7 @@ export default async function BackupPage() {
       <header className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-serif text-stone-800 mb-1">
-            Backup & Restore
+            Database Backups
           </h1>
           <p className="text-sm text-stone-500">
             {formatted.length} {formatted.length === 1 ? "backup" : "backups"}{" "}
@@ -35,11 +39,12 @@ export default async function BackupPage() {
         <BackupActions />
       </header>
 
-      <div className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6 mb-8">
+      <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6 mb-8">
         <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2">
           How It Works
         </h2>
         <ul className="text-sm text-stone-700 space-y-1">
+          <li>Cloudinary file bytes require a separate storage backup. These snapshots contain account credentials and must be kept private.</li>
           <li>
             • <strong>Backup Now</strong> exports all database tables to a JSON
             file

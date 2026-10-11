@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ModuleContent } from "@/components/layout/module-content";
 import { publicMediaWhere, publicRecordWhere } from "@/lib/governance";
+import { getDefaultPublicLanguage, getPublicModules } from "@/lib/public-navigation";
 
 function getRecordText(data: unknown): string {
   if (!data || typeof data !== "object") return "";
@@ -13,25 +14,22 @@ function getRecordText(data: unknown): string {
 }
 
 export default async function UserDashboardPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { module?: string };
+  searchParams: Promise<{ module?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
+  if (searchParams.module === "chatbot") redirect("/chatbot");
 
   const user = session.user as any;
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
-  const fallbackLanguage = primaryRole ? null : await prisma.language.findFirst({
-    where: { isActive: true },
-    orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
-    select: { id: true, code: true, nativeName: true },
-  });
+  const fallbackLanguage = primaryRole ? null : await getDefaultPublicLanguage();
   const languageId = primaryRole?.languageId ?? fallbackLanguage?.id;
   const languageCode = primaryRole?.languageCode ?? fallbackLanguage?.code ?? "luo";
   const languageName = primaryRole?.languageName ?? fallbackLanguage?.nativeName ?? "Dholuo";
-  const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
 
   const localizedSummary = (record: any, targetLanguageId: number) => {
     if (record.languageId === targetLanguageId) return record.summary || getRecordText(record.data);
@@ -41,19 +39,19 @@ export default async function UserDashboardPage({
 
   // ── Module view
   if (searchParams.module && languageId) {
-    const mod = await prisma.module.findUnique({
-      where: { code: searchParams.module },
-      include: { translations: { where: { languageId } } },
-    });
+    const modules = await getPublicModules(languageId);
+    const mod = modules.find((module) => module.code === searchParams.module);
 
     if (mod) {
       const title = mod.translations[0]?.title ?? mod.baseName;
+      const isMediaLibrary = mod.code === "audio_visual";
+      const englishLanguage = languageCode === "eng" ? { id: languageId } : await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
 
       const records = await prisma.culturalRecord.findMany({
-        where: { moduleId: mod.id, languageId, ...publicRecordWhere() },
+        where: { ...(isMediaLibrary ? { media: { some: publicMediaWhere() } } : { moduleId: mod.id }), ...(languageCode === "eng" ? {} : { languageId }), ...publicRecordWhere() },
         orderBy: { createdAt: "desc" },
         take: 50,
-        include: { media: { where: publicMediaWhere() }, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } } },
+        include: { module: { select: { code: true, baseName: true } }, media: { where: publicMediaWhere() }, translations: { where: { languageId: { in: [languageId, ...(englishLanguage ? [englishLanguage.id] : [])] } } } },
       });
       const dictionaryEntries = mod.code === "dictionary"
         ? await prisma.dictionaryEntry.findMany({ where: { ...(languageCode === "eng" ? {} : { languageId }), ...publicRecordWhere() }, orderBy: { createdAt: "desc" }, take: 100, include: { media: { where: publicMediaWhere() } } })
@@ -61,11 +59,11 @@ export default async function UserDashboardPage({
 
       const items = records.map((r) => ({
         id: r.id,
-        title: r.title,
+        title: r.languageId === languageId ? r.title : r.translations.find((translation) => translation.languageId === languageId)?.title || r.title,
         summary: localizedSummary(r, languageId),
         englishSummary: englishLanguage ? localizedSummary(r, englishLanguage.id) : null,
-        moduleCode: r.moduleId === mod.id ? mod.code : undefined,
-        moduleName: mod.baseName,
+        moduleCode: r.module?.code ?? mod.code,
+        moduleName: r.module?.baseName ?? mod.baseName,
         createdAt: r.createdAt.toISOString(),
         media: r.media.map((m) => ({
           id: m.id,
@@ -88,12 +86,14 @@ export default async function UserDashboardPage({
 
       return (
         <ModuleContent
+          key={mod.code}
           title={title}
           baseName={mod.baseName}
           languageName={languageName}
           languageCode={languageCode}
           languageId={languageId}
-          moduleCode={mod.code}
+          moduleCode={isMediaLibrary ? "all" : mod.code}
+          canContribute={!isMediaLibrary && (mod._count?.fieldDefinitions ?? 0) > 0}
           items={[...items, ...dictionaryItems].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))}
         />
       );

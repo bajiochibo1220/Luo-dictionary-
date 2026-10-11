@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { NavigationLink as Link } from "./navigation-link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 type ModuleItem = {
@@ -31,10 +31,10 @@ export function AppSidebar({ modules }: { modules: ModuleItem[] }) {
       {/* Module list */}
       <nav className="flex-1 overflow-y-auto py-2">
         {items.map((item) => {
-          const isActive =
+          const isActive = item.code === "chatbot" ? pathname === "/chatbot" :
             (item.code === "" && !activeModule) ||
             (item.code !== "" && activeModule === item.code);
-          const href = item.code ? `${pathname}?module=${item.code}` : pathname;
+          const href = item.code === "chatbot" ? "/chatbot" : item.code ? `/dashboard?module=${encodeURIComponent(item.code)}` : "/dashboard";
 
           return (
             <Link

@@ -5,8 +5,9 @@ import { logAction } from "@/lib/audit";
 
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

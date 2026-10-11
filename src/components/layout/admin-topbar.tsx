@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { NavigationLink as Link } from "./navigation-link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -109,7 +109,7 @@ export function AdminTopbar({
           LuoLinguaAI
         </Link>
         {isSuperAdmin && (
-          <span className="hidden md:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded">
+          <span className="hidden md:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
             {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
           </span>
         )}
@@ -123,7 +123,7 @@ export function AdminTopbar({
               aria-label="Choose language to manage"
               value={selectedLanguageId ?? ""}
               onChange={(event) => void selectLanguage(Number(event.target.value))}
-              className="max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400"
             >
               {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}{language.isActive ? "" : " (inactive)"}</option>)}
             </select>
@@ -134,7 +134,7 @@ export function AdminTopbar({
             <span>Culture</span>
             <select aria-label="Choose culture content" value={selectedCultureId ?? "all"}
               onChange={(event) => void selectCulture(event.target.value === "all" ? null : Number(event.target.value))}
-              className="max-w-36 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400">
+              className="max-w-36 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400">
               <option value="all">All cultures</option>
               {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}</option>)}
             </select>
@@ -195,7 +195,7 @@ export function AdminTopbar({
             aria-expanded={menuOpen}
             className="flex items-center gap-2 p-1 rounded-lg hover:bg-amber-100/10"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-stone-900 ring-1 ring-amber-200/40 flex items-center justify-center text-sm font-medium overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 text-stone-900 ring-1 ring-amber-200/40 flex items-center justify-center text-sm font-medium overflow-hidden">
               {userImage ? <img src={userImage} alt="" className="w-full h-full rounded-full object-cover" /> : (userName || userEmail).charAt(0).toUpperCase()}
             </div>
           </button>
@@ -216,17 +216,20 @@ export function AdminTopbar({
                   </p>
                 </div>
                 <Link
-                  href="/"
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
                 >
                   View public site
                 </Link>
                 <Link
-                  href="/dashboard"
+                  href="/admin/dashboard"
+                  onClick={() => setMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
                 >
-                  My dashboard
+                  Admin dashboard
                 </Link>
+                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50">Super Admin dashboard</Link>}
                 <button
                   onClick={() => signOut({ redirectTo: "/login" })}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"

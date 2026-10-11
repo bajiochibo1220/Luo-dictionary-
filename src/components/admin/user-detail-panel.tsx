@@ -126,7 +126,7 @@ export function UserDetailPanel({
   return (
     <div className="space-y-6">
       {/* Profile */}
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
           Profile
         </h2>
@@ -140,7 +140,7 @@ export function UserDetailPanel({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             />
           </div>
           {isMasterSuperAdmin && <div>
@@ -150,7 +150,7 @@ export function UserDetailPanel({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             >
               <option value="active">Active</option>
               <option value="suspended">Suspended</option>
@@ -168,12 +168,12 @@ export function UserDetailPanel({
         </button>}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public profile</h2>
         <p className="text-sm text-stone-700">{user.profileTypes.length ? user.profileTypes.map((type) => type.replaceAll("_", " ")).join(", ") : "No interests selected"}</p>
       </div>
 
-      {(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-sm">
+      {(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-xs">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
           Admin Roles ({user.languageRoles.length})
         </h2>
@@ -213,7 +213,7 @@ export function UserDetailPanel({
             <select
               value={newLang}
               onChange={(e) => setNewLang(Number(e.target.value))}
-              className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
               {languages.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -224,7 +224,7 @@ export function UserDetailPanel({
             <select
               value={newRole}
               onChange={(e) => setNewRole(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>

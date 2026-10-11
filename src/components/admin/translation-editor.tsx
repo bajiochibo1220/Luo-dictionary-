@@ -63,7 +63,7 @@ export function TranslationEditor({
 
   return (
     <div className="flex items-center gap-3 py-3 border-b border-stone-100 last:border-0">
-      <div className="w-48 flex-shrink-0">
+      <div className="w-48 shrink-0">
         <p className="text-sm text-stone-700">{label}</p>
         {hint && <p className="text-xs text-stone-400 mt-0.5">{hint}</p>}
       </div>
@@ -74,7 +74,7 @@ export function TranslationEditor({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && save()}
-          className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+          className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
         />
       </div>
 

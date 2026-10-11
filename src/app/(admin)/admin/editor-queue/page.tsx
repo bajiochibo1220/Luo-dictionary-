@@ -1,3 +1,4 @@
+import { canReadRecord } from "@/lib/governance";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -17,7 +18,7 @@ export default async function EditorQueuePage() {
     .map((role: any) => Number(role.languageId)))];
   if (languageIds.length === 0 && !isSuperAdmin) redirect("/admin/dashboard");
 
-  const records = await prisma.culturalRecord.findMany({
+  const candidates = await prisma.culturalRecord.findMany({
     where: {
       status: "needs_edit",
       ...(isSuperAdmin ? {} : { languageId: { in: languageIds } }),
@@ -29,6 +30,7 @@ export default async function EditorQueuePage() {
       media: { select: { type: true, format: true } },
     },
   });
+  const records = candidates.filter((record) => canReadRecord(session!.user, record));
 
   const recordsWithRole = records.map((record) => ({
     ...record,

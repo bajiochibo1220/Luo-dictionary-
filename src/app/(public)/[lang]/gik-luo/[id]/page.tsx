@@ -6,10 +6,11 @@ import { findLocalizedRecord, getContentCultureLanguageId } from "@/lib/content-
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function ArtifactDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });
@@ -46,7 +47,7 @@ export default async function ArtifactDetailPage({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <div className="md:col-span-2"><EnglishVersionLink langCode={language.code} href={`/${language.code}/gik-luo/${record.id}`} /></div>
         {/* Image */}
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xs border border-stone-100 overflow-hidden">
           {image ? (
             <img
               src={image.url}
@@ -144,7 +145,7 @@ export default async function ArtifactDetailPage({
                 <Link
                   key={r.id}
                   href={`/${language.code}/gik-luo/${r.id}`}
-                  className="group bg-white rounded-lg border border-stone-100 hover:border-amber-300 hover:shadow transition overflow-hidden"
+                  className="group bg-white rounded-lg border border-stone-100 hover:border-amber-300 hover:shadow-sm transition overflow-hidden"
                 >
                   <div className="aspect-square bg-stone-100 flex items-center justify-center">
                     {img ? (

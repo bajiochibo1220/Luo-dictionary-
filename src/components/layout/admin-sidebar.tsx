@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { NavigationLink as Link } from "./navigation-link";
 import { usePathname } from "next/navigation";
 
 type NavItem = { label: string; href: string; icon: string };

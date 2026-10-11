@@ -1,5 +1,7 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { assertAiQuota } from "@/lib/ai/quota";
 import { prisma } from "@/lib/db";
 import { embedText } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
@@ -7,14 +9,8 @@ import { getContentCultureLanguageId } from "@/lib/content-translations";
 
 export async function POST(req: NextRequest) {
   try {
+    await assertServiceAvailable();
     const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Please sign in to use semantic search." },
-        { status: 401 }
-      );
-    }
-
     if (!(await hasGemini())) {
       return NextResponse.json(
         { success: false, error: "AI is not configured" },
@@ -25,7 +21,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { query, languageCode, limit = 10 } = body;
 
-    if (!query || query.trim().length < 2) {
+    if (typeof query !== "string" || query.trim().length < 2 || query.length > 2000 || !Number.isInteger(limit) || limit < 1 || limit > 20 || (languageCode !== undefined && typeof languageCode !== "string")) {
       return NextResponse.json(
         { success: false, error: "Query too short" },
         { status: 400 }
@@ -40,6 +36,7 @@ export async function POST(req: NextRequest) {
       if (lang) languageId = lang.id;
     }
 
+    await assertAiQuota(req, session?.user?.id);
     const queryVector = await embedText(query);
     const vectorStr = `[${queryVector.join(",")}]`;
     // Content has a source locale plus separate translation vectors. Filter on
@@ -86,7 +83,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: (results as any[]).map((r) => ({
+      data: (results as any[]).filter((r) => r.similarity >= 0.35).filter((r, index, all) => all.findIndex((item) => item.id === r.id) === index).map((r) => ({
         id: r.id,
         title: r.title,
         module: r.module,
@@ -98,8 +95,8 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error("[ai/search]", err);
     return NextResponse.json(
-      { success: false, error: err.message || "Search failed" },
-      { status: 500 }
+      { success: false, error: [429, 503].includes(err.status) ? err.message : "Search is temporarily unavailable. Please try again." },
+      { status: err.status || 500, headers: err.retryAfter ? { "Retry-After": String(err.retryAfter) } : undefined }
     );
   }
 }

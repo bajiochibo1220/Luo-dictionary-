@@ -74,7 +74,7 @@ export function AddAdminModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="p-6 border-b border-stone-100 flex items-center justify-between">
           <h2 className="text-lg font-serif text-stone-800">Add Administrator</h2>
@@ -96,7 +96,7 @@ export function AddAdminModal({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function AddAdminModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             />
           </div>
 
@@ -123,7 +123,7 @@ export function AddAdminModal({
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm pr-14"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm pr-14"
               />
               <button
                 type="button"
@@ -145,7 +145,7 @@ export function AddAdminModal({
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             >
               {ROLES.filter((r) => r.value !== "super_admin" || isMasterSuperAdmin).map((r) => (
                 <option key={r.value} value={r.value}>
@@ -170,7 +170,7 @@ export function AddAdminModal({
             <select
               value={languageId}
               onChange={(e) => setLanguageId(Number(e.target.value))}
-              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             >
               {languages.map((l) => (
                 <option key={l.id} value={l.id}>

@@ -44,14 +44,14 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
 
   if (logs.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
         No audit logs in this period
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
@@ -118,7 +118,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
                             Before
                           </p>
-                          <pre className="bg-white p-3 rounded border border-stone-200 overflow-auto max-h-40 text-stone-700">
+                          <pre className="bg-white p-3 rounded-sm border border-stone-200 overflow-auto max-h-40 text-stone-700">
                             {JSON.stringify(l.oldValue, null, 2)}
                           </pre>
                         </div>
@@ -128,7 +128,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
                             After
                           </p>
-                          <pre className="bg-white p-3 rounded border border-stone-200 overflow-auto max-h-40 text-stone-700">
+                          <pre className="bg-white p-3 rounded-sm border border-stone-200 overflow-auto max-h-40 text-stone-700">
                             {JSON.stringify(l.newValue, null, 2)}
                           </pre>
                         </div>

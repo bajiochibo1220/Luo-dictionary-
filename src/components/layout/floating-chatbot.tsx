@@ -13,7 +13,7 @@ export function FloatingChatbot() {
         {/* Pulse ring */}
         <span className="absolute inset-0 rounded-full bg-amber-400 opacity-40 animate-ping" />
         {/* Button */}
-        <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 shadow-2xl shadow-amber-900/40 flex items-center justify-center transition-transform group-hover:scale-110 ring-4 ring-amber-100/20">
+        <div className="relative w-14 h-14 rounded-full bg-linear-to-br from-amber-500 to-amber-700 shadow-2xl shadow-amber-900/40 flex items-center justify-center transition-transform group-hover:scale-110 ring-4 ring-amber-100/20">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-6 h-6 text-white"

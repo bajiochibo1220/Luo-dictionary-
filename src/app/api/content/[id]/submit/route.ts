@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -7,10 +9,11 @@ import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(
+async function handlePOST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,6 +26,7 @@ export async function POST(
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const userId = (session.user as any).id as string;
   const isUploader = canUploadContent(session, record.languageId);
   if (record.contributorId !== userId && !isUploader) {
@@ -36,9 +40,9 @@ export async function POST(
     );
   }
 
-  const module = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
+  const contentModule = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
   const hasLinkedTranscript = record.transcripts.some((item) => item.text.trim().length > 0);
-  const requiredError = validatePhaseOneSubmission(module?.code ?? "", record.title, record.data, hasLinkedTranscript);
+  const requiredError = validatePhaseOneSubmission(contentModule?.code ?? "", record.title, record.data, hasLinkedTranscript);
   if (requiredError) return NextResponse.json({ success: false, error: requiredError }, { status: 400 });
   const recordData = record.data && typeof record.data === "object" ? record.data as Record<string, unknown> : {};
   if (recordData.sourcePermission === "not_granted") {
@@ -98,3 +102,5 @@ export async function POST(
 
   return NextResponse.json({ success: true, data: updated });
 }
+
+export const POST = withApiErrors(handlePOST);

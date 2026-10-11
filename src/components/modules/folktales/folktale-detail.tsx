@@ -80,7 +80,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       </header>
 
       {audio && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-8">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
             Listen
           </p>
@@ -98,7 +98,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
         </div>
       ))}
 
-      <article className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12 mb-8">
+      <article className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12 mb-8">
         <div className="prose prose-stone max-w-none">
           {primaryText.split("\n").filter((p) => p.trim()).map((p, i) => (
             <p key={i} className="text-lg leading-relaxed text-stone-800 mb-4">
@@ -124,7 +124,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       </article>
 
       {d.moral && (
-        <div className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
+        <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
           <p className="text-xs uppercase tracking-wider text-amber-700 mb-2">
             Moral Lesson
           </p>
@@ -135,7 +135,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       )}
 
       {d.teacher_notes && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 mb-8">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 mb-8">
           <button
             onClick={() => setShowTeacherNotes(!showTeacherNotes)}
             className="w-full p-6 text-left flex items-center justify-between"

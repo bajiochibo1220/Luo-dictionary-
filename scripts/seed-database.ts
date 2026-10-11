@@ -114,7 +114,7 @@ type FieldDef = {
   fieldType: string;
   isRequired: boolean;
   displayOrder: number;
-  luoLabel: string;
+  luoLabel?: string;
 };
 
 const FIELDS_BY_MODULE: Record<string, FieldDef[]> = {
@@ -161,6 +161,25 @@ const FIELDS_BY_MODULE: Record<string, FieldDef[]> = {
     { fieldCode: "location", baseLabel: "Location", fieldType: "text", isRequired: false, displayOrder: 5, luoLabel: "Piny" },
     { fieldCode: "county", baseLabel: "County", fieldType: "text", isRequired: false, displayOrder: 6, luoLabel: "Senta" },
     { fieldCode: "transcript", baseLabel: "Transcript", fieldType: "textarea", isRequired: true, displayOrder: 7, luoLabel: "Ndiko" },
+  ],
+  folktales: [
+    { fieldCode: "original", baseLabel: "Original story", fieldType: "textarea", isRequired: true, displayOrder: 1 },
+    { fieldCode: "translation", baseLabel: "English translation", fieldType: "textarea", isRequired: false, displayOrder: 2 },
+    { fieldCode: "moral", baseLabel: "Moral or meaning", fieldType: "textarea", isRequired: false, displayOrder: 3 },
+    { fieldCode: "children_version", baseLabel: "Children's version", fieldType: "textarea", isRequired: false, displayOrder: 4 },
+    { fieldCode: "teacher_notes", baseLabel: "Teacher notes", fieldType: "textarea", isRequired: false, displayOrder: 5 },
+  ],
+  artifacts: [
+    { fieldCode: "description", baseLabel: "Description", fieldType: "textarea", isRequired: true, displayOrder: 1 },
+    { fieldCode: "origin", baseLabel: "Origin", fieldType: "text", isRequired: false, displayOrder: 2 },
+    { fieldCode: "clan", baseLabel: "Clan", fieldType: "text", isRequired: false, displayOrder: 3 },
+    { fieldCode: "usage", baseLabel: "Usage", fieldType: "textarea", isRequired: false, displayOrder: 4 },
+  ],
+  heritage_sites: [
+    { fieldCode: "county", baseLabel: "County", fieldType: "text", isRequired: false, displayOrder: 1 },
+    { fieldCode: "description", baseLabel: "Description", fieldType: "textarea", isRequired: true, displayOrder: 2 },
+    { fieldCode: "history", baseLabel: "History", fieldType: "textarea", isRequired: false, displayOrder: 3 },
+    { fieldCode: "visiting_info", baseLabel: "Visiting information", fieldType: "textarea", isRequired: false, displayOrder: 4 },
   ],
 };
 
@@ -250,12 +269,14 @@ async function main() {
       });
       fieldCount++;
 
-      await prisma.fieldTranslation.upsert({
-        where: { fieldId_languageId: { fieldId: fd.id, languageId: luoId } },
-        update: { label: f.luoLabel },
-        create: { fieldId: fd.id, languageId: luoId, label: f.luoLabel },
-      });
-      fieldTransCount++;
+      if (f.luoLabel) {
+        await prisma.fieldTranslation.upsert({
+          where: { fieldId_languageId: { fieldId: fd.id, languageId: luoId } },
+          update: { label: f.luoLabel },
+          create: { fieldId: fd.id, languageId: luoId, label: f.luoLabel },
+        });
+        fieldTransCount++;
+      }
     }
   }
   console.log(`Field definitions: ${fieldCount} upserted`);

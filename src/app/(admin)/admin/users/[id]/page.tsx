@@ -3,16 +3,19 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { UserDetailPanel } from "@/components/admin/user-detail-panel";
 import { auth } from "@/lib/auth";
+import { canManageUsers, userManagementWhere } from "@/lib/permissions";
 
 export default async function UserDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const params = await promisedParams;
   const session = await auth();
+  if (!canManageUsers(session)) notFound();
   const isMasterSuperAdmin = session?.user?.isMasterSuperAdmin === true;
-  const user = await prisma.user.findUnique({
-    where: { id: params.id },
+  const user = await prisma.user.findFirst({
+    where: { id: params.id, ...userManagementWhere(session) },
     select: {
       id: true,
       email: true,
@@ -58,7 +61,7 @@ export default async function UserDetailPage({
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Contributions
           </p>
@@ -66,7 +69,7 @@ export default async function UserDetailPage({
             {contributionCount}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Language Roles
           </p>
@@ -74,7 +77,7 @@ export default async function UserDetailPage({
             {user.languageRoles.length}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Joined
           </p>

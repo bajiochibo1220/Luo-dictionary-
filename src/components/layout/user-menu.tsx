@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { NavigationLink as Link } from "./navigation-link";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
@@ -9,11 +9,13 @@ export function UserMenu({
   userName,
   userImage,
   isAdmin,
+  isSuperAdmin = false,
 }: {
   userEmail: string;
   userName: string | null;
   userImage: string | null;
   isAdmin: boolean;
+  isSuperAdmin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -45,7 +47,7 @@ export function UserMenu({
               <p className="text-xs text-stone-500 truncate">{userEmail}</p>
             </div>
             <Link
-              href="/"
+              href="/dashboard"
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
             >
               Public site
@@ -65,6 +67,7 @@ export function UserMenu({
                 Admin dashboard
               </Link>
             )}
+            {isSuperAdmin && <Link href="/super-admin/dashboard" className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50">Super Admin dashboard</Link>}
             <button
               onClick={() => signOut({ redirectTo: "/login" })}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"

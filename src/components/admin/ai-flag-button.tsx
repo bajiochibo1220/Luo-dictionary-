@@ -38,7 +38,7 @@ export function AiFlagButton({
     <button
       onClick={toggle}
       disabled={busy}
-      className={`text-xs px-2 py-1 rounded transition ${
+      className={`text-xs px-2 py-1 rounded-sm transition ${
         state
           ? "bg-red-100 text-red-700 hover:bg-red-200"
           : "bg-stone-100 text-stone-600 hover:bg-stone-200"

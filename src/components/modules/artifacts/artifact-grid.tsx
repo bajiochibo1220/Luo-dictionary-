@@ -46,7 +46,7 @@ export function ArtifactGrid({
           return (
             <div
               key={a.id}
-              className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
+              className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden"
             >
               <button
                 onClick={() =>

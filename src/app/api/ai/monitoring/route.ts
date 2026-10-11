@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { publicRecordWhere } from "@/lib/governance";
 import { canReviewContent } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
@@ -65,11 +66,9 @@ export async function GET(req: NextRequest) {
 
     const [totalRecords, totalEmbeddings] = await Promise.all([
       prisma.culturalRecord.count({
-        where: { ...(!isSuperAdmin ? { languageId: { in: reviewLanguageIds } } : {}), ...(languageId > 0 ? { languageId } : {}), status: "published" },
+        where: { ...(!isSuperAdmin ? { languageId: { in: reviewLanguageIds } } : {}), ...(languageId > 0 ? { languageId } : {}), ...publicRecordWhere() },
       }),
-      prisma.embedding.count({
-        where: languageId > 0 ? { record: { languageId } } : isSuperAdmin ? {} : { record: { languageId: { in: reviewLanguageIds } } },
-      }),
+      prisma.culturalRecord.count({ where: { ...(!isSuperAdmin ? { languageId: { in: reviewLanguageIds } } : {}), ...(languageId > 0 ? { languageId } : {}), ...publicRecordWhere(), embeddings: { some: {} } } }),
     ]);
 
     const embeddingCoverage =

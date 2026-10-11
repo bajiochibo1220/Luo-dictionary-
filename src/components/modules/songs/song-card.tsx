@@ -48,7 +48,7 @@ export function SongCard({
     .filter(Boolean);
 
   return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+    <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       <Link href={`/${langCode}/wende/${song.id}`} className="block">
       <div className="p-6">
         {(song.media ?? []).map((item) => item.type === "image" ? (

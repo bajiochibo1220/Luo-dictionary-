@@ -18,7 +18,7 @@ export function StatCard({
 
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm border border-stone-100 border-l-4 ${accentClasses[accent]} p-5`}
+      className={`bg-white rounded-xl shadow-xs border border-stone-100 border-l-4 ${accentClasses[accent]} p-5`}
     >
       <p className="text-xs uppercase tracking-wider text-stone-500 mb-1">
         {label}

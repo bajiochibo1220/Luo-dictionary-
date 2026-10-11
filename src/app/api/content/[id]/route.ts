@@ -4,16 +4,18 @@ import { prisma } from "@/lib/db";
 import { canEditContent, canReviewContent, canUploadContent, isLanguageAdmin } from "@/lib/permissions";
 import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
-import { buildRecordUri, canAccessGovernedItem, canReviewGovernedItem, parseGovernanceMetadata } from "@/lib/governance";
+import { buildRecordUri, canReadRecord, canAccessGovernedItem, canReviewGovernedItem, parseGovernanceMetadata } from "@/lib/governance";
 import { addContentVersion } from "@/lib/content-revisions";
 import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { logAction } from "@/lib/audit";
+import { lockEditableRecord, withApiErrors } from "@/lib/content-workflow";
 import { parseContentProvenance } from "@/lib/content-provenance";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,7 +40,7 @@ export async function GET(
   }
   const user = session.user as any;
   const accessUser = { isSuperAdmin: user.isSuperAdmin, languageRoles: user.languageRoles };
-  const mayRead = record.contributorId === user.id || canReviewGovernedItem(accessUser, record, record.languageId);
+  const mayRead = canReadRecord(user, record);
   if (!mayRead) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const visibleMedia = record.media.filter((asset) =>
@@ -52,13 +54,14 @@ export async function GET(
       entityId: record.id,
     });
   }
-  return NextResponse.json({ success: true, data: { ...record, media: visibleMedia } });
+  return NextResponse.json({ success: true, data: { ...record, media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) } });
 }
 
-export async function PATCH(
+async function handlePATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,6 +69,7 @@ export async function PATCH(
 
   const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, include: { transcripts: { select: { text: true } } } });
   if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!canReadRecord(session.user, record)) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const body = await req.json();
   const { title, data, tags } = body;
   const provenance = parseContentProvenance(body.provenance);
@@ -76,7 +80,7 @@ export async function PATCH(
     if (!["draft", "needs_edit", "rejected", "curated"].includes(record.status)) {
       return NextResponse.json({ error: "Translations are locked while content is being reviewed or after publication. Ask a cultural reviewer to return the item for changes." }, { status: 409 });
     }
-    if (!canEditContent(session, record.languageId) && !canUploadContent(session, record.languageId) && !canEditContent(session, targetLanguageId)) {
+    if (record.contributorId !== session.user.id && !canEditContent(session, record.languageId) && !canUploadContent(session, record.languageId) && !canEditContent(session, targetLanguageId)) {
       return NextResponse.json({ error: "Only a content editor for this language can edit translations." }, { status: 403 });
     }
     const languageTranslation = await prisma.culturalRecordTranslation.findUnique({
@@ -85,6 +89,8 @@ export async function PATCH(
     if (!languageTranslation) return NextResponse.json({ error: "Translation not found" }, { status: 404 });
 
     const updated = await prisma.$transaction(async (tx) => {
+      const current = await lockEditableRecord(tx, record.id);
+      if (current.updatedAt.getTime() !== record.updatedAt.getTime() || !canReadRecord(session.user, current)) throw Object.assign(new Error("Content changed. Refresh before editing."), { status: 409 });
       const translated = await tx.culturalRecordTranslation.update({
         where: { id: languageTranslation.id },
         data: {
@@ -110,7 +116,7 @@ export async function PATCH(
   const userId = (session.user as any).id;
   const isOwner = record.contributorId === userId;
   const editorCanEdit = canEditContent(session, record.languageId) && ["needs_edit", "draft", "rejected", "curated"].includes(record.status);
-  const contributorCanRevise = isOwner && ["draft", "rejected", "curated"].includes(record.status);
+  const contributorCanRevise = isOwner && ["draft", "needs_edit", "rejected", "curated"].includes(record.status);
   if (record.status === "submitted" || (record.status === "under_review" && !!record.validatorId)) {
     return NextResponse.json({ error: "This item is being reviewed. Wait for a reviewer to request changes before editing it." }, { status: 409 });
   }
@@ -168,15 +174,15 @@ export async function PATCH(
   // Only the review workflow can change status.
 
   if (data !== undefined && ["submitted", "under_review", "published"].includes(record.status)) {
-    const module = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
+    const contentModule = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
     const hasLinkedTranscript = record.transcripts.some((item) => item.text.trim().length > 0);
-    const validationError = validatePhaseOneSubmission(module?.code ?? "", title ?? record.title, data, hasLinkedTranscript);
+    const validationError = validatePhaseOneSubmission(contentModule?.code ?? "", title ?? record.title, data, hasLinkedTranscript);
     if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
   const updated = await prisma.$transaction(async (tx) => {
     const moved = await tx.culturalRecord.updateMany({
-      where: { id: params.id, status: record.status },
+      where: { id: params.id, status: record.status, updatedAt: record.updatedAt },
       data: update,
     });
     if (moved.count !== 1) throw new Error("This item moved to another review stage. Refresh before editing it again.");
@@ -276,15 +282,17 @@ export async function PATCH(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { id: true, languageId: true, contributorId: true, status: true } });
+  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { id: true, languageId: true, contributorId: true, status: true, consentScope: true, restrictionLevel: true, embargoUntil: true } });
   if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!canReadRecord(session.user, record)) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (record.status === "published") return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
   const userId = (session.user as any).id;
   const isUploaderOwner = record.contributorId === userId && canUploadContent(session, record.languageId);
@@ -296,3 +304,5 @@ export async function DELETE(
   if (!deleted.count) return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
   return NextResponse.json({ success: true });
 }
+
+export const PATCH = withApiErrors(handlePATCH);

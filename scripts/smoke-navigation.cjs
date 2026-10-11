@@ -1,0 +1,259 @@
+// Read-only browser checks against a local production server. Sessions are
+// short-lived, signed locally, and always refreshed against existing accounts.
+// No passwords, cookies, account identifiers, or personal content are printed.
+require('dotenv').config();
+const assert = require('node:assert/strict');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const os = require('node:os');
+const { spawn } = require('node:child_process');
+const { PrismaClient } = require('@prisma/client');
+const { encode } = require('next-auth/jwt');
+const prisma = new PrismaClient();
+const base = process.env.SMOKE_BASE_URL || 'http://localhost:3017';
+const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+async function until(check, description, timeout = 45_000) {
+  const started = Date.now();
+  while (Date.now() - started < timeout) {
+    try { const value = await check(); if (value) return value; } catch { /* page transition */ }
+    await delay(250);
+  }
+  throw new Error(`Timed out: ${description}`);
+}
+
+async function main() {
+  const entryOnly = process.argv.includes('--entry');
+  const interactions = process.argv.includes('--interactions');
+  if (interactions) console.log('CHECK read-only session preparation');
+  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!entryOnly) assert.ok(secret, 'Session secret is required');
+  const users = entryOnly ? [] : await until(() => prisma.user.findMany({ where: { status: 'active' }, select: { id: true, name: true, email: true, isSuperAdmin: true, isMasterSuperAdmin: true, languageRoles: { include: { language: true } } } }), 'active account database query', 60_000);
+  const administrator = users.find(user => user.isMasterSuperAdmin);
+  if (!entryOnly) assert.ok(administrator, 'An active master administrator is required');
+  const cookieFor = async user => encode({ secret, salt: 'authjs.session-token', maxAge: 600, token: { sub: user.id, id: user.id, name: user.name, email: user.email, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, languageCode: role.language.code, languageName: role.language.name, role: role.role })) } });
+  if (process.argv.includes('--forms')) {
+    const headers = { Cookie: 'authjs.session-token=' + await cookieFor(administrator) };
+    for (const moduleCode of ['dictionary', 'proverbs', 'riddles', 'songs', 'folktales', 'oral_histories', 'artifacts', 'heritage_sites']) {
+      const response = await fetch(base + '/contribute/' + moduleCode, { headers, redirect: 'manual', signal: AbortSignal.timeout(60_000) });
+      const html = await response.text();
+      assert.equal(response.status, 200, 'Contribution page ' + moduleCode);
+      assert.ok(html.includes('id="contribution-title"') && html.includes('Save private draft') && html.includes('type="submit"'), 'Structured form renders for ' + moduleCode);
+      console.log('PASS structured contribution form: ' + moduleCode);
+    }
+    const hub = await fetch(base + '/contribute', { headers, signal: AbortSignal.timeout(60_000) });
+    const html = await hub.text();
+    assert.equal(hub.status, 200);
+    assert.equal(html.includes('href="/contribute/chatbot"'), false);
+    assert.equal(html.includes('href="/contribute/audio_visual"'), false);
+    console.log('PASS contribution hub excludes tools without contribution forms');
+    return;
+  }
+  if (interactions) console.log('CHECK isolated Chrome startup');
+  const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'luolingua-review-'));
+  const debugPort = await new Promise((resolve, reject) => {
+    const server = require('node:net').createServer();
+    server.on('error', reject);
+    server.listen(0, '127.0.0.1', () => { const port = server.address().port; server.close(() => resolve(port)); });
+  });
+  const chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
+  let websocket;
+  let captureFailure;
+  try {
+    const target = await until(async () => (await (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(item => item.type === 'page'), 'Chrome startup');
+    websocket = new WebSocket(target.webSocketDebuggerUrl);
+    await new Promise((resolve, reject) => { websocket.addEventListener('open', resolve, { once: true }); websocket.addEventListener('error', reject, { once: true }); });
+    let sequence = 0;
+    const pending = new Map();
+    websocket.addEventListener('message', event => { const message = JSON.parse(event.data); const callback = pending.get(message.id); if (callback) { pending.delete(message.id); message.error ? callback.reject(new Error(message.error.message)) : callback.resolve(message.result); } });
+    const send = (method, params = {}) => new Promise((resolve, reject) => {
+      if (websocket.readyState !== WebSocket.OPEN) return reject(new Error('Browser connection is unavailable'));
+      const id = ++sequence;
+      const timer = setTimeout(() => { pending.delete(id); reject(new Error('Browser command timed out: ' + method)); }, 120_000);
+      pending.set(id, { resolve: value => { clearTimeout(timer); resolve(value); }, reject: error => { clearTimeout(timer); reject(error); } });
+      websocket.send(JSON.stringify({ id, method, params }));
+    });
+    websocket.addEventListener('close', () => { for (const callback of pending.values()) callback.reject(new Error('Browser connection closed')); pending.clear(); });
+    const evaluate = async expression => { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw new Error('Browser evaluation failed'); return result.result.value; };
+    captureFailure = async () => { const shot = await send('Page.captureScreenshot', { format: 'png' }); await fs.writeFile(path.join(os.tmpdir(), 'luolingua-navigation-failure.png'), Buffer.from(shot.data, 'base64')); };
+    await send('Page.enable');
+    await send('Runtime.enable');
+    await send('Network.enable');
+    await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
+    const setAccount = async user => { await send('Network.clearBrowserCookies'); await send('Network.setCookie', { name: 'authjs.session-token', value: await cookieFor(user), url: base, httpOnly: true, sameSite: 'Lax' }); };
+    const navigate = async pathname => { await send('Page.navigate', { url: base + pathname }); await until(async () => await evaluate(`location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]')`), pathname); await delay(750); };
+    const openMenu = async () => { await until(async () => { if (await evaluate(`document.querySelector('button[aria-label="Open account menu"]').getAttribute('aria-expanded') === 'true'`)) return true; await evaluate(`document.querySelector('button[aria-label="Open account menu"]').click()`); await delay(400); return await evaluate(`document.querySelector('button[aria-label="Open account menu"]').getAttribute('aria-expanded') === 'true'`); }, 'account menu hydration'); };
+    const clickMenuLink = async pathname => { await evaluate(`document.querySelector('button[aria-label="Open account menu"]').parentElement.querySelector('a[href=${JSON.stringify(pathname)}]').click()`); await until(() => evaluate(`location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]')`), 'menu navigation'); await delay(750); };
+    const clickVisible = async selector => {
+      const point = await evaluate(`(() => {
+        const element = document.querySelector(${JSON.stringify(selector)});
+        if (!element) return null;
+        element.scrollIntoView({ block: 'center' });
+        const rect = element.getBoundingClientRect();
+        const x = rect.left + rect.width / 2, y = rect.top + rect.height / 2;
+        const hit = document.elementFromPoint(x, y);
+        return { x, y, reachable: hit === element || element.contains(hit), blocker: hit?.tagName };
+      })()`);
+      assert.ok(point, 'Control exists: ' + selector);
+      assert.equal(point.reachable, true, 'Control is reachable by mouse: ' + selector + ' (hit ' + point.blocker + ')');
+      await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: point.x, y: point.y, button: 'left', clickCount: 1 });
+      await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: point.x, y: point.y, button: 'left', clickCount: 1 });
+    };
+    if (entryOnly) {
+      for (const pathname of ['/', '/luo', '/eng']) {
+        await send('Page.navigate', { url: base + pathname });
+        await until(() => evaluate(`location.pathname === '/login' && document.querySelector('h1')?.textContent.trim() === 'Welcome back' && !!document.querySelector('input[type="password"]')`), 'login entry ' + pathname, 90_000);
+        assert.equal(await evaluate(`document.body.textContent.includes('Misawa!')`), false);
+        assert.equal(await evaluate(`document.body.textContent.includes('Every language')`), true);
+        console.log('PASS first-load route ' + pathname + ': current login screen, no old landing');
+      }
+      await delay(750);
+      const shot = await send('Page.captureScreenshot', { format: 'png' });
+      await fs.writeFile(path.join(os.tmpdir(), 'luolingua-login-entry-review.png'), Buffer.from(shot.data, 'base64'));
+      await until(async () => { if (await evaluate(`location.pathname === '/register' && !!document.querySelector('input[type="password"]')`)) return true; await evaluate(`document.querySelector('a[href="/register"]')?.click()`); await delay(300); return await evaluate(`location.pathname === '/register' && !!document.querySelector('input[type="password"]')`); }, 'registration navigation');
+      assert.equal(await evaluate(`document.body.textContent.includes('Every language')`), true);
+      console.log('PASS current registration screen reachable from login');
+      return;
+    }
+    await setAccount(administrator);
+    if (process.argv.includes('--interactions')) {
+      console.log('CHECK physical contribution and account menu controls');
+      let exceptions = 0;
+      websocket.addEventListener('message', event => { const message = JSON.parse(event.data); if (message.method === 'Runtime.exceptionThrown') exceptions++; });
+      const timed = async (description, action, ready) => {
+        const started = Date.now();
+        await action();
+        await until(() => evaluate(ready), description, 120_000);
+        console.log('PASS ' + description + ': ' + (Date.now() - started) + ' ms');
+      };
+      await timed('proverbs page', () => send('Page.navigate', { url: base + '/dashboard?module=proverbs' }), `location.search.includes('module=proverbs') && !!document.querySelector('button[aria-label="Open account menu"]') && !!document.querySelector('.blink-contribute')`);
+      await delay(1000);
+      await clickVisible('.blink-contribute');
+      await until(() => evaluate(`document.body.textContent.includes('Open contribution form') || (location.pathname === '/contribute/proverbs' && !!document.querySelector('input')) || !!document.querySelector('[aria-label="Loading page"]')`), 'contribution click', 20_000);
+      if (await evaluate(`location.pathname !== '/contribute/proverbs'`)) {
+        if (await evaluate(`document.body.textContent.includes('Open contribution form')`)) await clickVisible('.fixed .max-w-lg button.bg-stone-900');
+      }
+      await until(() => evaluate(`location.pathname === '/contribute/proverbs' && !!document.querySelector('input') && document.body.textContent.includes('Save private draft')`), 'proverbs contribution form', 120_000);
+      console.log('PASS contribution button opens the working structured form');
+      await clickVisible('form button[type="submit"]');
+      await until(() => evaluate(`document.body.textContent.includes('Title is required')`), 'empty contribution validation');
+      console.log('PASS empty contribution reports validation without submitting');
+      for (const pathname of ['/dashboard', '/admin/dashboard', '/super-admin/dashboard', '/dashboard']) {
+        await clickVisible('button[aria-label="Open account menu"]');
+        await until(() => evaluate(`document.querySelector('button[aria-label="Open account menu"]').getAttribute('aria-expanded') === 'true'`), 'open menu');
+        await timed('physical menu navigation to ' + pathname, () => clickVisible('button[aria-label="Open account menu"] ~ div a[href="' + pathname + '"]'), `location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]') && !document.querySelector('[role="status"][aria-live="polite"]')`);
+        await delay(750);
+      }
+      await timed('physical sidebar navigation to dictionary', () => clickVisible('aside a[href="/dashboard?module=dictionary"]'), `location.search.includes('module=dictionary') && !!document.querySelector('.blink-contribute') && !document.querySelector('[role="status"][aria-live="polite"]')`);
+      assert.equal(exceptions, 0, 'No uncaught browser exceptions during interactions');
+      assert.equal(await evaluate(`getComputedStyle(document.body).fontFamily.includes('Inter')`), true);
+      await evaluate('document.fonts.ready');
+      assert.equal(await evaluate(`document.fonts.check('16px Inter') && document.fonts.check('24px Lora')`), true);
+      assert.equal(await evaluate(`['Inter', 'Lora'].every(name => [...document.fonts].some(face => face.family.includes(name) && face.status === 'loaded'))`), true);
+      console.log('PASS bundled Inter and Lora fonts load with the existing theme');
+      const shot = await send('Page.captureScreenshot', { format: 'png' });
+      await fs.writeFile(path.join(os.tmpdir(), 'luolingua-interactions-review.png'), Buffer.from(shot.data, 'base64'));
+      console.log('PASS no browser exceptions during contribution and dashboard switching');
+      return;
+    }
+    await navigate('/super-admin/dashboard');
+    await openMenu();
+    await clickMenuLink('/dashboard');
+    assert.equal(await evaluate(`!!document.querySelector('a[href="/dashboard?module=dictionary"]')`), true);
+    console.log('PASS master administrator: View public site opens the public module dashboard');
+    assert.equal(await evaluate("getComputedStyle(document.querySelector('header')).display"), 'flex');
+    assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
+    await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await delay(500);
+    assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
+    console.log('PASS desktop and mobile public dashboard: CSS loaded and no page overflow');
+    await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
+    await delay(750);
+    const screenshot = await send('Page.captureScreenshot', { format: 'png' });
+    await fs.writeFile(path.join(os.tmpdir(), 'luolingua-public-review.png'), Buffer.from(screenshot.data, 'base64'));
+    await openMenu();
+    await clickMenuLink('/admin/dashboard');
+    console.log('PASS public account menu: return to administrator dashboard');
+    await openMenu();
+    await clickMenuLink('/super-admin/dashboard');
+    console.log('PASS administrator account menu: return to super administrator dashboard');
+
+    if (process.argv.includes('--quick')) {
+      const token = await cookieFor(administrator);
+      for (const moduleCode of ['dictionary', 'proverbs', 'riddles', 'songs', 'folktales', 'oral_histories', 'artifacts', 'heritage_sites']) {
+        const response = await fetch(base + '/dashboard?module=' + moduleCode, { headers: { Cookie: 'authjs.session-token=' + token }, redirect: 'manual' });
+        assert.equal(response.status, 200, 'Public module ' + moduleCode);
+        await response.text();
+      }
+      console.log('PASS all eight public module dashboards: HTTP 200');
+      await navigate('/super-admin/system');
+      await until(() => evaluate(`!!document.querySelector('input[placeholder="LuoLinguaAI"]')`), 'settings input');
+      await evaluate(`document.querySelector('input[placeholder="LuoLinguaAI"]').focus()`);
+      await send('Input.insertText', { text: '!' });
+      await delay(300);
+      assert.equal(await evaluate(`document.activeElement === document.querySelector('input[placeholder="LuoLinguaAI"]')`), true);
+      console.log('PASS settings input retains focus after typing; no settings saved');
+      return;
+    }
+    for (const role of ['super_admin', 'language_admin', 'uploader', 'publisher', 'content_editor', 'cultural_expert']) {
+      const user = users.find(user => !user.isMasterSuperAdmin && (role === 'super_admin' ? user.isSuperAdmin : user.languageRoles.some(item => item.role === role)));
+      if (!user) { console.log(`SKIP live ${role}: no active sample account; covered by regression tests`); continue; }
+      await setAccount(user);
+      await navigate('/admin/dashboard');
+      await openMenu();
+      await clickMenuLink('/dashboard');
+      console.log(`PASS ${role}: administrator to public dashboard`);
+    }
+    const masterToken = await cookieFor(administrator);
+    const adminPages = ['/admin/dashboard', '/admin/content', '/admin/validation-queue', '/admin/review-queue', '/admin/editor-queue', '/admin/published-history', '/admin/review-history', '/admin/media', '/admin/transcripts', '/admin/users', '/admin/translations', '/admin/analytics', '/admin/ai-monitoring', '/admin/audit-logs', '/super-admin/dashboard', '/super-admin/admins', '/super-admin/languages', '/super-admin/backup', '/super-admin/system', '/dashboard', '/profile', '/my-submissions', '/contribute'];
+    for (const pathname of adminPages) {
+      const response = await fetch(base + pathname, { headers: { Cookie: 'authjs.session-token=' + masterToken }, redirect: 'manual' });
+      assert.equal(response.status, 200, 'Administrator page ' + pathname);
+      await response.text();
+    }
+    console.log('PASS 23 signed-in administrator/public pages: HTTP 200');
+    for (const [pathname, destination] of [['/', '/login'], ['/luo', '/'], ['/eng', '/']]) {
+      const response = await fetch(base + pathname, { redirect: 'manual' });
+      // A loading boundary can commit HTML before the server resolves auth;
+      // Next then emits the redirect inside that stream instead of HTTP 307.
+      if (pathname === '/' && response.status === 200) {
+        const html = await response.text();
+        assert.ok(html.includes('NEXT_REDIRECT') && html.includes('url=/login'), 'Streamed anonymous login redirect');
+        continue;
+      }
+      assert.equal(response.status, 307, 'Retired landing ' + pathname);
+      assert.equal(new URL(response.headers.get('location'), base).pathname, destination);
+    }
+    console.log('PASS anonymous entry routes: current login replaces the retired landing screen');
+    const publicPages = ['/luo/muma', '/luo/ngero', '/luo/ngeche', '/luo/sigana', '/luo/sigana/folktales', '/luo/wende', '/luo/gik-luo', '/luo/piny-luo', '/luo/search', '/chatbot', '/about', '/privacy', '/terms', '/login', '/register', '/mobile-apps'];
+    for (const pathname of publicPages) {
+      const response = await fetch(base + pathname, { redirect: 'manual' });
+      assert.equal(response.status, 200, 'Public page ' + pathname);
+      await response.text();
+    }
+    console.log('PASS 16 anonymous public pages: HTTP 200');
+    const reader = users.find(user => !user.isSuperAdmin && !user.isMasterSuperAdmin && !user.languageRoles.some(role => ['language_admin', 'uploader', 'publisher', 'content_editor', 'cultural_expert'].includes(role.role)));
+    if (reader) {
+      const token = await cookieFor(reader);
+      const response = await fetch(base + '/api/users', { headers: { Cookie: `authjs.session-token=${token}` }, redirect: 'manual' });
+      assert.equal(response.status, 403);
+      console.log('PASS live ordinary account: user-directory access is forbidden');
+    }
+    await send('Network.clearBrowserCookies');
+    const unauthenticated = await fetch(base + '/api/users', { redirect: 'manual' });
+    assert.equal(unauthenticated.status, 401);
+    assert.equal((await unauthenticated.json()).error, 'Unauthorized');
+    console.log('PASS live anonymous request: protected API returns JSON 401');
+  } catch (error) {
+    if (captureFailure) await Promise.race([captureFailure().catch(() => {}), delay(3000)]);
+    throw error;
+  } finally {
+    websocket?.close();
+    chrome.kill();
+    await delay(500);
+    // This directory was created by mkdtemp solely for this run.
+    const resolved = path.resolve(profile);
+    if (path.dirname(resolved) === path.resolve(os.tmpdir()) && path.basename(resolved).startsWith('luolingua-review-')) await fs.rm(resolved, { recursive: true, force: true }).catch(() => {});
+  }
+}
+main().catch(error => { console.error('Navigation smoke check failed:', error.message); process.exitCode = 1; }).finally(() => prisma.$disconnect());

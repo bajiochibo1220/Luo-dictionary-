@@ -5,10 +5,11 @@ import { DictionarySearch } from "@/components/modules/dictionary/dictionary-sea
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function DictionaryPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
     include: {

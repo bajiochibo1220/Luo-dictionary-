@@ -4,6 +4,8 @@
 .env*.local
 
 # Data
+# Local reference corpus; not part of the application repository
+/LUO DATA/
 data/raw/audio/
 !data/raw/audio/.gitkeep
 data/exports/*.jsonl
@@ -17,6 +19,8 @@ node_modules/
 
 # Next.js
 .next/
+.next-review/
+.next-turbo-review/
 out/
 build/
 dist/
@@ -36,6 +40,8 @@ Desktop.ini
 *.swo
 
 # Logs
+/chrome_temp_profile/
+/edge_temp_profile/
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
@@ -46,3 +52,7 @@ pnpm-debug.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Private snapshots contain account credentials and service configuration
+data/exports/backups/*.json
+data/exports/backups/media-*/

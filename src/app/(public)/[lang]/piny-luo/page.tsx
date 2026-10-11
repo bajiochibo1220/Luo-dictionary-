@@ -5,10 +5,11 @@ import { SitesMapLoader } from "@/components/modules/heritage-sites/sites-map-lo
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function HeritageSitesPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
     include: { moduleTranslations: { include: { module: true } } },

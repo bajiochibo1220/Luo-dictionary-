@@ -1,9 +1,12 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { canReviewGovernedItem } from "@/lib/governance";
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
+  await assertServiceAvailable();
   try {
     const session = await auth();
     if (!session?.user) {
@@ -68,3 +71,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withApiErrors(handleGET);

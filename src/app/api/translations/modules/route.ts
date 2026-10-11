@@ -27,9 +27,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "You cannot edit translations for this language" }, { status: 403 });
   }
 
-  const module = await prisma.module.findUnique({ where: { id: moduleId }, select: { id: true } });
+  const contentModule = await prisma.module.findUnique({ where: { id: moduleId }, select: { id: true } });
   const language = await prisma.language.findUnique({ where: { id: languageId }, select: { id: true, code: true } });
-  if (!module || !language) return NextResponse.json({ error: "Invalid module or language" }, { status: 400 });
+  if (!contentModule || !language) return NextResponse.json({ error: "Invalid module or language" }, { status: 400 });
 
   const updated = await prisma.moduleTranslation.upsert({
     where: {

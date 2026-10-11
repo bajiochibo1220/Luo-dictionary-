@@ -1,45 +1,26 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
+import { localizeRecord } from "@/lib/content-translations";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { publicRecordWhere } from "@/lib/governance";
 
-export async function GET(
+async function handleGET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
-  const record = await prisma.culturalRecord.findUnique({
-    where: { id: params.id, ...publicRecordWhere() },
+  const params = await promisedParams;
+  await assertServiceAvailable();
+  const record = await prisma.culturalRecord.findFirst({
+    where: { id: params.id, module: { code: "proverbs" }, ...publicRecordWhere() },
   });
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json({ success: true, data: record });
+  return NextResponse.json({ success: true, data: localizeRecord(record, record.languageId) });
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const body = await req.json();
-  const updated = await prisma.culturalRecord.update({
-    where: { id: params.id },
-    data: body,
-  });
-  return NextResponse.json({ success: true, data: updated });
-}
+export { PATCH, DELETE } from "@/app/api/content/[id]/route";
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  await prisma.culturalRecord.delete({ where: { id: params.id } });
-  return NextResponse.json({ success: true });
-}
+export const GET = withApiErrors(handleGET);

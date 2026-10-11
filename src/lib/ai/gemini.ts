@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSystemSetting } from "@/lib/settings";
 
 async function getGeminiApiKey(): Promise<string> {
-  const configured = process.env.GEMINI_API_KEY || await getSystemSetting("gemini_api_key");
+  const configured = await getSystemSetting("gemini_api_key") || process.env.GEMINI_API_KEY || "";
   // API keys are single tokens. Remove whitespace introduced by copy/paste so
   // it cannot become an invalid HTTP header value.
   return configured.replace(/\s+/g, "");

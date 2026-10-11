@@ -37,7 +37,7 @@ export function ProfilePreferencesForm({ initialTypes }: { initialTypes: string[
   }
 
   return (
-    <section className="max-w-2xl rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+    <section className="max-w-2xl rounded-xl border border-stone-200 bg-white p-6 shadow-xs">
       <h1 className="font-serif text-2xl text-stone-800">Profile options</h1>
       <p className="mt-2 text-sm text-stone-600">Choose every option that describes how you use LuoLinguaAI. You can change these selections whenever you like.</p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">

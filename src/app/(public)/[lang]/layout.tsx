@@ -1,3 +1,5 @@
+import { maintenanceMessage } from "@/lib/maintenance";
+import { MaintenanceNotice } from "@/components/layout/maintenance-notice";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { LanguageProvider } from "@/components/providers/language-provider";
@@ -5,11 +7,14 @@ import { Header } from "@/components/layout/header";
 
 export default async function LangLayout({
   children,
-  params,
+  params: promisedParams,
 }: {
   children: React.ReactNode;
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
+  const message = await maintenanceMessage();
+  if (message) return <MaintenanceNotice message={message} />;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
     include: {

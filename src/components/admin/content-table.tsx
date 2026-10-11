@@ -108,11 +108,12 @@ export function ContentTable({
   async function advanceSelected() {
     if (!selected.length || !selectedStage) return;
     if (selectedStage === "under_review" && !confirm(`Publish ${selected.length} selected items? Confirm that every item and its attached files have passed review and may be shared publicly.`)) return;
+    if (selectedStage === "submitted" && !confirm(`Confirm that you have checked spelling, translation, grammar, pronunciation, examples and cultural accuracy for every one of the ${selected.length} selected items.`)) return;
     setBulkBusy(true);
     try {
       if (selectedStage === "submitted") {
         const response = await fetch("/api/content/bulk-validate", {
-          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ recordIds: selected }),
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ recordIds: selected, checklist: { spelling: true, translation: true, grammar: true, pronunciation: true, examples: true, culture: true } }),
         });
         const result = await response.json();
         if (!response.ok || !result.success) throw new Error(result.error || "Could not approve these items.");
@@ -163,7 +164,7 @@ export function ContentTable({
 
   const canSelect = canDelete || canBulkWorkflow;
   return (
-    <div className="overflow-hidden rounded-xl border border-stone-100 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-stone-100 bg-white shadow-xs">
       {canSelect && <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-4 py-3">
         <label className="flex items-center gap-2 text-sm text-stone-600">
           <input type="checkbox" checked={selected.length === records.length} onChange={(event) => setSelected(event.target.checked ? records.map((record) => record.id) : [])} aria-label="Select all visible content" />

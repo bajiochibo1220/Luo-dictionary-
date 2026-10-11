@@ -6,10 +6,11 @@ import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
 import { BackLink } from "@/components/layout/back-link";
 
 export default async function ContributePage({
-  params,
+  params: promisedParams,
 }: {
-  params: { module: string };
+  params: Promise<{ module: string }>;
 }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
 
@@ -17,19 +18,8 @@ export default async function ContributePage({
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
 
-  if (!primaryRole && !user.isSuperAdmin) {
-    return (
-      <div className="p-6 md:p-10 pt-20 md:pt-10">
-        <BackLink href="/contribute" label="Back" variant="on-sand" />
-        <p className="mt-6 font-serif text-xl text-stone-900">
-          You are not assigned to a language yet.
-        </p>
-      </div>
-    );
-  }
-
   const mod = await prisma.module.findUnique({
-    where: { code: params.module },
+    where: { code: params.module, isActive: true, isStub: false },
   });
   if (!mod) notFound();
 
@@ -37,10 +27,10 @@ export default async function ContributePage({
   let languageName: string;
   let languageCode: string;
 
-  if (user.isSuperAdmin && !primaryRole) {
+  if (!primaryRole) {
     const first = await prisma.language.findFirst({
       where: { isActive: true },
-      orderBy: { displayOrder: "asc" },
+      orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
     });
     if (!first) notFound();
     languageId = first.id;
@@ -56,16 +46,15 @@ export default async function ContributePage({
     languageCode = lang.code;
   }
 
-  const modTranslation = await prisma.moduleTranslation.findFirst({
-    where: { moduleId: mod.id, languageId },
-  });
+  const [modTranslation, fieldDefs] = await Promise.all([
+    prisma.moduleTranslation.findFirst({ where: { moduleId: mod.id, languageId } }),
+    prisma.fieldDefinition.findMany({
+      where: { moduleId: mod.id },
+      orderBy: { displayOrder: "asc" },
+      include: { translations: { where: { languageId } } },
+    }),
+  ]);
   const translatedTitle = modTranslation?.title ?? mod.baseName;
-
-  const fieldDefs = await prisma.fieldDefinition.findMany({
-    where: { moduleId: mod.id },
-    orderBy: { displayOrder: "asc" },
-    include: { translations: { where: { languageId } } },
-  });
 
   const formatted = fieldDefs.map((f) => ({
     id: f.id,
@@ -111,6 +100,7 @@ export default async function ContributePage({
           languageId={languageId}
           languageName={languageName}
           languageCode={languageCode}
+          redirectTo="/my-submissions"
           fieldDefs={formatted}
           isElderContributor={primaryRole?.role === "elder"}
         />

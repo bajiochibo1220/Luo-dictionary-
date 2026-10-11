@@ -178,6 +178,36 @@ export function publicMediaWhere(now = new Date()) {
   return publicGovernanceWhere(now);
 }
 
+type GovernanceUser = { id?: string; isSuperAdmin?: boolean; isMasterSuperAdmin?: boolean; languageRoles?: { role: string; languageId?: number }[] } | null;
+type GovernedParent = GovernanceAccessFields & { languageId: number; status: string; contributorId?: string | null };
+
+export function canReadRecord(user: GovernanceUser, record: GovernedParent): boolean {
+  if (record.status === "published" && isPubliclyEligible(record)) return true;
+  if (!user?.id) return false;
+  if (record.contributorId === user.id) return true;
+  const actor = { ...user, isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin) };
+  const staff = actor.isSuperAdmin || actor.languageRoles?.some((role) => role.languageId === record.languageId &&
+    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role));
+  return staff ? canReviewGovernedItem(actor, record, record.languageId)
+    : ["curated", "published"].includes(record.status) && !!actor.languageRoles?.some(role => role.languageId === record.languageId && ["researcher", "teacher", "elder"].includes(role.role)) && canAccessGovernedItem(actor, record, record.languageId);
+}
+
+export function canReadMedia(user: GovernanceUser, asset: GovernanceAccessFields & { languageId: number }, parent: GovernedParent | null): boolean {
+  if (parent?.status === "published" && isPubliclyEligible(parent) && isPubliclyEligible(asset)) return true;
+  if (!user?.id) return false;
+  const actor = { ...user, isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin) };
+  if (parent) {
+    if (!canReadRecord(actor, parent)) return false;
+    if (parent.contributorId === actor.id) return true;
+  } else if (!actor.isSuperAdmin && !actor.languageRoles?.some((role) => role.languageId === asset.languageId &&
+    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role))) return false;
+  return canReviewGovernedItem(actor, asset, asset.languageId);
+}
+
+export function mayReviewRecord(user: GovernanceUser, record: GovernanceAccessFields & { languageId: number }): boolean {
+  return !!user?.id && canReviewGovernedItem({ ...user, isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin) }, record, record.languageId);
+}
+
 export function governanceError(metadata: GovernanceMetadata): string | null {
   if (
     metadata.consentScope === "public_excerpt" &&

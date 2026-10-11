@@ -23,14 +23,14 @@ export function DictionaryCard({
   langCode: string;
 }) {
   return (
-    <div className="group p-6 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300">
+    <div className="group p-6 bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300">
       <Link href={`/${langCode}/muma/${entry.id}`} className="block">
       <div className="flex items-start justify-between gap-4 mb-2">
         <h3 className="text-2xl font-serif text-stone-800 group-hover:text-amber-700 transition">
           {entry.dholuo}
         </h3>
         {entry.grammarClass && (
-          <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-1 rounded">
+          <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-1 rounded-sm">
             {entry.grammarClass}
           </span>
         )}

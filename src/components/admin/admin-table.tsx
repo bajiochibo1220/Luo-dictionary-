@@ -68,14 +68,14 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
 
   if (admins.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
         No administrators yet
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>

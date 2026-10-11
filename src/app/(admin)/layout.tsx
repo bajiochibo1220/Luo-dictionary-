@@ -31,7 +31,7 @@ export default async function AdminLayout({
     prisma.notification.count({ where: { userId: user.id, read: false } }).catch(() => 0),
     prisma.language.findMany({ orderBy: { displayOrder: "asc" }, select: { id: true, code: true, nativeName: true, isActive: true } }),
   ]);
-  const cookieLanguageId = Number(cookies().get("admin-language-id")?.value);
+  const cookieLanguageId = Number((await cookies()).get("admin-language-id")?.value);
   const selectedLanguageId = languages.some((language) => language.id === cookieLanguageId)
     ? cookieLanguageId
     : languages.find((language) => language.code === "eng")?.id ?? languages[0]?.id ?? null;

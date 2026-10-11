@@ -1,3 +1,4 @@
+import { mayReviewRecord, canReadMedia } from "@/lib/governance";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -6,10 +7,11 @@ import { ReviewActions } from "@/components/admin/review-actions";
 import { canFinalizeContent } from "@/lib/permissions";
 
 export default async function ReviewDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) notFound();
   const record = await prisma.culturalRecord.findUnique({
@@ -28,7 +30,8 @@ export default async function ReviewDetailPage({
       },
     },
   });
-  if (!record) notFound();
+  if (!record || !mayReviewRecord(session.user, record)) notFound();
+  record.media = record.media.filter((asset) => canReadMedia(session.user, asset, record));
   const user = session.user as any;
   const canSee = user.isSuperAdmin || user.isMasterSuperAdmin || (user.languageRoles ?? []).some((role: any) =>
     role.languageId === record.languageId && ["language_admin", "publisher"].includes(role.role)
@@ -54,7 +57,7 @@ export default async function ReviewDetailPage({
 
       <header className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
+          <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-sm">
             {record.module.baseName}
           </span>
           <span className="text-xs text-stone-400">
@@ -103,7 +106,7 @@ export default async function ReviewDetailPage({
         </p>
       </section>
 
-      <section className="mb-6 rounded-xl border border-stone-100 bg-white p-5 shadow-sm">
+      <section className="mb-6 rounded-xl border border-stone-100 bg-white p-5 shadow-xs">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">Final access check</h2>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
           <div><dt className="text-xs text-stone-500">Consent</dt><dd className="font-medium text-stone-800">{record.consentScope.replaceAll("_", " ")}</dd></div>
@@ -114,7 +117,7 @@ export default async function ReviewDetailPage({
       </section>
 
       {/* Content fields */}
-      <section className="bg-white rounded-xl shadow-sm border border-stone-100 p-8 mb-6">
+      <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-8 mb-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
           Content
         </h2>
@@ -170,7 +173,7 @@ export default async function ReviewDetailPage({
 
       {/* Review history */}
       {record.reviews.length > 0 && (
-        <section className="bg-white rounded-xl shadow-sm border border-stone-100 p-6 mb-6">
+        <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-6">
           <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
             Review History
           </h2>

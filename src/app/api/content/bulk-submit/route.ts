@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -5,7 +7,7 @@ import { canUploadContent } from "@/lib/permissions";
 import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { logAction } from "@/lib/audit";
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest) {
   try {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Sign in first." }, { status: 401 });
@@ -22,6 +24,7 @@ export async function POST(request: NextRequest) {
   });
   if (records.length !== recordIds.length) return NextResponse.json({ success: false, error: "One or more items could not be found." }, { status: 404 });
   for (const record of records) {
+    if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     if (!["draft", "rejected", "curated"].includes(record.status)) {
       return NextResponse.json({ success: false, error: `${record.title}: status is “${record.status}”; only drafts, returned items, and internally curated items can be sent for cultural review.` }, { status: 400 });
     }
@@ -99,3 +102,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withApiErrors(handlePOST);

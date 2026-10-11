@@ -1,3 +1,4 @@
+import { canReadRecord } from "@/lib/governance";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -8,7 +9,8 @@ import { redirect } from "next/navigation";
 
 type SearchParams = { status?: string; module?: string; languageId?: string };
 
-export default async function ContentPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ContentPage({ searchParams: promisedSearchParams }: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   const user = session!.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
@@ -28,11 +30,11 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
 
   if (searchParams.status) where.status = searchParams.status;
   if (searchParams.module) {
-    const module = modules.find((item) => item.code === searchParams.module);
-    if (module) where.moduleId = module.id;
+    const contentModule = modules.find((item) => item.code === searchParams.module);
+    if (contentModule) where.moduleId = contentModule.id;
   }
 
-  const records = await prisma.culturalRecord.findMany({
+  const candidates = await prisma.culturalRecord.findMany({
     where,
     orderBy: [{ moduleId: "asc" }, { createdAt: "desc" }],
     take: 500,
@@ -41,6 +43,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
       module: { select: { code: true, baseName: true } },
     },
   });
+  const records = candidates.filter((record) => canReadRecord(session!.user, record));
 
   const formatted = records.map((record) => ({
     id: record.id,
@@ -92,15 +95,15 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
           <p className="text-sm text-stone-500">Items are grouped by language and content area. Select several items at the same stage to move them together.</p>
         </div>
         <div className="flex flex-wrap justify-end gap-2">
-          {modules.filter((module) => module.isActive && !module.isStub && !!createLanguageId && canUploadContent(session, createLanguageId)).map((module) => (
-            <Link key={module.code} href={`/admin/content/new/${module.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-medium text-white hover:bg-amber-900">
-              + {module.baseName}
+          {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub && !!createLanguageId && canUploadContent(session, createLanguageId)).map((contentModule) => (
+            <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-medium text-white hover:bg-amber-900">
+              + {contentModule.baseName}
             </Link>
           ))}
         </div>
       </header>
 
-      {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+      {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
         <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by language <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.languageId ? "· selected" : "· all"}</span></summary>
         <nav aria-label="Filter by language" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ languageId: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All languages</Link>
@@ -110,17 +113,17 @@ export default async function ContentPage({ searchParams }: { searchParams: Sear
         </nav>
       </details>}
 
-      <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by content area <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((module) => module.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
+      <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by content area <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((contentModule) => contentModule.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
         <nav aria-label="Filter by content area" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ module: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.module ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All content areas</Link>
-        {modules.filter((module) => module.isActive && !module.isStub).map((module) => (
-          <Link key={module.code} href={paramsFor({ module: module.code })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.module === module.code ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{module.baseName}</Link>
+        {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub).map((contentModule) => (
+          <Link key={contentModule.code} href={paramsFor({ module: contentModule.code })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.module === contentModule.code ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{contentModule.baseName}</Link>
         ))}
         </nav>
       </details>
 
-      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
         <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by status <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status ? `· ${searchParams.status.replaceAll("_", " ")}` : "· all"}</span></summary>
         <nav aria-label="Filter by status" className="mt-3 flex flex-wrap gap-2">
         <Link href={paramsFor({ status: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All statuses</Link>

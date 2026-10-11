@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/layout/navigation-link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -11,24 +11,13 @@ export default async function ContributeHubPage() {
   const user = session.user as any;
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
-  const languageId = primaryRole?.languageId;
-  const languageName = primaryRole?.languageName ?? "Dholuo";
-
-  if (!languageId) {
-    return (
-      <div className="p-6 md:p-10 pt-20 md:pt-10">
-        <BackLink href="/dashboard" label="Back" variant="on-sand" />
-        <div className="mt-6 max-w-xl">
-          <p className="font-serif text-2xl text-stone-900">
-            You are not assigned to a language yet.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const language = await prisma.language.findFirst({ where: primaryRole ? { id: primaryRole.languageId, isActive: true } : { isActive: true }, orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }] });
+  if (!language) return <div className="p-10">No active language is available. Contact an administrator.</div>;
+  const languageId = language.id;
+  const languageName = language.nativeName;
 
   const modules = await prisma.module.findMany({
-    where: { isActive: true },
+    where: { isActive: true, isStub: false, fieldDefinitions: { some: {} } },
     orderBy: { displayOrder: "asc" },
     include: {
       translations: { where: { languageId } },
@@ -68,10 +57,10 @@ export default async function ContributeHubPage() {
             <Link
               key={m.id}
               href={`/contribute/${m.code}`}
-              className="group relative bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 p-6 shadow-md hover:shadow-2xl hover:border-amber-800/50 hover:-translate-y-0.5 transition-all duration-300"
+              className="group relative bg-black/5 backdrop-blur-sm rounded-2xl border border-stone-900/10 p-6 shadow-md hover:shadow-2xl hover:border-amber-800/50 hover:-translate-y-0.5 transition-all duration-300"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-amber-100 to-amber-200 flex items-center justify-center shadow-inner">
                   <span className="text-2xl">{iconFor(m.code)}</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-widest text-amber-900/60 font-semibold">

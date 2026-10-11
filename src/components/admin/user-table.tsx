@@ -47,17 +47,17 @@ export function UserTable({ users, canBulkManage = false }: { users: UserRow[]; 
   }
   if (users.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
         No users found
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
       {canBulkManage && <div className="flex items-center justify-between gap-3 border-b border-stone-100 p-3 text-sm">
         <label className="flex items-center gap-2"><input type="checkbox" checked={selected.length === users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).length && selected.length > 0} onChange={(e) => setSelected(e.target.checked ? users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).map((u) => u.id) : [])} />Select accounts</label>
-        {selected.length > 0 && <div className="flex gap-2"><button disabled={busy} onClick={() => void bulkStatus("suspended")} className="rounded bg-red-50 px-3 py-1.5 text-xs text-red-700">Suspend selected ({selected.length})</button><button disabled={busy} onClick={() => void bulkStatus("active")} className="rounded bg-green-50 px-3 py-1.5 text-xs text-green-700">Activate selected</button></div>}
+        {selected.length > 0 && <div className="flex gap-2"><button disabled={busy} onClick={() => void bulkStatus("suspended")} className="rounded-sm bg-red-50 px-3 py-1.5 text-xs text-red-700">Suspend selected ({selected.length})</button><button disabled={busy} onClick={() => void bulkStatus("active")} className="rounded-sm bg-green-50 px-3 py-1.5 text-xs text-green-700">Activate selected</button></div>}
       </div>}
       <p className="border-b border-stone-100 px-3 py-2 text-xs text-stone-400 md:hidden">Swipe left or right to see all user details</p>
       <div className="mobile-table-scroll">

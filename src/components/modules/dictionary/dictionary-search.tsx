@@ -62,7 +62,7 @@ export function DictionarySearch({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search Dholuo, English, or Kiswahili..."
-          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white shadow-sm"
+          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white shadow-xs"
         />
         {loading && (
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600">

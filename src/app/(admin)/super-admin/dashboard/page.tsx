@@ -1,3 +1,6 @@
+import fs from "fs";
+import { getSystemSettings } from "@/lib/settings";
+import { hasGemini } from "@/lib/ai/gemini";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -13,43 +16,37 @@ export default async function SuperAdminDashboardPage() {
   if (!(session.user as any).isSuperAdmin && !(session.user as any).isMasterSuperAdmin) redirect("/");
 
   // Stats
-  const [languages, totalUsers, totalRecords, totalMedia, totalAI] =
+  const [languages, totalUsers, recordsByLanguage, usersByLanguage, totalMedia, totalAI, activityRaw, latestBackup, settings] =
     await Promise.all([
       prisma.language.findMany({
         orderBy: { displayOrder: "asc" },
       }),
       prisma.user.count(),
-      prisma.culturalRecord.count(),
+      prisma.culturalRecord.groupBy({ by: ["languageId"], _count: { _all: true } }),
+      prisma.userLanguageRole.groupBy({ by: ["languageId"], _count: { _all: true } }),
       prisma.mediaAsset.count(),
       prisma.aIResponse.count(),
+      prisma.auditLog.findMany({ orderBy: { createdAt: "desc" }, take: 10, include: { user: { select: { name: true, email: true } } } }),
+      prisma.backup.findFirst({ orderBy: { createdAt: "desc" } }),
+      getSystemSettings(),
     ]);
 
   // Per-language stats
-  const languagesWithStats = await Promise.all(
-    languages.map(async (l) => {
-      const [recordCount, userCount] = await Promise.all([
-        prisma.culturalRecord.count({ where: { languageId: l.id } }),
-        prisma.userLanguageRole.count({ where: { languageId: l.id } }),
-      ]);
+  const totalRecords = recordsByLanguage.reduce((total, group) => total + group._count._all, 0);
+  const recordCounts = new Map(recordsByLanguage.map((group) => [group.languageId, group._count._all]));
+  const userCounts = new Map(usersByLanguage.map((group) => [group.languageId, group._count._all]));
+  const languagesWithStats = languages.map((l) => {
       return {
         code: l.code,
         name: l.name,
         nativeName: l.nativeName,
         isActive: l.isActive,
-        recordCount,
-        userCount,
+        recordCount: recordCounts.get(l.id) ?? 0,
+        userCount: userCounts.get(l.id) ?? 0,
       };
-    })
-  );
+    });
 
   const activeLanguages = languages.filter((l) => l.isActive).length;
-
-  // Recent activity
-  const activityRaw = await prisma.auditLog.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 10,
-    include: { user: { select: { name: true, email: true } } },
-  });
 
   const activity = activityRaw.map((a) => ({
     id: a.id,
@@ -64,25 +61,11 @@ export default async function SuperAdminDashboardPage() {
   }));
 
   // Simple system health checks
-  let dbHealthy: "healthy" | "warning" | "error" = "healthy";
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-  } catch {
-    dbHealthy = "error";
-  }
-
-  const storageHealthy: "healthy" | "warning" | "error" =
-    process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_CLOUD_NAME !== "placeholder"
-      ? "healthy"
-      : "warning";
-
-  const aiHealthy: "healthy" | "warning" | "error" =
-    process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== "sk-placeholder"
-      ? "healthy"
-      : "warning";
-
-  const backupHealthy: "healthy" | "warning" | "error" = "warning";
+  // The successful live statistics queries establish database connectivity.
+  const dbHealthy = "healthy" as const;
+  const storageHealthy = (settings.cloudinary_cloud_name || process.env.CLOUDINARY_CLOUD_NAME) && (settings.cloudinary_api_key || process.env.CLOUDINARY_API_KEY) && (settings.cloudinary_api_secret || process.env.CLOUDINARY_API_SECRET) ? "configured" as const : "warning" as const;
+  const aiHealthy = await hasGemini() ? "configured" as const : "warning" as const;
+  const backupHealthy = latestBackup?.fileUrl && fs.existsSync(latestBackup.fileUrl) && Date.now() - latestBackup.createdAt.getTime() < 7 * 86400000 ? "healthy" as const : "warning" as const;
 
   return (
     <div>

@@ -48,7 +48,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 max-w-2xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 max-w-2xl mx-auto">
       {/* Step indicator */}
       <div className="flex items-center justify-between mb-8">
         {[1, 2, 3, 4].map((s) => (
@@ -88,7 +88,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
                 value={code}
                 onChange={(e) => setCode(e.target.value.toLowerCase())}
                 placeholder="e.g. kik"
-                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
               />
             </div>
             <div>
@@ -99,7 +99,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
                 type="number"
                 value={displayOrder}
                 onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
               />
             </div>
           </div>
@@ -111,7 +111,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Kikuyu"
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             />
           </div>
           <div>
@@ -122,7 +122,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               value={nativeName}
               onChange={(e) => setNativeName(e.target.value)}
               placeholder="e.g. Gĩkũyũ"
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               onChange={(e) => setFlagIcon(e.target.value)}
               placeholder="🌍"
               maxLength={4}
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             />
           </div>
         </div>
@@ -159,7 +159,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
               placeholder="admin@example.com"
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             />
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { auth } from "@/lib/auth";
@@ -9,7 +11,8 @@ import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, generateCollectionSessionId, getRepositoryDomain, parseGovernanceMetadata, publicGovernanceWhere, publicRecordWhere } from "@/lib/governance";
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
+  await assertServiceAvailable();
   try {
     const { searchParams } = new URL(req.url);
     const langCode = searchParams.get("lang");
@@ -177,11 +180,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const module = await prisma.module.findUnique({ where: { code: "dictionary" } });
-    if (!module) return NextResponse.json({ success: false, error: "Dictionary module missing" }, { status: 500 });
+    const contentModule = await prisma.module.findUnique({ where: { code: "dictionary" } });
+    if (!contentModule) return NextResponse.json({ success: false, error: "Dictionary module missing" }, { status: 500 });
     const isAdmin = canReviewContent(session, data.languageId);
     const publicReady = governance.data.consentScope === "public_excerpt" && governance.data.restrictionLevel === "public" && (!governance.data.embargoUntil || governance.data.embargoUntil <= new Date());
-    const entryStatus = isAdmin && publicReady ? "published" : isAdmin ? "draft" : "submitted";
+    const entryStatus = isAdmin ? "draft" : "submitted";
     const record = await prisma.$transaction(async (tx) => {
       const recordId = crypto.randomUUID();
       const sessionId = await generateCollectionSessionId(tx, governance.data);
@@ -190,7 +193,7 @@ export async function POST(req: NextRequest) {
         data: {
           id: recordId,
           languageId: data.languageId,
-          moduleId: module.id,
+          moduleId: contentModule.id,
           title: data.dholuo,
           data: {
             dholuo: data.dholuo,
@@ -204,7 +207,7 @@ export async function POST(req: NextRequest) {
             examples: data.examples ?? [],
           },
           status: entryStatus,
-          publishedAt: entryStatus === "published" ? new Date() : null,
+          publishedAt: null,
           contributorId: (session.user as any).id,
           ...governance.data,
           sessionId,
@@ -248,3 +251,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const GET = withApiErrors(handleGET);

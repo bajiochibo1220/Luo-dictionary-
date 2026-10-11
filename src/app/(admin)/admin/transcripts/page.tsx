@@ -57,7 +57,7 @@ export default async function TranscriptLibraryPage() {
           No transcripts are available for this language selection.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-stone-900/10 bg-white/90 shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-stone-900/10 bg-white/90 shadow-xs">
           <div className="grid grid-cols-[1fr_auto] gap-4 border-b border-stone-200 px-4 py-3 text-xs uppercase tracking-wide text-stone-500">
             <span>Collection session</span>
             <span>Segments</span>

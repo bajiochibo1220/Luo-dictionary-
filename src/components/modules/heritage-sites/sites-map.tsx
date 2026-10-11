@@ -96,7 +96,7 @@ export function SitesMap({
       )}
 
       {/* Map */}
-      <div className="rounded-xl overflow-hidden shadow-sm border border-stone-200 mb-8">
+      <div className="rounded-xl overflow-hidden shadow-xs border border-stone-200 mb-8">
         <MapContainer
           center={KENYA_CENTER}
           zoom={7}
@@ -140,7 +140,7 @@ export function SitesMap({
         {filtered.map((s) => {
           const img = s.media.find((m) => m.type === "image");
           return (
-            <div key={s.id} className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition border border-stone-100 hover:border-amber-300 overflow-hidden">
+            <div key={s.id} className="group bg-white rounded-lg shadow-xs hover:shadow-lg transition border border-stone-100 hover:border-amber-300 overflow-hidden">
               <Link href={`/${langCode}/piny-luo/${s.id}`} className="block">
               {img && (
                 <div className="aspect-video bg-stone-100 overflow-hidden">

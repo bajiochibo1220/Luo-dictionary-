@@ -4,10 +4,11 @@ import { SongDetail } from "@/components/modules/songs/song-detail";
 import { findLocalizedRecord } from "@/lib/content-translations";
 
 export default async function SongDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });

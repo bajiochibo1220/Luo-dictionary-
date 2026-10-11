@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -9,10 +11,11 @@ import { buildRecordUri, isPubliclyEligible } from "@/lib/governance";
 import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 
-export async function POST(
+async function handlePOST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -29,6 +32,7 @@ export async function POST(
   if (!record) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (!canFinalizeContent(session, record.languageId)) {
     return NextResponse.json({ error: "Only a publisher assigned to this language can publish this item." }, { status: 403 });
   }
@@ -43,20 +47,20 @@ export async function POST(
     if (missing.length) return NextResponse.json({ error: `The English version must be completed and culturally reviewed before publishing. Missing: ${missing.join(", ")}.` }, { status: 400 });
   }
 
-  const module = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
+  const contentModule = await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } });
   const hasLinkedTranscript = record.transcripts.some((item) => item.text.trim().length > 0);
-  const validationError = validatePhaseOneSubmission(module?.code ?? "", record.title, record.data, hasLinkedTranscript);
+  const validationError = validatePhaseOneSubmission(contentModule?.code ?? "", record.title, record.data, hasLinkedTranscript);
   if (validationError) return NextResponse.json({ success: false, error: validationError }, { status: 400 });
 
   const oldStatus = record.status;
-  const sourcePermissionConfirmed = hasPublicReleaseSourcePermission(module?.code ?? "", record.data);
+  const sourcePermissionConfirmed = hasPublicReleaseSourcePermission(contentModule?.code ?? "", record.data);
   const publicRelease = isPubliclyEligible(record) && sourcePermissionConfirmed;
   const nextStatus = publicRelease ? "published" : "curated";
   const decisionAt = new Date();
 
   await prisma.$transaction(async (tx) => {
     const moved = await tx.culturalRecord.updateMany({
-      where: { id: params.id, status: "under_review", validatorId: { not: null } },
+      where: { id: params.id, status: "under_review", updatedAt: record.updatedAt, validatorId: { not: null } },
       data: {
         status: nextStatus,
         publishedAt: publicRelease ? decisionAt : null,
@@ -95,48 +99,46 @@ export async function POST(
           : "Approved for internal curation after cultural review and any requested editing."),
       },
     });
-  });
-
-  const contentData = record.data && typeof record.data === "object" && !Array.isArray(record.data)
-    ? record.data as Record<string, unknown>
-    : {};
-  if (module?.code === "oral_histories" || Object.prototype.hasOwnProperty.call(contentData, "sourcePermission")) {
-    const previousConsent = await prisma.consentRecord.findFirst({
-      where: { recordId: record.id, consentType: "source_permission" },
-      orderBy: { createdAt: "desc" },
-    });
-    const sourcePermissionStatus = contentData.sourcePermission === "confirmed"
-      ? "confirmed"
-      : contentData.sourcePermission === "not_granted" ? "not_granted" : "needs_review";
-    await prisma.$transaction(async (tx) => {
-      const reviewSnapshot = await tx.consentRecord.create({
-        data: {
-          languageId: record.languageId,
-          recordId: record.id,
-          contributorName: previousConsent?.contributorName ?? "Undisclosed contributor",
-          contributorType: "reviewer",
-          consentType: "source_permission",
-          consentGiven: sourcePermissionStatus === "confirmed",
-          consentDate: sourcePermissionStatus === "confirmed" ? previousConsent?.consentDate ?? null : null,
-          sourcePermissionStatus,
-          attributionPreference: typeof contentData.attributionPreference === "string" ? contentData.attributionPreference : previousConsent?.attributionPreference ?? null,
-          consentScope: record.consentScope,
-          restrictionLevel: record.restrictionLevel,
-          embargoUntil: record.embargoUntil,
-          reviewedById: (session.user as any).id,
-          reviewedAt: new Date(),
-          notes: "Reviewer decision recorded during content approval.",
-        },
+    const contentData = record.data && typeof record.data === "object" && !Array.isArray(record.data)
+      ? record.data as Record<string, unknown>
+      : {};
+    if (contentModule?.code === "oral_histories" || Object.prototype.hasOwnProperty.call(contentData, "sourcePermission")) {
+      const previousConsent = await tx.consentRecord.findFirst({
+        where: { recordId: record.id, consentType: "source_permission" },
+        orderBy: { createdAt: "desc" },
       });
-      const assets = await tx.mediaAsset.findMany({ where: { recordId: record.id }, select: { id: true } });
-      if (assets.length) {
-        await tx.consentRecordAsset.createMany({
-          data: assets.map((asset) => ({ consentRecordId: reviewSnapshot.id, mediaAssetId: asset.id })),
-          skipDuplicates: true,
+      const sourcePermissionStatus = contentData.sourcePermission === "confirmed"
+        ? "confirmed"
+        : contentData.sourcePermission === "not_granted" ? "not_granted" : "needs_review";
+        const reviewSnapshot = await tx.consentRecord.create({
+          data: {
+            languageId: record.languageId,
+            recordId: record.id,
+            contributorName: previousConsent?.contributorName ?? "Undisclosed contributor",
+            contributorType: "reviewer",
+            consentType: "source_permission",
+            consentGiven: sourcePermissionStatus === "confirmed",
+            consentDate: sourcePermissionStatus === "confirmed" ? previousConsent?.consentDate ?? null : null,
+            sourcePermissionStatus,
+            attributionPreference: typeof contentData.attributionPreference === "string" ? contentData.attributionPreference : previousConsent?.attributionPreference ?? null,
+            consentScope: record.consentScope,
+            restrictionLevel: record.restrictionLevel,
+            embargoUntil: record.embargoUntil,
+            reviewedById: (session.user as any).id,
+            reviewedAt: new Date(),
+            notes: "Reviewer decision recorded during content approval.",
+          },
         });
-      }
-    });
-  }
+        const assets = await tx.mediaAsset.findMany({ where: { recordId: record.id }, select: { id: true } });
+        if (assets.length) {
+          await tx.consentRecordAsset.createMany({
+            data: assets.map((asset) => ({ consentRecordId: reviewSnapshot.id, mediaAssetId: asset.id })),
+            skipDuplicates: true,
+          });
+        }
+    }
+
+  });
 
   await logAction({
     userId: (session.user as any).id,
@@ -150,7 +152,7 @@ export async function POST(
       publishedById: (session.user as any).id,
       title: record.title,
       languageId: record.languageId,
-      moduleCode: module?.code ?? null,
+      moduleCode: contentModule?.code ?? null,
       consentScope: record.consentScope,
       restrictionLevel: record.restrictionLevel,
       publicRelease,
@@ -169,3 +171,5 @@ export async function POST(
   }
   return NextResponse.json({ success: true, status: nextStatus, publicRelease });
 }
+
+export const POST = withApiErrors(handlePOST);

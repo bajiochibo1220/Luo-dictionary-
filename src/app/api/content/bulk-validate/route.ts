@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -5,10 +7,12 @@ import { canValidateCulture } from "@/lib/permissions";
 import { logAction } from "@/lib/audit";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Sign in first." }, { status: 401 });
   const body = await request.json().catch(() => ({}));
+  const checks = ["spelling", "translation", "grammar", "pronunciation", "examples", "culture"];
+  if (!body.checklist || checks.some(key => body.checklist[key] !== true)) return NextResponse.json({ success: false, error: "Confirm every cultural review check for all selected items." }, { status: 400 });
   const ids: unknown[] = Array.isArray(body.recordIds) ? body.recordIds : [];
   if (!ids.length || ids.length > 100 || ids.some((id) => typeof id !== "string") || new Set(ids).size !== ids.length) {
     return NextResponse.json({ success: false, error: "Select between one and one hundred different items." }, { status: 400 });
@@ -21,6 +25,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: "Select only items awaiting cultural review that you did not contribute." }, { status: 400 });
   }
   for (const record of records) {
+    if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     if (record.language.code !== "eng") {
       const missing = missingEnglishTranslation(record.title, record.data, record.translations[0]);
       if (missing.length) return NextResponse.json({ success: false, error: `${record.title}: complete the English version before cultural approval. Missing: ${missing.join(", ")}.` }, { status: 400 });
@@ -30,7 +35,7 @@ export async function POST(request: NextRequest) {
   const reviewerId = session.user.id!;
   await prisma.$transaction(async (tx) => {
     for (const record of records) {
-      const result = await tx.culturalRecord.updateMany({ where: { id: record.id, status: "submitted" }, data: { status: "under_review", validatorId: reviewerId } });
+      const result = await tx.culturalRecord.updateMany({ where: { id: record.id, status: "submitted", updatedAt: record.updatedAt }, data: { status: "under_review", validatorId: reviewerId } });
       if (result.count !== 1) throw new Error(`"${record.title}" has already changed. Refresh and try again.`);
       await tx.reviewHistory.create({ data: { recordId: record.id, reviewerId, action: "validated_for_publishing", stage: "cultural_validation", comments: "Approved during bulk cultural review." } });
     }
@@ -40,3 +45,5 @@ export async function POST(request: NextRequest) {
   if (publishers.length) await prisma.notification.createMany({ data: publishers.map(({ userId }) => ({ userId, type: "content_ready_for_publishing", message: `${records.length} culturally approved item${records.length === 1 ? " is" : "s are"} ready for publishing.`, link: "/admin/review-queue" })) });
   return NextResponse.json({ success: true, count: records.length });
 }
+
+export const POST = withApiErrors(handlePOST);

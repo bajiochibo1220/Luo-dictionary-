@@ -25,7 +25,7 @@ export function ValidationChecklist({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Validation Checklist
       </h2>
@@ -37,7 +37,7 @@ export function ValidationChecklist({
                 type="checkbox"
                 checked={!!checks[c.key]}
                 onChange={() => toggle(c.key)}
-                className="w-4 h-4 text-amber-600 rounded focus:ring-amber-500"
+                className="w-4 h-4 text-amber-600 rounded-sm focus:ring-amber-500"
               />
               <span className="text-stone-700">{c.label}</span>
             </label>

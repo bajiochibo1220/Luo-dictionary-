@@ -13,7 +13,7 @@ function getRoles(session: Session | null): LanguageRole[] {
 }
 
 export function isAuthenticated(session: Session | null): boolean {
-  return !!session?.user;
+  return !!session?.user?.id;
 }
 
 export function isSuperAdmin(session: Session | null): boolean {
@@ -120,4 +120,20 @@ export function hasAnyAdminRole(session: Session | null): boolean {
       lr.role
     )
   );
+}
+
+export function canManageUsers(session: Session | null): boolean {
+  return isSuperAdmin(session) || getRoles(session).some((role) => role.role === "language_admin");
+}
+
+export function userManagementWhere(session: Session | null) {
+  if (isMasterSuperAdmin(session)) return {};
+  const languageIds = getRoles(session)
+    .filter((role) => isSuperAdmin(session) || role.role === "language_admin")
+    .map((role) => role.languageId);
+  return { languageRoles: { some: { languageId: { in: languageIds } } } };
+}
+
+export function canViewAnalytics(session: Session | null): boolean {
+  return isSuperAdmin(session) || getRoles(session).some((role) => role.role === "language_admin");
 }

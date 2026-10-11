@@ -78,7 +78,7 @@ export default function OnboardingPage() {
 
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl shadow-stone-900/10 border border-stone-200 p-8">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-serif text-2xl font-bold">L</span>
           </div>
           <h1 className="font-serif text-2xl text-stone-900 mb-2">
@@ -98,7 +98,7 @@ export default function OnboardingPage() {
               value={languageId ?? ""}
               onChange={(e) => setLanguageId(Number(e.target.value))}
               required
-              className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
+              className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
             >
               <option value="" disabled>
                 Select your language
@@ -119,7 +119,7 @@ export default function OnboardingPage() {
               value={role}
               onChange={(e) => setRole(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
+              className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
             >
               <option value="registered">Community member</option>
               <option value="student">Student</option>

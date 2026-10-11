@@ -42,10 +42,11 @@ export async function PATCH(req: NextRequest) {
   }
 
   const body = await req.json();
+  if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "Invalid settings" }, { status: 400 });
   const updates: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(body)) {
-    if (typeof value !== "string") continue;
+    if (key.startsWith("rate-limit:") || typeof value !== "string" || value.length > 50_000) return NextResponse.json({ error: "Invalid setting" }, { status: 400 });
     if ((key === "terms_content" || key === "privacy_content") && !(session.user as any).isMasterSuperAdmin) {
       return NextResponse.json({ error: "Only the master super admin can edit legal documents" }, { status: 403 });
     }

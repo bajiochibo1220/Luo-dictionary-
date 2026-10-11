@@ -27,7 +27,7 @@ export function OralHistoryCard({
   const excerpt = (d.transcript || "").slice(0, 160);
 
   return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+    <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       {(item.media ?? []).map((asset) => asset.type === "audio" ? (
         <audio key={asset.id} src={asset.url} controls className="w-full" />
       ) : asset.type === "video" ? (

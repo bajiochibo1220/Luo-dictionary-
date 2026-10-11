@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { calculateCloudinarySha256, cloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
+import { calculateCloudinarySha256, cloudinary, configureCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 import { authorizeMediaUpload } from "@/lib/media-upload-auth";
 import { buildMediaAssetId, buildMediaUri, ensureRecordCollectionSessionId, getRepositoryDomain, linkRecordConsentToMedia, lockMediaAssetSequence } from "@/lib/governance";
 import crypto from "crypto";
+import { canReadRecord } from "@/lib/governance";
+import { lockEditableRecord } from "@/lib/content-workflow";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Uploaded file does not match the requested content record" }, { status: 400 });
     }
 
+    await configureCloudinary();
     const verified: any = await cloudinary.api.resource(upload.public_id, { resource_type: expectedResourceType, type: "authenticated" });
     if (!verified.secure_url || verified.public_id !== upload.public_id) {
       return NextResponse.json({ success: false, error: "Could not verify uploaded file with Cloudinary" }, { status: 400 });
@@ -49,6 +52,9 @@ export async function POST(req: NextRequest) {
     }
     const domain = getRepositoryDomain(moduleCode);
     const asset = await prisma.$transaction(async (tx) => {
+      const current = await lockEditableRecord(tx, context.record.id);
+      if (!canReadRecord(session.user, current)) throw Object.assign(new Error("Content access changed during upload."), { status: 403 });
+      Object.assign(context.record, current);
       const sessionId = await ensureRecordCollectionSessionId(tx, context.record.id, {
         countyCode: context.record.countyCode,
         siteName: context.record.siteName,

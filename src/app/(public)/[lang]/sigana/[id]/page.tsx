@@ -1,26 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
+import { ClientLocationMap as LocationMap } from "@/components/modules/oral-history/client-location-map";
 import { prisma } from "@/lib/db";
 import { TranscriptViewer } from "@/components/modules/oral-history/transcript-viewer";
 import { SummarizeButton } from "@/components/admin/summarize-button";
 import { findLocalizedRecord } from "@/lib/content-translations";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
-const LocationMap = dynamic(
-  () =>
-    import("@/components/modules/oral-history/location-map").then(
-      (m) => m.LocationMap
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-80 bg-stone-100 rounded-xl flex items-center justify-center text-stone-400 text-sm">
-        Loading map...
-      </div>
-    ),
-  }
-);
+
 
 const COUNTY_COORDS: Record<string, [number, number]> = {
   "Homa Bay": [-0.5273, 34.4571],
@@ -31,10 +18,11 @@ const COUNTY_COORDS: Record<string, [number, number]> = {
 };
 
 export default async function OralHistoryDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });
@@ -102,7 +90,7 @@ export default async function OralHistoryDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <div>
           {record.media.length > 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6 mb-4">
+            <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-4">
               <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
                 Audio Recording
               </p>
@@ -121,7 +109,7 @@ export default async function OralHistoryDetailPage({
           )}
 
           {record.summary ? (
-            <div className="bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
+            <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
               <p className="text-xs uppercase tracking-wider text-amber-700 mb-3">
                 ✨ AI Summary
               </p>
@@ -143,7 +131,7 @@ export default async function OralHistoryDetailPage({
         </div>
 
         <div>
-          <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+          <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
             <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
               Transcript
             </p>

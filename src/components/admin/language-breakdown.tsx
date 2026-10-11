@@ -13,7 +13,7 @@ export function LanguageBreakdown({
   const max = Math.max(...languages.map((l) => l.recordCount), 1);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Languages
       </h3>
@@ -27,11 +27,11 @@ export function LanguageBreakdown({
                 </span>
                 <span className="text-xs text-stone-400">({l.name})</span>
                 {l.isActive ? (
-                  <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded">
+                  <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded-sm">
                     Active
                   </span>
                 ) : (
-                  <span className="text-xs px-1.5 py-0.5 bg-stone-100 text-stone-500 rounded">
+                  <span className="text-xs px-1.5 py-0.5 bg-stone-100 text-stone-500 rounded-sm">
                     Inactive
                   </span>
                 )}
@@ -42,7 +42,7 @@ export function LanguageBreakdown({
             </div>
             <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all"
+                className="h-full bg-linear-to-r from-amber-400 to-amber-600 rounded-full transition-all"
                 style={{ width: `${(l.recordCount / max) * 100}%` }}
               />
             </div>

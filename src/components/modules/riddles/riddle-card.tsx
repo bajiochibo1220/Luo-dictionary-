@@ -29,7 +29,7 @@ export function RiddleCard({
   const d = riddle.data;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 overflow-hidden">
       <div className="p-6">
         <EnglishVersionLink langCode={langCode} href={`/${langCode}/ngeche/${riddle.id}`} />
         {(riddle.media ?? []).map((item) => item.type === "image" ? (
@@ -57,7 +57,7 @@ export function RiddleCard({
         </button>
 
         {revealed && (
-          <div className="mt-4 p-4 bg-gradient-to-br from-amber-50 to-stone-50 rounded-lg border border-amber-100 animate-in fade-in slide-in-from-top-2">
+          <div className="mt-4 p-4 bg-linear-to-br from-amber-50 to-stone-50 rounded-lg border border-amber-100 animate-in fade-in slide-in-from-top-2">
             <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
               Answer
             </p>

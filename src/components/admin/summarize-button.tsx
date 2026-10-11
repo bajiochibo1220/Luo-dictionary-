@@ -31,7 +31,7 @@ export function SummarizeButton({ recordId }: { recordId: string }) {
     <button
       onClick={generate}
       disabled={busy}
-      className="text-xs uppercase tracking-wider px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full hover:from-amber-600 hover:to-amber-700 disabled:opacity-50"
+      className="text-xs uppercase tracking-wider px-3 py-1.5 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-full hover:from-amber-600 hover:to-amber-700 disabled:opacity-50"
     >
       {busy ? "Generating..." : "✨ Generate AI Summary"}
     </button>

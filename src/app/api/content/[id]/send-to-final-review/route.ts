@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -5,7 +7,8 @@ import { canSendToFinalReview } from "@/lib/permissions";
 import { logAction } from "@/lib/audit";
 import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+async function handlePOST(request: NextRequest, { params: promisedParams }: { params: Promise<{ id: string }> }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Sign in first." }, { status: 401 });
 
@@ -14,6 +17,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     include: { module: { select: { code: true } }, transcripts: { select: { text: true } } },
   });
   if (!record) return NextResponse.json({ success: false, error: "Content not found." }, { status: 404 });
+  if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (!canSendToFinalReview(session, record.languageId)) {
     return NextResponse.json({ success: false, error: "Only the assigned content editor can send this item back to cultural review." }, { status: 403 });
   }
@@ -72,3 +76,5 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
   return NextResponse.json({ success: true, status: "submitted" });
 }
+
+export const POST = withApiErrors(handlePOST);

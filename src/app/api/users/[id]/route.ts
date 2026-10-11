@@ -2,18 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
+import { canManageUsers, userManagementWhere } from "@/lib/permissions";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: params.id },
+  const ownProfile = params.id === session.user.id || params.id === "me";
+  if (!ownProfile && !canManageUsers(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const user = await prisma.user.findFirst({
+    where: { id: ownProfile ? session.user.id : params.id, ...(!ownProfile ? userManagementWhere(session) : {}) },
     select: {
       id: true,
       email: true,
@@ -41,16 +45,18 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const user = session.user as any;
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   if ((user.id === params.id || params.id === "me") && req.headers.get("content-type")?.includes("application/json")) {
-    const body = await req.json().catch(() => null);
     if (body && Object.keys(body).length === 1 && Array.isArray(body.profileTypes)) {
       const allowed = new Set(["community_member", "student", "contributor", "researcher", "teacher"]);
       const profileTypes: unknown[] = body.profileTypes;
@@ -68,8 +74,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json();
-  const target = await prisma.user.findUnique({ where: { id: params.id }, select: { isMasterSuperAdmin: true } });
+  const target = await prisma.user.findFirst({ where: { id: params.id, ...userManagementWhere(session) }, select: { isMasterSuperAdmin: true } });
   if (!target) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (target.isMasterSuperAdmin) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
   if (body.isSuperAdmin !== undefined) {
@@ -103,8 +108,9 @@ export async function PATCH(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

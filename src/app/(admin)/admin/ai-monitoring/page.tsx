@@ -1,3 +1,4 @@
+import { publicRecordWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { AiTabs } from "@/components/admin/ai-tabs";
@@ -6,12 +7,14 @@ import { StatCard } from "@/components/admin/stat-card";
 import { redirect } from "next/navigation";
 
 export default async function AiMonitoringPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { tab?: string; lang?: string };
+  searchParams: Promise<{ tab?: string; lang?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
-  const user = session!.user as any;
+  if (!session?.user) redirect("/login");
+  const user = session.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const assignedLanguageIds = [...new Set<number>((user.languageRoles ?? [])
     .filter((role: any) => role.role === "language_admin")
@@ -53,11 +56,9 @@ export default async function AiMonitoringPage({
 
   // Embedding coverage
   const totalRecords = await prisma.culturalRecord.count({
-    where: { ...where, ...(language ? { languageId: language.id } : {}), status: "published" },
+    where: { ...where, ...(language ? { languageId: language.id } : {}), ...publicRecordWhere() },
   });
-  const totalEmbeddings = await prisma.embedding.count({
-    where: language ? { record: { languageId: language.id } } : isSuperAdmin ? {} : { record: { languageId: { in: assignedLanguageIds } } },
-  });
+  const totalEmbeddings = await prisma.culturalRecord.count({ where: { ...where, ...publicRecordWhere(), embeddings: { some: {} } } });
   const coveragePct =
     totalRecords === 0 ? 0 : Math.round((totalEmbeddings / totalRecords) * 100);
 
@@ -130,7 +131,7 @@ export default async function AiMonitoringPage({
             />
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
             <div className="px-6 py-4 border-b border-stone-100">
               <h2 className="text-xs uppercase tracking-wider text-stone-400">
                 Recent Queries
@@ -199,13 +200,13 @@ export default async function AiMonitoringPage({
             <StatCard label="Pending" value={totalRecords - totalEmbeddings} />
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+          <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
               Embedding Coverage
             </h2>
             <div className="h-3 bg-stone-100 rounded-full overflow-hidden mb-3">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all"
+                className="h-full bg-linear-to-r from-amber-400 to-amber-600 rounded-full transition-all"
                 style={{ width: `${coveragePct}%` }}
               />
             </div>
@@ -222,7 +223,7 @@ export default async function AiMonitoringPage({
       )}
 
       {tab === "flagged" && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-100">
             <h2 className="text-xs uppercase tracking-wider text-stone-400">
               Flagged Responses ({flagged.length})

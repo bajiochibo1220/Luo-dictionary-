@@ -3,16 +3,19 @@ import { prisma } from "@/lib/db";
 import { UserTable } from "@/components/admin/user-table";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { canManageUsers, userManagementWhere } from "@/lib/permissions";
 
 export default async function UsersPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { status?: string; role?: string };
+  searchParams: Promise<{ status?: string; role?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin && !(session.user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
-  const where: any = {};
+  if (!canManageUsers(session)) redirect("/admin/dashboard");
+  const where: any = { AND: [userManagementWhere(session)] };
   if (searchParams.status) where.status = searchParams.status;
   if (searchParams.role) {
     where.languageRoles = { some: { role: searchParams.role } };
@@ -53,7 +56,7 @@ export default async function UsersPage({
         </p>
       </header>
 
-      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-sm">
+      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
         <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter users <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status || searchParams.role ? "· filters active" : "· all users"}</span></summary>
       <div className="mt-3 flex flex-wrap gap-2">
         <Link

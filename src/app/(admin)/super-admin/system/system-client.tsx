@@ -1,11 +1,48 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SettingsTabs } from "@/components/admin/settings-tabs";
 
 type Language = { id: number; code: string; name: string; nativeName: string };
+
+function Field({
+    values, update,
+    label,
+    settingKey,
+    type = "text",
+    placeholder = "",
+    helpText,
+  }: {
+    values: Record<string, string>;
+    update: (key: string, value: string) => void;
+    label: string;
+    settingKey: string;
+    type?: string;
+    placeholder?: string;
+    helpText?: string;
+  }) {
+    return (
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-stone-700 mb-1">
+          {label}
+        </label>
+        <input
+          type={type}
+          value={values[settingKey] ?? ""}
+          onChange={(e) => update(settingKey, e.target.value)}
+          placeholder={placeholder}
+          className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
+        />
+        {helpText && (
+          <p className="text-xs text-stone-400 mt-1">{helpText}</p>
+        )}
+      </div>
+    );
+  }
 
 export function SystemClient({
   settings,
@@ -49,6 +86,17 @@ export function SystemClient({
     }
   }
 
+  async function sendTestEmail() {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/super-admin/settings/test-email", { method: "POST" });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.error || "Email test failed");
+      toast.success("The provider accepted the test email to your account address.");
+    } catch (error: any) { toast.error(error.message || "Email test failed"); }
+    finally { setBusy(false); }
+  }
+
   async function rebuildAiIndex() {
     setBusy(true);
     try {
@@ -69,37 +117,6 @@ export function SystemClient({
     }
   }
 
-  function Field({
-    label,
-    settingKey,
-    type = "text",
-    placeholder = "",
-    helpText,
-  }: {
-    label: string;
-    settingKey: string;
-    type?: string;
-    placeholder?: string;
-    helpText?: string;
-  }) {
-    return (
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-stone-700 mb-1">
-          {label}
-        </label>
-        <input
-          type={type}
-          value={values[settingKey] ?? ""}
-          onChange={(e) => update(settingKey, e.target.value)}
-          placeholder={placeholder}
-          className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
-        />
-        {helpText && (
-          <p className="text-xs text-stone-400 mt-1">{helpText}</p>
-        )}
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -114,28 +131,25 @@ export function SystemClient({
 
       <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} />
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         {tab === "general" && (
           <>
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
               General Configuration
             </h2>
 
-            <Field
-              label="Site name"
+            <Field values={values} update={update}               label="Site name"
               settingKey="site_name"
               placeholder="LuoLinguaAI"
             />
 
-            <Field
-              label="Support email"
+            <Field values={values} update={update}               label="Support email"
               settingKey="support_email"
               type="email"
               placeholder="support@luolingua.ai"
             />
 
-            <Field
-              label="NRF repository namespace"
+            <Field values={values} update={update}               label="NRF repository namespace"
               settingKey="nrf_namespace"
               placeholder="JOOUST/NRF/LuoAI_Repository"
             />
@@ -149,7 +163,7 @@ export function SystemClient({
                 onChange={(e) =>
                   update("default_language_id", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
               >
                 {languages.map((l) => (
                   <option key={l.id} value={String(l.id)}>
@@ -187,27 +201,23 @@ export function SystemClient({
               change it.
             </div>
 
-            <Field
-              label="Gemini API Key"
+            <Field values={values} update={update}               label="Gemini API Key"
               settingKey="gemini_api_key"
               placeholder="AIza..."
               helpText="Used by the AI chatbot, semantic search, and content embeddings."
             />
 
-            <Field
-              label="Cloudinary Cloud Name"
+            <Field values={values} update={update}               label="Cloudinary Cloud Name"
               settingKey="cloudinary_cloud_name"
               placeholder="your-cloud-name"
             />
 
-            <Field
-              label="Cloudinary API Key"
+            <Field values={values} update={update}               label="Cloudinary API Key"
               settingKey="cloudinary_api_key"
               placeholder="your-api-key"
             />
 
-            <Field
-              label="Cloudinary API Secret"
+            <Field values={values} update={update}               label="Cloudinary API Secret"
               settingKey="cloudinary_api_secret"
               type="password"
               placeholder="•••••••"
@@ -264,21 +274,18 @@ export function SystemClient({
               Email Configuration
             </h2>
 
-            <Field
-              label="SMTP Provider"
+            <Field values={values} update={update}               label="Email Provider"
               settingKey="smtp_provider"
-              placeholder="SendGrid"
+              placeholder="SendGrid or Resend"
             />
 
-            <Field
-              label="From Email"
+            <Field values={values} update={update}               label="From Email"
               settingKey="smtp_from"
               type="email"
               placeholder="noreply@luolingua.ai"
             />
 
-            <Field
-              label="SMTP Password / API Key"
+            <Field values={values} update={update}               label="Provider API Key"
               settingKey="smtp_password"
               type="password"
               placeholder="•••••••"
@@ -293,6 +300,8 @@ export function SystemClient({
             >
               {busy ? "Saving..." : "Save Email"}
             </button>
+            <button disabled={busy} onClick={sendTestEmail} className="ml-3 rounded-lg border px-5 py-2.5 disabled:opacity-50">Send test email to me</button>
+            <p className="mt-3 text-sm text-stone-500">Save first. Test delivery uses your own account address and requires a verified sender. Account notifications currently appear inside the app.</p>
           </>
         )}
 
@@ -310,18 +319,18 @@ export function SystemClient({
                 Database storage: Neon PostgreSQL (free tier: 0.5 GB).
               </p>
             </div>
-            <a
+            <Link
               href="/admin/media"
               className="inline-block px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700"
             >
               Open Media Library →
-            </a>
-            <a
+            </Link>
+            <Link
               href="/super-admin/backup"
               className="inline-block ml-3 px-6 py-2.5 bg-white border border-stone-300 text-stone-700 rounded-lg text-sm font-medium hover:bg-stone-50"
             >
               Manage Backups →
-            </a>
+            </Link>
           </>
         )}
 
@@ -370,7 +379,7 @@ export function SystemClient({
                 onChange={(e) =>
                   update("maintenance_message", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
               />
             </div>
 
@@ -391,9 +400,9 @@ export function SystemClient({
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public legal documents</h2>
             <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">These drafts are visible to users. Replace every bracketed placeholder with the Operator’s verified details and have counsel review the documents before relying on them. Saving publishes the text on the public Terms and Privacy pages.</p>
             <label className="mb-2 block text-sm font-medium text-stone-700">Terms and Conditions</label>
-            <textarea rows={18} value={values.terms_content ?? ""} onChange={(e) => update("terms_content", e.target.value)} className="mb-6 w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <textarea rows={18} value={values.terms_content ?? ""} onChange={(e) => update("terms_content", e.target.value)} className="mb-6 w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-amber-500" />
             <label className="mb-2 block text-sm font-medium text-stone-700">Privacy Policy</label>
-            <textarea rows={18} value={values.privacy_content ?? ""} onChange={(e) => update("privacy_content", e.target.value)} className="w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <textarea rows={18} value={values.privacy_content ?? ""} onChange={(e) => update("privacy_content", e.target.value)} className="w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-amber-500" />
             <button onClick={() => save(["terms_content", "privacy_content"])} disabled={busy} className="mt-5 rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50">{busy ? "Saving…" : "Save and publish legal documents"}</button>
           </>
         )}

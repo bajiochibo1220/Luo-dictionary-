@@ -1,3 +1,5 @@
+import { withApiErrors } from "@/lib/content-workflow";
+import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -8,7 +10,8 @@ import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 const STAGE_PREFIX = "cultural_rejection_vote:";
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+async function handlePOST(request: NextRequest, { params: promisedParams }: { params: Promise<{ id: string }> }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Sign in first." }, { status: 401 });
   const userId = session.user.id;
@@ -17,6 +20,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   const comments = typeof body.comments === "string" ? body.comments.trim().slice(0, 2000) : "";
   const record = await prisma.culturalRecord.findUnique({ where: { id: params.id } });
   if (!record) return NextResponse.json({ success: false, error: "Content not found." }, { status: 404 });
+  if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (!canValidateCulture(session, record.languageId)) return NextResponse.json({ success: false, error: "Only an assigned cultural reviewer can propose or vote on this review." }, { status: 403 });
   if (record.contributorId === userId) return NextResponse.json({ success: false, error: "You cannot review your own contribution." }, { status: 403 });
 
@@ -36,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     try {
       await prisma.$transaction(async (tx) => {
         const moved = await tx.culturalRecord.updateMany({
-          where: { id: record.id, status: record.status, ...(record.status === "under_review" ? { validatorId: null } : {}) },
+          where: { id: record.id, status: record.status, updatedAt: record.updatedAt, ...(record.status === "under_review" ? { validatorId: null } : {}) },
           data: { status: "rejection_review", validatorId: userId },
         });
         if (moved.count !== 1) throw new Error("This item has already moved to another review stage.");
@@ -192,3 +196,5 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   });
   return NextResponse.json({ success: true, result: vote.result, message });
 }
+
+export const POST = withApiErrors(handlePOST);

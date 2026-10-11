@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 type Result = {
   id: string;
@@ -20,6 +20,8 @@ const SUGGESTED = [
 ];
 
 export function SemanticSearch({ langCode }: { langCode: string }) {
+  const activeRequest = useRef<AbortController | null>(null);
+  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,39 +30,46 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
 
   const search = useCallback(
     async (q: string) => {
-      if (q.length < 2) {
+      activeRequest.current?.abort();
+      const controller = new AbortController();
+      activeRequest.current = controller;
+      setError("");
+      if (q.trim().length < 2) {
         setResults([]);
         setSearched(false);
+        setLoading(false);
         return;
       }
       setLoading(true);
       try {
         const res = await fetch("/api/ai/search", {
+          signal: controller.signal,
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: q, languageCode: langCode }),
         });
         const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Search failed. Please try again.");
+        if (controller.signal.aborted) return;
         if (data.success) {
           setResults(data.data || []);
           setSearched(true);
         }
+      } catch (err: any) {
+        if (!controller.signal.aborted) { setError(err.message || "Search failed. Please try again."); setResults([]); setSearched(false); }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     },
     [langCode]
   );
 
   useEffect(() => {
+    activeRequest.current?.abort();
     const t = setTimeout(() => {
-      if (query) search(query);
-      else {
-        setResults([]);
-        setSearched(false);
-      }
+      search(query);
     }, 400);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); activeRequest.current?.abort(); };
   }, [query, search]);
 
   return (
@@ -71,7 +80,7 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Describe what you're looking for in natural language..."
-          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white shadow-sm"
+          className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 bg-white shadow-xs"
         />
         {loading && (
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600">
@@ -80,7 +89,8 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
         )}
       </div>
 
-      {!searched && !loading && (
+      {error && <p role="alert" className="text-red-700 mb-4">{error}</p>}
+      {!searched && !loading && !error && (
         <div className="text-center py-8">
           <p className="text-sm text-stone-500 mb-4">
             Try one of these:
@@ -118,7 +128,7 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
             return (
               <div
                 key={r.id}
-                className="bg-white rounded-xl shadow-sm border border-stone-100 hover:border-amber-300 transition p-5"
+                className="bg-white rounded-xl shadow-xs border border-stone-100 hover:border-amber-300 transition p-5"
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div className="flex-1 min-w-0">
@@ -161,7 +171,7 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
                     <p>
                       <strong>Matched content:</strong>
                     </p>
-                    <pre className="bg-stone-50 p-2 rounded text-xs whitespace-pre-wrap max-h-32 overflow-auto">
+                    <pre className="bg-stone-50 p-2 rounded-sm text-xs whitespace-pre-wrap max-h-32 overflow-auto">
                       {r.excerpt}
                     </pre>
                   </div>

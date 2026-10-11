@@ -102,7 +102,7 @@ export function RiddleQuiz({
         </span>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12 text-center">
+      <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12 text-center">
         <p className="text-xs uppercase tracking-wider text-amber-600 mb-4">
           Riddle
         </p>
@@ -122,7 +122,7 @@ export function RiddleQuiz({
           </button>
         ) : (
           <div className="space-y-6">
-            <div className="p-6 bg-gradient-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100">
+            <div className="p-6 bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100">
               <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
                 Answer
               </p>

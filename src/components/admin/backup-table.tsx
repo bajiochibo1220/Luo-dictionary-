@@ -42,17 +42,17 @@ export function BackupTable({ backups }: { backups: Backup[] }) {
 
   if (backups.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-12 text-center text-stone-400">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
         <p className="text-lg mb-2">No backups yet</p>
         <p className="text-sm">
-          Click "Backup Now" to create your first backup
+          Click &ldquo;Backup Now&rdquo; to create your first backup
         </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>

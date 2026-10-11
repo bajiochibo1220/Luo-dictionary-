@@ -14,7 +14,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-50 to-amber-50 px-4">
+    <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-stone-50 to-amber-50 px-4">
       <div className="text-center max-w-md">
         <h1 className="text-6xl font-serif text-red-600 mb-4">Oops</h1>
         <h2 className="text-2xl font-serif text-stone-800 mb-4">

@@ -1,21 +1,8 @@
 ﻿import type { Metadata } from "next";
-import { Inter, Lora } from "next/font/google";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/session-provider";
 import { InstallAppPrompt } from "@/components/pwa/install-app-prompt";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const lora = Lora({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "LuoLinguaAI",
@@ -35,11 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+    <html lang="en">
       <body className="font-sans antialiased">
         <AuthProvider>{children}</AuthProvider>
         <InstallAppPrompt />
-        <Toaster richColors position="top-right" />
+        <Toaster richColors position="bottom-center" closeButton />
       </body>
     </html>
   );

@@ -1,8 +1,11 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
+  await assertServiceAvailable();
   try {
     const { searchParams } = new URL(req.url);
     const langCode = searchParams.get("lang");
@@ -60,3 +63,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+export const GET = withApiErrors(handleGET);

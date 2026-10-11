@@ -68,7 +68,7 @@ export function LanguageDetailActions({ language }: { language: Language }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
           Actions
         </h2>

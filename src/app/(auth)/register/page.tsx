@@ -1,10 +1,14 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
 
 export const dynamic = "force-dynamic";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const session = await auth();
+  if (session?.user?.id) redirect("/auth/continue");
   return (
     <div className="w-full">
       <div className="mb-8">
@@ -33,13 +37,13 @@ export default function RegisterPage() {
             Home
           </Link>
           <span className="text-stone-400">·</span>
-          <a href="#" className="hover:text-amber-800 transition">
+          <Link href="/about" className="hover:text-amber-800 transition">
             Help
-          </a>
+          </Link>
           <span className="text-stone-400">·</span>
-          <a href="#" className="hover:text-amber-800 transition">
+          <Link href="/privacy" className="hover:text-amber-800 transition">
             Privacy
-          </a>
+          </Link>
         </div>
       </div>
     </div>

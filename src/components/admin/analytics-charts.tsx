@@ -20,9 +20,9 @@ const DEVICE_COLORS = ["#d97706", "#10b981", "#3b82f6"];
 
 export function VisitorTrend({ data }: { data: Trend[] }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Visitor Trend
+        Activity events per day
       </h3>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data}>
@@ -59,7 +59,7 @@ export function DevicePie({
 }) {
   const filtered = data.filter((d) => d.count > 0);
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Devices
       </h3>
@@ -109,7 +109,7 @@ export function TopSearches({
   data: { query: string; count: number }[];
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Top Searches
       </h3>
@@ -136,7 +136,7 @@ export function GeoBar({
   data: { country: string; count: number }[];
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Geographic Reach
       </h3>

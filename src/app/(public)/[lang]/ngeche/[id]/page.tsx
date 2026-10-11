@@ -5,10 +5,11 @@ import { findLocalizedRecord } from "@/lib/content-translations";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
 export default async function RiddleDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string; id: string };
+  params: Promise<{ lang: string; id: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
   });
@@ -28,7 +29,7 @@ export default async function RiddleDetailPage({
         ← Back to Riddles
       </Link>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12">
+      <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12">
         <EnglishVersionLink langCode={language.code} href={`/${language.code}/ngeche/${record.id}`} />
         <div className="mb-8">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">

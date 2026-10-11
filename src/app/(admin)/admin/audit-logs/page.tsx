@@ -5,10 +5,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function AuditLogsPage({
-  searchParams,
+  searchParams: promisedSearchParams,
 }: {
-  searchParams: { days?: string; action?: string; entityType?: string };
+  searchParams: Promise<{ days?: string; action?: string; entityType?: string }>;
 }) {
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (!session.user.isSuperAdmin && !session.user.isMasterSuperAdmin) redirect("/admin/dashboard");

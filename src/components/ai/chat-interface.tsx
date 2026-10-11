@@ -264,7 +264,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
           </div>
           <button
             onClick={startNewChat}
-            className="w-full flex items-center justify-center gap-2 bg-amber-400 text-stone-900 py-2.5 rounded-full font-semibold text-sm hover:bg-amber-300 transition shadow"
+            className="w-full flex items-center justify-center gap-2 bg-amber-400 text-stone-900 py-2.5 rounded-full font-semibold text-sm hover:bg-amber-300 transition shadow-sm"
           >
             <span className="text-base">+</span> New chat
           </button>
@@ -291,7 +291,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
                 onClick={() => loadConversation(c.id)}
               >
                 {c.pinned && (
-                  <span className="text-amber-300 text-xs flex-shrink-0">📌</span>
+                  <span className="text-amber-300 text-xs shrink-0">📌</span>
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-amber-50 truncate leading-tight">
@@ -372,7 +372,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
               ☰
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center">
                 <span className="text-white text-sm">💬</span>
               </div>
             <div>
@@ -409,7 +409,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
                     <button
                       key={q}
                       onClick={() => send(q)}
-                      className="text-left p-4 bg-black/5 hover:bg-black/10 border border-stone-900/15 hover:border-amber-800/50 rounded-xl text-sm text-stone-900 transition shadow-sm"
+                      className="text-left p-4 bg-black/5 hover:bg-black/10 border border-stone-900/15 hover:border-amber-800/50 rounded-xl text-sm text-stone-900 transition shadow-xs"
                     >
                       {q}
                     </button>
@@ -422,7 +422,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
                   <div key={i}>
                     {m.role === "user" ? (
                       <div className="flex justify-end">
-                        <div className="max-w-md bg-stone-900 text-amber-50 rounded-2xl rounded-tr-sm px-4 py-2.5 shadow">
+                        <div className="max-w-md bg-stone-900 text-amber-50 rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm">
                           <p className="text-sm whitespace-pre-line">
                             {m.content}
                           </p>
@@ -431,7 +431,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
                     ) : (
                       <div className="flex justify-start">
                         <div className="max-w-xl">
-                          <div className="bg-black/5 backdrop-blur rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-stone-900/10">
+                          <div className="bg-black/5 backdrop-blur-sm rounded-2xl rounded-tl-sm px-4 py-3 shadow-xs border border-stone-900/10">
                             <p className="text-sm text-stone-900 whitespace-pre-line leading-relaxed">
                               {m.content}
                             </p>
@@ -457,7 +457,7 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
                 ))}
                 {busy && (
                   <div className="flex justify-start">
-                    <div className="bg-black/5 rounded-2xl px-4 py-3 shadow-sm">
+                    <div className="bg-black/5 rounded-2xl px-4 py-3 shadow-xs">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 bg-amber-600 rounded-full animate-bounce" />
                         <span
@@ -517,12 +517,12 @@ export function ChatInterface({ languageCode = "luo", cultureCode = languageCode
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about Luo culture, songs, artifact videos..."
               disabled={busy}
-              className="flex-1 px-4 py-3 bg-white border border-stone-900/20 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-800 text-sm text-stone-900 placeholder:text-stone-800/40 disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-white border border-stone-900/20 rounded-full focus:outline-hidden focus:ring-2 focus:ring-amber-800 text-sm text-stone-900 placeholder:text-stone-800/40 disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={busy || !input.trim()}
-              className="px-6 py-3 bg-stone-900 text-amber-50 rounded-full text-sm font-semibold hover:bg-amber-900 disabled:opacity-40 transition shadow"
+              className="px-6 py-3 bg-stone-900 text-amber-50 rounded-full text-sm font-semibold hover:bg-amber-900 disabled:opacity-40 transition shadow-sm"
             >
               Send
             </button>
@@ -561,7 +561,7 @@ function MenuItem({
 
 function MediaCard({ media }: { media: MediaItem }) {
   return (
-    <div className="bg-black/5 backdrop-blur rounded-xl border border-stone-900/10 overflow-hidden shadow-sm">
+    <div className="bg-black/5 backdrop-blur-sm rounded-xl border border-stone-900/10 overflow-hidden shadow-xs">
       <div className="bg-stone-900">
         {media.mediaType === "image" && (
           <img

@@ -25,7 +25,7 @@ export function FolktaleCard({
   const preview = (d.translation || d.original || "").slice(0, 140);
 
   return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
+    <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       {(tale.media ?? []).map((item) => item.type === "image" ? (
         <img key={item.id} src={item.url} alt={tale.title} className="max-h-64 w-full object-contain" />
       ) : item.type === "video" ? (

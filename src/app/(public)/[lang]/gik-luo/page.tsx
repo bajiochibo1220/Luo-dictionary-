@@ -5,10 +5,11 @@ import { ArtifactGrid } from "@/components/modules/artifacts/artifact-grid";
 import { getContentCultureLanguageId, localizeRecord } from "@/lib/content-translations";
 
 export default async function ArtifactsPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await promisedParams;
   const language = await prisma.language.findUnique({
     where: { code: params.lang },
     include: { moduleTranslations: { include: { module: true } } },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { canManageUsers, userManagementWhere } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,6 +10,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!canManageUsers(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const { searchParams } = new URL(req.url);
     const role = searchParams.get("role")?.trim() || "";
     const status = searchParams.get("status")?.trim() || "";
@@ -16,9 +18,10 @@ export async function GET(req: NextRequest) {
     const q = searchParams.get("q")?.trim() || "";
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.min(100, Number(searchParams.get("limit") || 50));
+    if (![page, limit, languageId].every(Number.isInteger) || limit < 1 || languageId < 0) return NextResponse.json({ error: "Invalid pagination or language filter." }, { status: 400 });
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: any = { AND: [userManagementWhere(session)] };
     if (status) where.status = status;
     if (q) {
       where.OR = [

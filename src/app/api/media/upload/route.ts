@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { uploadToCloudinary, generateFolderPath } from "@/lib/cloudinary";
-import { canContribute, canUploadContent, isSuperAdmin } from "@/lib/permissions";
+import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
+import { authorizeMediaUpload } from "@/lib/media-upload-auth";
+import { lockEditableRecord } from "@/lib/content-workflow";
+import { canReadRecord } from "@/lib/governance";
 import crypto from "crypto";
 import { buildMediaAssetId, buildMediaUri, ensureRecordCollectionSessionId, getRepositoryDomain, linkRecordConsentToMedia, lockMediaAssetSequence } from "@/lib/governance";
 
 export async function POST(req: NextRequest) {
+  let uploadedObject: Awaited<ReturnType<typeof uploadToCloudinary>> | null = null;
+  let persisted = false;
   try {
     const session = await auth();
     if (!session?.user) {
@@ -38,53 +42,10 @@ export async function POST(req: NextRequest) {
     }
     if (!recordId) return NextResponse.json({ success: false, error: "Create or select a content record before uploading media" }, { status: 400 });
 
-    const language = await prisma.language.findUnique({
-      where: { code: languageCode },
-    });
-
-    if (!language) {
-      return NextResponse.json(
-        { success: false, error: "Invalid language" },
-        { status: 400 }
-      );
-    }
-
-    if (!isSuperAdmin(session) && !canContribute(session, language.id)) {
-      return NextResponse.json({ success: false, error: "You cannot contribute to this language" }, { status: 403 });
-    }
-
-    const module = await prisma.module.findUnique({ where: { code: moduleCode } });
-    if (!module) {
-      return NextResponse.json({ success: false, error: "Invalid content area" }, { status: 400 });
-    }
-
-    let linkedRecord: { id: string; languageId: number; moduleId: number; contributorId: string | null; consentScope: string; restrictionLevel: string; embargoUntil: Date | null; countyCode: string | null; siteName: string | null; sourceReference: string | null; sessionId: string | null; createdAt: Date; language: { code: string } } | null = null;
-    {
-      linkedRecord = await prisma.culturalRecord.findUnique({
-        where: { id: recordId },
-        select: { id: true, languageId: true, moduleId: true, contributorId: true, consentScope: true, restrictionLevel: true, embargoUntil: true, countyCode: true, siteName: true, sourceReference: true, sessionId: true, createdAt: true, language: { select: { code: true } } },
-      });
-      const isSourceLanguage = linkedRecord?.languageId === language.id;
-      const hasTranslation = linkedRecord && !isSourceLanguage
-        ? await prisma.culturalRecordTranslation.findUnique({ where: { recordId_languageId: { recordId: linkedRecord.id, languageId: language.id } }, select: { id: true } })
-        : null;
-      const mayUpload = linkedRecord && (
-        isSourceLanguage
-          ? linkedRecord.contributorId === (session.user as any).id || canUploadContent(session, language.id)
-          : !!hasTranslation && canUploadContent(session, language.id)
-      );
-      if (!linkedRecord || linkedRecord.moduleId !== module.id || !mayUpload) {
-        return NextResponse.json({ success: false, error: "Invalid content record" }, { status: 403 });
-      }
-    }
-
-    const storageLanguageCode = linkedRecord?.language.code ?? languageCode;
-    const folder = generateFolderPath(
-      storageLanguageCode,
-      moduleCode,
-      recordId,
-      assetType
-    );
+    const context = await authorizeMediaUpload(session, { languageCode, moduleCode, recordId, assetType });
+    const linkedRecord = context.record;
+    const folder = context.folder;
+    if (file.size === 0 || file.size > 100 * 1024 * 1024) return NextResponse.json({ success: false, error: "Files must be between 1 byte and 100 MB." }, { status: 400 });
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
@@ -94,9 +55,13 @@ export async function POST(req: NextRequest) {
       tags: [languageCode, moduleCode, assetType],
     });
 
+    uploadedObject = uploaded;
     const checksum = uploaded.checksum;
     const domain = getRepositoryDomain(moduleCode);
     const asset = await prisma.$transaction(async (tx) => {
+      const current = await lockEditableRecord(tx, linkedRecord.id);
+      if (!canReadRecord(session.user, current)) throw Object.assign(new Error("Content access changed during upload."), { status: 403 });
+      Object.assign(linkedRecord, current);
       const sessionId = await ensureRecordCollectionSessionId(tx, linkedRecord!.id, {
         countyCode: linkedRecord!.countyCode,
         siteName: linkedRecord!.siteName,
@@ -151,6 +116,7 @@ export async function POST(req: NextRequest) {
       return created;
     });
 
+    persisted = true;
     return NextResponse.json({
       success: true,
       data: {
@@ -159,10 +125,11 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: any) {
-    console.error("[media/upload]", err);
+    if (uploadedObject && !persisted) await deleteFromCloudinary(uploadedObject.publicId, uploadedObject.resourceType as "image" | "video" | "raw").catch(() => console.error("[media/upload] unused upload cleanup failed"));
+    console.error("[media/upload] failed", { name: err.name });
     return NextResponse.json(
       { success: false, error: err.message ?? "Upload failed" },
-      { status: 500 }
+      { status: err.status || 500 }
     );
   }
 }

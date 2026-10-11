@@ -5,7 +5,8 @@ import { logAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: promisedParams }: { params: Promise<{ id: string }> }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: session?.user ? 403 : 401 });
   if (!session.user.isMasterSuperAdmin) return NextResponse.json({ error: "Only the Master Super Admin can change account status or Super Admin access" }, { status: 403 });
@@ -26,7 +27,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json({ success: true, data: { id: updated.id, name: updated.name, isSuperAdmin: updated.isSuperAdmin, status: updated.status } });
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params: promisedParams }: { params: Promise<{ id: string }> }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: session?.user ? 403 : 401 });
   if (!session.user.isMasterSuperAdmin) return NextResponse.json({ error: "Only the Master Super Admin can revoke administrator access" }, { status: 403 });

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -67,14 +69,14 @@ export default function TestUploadPage() {
         </p>
       </header>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-8">
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-8">
         <label className="block text-sm font-medium text-stone-700 mb-2">
           Choose a file (image, video, or audio)
         </label>
         <input
           type="file"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 mb-6"
+          className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 mb-6"
         />
 
         {file && (
@@ -117,12 +119,12 @@ export default function TestUploadPage() {
                 >
                   Open uploaded file →
                 </a>
-                <a
+                <Link
                   href="/admin/media"
                   className="text-amber-600 hover:underline text-sm block"
                 >
                   Go to Media Library →
-                </a>
+                </Link>
               </div>
             )}
           </div>

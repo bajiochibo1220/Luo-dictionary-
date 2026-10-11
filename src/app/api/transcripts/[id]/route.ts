@@ -10,8 +10,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   const transcript = await prisma.transcript.findUnique({
     where: { id: params.id },
@@ -38,8 +39,9 @@ export async function GET(
 }
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

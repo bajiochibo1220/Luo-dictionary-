@@ -6,12 +6,14 @@ import { canEditContent, canUploadContent } from "@/lib/permissions";
 import { canReviewGovernedItem } from "@/lib/governance";
 
 export default async function EditContentPage({
-  params,
-  searchParams,
+  params: promisedParams,
+  searchParams: promisedSearchParams,
 }: {
-  params: { id: string };
-  searchParams: { languageId?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ languageId?: string }>;
 }) {
+  const params = await promisedParams;
+  const searchParams = await promisedSearchParams;
   const session = await auth();
   const record = await prisma.culturalRecord.findUnique({
     where: { id: params.id },
@@ -57,6 +59,7 @@ export default async function EditContentPage({
   const initialData = {
     ...(((editingTranslation ? translation?.data : record.data) as any) ?? {}),
     ...(editingTranslation && translation?.summary ? { description: translation.summary } : {}),
+    __tags: record.tags,
     __title: editingTranslation ? translation?.title ?? "" : record.title,
     consentScope: record.consentScope,
     restrictionLevel: record.restrictionLevel,

@@ -1,8 +1,12 @@
+import { assertServiceAvailable } from "@/lib/maintenance";
+import { withApiErrors } from "@/lib/content-workflow";
+import { addContentVersion } from "@/lib/content-revisions";
+import { createDefaultRecordTranslations } from "@/lib/content-translations";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { publicRecordWhere, parseGovernanceMetadata, buildRecordUri } from "@/lib/governance";
-import { canReviewContent, isLanguageAdmin } from "@/lib/permissions";
+import { publicRecordWhere, canReadRecord, parseGovernanceMetadata, buildRecordUri } from "@/lib/governance";
+import { canEditContent, isLanguageAdmin } from "@/lib/permissions";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { embedDictionaryEntry } from "@/lib/ai/embeddings";
@@ -26,10 +30,12 @@ const updateSchema = z.object({
   sessionId: z.string().trim().max(100).regex(/^[A-Za-z0-9_-]+$/).nullable().optional(),
 }).strict();
 
-export async function GET(
+async function handleGET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
+  await assertServiceAvailable();
   const entry = await prisma.dictionaryEntry.findUnique({
     where: { id: params.id, ...publicRecordWhere() },
   });
@@ -44,10 +50,11 @@ export async function GET(
   return NextResponse.json({ success: true, data: entry });
 }
 
-export async function PATCH(
+async function handlePATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -55,7 +62,7 @@ export async function PATCH(
 
   const existing = await prisma.dictionaryEntry.findUnique({ where: { id: params.id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (!canReviewContent(session, existing.languageId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!canEditContent(session, existing.languageId) || !canReadRecord(session.user, existing)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   let body: z.infer<typeof updateSchema>;
   try { body = updateSchema.parse(await req.json()); }
@@ -70,42 +77,45 @@ export async function PATCH(
     sessionId: body.sessionId === undefined ? existing.sessionId : body.sessionId,
   });
   if (!governance.success) return NextResponse.json({ error: governance.error.issues[0]?.message ?? "Invalid governance metadata" }, { status: 400 });
-  const publicEligible = governance.data.consentScope === "public_excerpt" && governance.data.restrictionLevel === "public" && (!governance.data.embargoUntil || governance.data.embargoUntil <= new Date());
-  const { examples, ...fields } = body;
-  const updated = await prisma.dictionaryEntry.update({
-    where: { id: params.id },
-    data: {
-      ...fields,
-      ...(examples === undefined ? {} : { examples: examples as Prisma.InputJsonValue }),
-      ...governance.data,
-      status: publicEligible ? "published" : existing.status === "published" ? "curated" : existing.status,
-      publishedAt: publicEligible ? existing.publishedAt ?? new Date() : null,
-      nrfUri: buildRecordUri(params.id, governance.data.consentScope, governance.data.restrictionLevel, publicEligible ? "published" : existing.status === "published" ? "curated" : existing.status),
-      nrfMetadata: {
-        ...(existing.nrfMetadata as Record<string, unknown> | null),
-        ...governance.data,
-        embargoUntil: governance.data.embargoUntil?.toISOString() ?? null,
-      },
-    },
+  const contentModule = await prisma.module.findUnique({ where: { code: "dictionary" } });
+  if (!contentModule) return NextResponse.json({ error: "Dictionary module is not configured" }, { status: 409 });
+  const fields = { ...existing, ...body };
+  const data = { dholuo: fields.dholuo, english: fields.english, kiswahili: fields.kiswahili, pronunciation: fields.pronunciation, grammarClass: fields.grammarClass, wordOrigin: fields.wordOrigin, synonyms: fields.synonyms, antonyms: fields.antonyms, examples: fields.examples, sourcePermission: "needs_review" };
+  const updated = await prisma.$transaction(async (tx) => {
+    const moved = await tx.dictionaryEntry.updateMany({ where: { id: existing.id, updatedAt: existing.updatedAt }, data: { status: "curated", publishedAt: null } });
+    if (moved.count !== 1) throw Object.assign(new Error("Entry already changed; refresh and retry."), { status: 409 });
+    const alreadyConverted = await tx.culturalRecord.findUnique({ where: { id: existing.id } });
+    if (alreadyConverted) throw Object.assign(new Error("Use the Content editor to revise this dictionary entry."), { status: 409 });
+    const record = await tx.culturalRecord.create({ data: { id: existing.id, languageId: existing.languageId, moduleId: contentModule.id, title: fields.dholuo, data: data as Prisma.InputJsonValue, tags: [], status: "draft", contributorId: session.user.id, ...governance.data, nrfUri: buildRecordUri(existing.id, governance.data.consentScope, governance.data.restrictionLevel, "draft") } });
+    await tx.mediaAsset.updateMany({ where: { dictionaryId: existing.id }, data: { dictionaryId: null, recordId: record.id } });
+    await createDefaultRecordTranslations(tx, record.id, record.languageId);
+    await addContentVersion(tx, { recordId: record.id, changedBy: session.user.id!, changeReason: "Legacy dictionary entry moved into the reviewed content workflow", snapshot: { title: record.title, data: record.data, status: "draft" } as any });
+    await tx.$executeRawUnsafe('DELETE FROM embeddings WHERE "dictionaryId" = $1', existing.id);
+    return record;
   });
-  await embedDictionaryEntry(updated.id, true).catch((error) => console.error("[dictionary PATCH] embedding sync failed:", error));
 
   return NextResponse.json({ success: true, data: updated });
 }
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const existing = await prisma.dictionaryEntry.findUnique({ where: { id: params.id }, select: { languageId: true } });
+  const existing = await prisma.dictionaryEntry.findUnique({ where: { id: params.id }, select: { languageId: true, status: true } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (!isLanguageAdmin(session, existing.languageId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+  if (existing.status === "published") return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
   await prisma.dictionaryEntry.delete({ where: { id: params.id } });
   return NextResponse.json({ success: true });
 }
+
+export const PATCH = withApiErrors(handlePATCH);
+
+export const GET = withApiErrors(handleGET);

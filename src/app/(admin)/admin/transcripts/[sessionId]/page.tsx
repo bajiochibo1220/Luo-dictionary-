@@ -8,10 +8,11 @@ import { TranscriptSegments } from "@/components/admin/transcript-segments";
 export const dynamic = "force-dynamic";
 
 export default async function TranscriptSessionPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { sessionId: string };
+  params: Promise<{ sessionId: string }>;
 }) {
+  const params = await promisedParams;
   const session = await auth();
   if (!session?.user) notFound();
 

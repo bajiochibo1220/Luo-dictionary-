@@ -1,7 +1,10 @@
+import { maintenanceMessage } from "@/lib/maintenance";
+import { MaintenanceNotice } from "@/components/layout/maintenance-notice";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getDefaultPublicLanguage, getPublicModules } from "@/lib/public-navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppTopbar } from "@/components/layout/app-topbar";
@@ -12,43 +15,32 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const message = await maintenanceMessage();
+  if (message) return <MaintenanceNotice message={message} />;
   const session = await auth();
   if (!session?.user) redirect("/login");
 
   const user = session.user as any;
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
-  const fallbackLanguage = primaryRole ? null : await prisma.language.findFirst({
-    where: { isActive: true },
-    orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
-    select: { id: true, code: true, nativeName: true },
-  });
+  const fallbackLanguage = primaryRole ? null : await getDefaultPublicLanguage();
   const languageCode = primaryRole?.languageCode ?? fallbackLanguage?.code ?? "luo";
   const languageId = primaryRole?.languageId ?? fallbackLanguage?.id;
 
   const [modules, stats] = await Promise.all([
     languageId
-      ? prisma.module.findMany({
-          where: { isActive: true, isStub: false },
-          orderBy: { displayOrder: "asc" },
-          include: {
-            translations: { where: { languageId } },
-          },
-        })
+      ? getPublicModules(languageId)
       : Promise.resolve([]),
-    Promise.all([
-      prisma.culturalRecord.count({ where: { contributorId: user.id } }),
-      prisma.culturalRecord.count({
-        where: { contributorId: user.id, status: "published" },
-      }),
-      prisma.culturalRecord.count({
-        where: {
-          contributorId: user.id,
-          status: { in: ["submitted", "under_review", "validated"] },
-        },
-      }),
-    ]),
+    prisma.culturalRecord.groupBy({
+      by: ["status"],
+      where: { contributorId: user.id },
+      _count: { _all: true },
+    }),
   ]);
+
+  const uploads = stats.reduce((total, group) => total + group._count._all, 0);
+  const approved = stats.find((group) => group.status === "published")?._count._all ?? 0;
+  const pending = stats.filter((group) => ["submitted", "under_review", "validated"].includes(group.status)).reduce((total, group) => total + group._count._all, 0);
 
   const formattedModules = modules.map((m) => ({
     code: m.code,
@@ -73,11 +65,12 @@ export default async function DashboardLayout({
         userEmail={user.email ?? ""}
         userImage={user.image ?? null}
         isAdmin={isAdmin}
+        isSuperAdmin={!!(user.isSuperAdmin || user.isMasterSuperAdmin)}
         languageCode={languageCode}
         stats={{
-          uploads: stats[0],
-          approved: stats[1],
-          pending: stats[2],
+          uploads,
+          approved,
+          pending,
         }}
       />
       <Suspense

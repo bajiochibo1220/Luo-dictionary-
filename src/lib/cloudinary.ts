@@ -1,5 +1,16 @@
 import { v2 as cloudinary } from "cloudinary";
 import crypto from "crypto";
+import { getSystemSettings } from "./settings";
+
+export async function configureCloudinary() {
+  const settings = await getSystemSettings();
+  const cloudName = settings.cloudinary_cloud_name || process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = settings.cloudinary_api_key || process.env.CLOUDINARY_API_KEY;
+  const apiSecret = settings.cloudinary_api_secret || process.env.CLOUDINARY_API_SECRET;
+  if (!cloudName || !apiKey || !apiSecret || cloudName === "placeholder") throw Object.assign(new Error("Cloudinary credentials are not configured."), { status: 503 });
+  cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret, secure: true });
+  return { cloudName, apiKey, apiSecret };
+}
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -37,6 +48,7 @@ export async function uploadToCloudinary(
     tags?: string[];
   }
 ) {
+  await configureCloudinary();
   const resourceType = options?.resourceType ?? "auto";
   const checksum = crypto.createHash("sha256").update(fileBuffer).digest("hex");
 
@@ -101,6 +113,7 @@ export async function deleteFromCloudinary(
   resourceType: "image" | "video" | "raw" = "image",
   deliveryType: "upload" | "authenticated" = "authenticated"
 ) {
+  await configureCloudinary();
   return cloudinary.uploader.destroy(publicId, {
     resource_type: resourceType,
     type: deliveryType,
@@ -113,6 +126,7 @@ export async function calculateCloudinarySha256(
   format: string,
   resourceType: "image" | "video" | "raw"
 ): Promise<string> {
+  await configureCloudinary();
   const expiresAt = Math.floor(Date.now() / 1000) + 120;
   const downloadUrl = cloudinary.utils.private_download_url(publicId, format, {
     resource_type: resourceType,

@@ -27,6 +27,8 @@ export default async function MySubmissionsPage() {
     validated: "bg-purple-100 text-purple-700",
     published: "bg-green-100 text-green-700",
     rejected: "bg-red-100 text-red-700",
+    needs_edit: "bg-amber-100 text-amber-700",
+    curated: "bg-orange-100 text-orange-700",
     revision: "bg-amber-100 text-amber-700",
   };
 
@@ -66,7 +68,7 @@ export default async function MySubmissionsPage() {
           {submissions.map((s) => (
             <div
               key={s.id}
-              className="bg-black/5 backdrop-blur rounded-2xl border border-stone-900/10 p-5"
+              className="bg-black/5 backdrop-blur-sm rounded-2xl border border-stone-900/10 p-5"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -92,6 +94,7 @@ export default async function MySubmissionsPage() {
                 </span>
               </div>
 
+              {["draft", "needs_edit", "rejected", "curated"].includes(s.status) && <Link className="inline-block mt-3 text-amber-900 underline" href={`/my-submissions/${s.id}/edit`}>Edit / complete translations</Link>}
               {s.reviews.length > 0 && s.reviews[0].comments && (
                 <div className="mt-3 pt-3 border-t border-stone-900/10">
                   <p className="text-xs uppercase tracking-wider text-stone-800/60 mb-1 font-semibold">

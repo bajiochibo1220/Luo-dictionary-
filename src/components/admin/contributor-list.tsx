@@ -4,7 +4,7 @@ export function ContributorList({
   contributors: { name: string; count: number; email: string }[];
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+    <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
       <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
         Recent Contributors
       </h3>

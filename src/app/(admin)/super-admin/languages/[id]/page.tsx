@@ -4,10 +4,11 @@ import { prisma } from "@/lib/db";
 import { LanguageDetailActions } from "@/components/admin/language-detail-actions";
 
 export default async function LanguageDetailPage({
-  params,
+  params: promisedParams,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const params = await promisedParams;
   const id = Number(params.id);
   if (!id) notFound();
 
@@ -61,19 +62,19 @@ export default async function LanguageDetailPage({
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Records
           </p>
           <p className="text-2xl font-serif text-stone-800">{recordCount}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Media Files
           </p>
           <p className="text-2xl font-serif text-stone-800">{mediaCount}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Module Titles
           </p>
@@ -81,7 +82,7 @@ export default async function LanguageDetailPage({
             {translationCount}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+        <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
             Admins
           </p>
@@ -103,7 +104,7 @@ export default async function LanguageDetailPage({
       />
 
       {language.userRoles.length > 0 && (
-        <div className="mt-6 bg-white rounded-xl shadow-sm border border-stone-100 p-6">
+        <div className="mt-6 bg-white rounded-xl shadow-xs border border-stone-100 p-6">
           <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
             Assigned Admins
           </h2>
