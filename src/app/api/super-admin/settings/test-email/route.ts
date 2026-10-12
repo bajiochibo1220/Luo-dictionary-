@@ -17,7 +17,7 @@ async function handlePOST() {
     const value = String(Date.now());
     await tx.systemSetting.upsert({ where: { key }, create: { key, value }, update: { value } });
   });
-  await sendSystemEmail(session.user.email, "LuoLinguaAI email configuration test", "Your LuoLinguaAI email provider accepted this configuration test.");
+  await sendSystemEmail(session.user.email, "Luo Heritage email configuration test", "Your Luo Heritage email provider accepted this configuration test.");
   return NextResponse.json({ success: true });
 }
 

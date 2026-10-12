@@ -1,9 +1,9 @@
-﻿export const DEFAULT_TERMS = `# LuoLinguaAI Terms and Conditions
+﻿export const DEFAULT_TERMS = `# Luo Heritage Terms and Conditions
 **Effective date:** 29 September 2026  
 **Document status:** Default draft. The Master Super Admin must complete every bracketed field and obtain legal review before treating this as the Operatorâ€™s final terms.
 
 ## 1. Important information and agreement
-These Terms and Conditions (â€œTermsâ€) govern access to and use of LuoLinguaAI, including its websites, mobile experiences, accounts, learning tools, cultural collection, community submissions, search, chatbot, APIs, and related features (together, the â€œPlatformâ€). The Platform is operated by **[FULL LEGAL NAME OF OWNER / INSTITUTION]**, of **[REGISTERED OR PRINCIPAL ADDRESS]** (â€œOperatorâ€, â€œweâ€, â€œusâ€). By visiting, creating an account, uploading material, or using a feature, you agree to the Terms and the [Privacy Policy](/privacy). If you do not agree, do not create an account or use the Platform. Feature-specific notices may also apply; if they conflict with these Terms, the specific notice controls only for that feature and only to the extent stated.
+These Terms and Conditions (â€œTermsâ€) govern access to and use of Luo Heritage, including its websites, mobile experiences, accounts, learning tools, cultural collection, community submissions, search, chatbot, APIs, and related features (together, the â€œPlatformâ€). The Platform is operated by **[FULL LEGAL NAME OF OWNER / INSTITUTION]**, of **[REGISTERED OR PRINCIPAL ADDRESS]** (â€œOperatorâ€, â€œweâ€, â€œusâ€). By visiting, creating an account, uploading material, or using a feature, you agree to the Terms and the [Privacy Policy](/privacy). If you do not agree, do not create an account or use the Platform. Feature-specific notices may also apply; if they conflict with these Terms, the specific notice controls only for that feature and only to the extent stated.
 
 These Terms are intended to explain the relationship clearly. They do not remove consumer, privacy, intellectual-property, cultural, or other rights that applicable law does not allow the Operator to exclude. The Platform is being developed for language learning, cultural preservation, research, and community participation; its exact institutional operator, funding, and support arrangements must be accurately stated by the Operator before publication.
 
@@ -66,7 +66,7 @@ The Operator may, but is not obligated to, review Contributions before or after 
 Where practicable, the Operator may notify the affected user and explain the reason, subject to safety, confidentiality, security, legal restrictions, and the risk of evidence destruction. The Operator may preserve relevant logs or copies for security, legal claims, safeguarding, or compliance, with access limited as appropriate. Content removal from the Platform does not automatically remove third-party copies, search caches, backups, or records lawfully retained for a defined purpose. See the [Privacy Policy](/privacy#8-retention-and-deletion).
 
 ## 11. Intellectual property and infringement notices
-The Platform software, layout, marks, logos, documentation, and Operator-created content are owned by or licensed to the Operator and protected by applicable law. Except for access and use expressly allowed by the Platform, no right in that material is granted. You must not use the LuoLinguaAI name, marks, or institutional identity to imply endorsement without written permission.
+The Platform software, layout, marks, logos, documentation, and Operator-created content are owned by or licensed to the Operator and protected by applicable law. Except for access and use expressly allowed by the Platform, no right in that material is granted. You must not use the Luo Heritage name, marks, or institutional identity to imply endorsement without written permission.
 
 If you believe a Contribution infringes your rights or was published without authority, send a notice to **[COPYRIGHT AND CONTENT NOTICE EMAIL]** with your name and contact details, the relevant page or record identifier, the rights or permission at issue, a good-faith explanation, and the action requested. The Operator may request additional information, temporarily restrict disputed material, notify the contributor, or restore material if a report is unsupported. Knowingly false or abusive notices may be rejected. This process does not limit statutory remedies or lawful counter-notices.
 
@@ -129,7 +129,7 @@ These Terms, the Privacy Policy, and any clearly identified feature-specific ter
 
 Read the [Privacy Policy](/privacy) for personal-data practices, or visit the [About page](/about). These default Terms are a drafting aid, not a guarantee against claims and not a substitute for advice from Kenyan counsel who has reviewed the Operator, actual service, funding, users, and data flows.`;
 
-export const DEFAULT_PRIVACY = `# LuoLinguaAI Privacy Policy
+export const DEFAULT_PRIVACY = `# Luo Heritage Privacy Policy
 **Effective date:** 29 September 2026  
 **Document status:** Default draft. The Master Super Admin must complete every bracketed field and verify that this notice matches the live service before publication.
 

@@ -11,7 +11,7 @@ export default async function PrivacyPage() {
     <main className="min-h-screen bg-[#cfc09a] px-5 py-12 text-stone-900">
       <article className="mx-auto max-w-3xl rounded-2xl bg-white/80 p-6 shadow-xs md:p-10">
         <Link href="/register" className="text-sm text-amber-800 underline">← Back to registration</Link>
-        <p className="mt-8 text-xs uppercase tracking-[0.25em] text-amber-800">LuoLinguaAI</p>
+        <p className="mt-8 text-xs uppercase tracking-[0.25em] text-amber-800">Luo Heritage</p>
         <h1 className="mt-2 font-serif text-4xl">Privacy Policy</h1>
         <nav className="mt-4 flex gap-4 text-sm"><Link href="/terms" className="text-amber-800 underline">Terms and Conditions</Link><Link href="/" className="text-amber-800 underline">Home</Link></nav>
         <LegalDocument content={privacy} />

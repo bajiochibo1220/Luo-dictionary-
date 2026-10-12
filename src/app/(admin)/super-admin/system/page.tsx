@@ -36,7 +36,7 @@ export default async function SystemPage() {
   }
 
   const defaults: Record<string, string> = {
-    site_name: "LuoLinguaAI",
+    site_name: "Luo Heritage",
     nrf_namespace: "JOOUST/NRF/LuoAI_Repository",
     support_email: "",
     default_language_id: String(languages[0]?.id ?? 1),

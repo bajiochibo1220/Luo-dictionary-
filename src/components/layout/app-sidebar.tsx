@@ -2,6 +2,7 @@
 
 import { NavigationLink as Link } from "./navigation-link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useSidebar } from "./sidebar-controls";
 
 type ModuleItem = {
   code: string;
@@ -13,6 +14,7 @@ export function AppSidebar({ modules }: { modules: ModuleItem[] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeModule = searchParams.get("module");
+  const sidebar = useSidebar();
 
   const items = [
     { code: "", title: "Overview", baseName: "Dashboard" },
@@ -32,14 +34,15 @@ export function AppSidebar({ modules }: { modules: ModuleItem[] }) {
       <nav className="flex-1 overflow-y-auto py-2">
         {items.map((item) => {
           const isActive = item.code === "chatbot" ? pathname === "/chatbot" :
-            (item.code === "" && !activeModule) ||
-            (item.code !== "" && activeModule === item.code);
+            (pathname === "/dashboard" && item.code === "" && !activeModule) ||
+            (pathname === "/dashboard" && item.code !== "" && activeModule === item.code);
           const href = item.code === "chatbot" ? "/chatbot" : item.code ? `/dashboard?module=${encodeURIComponent(item.code)}` : "/dashboard";
 
           return (
             <Link
               key={item.code || "overview"}
               href={href}
+              onClick={sidebar?.closeMobile}
               className={`flex items-center gap-3 px-5 py-3 transition-all relative border-l-4 ${
                 isActive
                   ? "bg-black/25 border-amber-400"

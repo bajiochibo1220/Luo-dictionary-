@@ -1,8 +1,11 @@
+import { BrandMark } from "./brand-mark";
+import { APP_NAME } from "@/lib/brand";
+
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* LEFT — form */}
-      <main className="relative flex-1 flex items-center justify-center px-6 py-12 lg:px-16 bg-[#cfc09a] overflow-hidden">
+      <main className="relative flex-1 flex flex-col items-center justify-center px-6 py-8 lg:py-12 lg:px-16 bg-[#cfc09a] overflow-hidden">
         {/* Diamond pattern */}
         <div
           className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -17,11 +20,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="absolute bottom-1/4 -right-20 w-[300px] h-[300px] rounded-full bg-orange-200/40 blur-3xl pointer-events-none" />
 
         {/* Mobile logo */}
-        <div className="absolute top-6 left-6 lg:hidden flex items-center gap-2 z-10">
-          <div className="w-9 h-9 rounded-xl bg-linear-to-br from-amber-600 to-amber-800 flex items-center justify-center">
-            <span className="text-white font-serif text-sm font-bold">L</span>
-          </div>
-          <p className="font-serif text-lg text-stone-900">LuoLinguaAI</p>
+        <div className="relative mb-8 flex w-full max-w-md items-center gap-3 z-10 lg:hidden">
+          <BrandMark className="h-14 w-14 shadow-lg" />
+          <p className="font-serif text-2xl text-stone-900">{APP_NAME}</p>
         </div>
 
         <div className="relative w-full max-w-md">{children}</div>
@@ -42,11 +43,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         <div className="relative z-10 flex flex-col justify-between p-16 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-              <span className="text-white font-serif text-2xl font-bold">L</span>
-            </div>
+            <BrandMark className="h-20 w-20 shadow-xl" />
             <div>
-              <p className="font-serif text-2xl leading-tight">LuoLinguaAI</p>
+              <p className="font-serif text-3xl leading-tight">{APP_NAME}</p>
               <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/70">
                 JOOUST · NRF
               </p>

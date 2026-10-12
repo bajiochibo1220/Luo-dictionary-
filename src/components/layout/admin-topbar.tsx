@@ -4,6 +4,9 @@ import { NavigationLink as Link } from "./navigation-link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { BrandMark } from "./brand-mark";
+import { SidebarToggle } from "./sidebar-controls";
+import { APP_NAME } from "@/lib/brand";
 
 type AdminNotification = {
   id: number;
@@ -24,7 +27,6 @@ export function AdminTopbar({
   languages,
   selectedLanguageId,
   selectedCultureId,
-  onMenuClick,
 }: {
   userEmail: string;
   userName: string | null;
@@ -35,7 +37,6 @@ export function AdminTopbar({
   languages: { id: number; code: string; nativeName: string; isActive: boolean }[];
   selectedLanguageId: number | null;
   selectedCultureId: number | null;
-  onMenuClick: () => void;
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -92,38 +93,33 @@ export function AdminTopbar({
   }
 
   return (
-    <header className="bg-[#5c3a1c] border-b border-black/30 h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-lg">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={onMenuClick}
-          type="button"
-          className="md:hidden text-2xl text-amber-100"
-          aria-label="Open menu"
-        >
-          ☰
-        </button>
+    <header className="bg-[#5c3a1c] border-b border-black/30 h-20 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
+      <div className="flex min-w-0 items-center gap-2 md:gap-3">
+        <SidebarToggle />
         <Link
           href="/admin/dashboard"
-          className="text-xl font-serif text-amber-50"
+          aria-label={`${APP_NAME} administration`}
+          className="flex min-w-0 items-center gap-2 rounded-xl text-xl font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
         >
-          LuoLinguaAI
+          <BrandMark className="h-11 w-11 md:h-12 md:w-12" />
+          <span className="hidden truncate sm:block">{APP_NAME}</span>
         </Link>
         {isSuperAdmin && (
-          <span className="hidden md:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
+          <span className="hidden xl:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
             {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
         {isSuperAdmin && (
           <label className="flex items-center gap-2 text-xs text-amber-100/80">
-            <span className="hidden sm:inline">Language</span>
+            <span className="hidden lg:inline">Language</span>
             <select
               aria-label="Choose language to manage"
               value={selectedLanguageId ?? ""}
               onChange={(event) => void selectLanguage(Number(event.target.value))}
-              className="max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400"
+              className="max-w-24 sm:max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400"
             >
               {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}{language.isActive ? "" : " (inactive)"}</option>)}
             </select>

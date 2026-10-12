@@ -1,6 +1,8 @@
-# LuoLinguaAI
+# Luo Heritage
 
 AI-powered digital platform for the preservation, learning, and promotion of the Dholuo language and Luo indigenous knowledge.
+
+The app is branded **Luo Heritage**, with the tagline *Language · Culture · Living memory*. The shared name lives in `src/lib/brand.ts`; the original icon and installation exports are documented in `public/icons/README.md`. Desktop public and admin sidebars can collapse from their header controls and remember separate preferences. On phones, the menu button opens a keyboard-accessible drawer without covering the logo.
 
 ## Stack
 
@@ -18,7 +20,7 @@ AI-powered digital platform for the preservation, learning, and promotion of the
 2. Install dependencies: `npm ci`
 3. Generate the client: `npm run db:generate`; apply reviewed migrations with `npx prisma migrate deploy`.
 4. On a new database only, seed with `npm run db:seed`. Do not reset or reseed an existing production database.
-5. For everyday use and fast page loading, run `npm run build` once, then `npm start` and open `http://localhost:3000`. Repeat the build and restart after source changes. Production output lives in `.next-review`, separate from development's `.next` directory.
+5. For everyday use and fast page loading, run `npm run build` once, then `npm start` and open `http://localhost:3000`. Repeat the build and restart after source changes. Local production output lives in `.next-review`, separate from development's `.next` directory. Vercel builds use `.next`, matching its Next.js framework settings. `.vercelignore` excludes local build caches, reference data, browser profiles, backups, and environment files from deployment; configure production environment variables in Vercel.
 6. Use `npm run dev` when editing the source. Development compiles pages on demand, so its first visits are slower. Stop the existing server before starting another server on port 3000.
 
 Verification: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.

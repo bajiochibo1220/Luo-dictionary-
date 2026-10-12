@@ -148,7 +148,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
           </h2>
           <p className="text-sm text-stone-500 mb-4">
             Optionally assign an admin who will manage this language. They must
-            already have a LuoLinguaAI account.
+            already have a Luo Heritage account.
           </p>
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1">

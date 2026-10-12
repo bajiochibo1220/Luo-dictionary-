@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "./admin-sidebar";
 import { AdminTopbar } from "./admin-topbar";
+import { SidebarPanel, SidebarProvider, useSidebar } from "./sidebar-controls";
 
 export function AdminShell({
   children,
@@ -31,7 +32,6 @@ export function AdminShell({
   selectedLanguageId: number | null;
   selectedCultureId: number | null;
 }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
   const serverRoleSignature = useMemo(() => JSON.stringify({
@@ -51,28 +51,31 @@ export function AdminShell({
   }, [clientRoleSignature, router, serverRoleSignature]);
 
   return (
-    <div className="min-h-screen bg-[#b89a68]">
-      <aside className="hidden md:block fixed left-0 top-0 bottom-0 w-64 bg-[#6b4724] text-amber-50 z-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fbe8c4' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
-        <div className="relative h-16 flex items-center px-6 border-b border-amber-100/15"><span className="text-lg font-serif text-amber-50">Admin</span></div>
-        <div className="relative h-[calc(100vh-4rem)]"><AdminSidebar isSuperAdmin={isSuperAdmin} roles={roles} /></div>
-      </aside>
+    <SidebarProvider id="admin-sidebar" storageKey="luoheritage-admin-sidebar">
+      <AdminWorkspace isSuperAdmin={isSuperAdmin} roles={roles} topbar={<AdminTopbar userEmail={userEmail} userName={userName} userImage={userImage} isSuperAdmin={isSuperAdmin} isMasterSuperAdmin={isMasterSuperAdmin} notificationCount={notificationCount} languages={languages} selectedLanguageId={selectedLanguageId} selectedCultureId={selectedCultureId} />}>
+        {children}
+      </AdminWorkspace>
+    </SidebarProvider>
+  );
+}
 
-      {mobileOpen && <>
-        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileOpen(false)} />
-        <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#6b4724] text-amber-50 z-50 md:hidden overflow-hidden">
-          <div className="relative h-16 flex items-center justify-between px-4 border-b border-amber-100/15"><span className="text-lg font-serif text-amber-50">Admin</span><button type="button" onClick={() => setMobileOpen(false)} aria-label="Close admin menu" className="text-amber-100 text-2xl">×</button></div>
-          <div className="relative h-[calc(100vh-4rem)]"><AdminSidebar isSuperAdmin={isSuperAdmin} roles={roles} onNavigate={() => setMobileOpen(false)} /></div>
-        </aside>
-      </>}
+function AdminWorkspace({ children, topbar, isSuperAdmin, roles }: { children: React.ReactNode; topbar: React.ReactNode; isSuperAdmin: boolean; roles: { role: string }[] }) {
+  const sidebar = useSidebar();
+  const closeMobile = sidebar?.closeMobile;
+  const pathname = usePathname();
+  useEffect(() => { closeMobile?.(); }, [pathname, closeMobile]);
 
-      <div className="md:ml-64">
-        <AdminTopbar userEmail={userEmail} userName={userName} userImage={userImage} isSuperAdmin={isSuperAdmin} isMasterSuperAdmin={isMasterSuperAdmin} notificationCount={notificationCount} languages={languages} selectedLanguageId={selectedLanguageId} selectedCultureId={selectedCultureId} onMenuClick={() => setMobileOpen(true)} />
-        <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#b89a68] p-4 md:p-8">
+  return <div className="flex h-dvh overflow-hidden bg-[#b89a68]">
+      <SidebarPanel width={256}>
+        <div className="flex h-20 items-center border-b border-amber-100/15 px-5"><span className="font-serif text-lg text-amber-50">Admin workspace</span></div>
+        <div className="h-[calc(100%_-_5rem)]"><AdminSidebar isSuperAdmin={isSuperAdmin} roles={roles} onNavigate={closeMobile} /></div>
+      </SidebarPanel>
+      <div className="flex min-w-0 flex-1 flex-col">
+        {topbar}
+        <main className="relative flex-1 overflow-y-auto overscroll-contain bg-[#b89a68] p-4 md:p-8">
           <div className="absolute inset-0 opacity-[0.10] pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fff2d3' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
           <div className="relative z-10">{children}</div>
         </main>
       </div>
-    </div>
-  );
+    </div>;
 }

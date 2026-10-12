@@ -56,7 +56,7 @@ export function GoogleProfileForm({ initialName }: { initialName: string }) {
         </select>
       </label>
       <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
-        <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use LuoLinguaAI? (Choose any)</legend>
+        <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use Luo Heritage? (Choose any)</legend>
         <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-stone-700">
           {["Student", "Researcher", "Contributor", "Teacher", "Community member"].map((value) => {
             const key = value.toLowerCase().replaceAll(" ", "_");

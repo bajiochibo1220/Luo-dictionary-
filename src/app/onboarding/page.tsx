@@ -58,7 +58,7 @@ export default function OnboardingPage() {
       await fetch("/api/auth/session", { cache: "no-store" });
       await update();
 
-      toast.success("Welcome to LuoLinguaAI");
+      toast.success("Welcome to Luo Heritage");
       window.location.href = "/dashboard";
     } catch (err: any) {
       toast.error(err.message || "Onboarding failed");
@@ -82,7 +82,7 @@ export default function OnboardingPage() {
             <span className="text-white font-serif text-2xl font-bold">L</span>
           </div>
           <h1 className="font-serif text-2xl text-stone-900 mb-2">
-            Welcome to LuoLinguaAI
+            Welcome to Luo Heritage
           </h1>
           <p className="text-sm text-stone-600">
             Just a few details before we continue

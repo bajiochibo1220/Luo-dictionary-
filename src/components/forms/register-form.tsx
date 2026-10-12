@@ -168,7 +168,7 @@ export function RegisterForm() {
         </select>
 
         <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
-          <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use LuoLinguaAI? (Choose any)</legend>
+          <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use Luo Heritage? (Choose any)</legend>
           <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-stone-700">
             {["Student", "Researcher", "Contributor", "Teacher", "Community member"].map((interest) => (
               <label key={interest} className="flex items-center gap-2"><input type="checkbox" name="interests" value={interest.toLowerCase().replaceAll(" ", "_")} />{interest}</label>

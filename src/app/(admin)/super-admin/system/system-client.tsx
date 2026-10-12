@@ -140,7 +140,7 @@ export function SystemClient({
 
             <Field values={values} update={update}               label="Site name"
               settingKey="site_name"
-              placeholder="LuoLinguaAI"
+              placeholder="Luo Heritage"
             />
 
             <Field values={values} update={update}               label="Support email"

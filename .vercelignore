@@ -1,0 +1,32 @@
+# Local build output; Vercel builds the application from source.
+.next/
+.next-*/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Reference material and local browser sessions are not application assets.
+LUO DATA/
+PREVIOUS  IMORVED SYSTM/
+chrome_temp_profile/
+edge_temp_profile/
+structure.txt
+
+# Production settings are configured in Vercel, not uploaded from this machine.
+.env
+.env.*
+!.env.example
+data/raw/audio/
+data/exports/backups/
+data/exports/*.jsonl
+
+# Local development metadata.
+.git/
+.vercel/
+.vscode/
+.idea/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*

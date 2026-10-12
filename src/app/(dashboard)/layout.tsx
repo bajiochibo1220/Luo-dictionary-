@@ -9,6 +9,10 @@ import { AppShell } from "@/components/layout/app-shell";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppTopbar } from "@/components/layout/app-topbar";
 import { FloatingChatbot } from "@/components/layout/floating-chatbot";
+import { SidebarProvider } from "@/components/layout/sidebar-controls";
+
+// Account data and maintenance settings are read per request, never at build time.
+export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({
   children,
@@ -58,7 +62,8 @@ export default async function DashboardLayout({
     );
 
   return (
-    <div className="h-screen flex flex-col bg-[#b89a68] overflow-hidden">
+    <SidebarProvider id="public-sidebar" storageKey="luoheritage-public-sidebar">
+    <div className="h-dvh flex flex-col bg-[#b89a68] overflow-hidden">
       <AppTopbar
         userInitial={userInitial}
         userName={user.name ?? null}
@@ -86,5 +91,6 @@ export default async function DashboardLayout({
       </Suspense>
       <FloatingChatbot />
     </div>
+    </SidebarProvider>
   );
 }

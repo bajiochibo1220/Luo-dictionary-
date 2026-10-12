@@ -100,7 +100,7 @@ async function exportVisionDataset(
         site_name: asset.siteName,
         session_id: asset.sessionId,
       })), ["image_id", "file_name", "width", "height", "checksum_sha256", "label", "consent_scope", "restriction_level", "county_code", "site_name", "session_id"])
-    : JSON.stringify({ info: { description: "LuoLinguaAI authorized image metadata export", language: language?.code ?? null }, images, annotations, categories }, null, 2);
+    : JSON.stringify({ info: { description: "Luo Heritage authorized image metadata export", language: language?.code ?? null }, images, annotations, categories }, null, 2);
   await logAction({
     userId: user.id,
     action: "nrf.export",

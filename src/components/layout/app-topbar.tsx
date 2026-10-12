@@ -3,6 +3,9 @@
 import { NavigationLink as Link } from "./navigation-link";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { BrandMark } from "./brand-mark";
+import { SidebarToggle } from "./sidebar-controls";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 
 export function AppTopbar({
   userInitial,
@@ -26,31 +29,32 @@ export function AppTopbar({
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
-    <header className="bg-[#5c3a1c] border-b border-black/30 flex items-center justify-between px-6 py-3 shadow-lg relative z-30">
+    <header className="bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-3 shadow-lg relative z-30">
       {/* Left: Logo */}
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg ring-1 ring-amber-200/30 shrink-0">
-          <span className="text-stone-900 font-serif text-lg font-bold">L</span>
-        </div>
+      <div className="flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
+        <SidebarToggle />
+        <Link href="/dashboard" aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
+        <BrandMark className="h-12 w-12 md:h-14 md:w-14 shadow-lg" />
         <div className="min-w-0">
           <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
-            Luo Dictionary
+            {APP_NAME}
           </h1>
           <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/60 hidden sm:block">
-            LuoLinguaAI
+            {APP_TAGLINE}
           </p>
         </div>
+        </Link>
       </div>
 
       {/* Middle: Stats (hidden on small screens) */}
-      <div className="hidden lg:flex items-center gap-6">
+      <div className="hidden xl:flex items-center gap-6 px-6">
         <StatPill label="Uploads" value={stats.uploads} />
         <StatPill label="Approved" value={stats.approved} accent="green" />
         <StatPill label="Pending" value={stats.pending} accent="amber" />
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <Link
           href={`/${languageCode}/search`}
           className="hidden md:inline-flex items-center gap-2 text-sm text-amber-100/80 hover:text-amber-50 transition font-medium px-3 py-1.5 rounded-full hover:bg-amber-100/10"
@@ -82,7 +86,7 @@ export function AppTopbar({
         {isAdmin && (
           <Link
             href="/admin/dashboard"
-            className="text-xs bg-amber-400 text-stone-900 px-3 py-1.5 rounded-full hover:bg-amber-300 transition font-semibold shadow-sm"
+            className="hidden sm:inline-flex text-xs bg-amber-400 text-stone-900 px-3 py-1.5 rounded-full hover:bg-amber-300 transition font-semibold shadow-sm"
           >
             Admin
           </Link>

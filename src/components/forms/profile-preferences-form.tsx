@@ -39,7 +39,7 @@ export function ProfilePreferencesForm({ initialTypes }: { initialTypes: string[
   return (
     <section className="max-w-2xl rounded-xl border border-stone-200 bg-white p-6 shadow-xs">
       <h1 className="font-serif text-2xl text-stone-800">Profile options</h1>
-      <p className="mt-2 text-sm text-stone-600">Choose every option that describes how you use LuoLinguaAI. You can change these selections whenever you like.</p>
+      <p className="mt-2 text-sm text-stone-600">Choose every option that describes how you use Luo Heritage. You can change these selections whenever you like.</p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {OPTIONS.map(([value, label]) => (
           <label key={value} className="flex items-center gap-3 rounded-lg border border-stone-200 p-3 text-sm text-stone-700">

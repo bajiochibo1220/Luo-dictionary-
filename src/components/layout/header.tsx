@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "@/components/layout/user-menu";
+import { BrandMark } from "./brand-mark";
+import { APP_NAME } from "@/lib/brand";
 
 const NAV_MODULES = [
   { code: "dictionary", path: "muma" },
@@ -39,17 +41,18 @@ export function Header() {
 
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href={`/${language.code}`} className="flex items-center gap-2">
-          <span className="text-2xl font-serif text-stone-800">
-            LuoLinguaAI
+      <div className="container mx-auto px-3 md:px-4 py-3 flex items-center justify-between gap-3">
+        <Link href={`/${language.code}`} className="flex min-w-0 items-center gap-2">
+          <BrandMark className="h-10 w-10 sm:h-12 sm:w-12" />
+          <span className="truncate text-xl sm:text-2xl font-serif text-stone-800">
+            {APP_NAME}
           </span>
           <span className="hidden md:inline text-xs text-amber-600 font-medium px-2 py-0.5 bg-amber-50 rounded-sm">
             {language.nativeName}
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden xl:flex items-center gap-6">
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}
@@ -61,10 +64,10 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 md:gap-3">
           <Link
             href={alternatePath}
-            className="text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded-sm px-2 py-1"
+            className="hidden sm:inline-flex text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded-sm px-2 py-1"
           >
             {alternateCode === "luo" ? "Dholuo" : "English"}
           </Link>
@@ -89,9 +92,11 @@ export function Header() {
           )}
 
           <button
+            type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-stone-700 text-xl"
+            className="xl:hidden text-stone-700 text-xl"
             aria-label="Menu"
+            aria-expanded={menuOpen}
           >
             ☰
           </button>
@@ -99,7 +104,8 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <nav className="md:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
+        <nav className="xl:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
+          <Link href={alternatePath} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden">Switch to {alternateCode === "luo" ? "Dholuo" : "English"}</Link>
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}

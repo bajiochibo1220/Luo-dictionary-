@@ -74,14 +74,22 @@ async function main() {
       websocket.send(JSON.stringify({ id, method, params }));
     });
     websocket.addEventListener('close', () => { for (const callback of pending.values()) callback.reject(new Error('Browser connection closed')); pending.clear(); });
-    const evaluate = async expression => { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw new Error('Browser evaluation failed'); return result.result.value; };
+    const evaluate = async expression => { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw new Error('Browser evaluation failed: ' + (result.exceptionDetails.exception?.description?.split('\n')[0] || result.exceptionDetails.text)); return result.result.value; };
     captureFailure = async () => { const shot = await send('Page.captureScreenshot', { format: 'png' }); await fs.writeFile(path.join(os.tmpdir(), 'luolingua-navigation-failure.png'), Buffer.from(shot.data, 'base64')); };
     await send('Page.enable');
     await send('Runtime.enable');
     await send('Network.enable');
     await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
     const setAccount = async user => { await send('Network.clearBrowserCookies'); await send('Network.setCookie', { name: 'authjs.session-token', value: await cookieFor(user), url: base, httpOnly: true, sameSite: 'Lax' }); };
-    const navigate = async pathname => { await send('Page.navigate', { url: base + pathname }); await until(async () => await evaluate(`location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]')`), pathname); await delay(750); };
+    const loadPage = async (pathname, ready, timeout = 90_000) => {
+      // Redirected routes may end at the same URL as the previous document.
+      // Wait for a new document instead of accepting the previous page's DOM.
+      const marker = 'navigation-' + Date.now() + '-' + Math.random();
+      await evaluate(`window.__smokePreviousDocument = ${JSON.stringify(marker)}`);
+      await send('Page.navigate', { url: base + pathname });
+      await until(() => evaluate(`window.__smokePreviousDocument !== ${JSON.stringify(marker)} && document.readyState === 'complete' && (${ready})`), pathname, timeout);
+    };
+    const navigate = async pathname => { await loadPage(pathname, `location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]')`); await delay(750); };
     const openMenu = async () => { await until(async () => { if (await evaluate(`document.querySelector('button[aria-label="Open account menu"]').getAttribute('aria-expanded') === 'true'`)) return true; await evaluate(`document.querySelector('button[aria-label="Open account menu"]').click()`); await delay(400); return await evaluate(`document.querySelector('button[aria-label="Open account menu"]').getAttribute('aria-expanded') === 'true'`); }, 'account menu hydration'); };
     const clickMenuLink = async pathname => { await evaluate(`document.querySelector('button[aria-label="Open account menu"]').parentElement.querySelector('a[href=${JSON.stringify(pathname)}]').click()`); await until(() => evaluate(`location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('button[aria-label="Open account menu"]')`), 'menu navigation'); await delay(750); };
     const clickVisible = async selector => {
@@ -101,8 +109,7 @@ async function main() {
     };
     if (entryOnly) {
       for (const pathname of ['/', '/luo', '/eng']) {
-        await send('Page.navigate', { url: base + pathname });
-        await until(() => evaluate(`location.pathname === '/login' && document.querySelector('h1')?.textContent.trim() === 'Welcome back' && !!document.querySelector('input[type="password"]')`), 'login entry ' + pathname, 90_000);
+        await loadPage(pathname, `location.pathname === '/login' && document.querySelector('h1')?.textContent.trim() === 'Welcome back' && !!document.querySelector('input[type="password"]')`);
         assert.equal(await evaluate(`document.body.textContent.includes('Misawa!')`), false);
         assert.equal(await evaluate(`document.body.textContent.includes('Every language')`), true);
         console.log('PASS first-load route ' + pathname + ': current login screen, no old landing');
@@ -113,9 +120,100 @@ async function main() {
       await until(async () => { if (await evaluate(`location.pathname === '/register' && !!document.querySelector('input[type="password"]')`)) return true; await evaluate(`document.querySelector('a[href="/register"]')?.click()`); await delay(300); return await evaluate(`location.pathname === '/register' && !!document.querySelector('input[type="password"]')`); }, 'registration navigation');
       assert.equal(await evaluate(`document.body.textContent.includes('Every language')`), true);
       console.log('PASS current registration screen reachable from login');
+      await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+      for (const pathname of ['/login', '/register']) {
+        await loadPage(pathname, `location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('main input[type="password"]') && !!document.querySelector('main img[src="/icons/luo-heritage.svg"]')?.closest('main')?.querySelector('h1')`);
+        const geometry = await evaluate(`(() => { const image = document.querySelector('main img[src="/icons/luo-heritage.svg"]'); const main = image.closest('main'); const logo = image.getBoundingClientRect(); const heading = main.querySelector('h1').getBoundingClientRect(); return { separate: logo.bottom < heading.top, width: logo.width, fits: document.documentElement.scrollWidth <= innerWidth }; })()`);
+        assert.equal(geometry.separate, true, 'Phone branding does not cover the form');
+        assert.equal(geometry.fits, true);
+        assert.ok(geometry.width >= 56);
+        assert.equal(await evaluate('document.title'), 'Luo Heritage');
+        console.log('PASS phone ' + pathname + ': new branding, clear form spacing, and no overflow');
+      }
       return;
     }
     await setAccount(administrator);
+    if (process.argv.includes('--appearance')) {
+      let exceptions = 0;
+      websocket.addEventListener('message', event => { if (JSON.parse(event.data).method === 'Runtime.exceptionThrown') exceptions++; });
+      const visible = id => evaluate(`(() => { const element = document.getElementById(${JSON.stringify(id)}); return !!element && getComputedStyle(element).display !== 'none' && element.getBoundingClientRect().left >= -1 && !element.inert; })()`);
+      const screenshot = async name => { const shot = await send('Page.captureScreenshot', { format: 'png' }); await fs.writeFile(path.join(os.tmpdir(), name), Buffer.from(shot.data, 'base64')); };
+      const desktopToggle = async id => {
+        await until(() => visible(id), 'expanded ' + id);
+        const before = await evaluate('document.querySelector("main").getBoundingClientRect().left');
+        await clickVisible('button[aria-label="Collapse sidebar"]');
+        await until(async () => !(await visible(id)), 'collapsed ' + id);
+        assert.ok(await evaluate('document.querySelector("main").getBoundingClientRect().left') < before, 'Content uses the freed sidebar space');
+        await send('Page.reload');
+        await until(() => evaluate(`!!document.querySelector('button[aria-label="Expand sidebar"]')`), 'saved collapse preference');
+        assert.equal(await visible(id), false);
+        await clickVisible('button[aria-label="Expand sidebar"]');
+        await until(() => visible(id), 'restored ' + id);
+        console.log('PASS ' + id + ': collapse, extra content space, reload persistence, and expand');
+      };
+      const mobileDrawer = async id => {
+        for (const width of [320, 390]) {
+          await send('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true });
+          await delay(500);
+          const geometry = await evaluate(`(() => { const button = document.querySelector('button[aria-label="Open menu"]'), logo = document.querySelector('header img[src="/icons/luo-heritage.svg"]'); const a = button.getBoundingClientRect(), b = logo.getBoundingClientRect(); return { separate: a.right <= b.left, width: b.width, normalFlow: getComputedStyle(button).position !== 'fixed', fits: document.documentElement.scrollWidth <= innerWidth }; })()`);
+          assert.equal(geometry.separate, true, 'Menu and logo do not overlap');
+          assert.equal(geometry.normalFlow, true, 'Menu belongs to the header layout');
+          assert.equal(geometry.fits, true, 'Phone view does not overflow');
+          assert.ok(geometry.width >= 44, 'Prominent phone logo');
+          await clickVisible('button[aria-label="Open menu"]');
+          await until(() => visible(id), 'mobile drawer open');
+          assert.equal(await evaluate(`document.getElementById(${JSON.stringify(id)}).contains(document.activeElement)`), true);
+          assert.equal(await evaluate(`document.getElementById(${JSON.stringify(id)}).getAttribute('aria-modal')`), 'true');
+          await evaluate(`(() => { const panel = document.getElementById(${JSON.stringify(id)}); const links = [...panel.querySelectorAll('a[href], button:not([disabled])')].filter(element => element.getClientRects().length); links[0].focus(); })()`);
+          await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Tab', code: 'Tab', modifiers: 8 });
+          await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Tab', code: 'Tab', modifiers: 8 });
+          assert.equal(await evaluate(`document.getElementById(${JSON.stringify(id)}).contains(document.activeElement)`), true, 'Keyboard focus stays in the drawer');
+          await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' });
+          await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape' });
+          await until(() => evaluate(`document.querySelector('button[aria-label="Open menu"]').getAttribute('aria-expanded') === 'false'`), 'Escape closes drawer');
+          assert.equal(await evaluate(`document.getElementById(${JSON.stringify(id)}).inert`), true, 'Hidden navigation cannot take focus');
+          assert.equal(await evaluate(`document.activeElement === document.querySelector('button[aria-label="Open menu"]')`), true, 'Focus returns to the menu button');
+          await delay(350);
+        }
+        await screenshot(id + '-mobile-review.png');
+        console.log('PASS ' + id + ': separate menu/logo, 320/390px widths, mobile drawer, focus trap, Escape, and focus restoration');
+        await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
+        await delay(500);
+      };
+      await navigate('/dashboard');
+      assert.equal(await evaluate('document.title'), 'Luo Heritage');
+      await desktopToggle('public-sidebar');
+      const previousWidth = await evaluate('document.getElementById("public-sidebar").getBoundingClientRect().width');
+      await evaluate(`document.querySelector('[aria-label="Resize sidebar"]').focus()`);
+      await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight' });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'ArrowRight', code: 'ArrowRight' });
+      await until(() => evaluate(`document.getElementById('public-sidebar').getBoundingClientRect().width === ${Math.min(420, previousWidth + 16)}`), 'sidebar keyboard resize');
+      await screenshot('public-sidebar-desktop-review.png');
+      await clickVisible('button[aria-label="Collapse sidebar"]');
+      await mobileDrawer('public-sidebar');
+      assert.equal(await visible('public-sidebar'), false, 'Desktop collapse is independent of the mobile drawer');
+      await clickVisible('button[aria-label="Expand sidebar"]');
+      await until(() => visible('public-sidebar'), 'public sidebar restored');
+      assert.equal(await evaluate('document.getElementById("public-sidebar").getBoundingClientRect().width'), Math.min(420, previousWidth + 16), 'Expansion restores the resized width');
+      await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+      await delay(500);
+      await clickVisible('button[aria-label="Open menu"]');
+      await until(() => visible('public-sidebar'), 'public drawer open for navigation');
+      await clickVisible('aside a[href="/dashboard?module=dictionary"]');
+      await until(() => evaluate(`location.search.includes('module=dictionary') && document.querySelector('button[aria-label="Open menu"]').getAttribute('aria-expanded') === 'false'`), 'module navigation closes drawer');
+      await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
+      await navigate('/admin/dashboard');
+      await desktopToggle('admin-sidebar');
+      await mobileDrawer('admin-sidebar');
+      await screenshot('admin-sidebar-desktop-review.png');
+      await navigate('/super-admin/dashboard');
+      await desktopToggle('admin-sidebar');
+      const regularAdmin = users.find(user => !user.isSuperAdmin && !user.isMasterSuperAdmin && user.languageRoles.some(role => role.role === 'language_admin'));
+      if (regularAdmin) { await setAccount(regularAdmin); await navigate('/admin/dashboard'); await desktopToggle('admin-sidebar'); }
+      assert.equal(exceptions, 0, 'No uncaught browser errors');
+      console.log('PASS branding, resized sidebar, public navigation, regular admin, and super admin controls; no browser exceptions');
+      return;
+    }
     if (process.argv.includes('--interactions')) {
       console.log('CHECK physical contribution and account menu controls');
       let exceptions = 0;
@@ -126,8 +224,10 @@ async function main() {
         await until(() => evaluate(ready), description, 120_000);
         console.log('PASS ' + description + ': ' + (Date.now() - started) + ' ms');
       };
-      await timed('proverbs page', () => send('Page.navigate', { url: base + '/dashboard?module=proverbs' }), `location.search.includes('module=proverbs') && !!document.querySelector('button[aria-label="Open account menu"]') && !!document.querySelector('.blink-contribute')`);
-      await delay(1000);
+      const proverbsReady = `location.search.includes('module=proverbs') && !!document.querySelector('button[aria-label="Open account menu"]') && !!document.querySelector('.blink-contribute')`;
+      await timed('proverbs page', () => loadPage('/dashboard?module=proverbs', proverbsReady), proverbsReady);
+      await evaluate('document.fonts.ready');
+      await until(() => evaluate(`(() => { const link = document.querySelector('.blink-contribute'); return Object.keys(link).some(key => key.startsWith('__reactProps$') && typeof link[key]?.onClick === 'function'); })()`), 'contribution link hydration');
       await clickVisible('.blink-contribute');
       await until(() => evaluate(`document.body.textContent.includes('Open contribution form') || (location.pathname === '/contribute/proverbs' && !!document.querySelector('input')) || !!document.querySelector('[aria-label="Loading page"]')`), 'contribution click', 20_000);
       if (await evaluate(`location.pathname !== '/contribute/proverbs'`)) {
@@ -187,11 +287,11 @@ async function main() {
       }
       console.log('PASS all eight public module dashboards: HTTP 200');
       await navigate('/super-admin/system');
-      await until(() => evaluate(`!!document.querySelector('input[placeholder="LuoLinguaAI"]')`), 'settings input');
-      await evaluate(`document.querySelector('input[placeholder="LuoLinguaAI"]').focus()`);
+      await until(() => evaluate(`!!document.querySelector('input[placeholder="Luo Heritage"]')`), 'settings input');
+      await evaluate(`document.querySelector('input[placeholder="Luo Heritage"]').focus()`);
       await send('Input.insertText', { text: '!' });
       await delay(300);
-      assert.equal(await evaluate(`document.activeElement === document.querySelector('input[placeholder="LuoLinguaAI"]')`), true);
+      assert.equal(await evaluate(`document.activeElement === document.querySelector('input[placeholder="Luo Heritage"]')`), true);
       console.log('PASS settings input retains focus after typing; no settings saved');
       return;
     }

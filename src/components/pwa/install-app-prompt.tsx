@@ -45,7 +45,7 @@ export function InstallAppPrompt() {
       onClick={() => void install()}
       className="fixed bottom-4 left-1/2 z-[100] -translate-x-1/2 rounded-full bg-amber-800 px-5 py-3 text-sm font-semibold text-white shadow-xl ring-1 ring-amber-200/50 hover:bg-amber-900"
     >
-      Install LuoLinguaAI app
+      Install Luo Heritage app
     </button>
   );
 }
