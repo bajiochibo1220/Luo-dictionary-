@@ -4,6 +4,8 @@ AI-powered digital platform for the preservation, learning, and promotion of the
 
 The app is branded **Luo Heritage**, with the tagline *Language · Culture · Living memory*. The shared name lives in `src/lib/brand.ts`; the original icon and installation exports are documented in `public/icons/README.md`. Desktop public and admin sidebars can collapse from their header controls and remember separate preferences. On phones, the menu button opens a keyboard-accessible drawer without covering the logo.
 
+Installed apps and browser tabs check for a new release after initial loading, once a minute while visible, and when returning online or to the app. Each production build automatically gets a fresh ID, shared by the UI and the uncached `/api/app-version` endpoint. The update notice offers **Update now** or **Later**; it never reloads unfinished work automatically. Find manual checks and icon replacement instructions at `/mobile-apps` or **App updates & installation** in the account menu. Development mode does not show release alerts. Both manifests retain their original app IDs and URLs and use identical full-color icon artwork; a browser may ask for approval of installed icon/name changes, or an old shortcut may need one-time reinstallation and repinning.
+
 ## Stack
 
 - Next.js 15 (App Router), React 18; Node.js 20.19+ (validated on Node.js 24)

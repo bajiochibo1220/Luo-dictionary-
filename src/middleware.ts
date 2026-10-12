@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
 
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
+  if (pathname === "/api/app-version") return true;
   if (pathname.startsWith("/api/auth")) return true;
   if (pathname.startsWith("/api/languages")) return true;
   // The language library is readable without an account. Contributions and

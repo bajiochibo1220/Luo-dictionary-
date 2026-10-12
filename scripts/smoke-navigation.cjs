@@ -23,7 +23,8 @@ async function until(check, description, timeout = 45_000) {
 }
 
 async function main() {
-  const entryOnly = process.argv.includes('--entry');
+  const updatesOnly = process.argv.includes('--updates');
+  const entryOnly = process.argv.includes('--entry') || updatesOnly;
   const interactions = process.argv.includes('--interactions');
   if (interactions) console.log('CHECK read-only session preparation');
   const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
@@ -107,6 +108,75 @@ async function main() {
       await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: point.x, y: point.y, button: 'left', clickCount: 1 });
       await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: point.x, y: point.y, button: 'left', clickCount: 1 });
     };
+    if (updatesOnly) {
+      await loadPage('/mobile-apps', `location.pathname === '/mobile-apps' && document.body.textContent.includes('Check for updates')`);
+      const errors = [];
+      websocket.addEventListener('message', event => { const message = JSON.parse(event.data); if (message.method === 'Runtime.exceptionThrown') errors.push(message.params.exceptionDetails.text); });
+      const current = await evaluate(`document.querySelector('meta[name="app-version"]')?.content`);
+      assert.ok(current && current !== 'development', 'Production build has a release ID');
+      assert.equal(await evaluate(`fetch('/api/app-version', {cache:'no-store'}).then(r => r.json()).then(r => r.version)`), current, 'Server and page share the release ID');
+      const browserManifest = await send('Page.getAppManifest');
+      assert.equal(browserManifest.errors.length, 0, 'Chrome accepts the installation manifest');
+      assert.equal(JSON.parse(browserManifest.data).name, 'Luo Heritage');
+      const checkSelector = 'button';
+      const clickCheck = async () => {
+        await until(() => evaluate(`(() => { const button = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Check for updates')); return !!button && !!Object.keys(button).find(key => key.startsWith('__reactProps$')); })()`), 'update controls hydrated');
+        await evaluate(`document.querySelector('[data-smoke-check]')?.removeAttribute('data-smoke-check'); [...document.querySelectorAll(${JSON.stringify(checkSelector)})].find(b => b.textContent.includes('Check for updates')).setAttribute('data-smoke-check', '')`);
+        await clickVisible('[data-smoke-check]');
+      };
+      await clickCheck();
+      await until(() => evaluate(`document.querySelector('[role="status"]')?.textContent.includes('latest version')`), 'current release confirmation');
+      assert.equal(await evaluate(`!!document.querySelector('[aria-label="App update"]')`), false);
+      console.log('PASS release ID survives server startup; manual check confirms latest release');
+      await evaluate(`(() => {
+        const originalFetch = window.fetch.bind(window);
+        window.__smokeRelease = { mode: 'error', version: 'smoke-next-release', calls: 0 };
+        window.fetch = async (input, options) => {
+          if (String(input) === '/api/app-version') {
+            window.__smokeRelease.calls++;
+            return window.__smokeRelease.mode === 'error' ? new Response('{}', {status:503}) : Response.json({ version: window.__smokeRelease.version });
+          }
+          return originalFetch(input, options);
+        };
+      })()`);
+      await clickCheck();
+      await until(() => evaluate(`document.querySelector('[role="status"]')?.textContent.includes('Couldn’t check')`), 'failed check feedback');
+      assert.equal(await evaluate(`!!document.querySelector('[aria-label="App update"]')`), false, 'Failure never announces a false update');
+      await evaluate(`Object.defineProperty(navigator, 'onLine', { configurable:true, get: () => false })`);
+      await clickCheck();
+      await until(() => evaluate(`document.querySelector('[role="status"]')?.textContent.includes('Couldn’t check')`), 'offline check feedback');
+      await evaluate(`Object.defineProperty(navigator, 'onLine', { configurable:true, get: () => true }); window.__smokeRelease.mode = 'success'; window.__smokeRelease.version = ${JSON.stringify(current)}`);
+      await clickCheck();
+      await until(() => evaluate(`document.querySelector('[role="status"]')?.textContent.includes('latest version')`), 'recovery after failed and offline checks');
+      console.log('PASS failed/offline checks recover without false alerts or stuck controls');
+      await evaluate(`window.__smokeRelease.version = 'smoke-next-release'; window.__smokeUnsavedWork = 'keep-my-work'; window.dispatchEvent(new Event('focus'))`);
+      await until(() => evaluate(`!!document.querySelector('[aria-label="App update"]')`), 'background release alert');
+      assert.equal(await evaluate(`window.__smokeUnsavedWork`), 'keep-my-work', 'Release detection never automatically reloads work');
+      await evaluate(`document.querySelector('[aria-label="App update"] button').setAttribute('data-smoke-later', '')`);
+      await clickVisible('[data-smoke-later]');
+      await until(() => evaluate(`!document.querySelector('[aria-label="App update"]')`), 'Later hides alert');
+      await evaluate(`window.dispatchEvent(new Event('focus'))`);
+      await delay(400);
+      assert.equal(await evaluate(`!!document.querySelector('[aria-label="App update"]')`), false, 'Same dismissed release stays quiet');
+      await clickCheck();
+      await until(() => evaluate(`!!document.querySelector('[aria-label="App update"]')`), 'manual check reopens available update');
+      console.log('PASS background alert, Later, and manual recheck preserve unfinished work');
+      await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+      const geometry = await evaluate(`(() => { const box = document.querySelector('[aria-label="App update"]').getBoundingClientRect(); return { left:box.left, right:box.right, bottom:box.bottom, width:innerWidth, height:innerHeight, overflow:document.documentElement.scrollWidth > innerWidth }; })()`);
+      assert.ok(geometry.left >= 0 && geometry.right <= geometry.width && geometry.bottom <= geometry.height);
+      assert.equal(geometry.overflow, false);
+      const shot = await send('Page.captureScreenshot', { format: 'png' });
+      await fs.writeFile(path.join(os.tmpdir(), 'luo-heritage-update-mobile-review.png'), Buffer.from(shot.data, 'base64'));
+      await evaluate(`document.querySelector('[aria-label="App update"] button:last-child').setAttribute('data-smoke-update', '')`);
+      await clickVisible('[data-smoke-update]');
+      await until(() => evaluate(`window.__smokeUnsavedWork === undefined && document.readyState === 'complete' && document.body.textContent.includes('Check for updates')`), 'Update now reloads the current page');
+      await clickCheck();
+      await until(() => evaluate(`document.querySelector('[role="status"]')?.textContent.includes('latest version')`), 'updated page has current release');
+      assert.equal(await evaluate(`!!document.querySelector('[aria-label="App update"]')`), false);
+      assert.equal(errors.length, 0, 'No browser runtime exceptions');
+      console.log('PASS phone notice fits; Update now reloads and removes the obsolete alert');
+      return;
+    }
     if (entryOnly) {
       for (const pathname of ['/', '/luo', '/eng']) {
         await loadPage(pathname, `location.pathname === '/login' && document.querySelector('h1')?.textContent.trim() === 'Welcome back' && !!document.querySelector('input[type="password"]')`);

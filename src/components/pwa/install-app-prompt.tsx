@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAppUpdates } from "./app-updates";
 
 type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -8,6 +9,7 @@ type InstallPromptEvent = Event & {
 };
 
 export function InstallAppPrompt() {
+  const updates = useAppUpdates();
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
@@ -30,7 +32,7 @@ export function InstallAppPrompt() {
     };
   }, []);
 
-  if (isInstalled || !installEvent) return null;
+  if (isInstalled || !installEvent || updates?.noticeVisible) return null;
 
   async function install() {
     if (!installEvent) return;
