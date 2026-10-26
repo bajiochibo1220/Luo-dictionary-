@@ -1,6 +1,6 @@
 "use client";
 import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
-import { applicationReturnTarget } from "@/lib/application-return";
+import { authenticationContinueTarget } from "@/lib/application-return";
 
 import Link from "next/link";
 
@@ -99,14 +99,13 @@ export function RegisterForm() {
       router.refresh();
       return;
     }
-    router.push(nativeReturn || applicationReturnTarget() || "/dashboard");
-    router.refresh();
+    window.location.assign(nativeReturn || authenticationContinueTarget());
   }
 
   function startGoogleSignup() {
     document.cookie = nativeReturnCookie(nativeReturn, window.location.protocol === "https:");
     document.cookie = `google-auth-intent=register; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
-    void signIn("google", { callbackUrl: nativeReturn || applicationReturnTarget() || "/dashboard" });
+    void signIn("google", { callbackUrl: nativeReturn || authenticationContinueTarget() });
   }
 
   return (

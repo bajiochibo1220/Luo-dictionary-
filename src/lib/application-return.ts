@@ -1,4 +1,11 @@
 "use client";
+import { publicApplicationReturn } from "@/lib/login-destination";
 export function applicationReturnTarget() {
-  try { const target = sessionStorage.getItem("application-return"); return target === "/application" || target?.startsWith("/application#/") ? target : null; } catch { return null; }
+  try { return publicApplicationReturn(sessionStorage.getItem("application-return")); } catch { return null; }
+}
+
+export function authenticationContinueTarget() {
+  const target = applicationReturnTarget();
+  try { sessionStorage.removeItem("application-return"); } catch {}
+  return target ? `/auth/continue?${new URLSearchParams({ returnTo: target })}` : "/auth/continue";
 }

@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { hasAnyAdminRole, isSuperAdmin } from "@/lib/permissions";
+import { loginDestination } from "@/lib/login-destination";
 
 export async function GET(request: Request) {
   const session = await auth();
-  const destination = !session?.user ? "/login"
-    : isSuperAdmin(session) ? "/super-admin/dashboard"
-    : hasAnyAdminRole(session) ? "/admin/dashboard" : "/dashboard";
+  const destination = loginDestination(session, new URL(request.url).searchParams.get("returnTo"));
   return NextResponse.redirect(new URL(destination, request.url));
 }

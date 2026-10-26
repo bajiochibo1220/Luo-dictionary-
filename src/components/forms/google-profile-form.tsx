@@ -1,6 +1,6 @@
 "use client";
 import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
-import { applicationReturnTarget } from "@/lib/application-return";
+import { authenticationContinueTarget } from "@/lib/application-return";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -38,8 +38,7 @@ export function GoogleProfileForm({ initialName, nativeReturn }: { initialName: 
       await fetch("/api/auth/session", { cache: "no-store" }).catch(() => null);
       toast.success(<InterfaceText source={"Your account is ready."} />);
       document.cookie = nativeReturnCookie(null, window.location.protocol === "https:");
-      router.replace(nativeLoginReturn(nativeReturn) || applicationReturnTarget() || "/dashboard");
-      router.refresh();
+      window.location.replace(nativeLoginReturn(nativeReturn) || authenticationContinueTarget());
     } catch (error) {
       toast.error(<InterfaceText source={error instanceof Error ? error.message : "Could not finish account setup"} />);
     } finally {

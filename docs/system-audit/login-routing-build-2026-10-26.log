@@ -1,0 +1,306 @@
+
+> luolinguaai@1.0.0 build
+> npm run lint && next build
+
+
+> luolinguaai@1.0.0 lint
+> eslint src scripts tests
+
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(admin)\admin\review-queue\[id]\page.tsx
+  136:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(admin)\admin\validation-queue\[id]\page.tsx
+  154:40  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\gik-luo\[id]\page.tsx
+   51:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  139:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\muma\[id]\page.tsx
+  44:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\ngero\[id]\page.tsx
+  92:34  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\piny-luo\[id]\page.tsx
+  54:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\admin\media-grid.tsx
+  145:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  152:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  199:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\admin-topbar.tsx
+  181:28  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\app-topbar.tsx
+  91:26  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\user-menu.tsx
+  34:24  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\artifacts\artifact-grid.tsx
+  57:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  97:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\dictionary\dictionary-card.tsx
+  49:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\folktales\folktale-card.tsx
+  31:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\folktales\folktale-detail.tsx
+  86:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\heritage-sites\sites-map.tsx
+  142:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\oral-history\oral-history-card.tsx
+  37:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\proverbs\proverb-card.tsx
+  42:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\riddles\riddle-card.tsx
+  37:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\songs\song-card.tsx
+  56:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\songs\song-detail.tsx
+  78:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\chat-interface.tsx
+  598:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\management-workspace.tsx
+  68:88  warning  The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\module-content-view.tsx
+  143:40  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  178:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  181:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\partner-branding.tsx
+  18:424  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\protected-media.tsx
+  27:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\research-library.tsx
+  13:83  warning  The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\staff-workspace.tsx
+  31:84  warning  The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+✖ 33 problems (0 errors, 33 warnings)
+
+   ▲ Next.js 15.5.28
+   - Environments: .env
+   - Experiments (use with caution):
+     · cpus: 1
+
+   Creating an optimized production build ...
+(node:19324) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1793037080300 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Compiled successfully in 85s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/52) ...
+   Generating static pages (13/52) 
+   Generating static pages (26/52) 
+   Generating static pages (39/52) 
+ ✓ Generating static pages (52/52)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                    Size  First Load JS
+┌ ○ /                                         379 B         103 kB
+├ ○ /_not-found                               379 B         103 kB
+├ ƒ /[lang]                                   379 B         103 kB
+├ ƒ /[lang]/gik-luo                         1.45 kB         125 kB
+├ ƒ /[lang]/gik-luo/[id]                      639 B         124 kB
+├ ƒ /[lang]/muma                            1.98 kB         125 kB
+├ ƒ /[lang]/muma/[id]                         639 B         124 kB
+├ ƒ /[lang]/ngeche                           1.9 kB         125 kB
+├ ƒ /[lang]/ngeche/[id]                       639 B         124 kB
+├ ƒ /[lang]/ngeche/quiz                     1.37 kB         125 kB
+├ ƒ /[lang]/ngero                           2.02 kB         125 kB
+├ ƒ /[lang]/ngero/[id]                        639 B         124 kB
+├ ƒ /[lang]/piny-luo                        1.46 kB         121 kB
+├ ƒ /[lang]/piny-luo/[id]                    1.8 kB         125 kB
+├ ƒ /[lang]/search                          1.94 kB         125 kB
+├ ƒ /[lang]/sigana                            629 B         124 kB
+├ ƒ /[lang]/sigana/[id]                     2.48 kB         134 kB
+├ ƒ /[lang]/sigana/folktales                  627 B         124 kB
+├ ƒ /[lang]/sigana/folktales/[id]           1.92 kB         125 kB
+├ ƒ /[lang]/wende                             629 B         124 kB
+├ ƒ /[lang]/wende/[id]                         2 kB         125 kB
+├ ○ /about                                    192 B         123 kB
+├ ƒ /account                                2.97 kB         136 kB
+├ ○ /account-recovery                       1.51 kB         125 kB
+├ ○ /admin-login                              379 B         103 kB
+├ ○ /admin-register                           379 B         103 kB
+├ ƒ /admin/ai-monitoring                    1.04 kB         132 kB
+├ ƒ /admin/analytics                         119 kB         242 kB
+├ ƒ /admin/audit-logs                       1.32 kB         124 kB
+├ ƒ /admin/content                           3.1 kB         134 kB
+├ ƒ /admin/content/[id]/edit                  437 B         141 kB
+├ ƒ /admin/content/new/[module]             2.94 kB         140 kB
+├ ƒ /admin/dashboard                          187 B         123 kB
+├ ƒ /admin/editor-queue                       379 B         103 kB
+├ ƒ /admin/interface                        2.26 kB         122 kB
+├ ƒ /admin/media                             4.8 kB         136 kB
+├ ƒ /admin/media/test-upload                1.53 kB         133 kB
+├ ƒ /admin/published-history                  177 B         120 kB
+├ ƒ /admin/review-history                     177 B         120 kB
+├ ƒ /admin/review-queue                       192 B         123 kB
+├ ƒ /admin/review-queue/[id]                1.23 kB         133 kB
+├ ƒ /admin/transcripts                        192 B         123 kB
+├ ƒ /admin/transcripts/[sessionId]          1.02 kB         124 kB
+├ ƒ /admin/translations                      1.2 kB         133 kB
+├ ƒ /admin/users                            1.87 kB         133 kB
+├ ƒ /admin/users/[id]                       2.04 kB         133 kB
+├ ƒ /admin/validation-queue                 1.53 kB         125 kB
+├ ƒ /admin/validation-queue/[id]            2.65 kB         134 kB
+├ ƒ /api/admin/language                       379 B         103 kB
+├ ƒ /api/ai/chat                              379 B         103 kB
+├ ƒ /api/ai/embed                             379 B         103 kB
+├ ƒ /api/ai/flag                              379 B         103 kB
+├ ƒ /api/ai/monitoring                        379 B         103 kB
+├ ƒ /api/ai/reembed                           379 B         103 kB
+├ ƒ /api/ai/search                            379 B         103 kB
+├ ƒ /api/ai/summarize                         379 B         103 kB
+├ ƒ /api/analytics                            379 B         103 kB
+├ ƒ /api/app-version                          379 B         103 kB
+├ ƒ /api/artifacts                            379 B         103 kB
+├ ƒ /api/artifacts/[id]                       379 B         103 kB
+├ ƒ /api/audit-logs                           379 B         103 kB
+├ ƒ /api/auth/[...nextauth]                   379 B         103 kB
+├ ƒ /api/auth/admin-register                  379 B         103 kB
+├ ƒ /api/auth/google-complete                 379 B         103 kB
+├ ƒ /api/auth/phone                           379 B         103 kB
+├ ƒ /api/auth/recovery                        379 B         103 kB
+├ ƒ /api/auth/register                        379 B         103 kB
+├ ƒ /api/branding                             379 B         103 kB
+├ ƒ /api/content                              379 B         103 kB
+├ ƒ /api/content/[id]                         379 B         103 kB
+├ ƒ /api/content/[id]/approve                 379 B         103 kB
+├ ƒ /api/content/[id]/publish-from-culture    379 B         103 kB
+├ ƒ /api/content/[id]/reject                  379 B         103 kB
+├ ƒ /api/content/[id]/revision                379 B         103 kB
+├ ƒ /api/content/[id]/send-to-final-review    379 B         103 kB
+├ ƒ /api/content/[id]/start-edit              379 B         103 kB
+├ ƒ /api/content/[id]/submit                  379 B         103 kB
+├ ƒ /api/content/[id]/validate                379 B         103 kB
+├ ƒ /api/content/bulk-delete                  379 B         103 kB
+├ ƒ /api/content/bulk-publish                 379 B         103 kB
+├ ƒ /api/content/bulk-submit                  379 B         103 kB
+├ ƒ /api/content/bulk-validate                379 B         103 kB
+├ ƒ /api/conversations                        379 B         103 kB
+├ ƒ /api/conversations/[id]                   379 B         103 kB
+├ ƒ /api/dictionary                           379 B         103 kB
+├ ƒ /api/dictionary/[id]                      379 B         103 kB
+├ ƒ /api/folktales                            379 B         103 kB
+├ ƒ /api/folktales/[id]                       379 B         103 kB
+├ ƒ /api/heritage-sites                       379 B         103 kB
+├ ƒ /api/heritage-sites/[id]                  379 B         103 kB
+├ ƒ /api/interface-copy                       379 B         103 kB
+├ ƒ /api/languages                            379 B         103 kB
+├ ƒ /api/languages/[id]                       379 B         103 kB
+├ ƒ /api/languages/[id]/activate              379 B         103 kB
+├ ƒ /api/media                                379 B         103 kB
+├ ƒ /api/media/[id]                           379 B         103 kB
+├ ƒ /api/media/[id]/file                      379 B         103 kB
+├ ƒ /api/media/upload                         379 B         103 kB
+├ ƒ /api/media/upload/finalize                379 B         103 kB
+├ ƒ /api/media/upload/signature               379 B         103 kB
+├ ƒ /api/notifications                        379 B         103 kB
+├ ƒ /api/notifications/[id]                   379 B         103 kB
+├ ƒ /api/nrf/export                           379 B         103 kB
+├ ƒ /api/onboarding                           379 B         103 kB
+├ ƒ /api/oral-histories                       379 B         103 kB
+├ ƒ /api/oral-histories/[id]                  379 B         103 kB
+├ ƒ /api/proverbs                             379 B         103 kB
+├ ƒ /api/proverbs/[id]                        379 B         103 kB
+├ ƒ /api/riddles                              379 B         103 kB
+├ ƒ /api/riddles/[id]                         379 B         103 kB
+├ ƒ /api/songs                                379 B         103 kB
+├ ƒ /api/songs/[id]                           379 B         103 kB
+├ ƒ /api/super-admin/admins                   379 B         103 kB
+├ ƒ /api/super-admin/admins/[id]              379 B         103 kB
+├ ƒ /api/super-admin/backup                   379 B         103 kB
+├ ƒ /api/super-admin/backup/[id]              379 B         103 kB
+├ ƒ /api/super-admin/branding                 379 B         103 kB
+├ ƒ /api/super-admin/settings                 379 B         103 kB
+├ ƒ /api/super-admin/settings/test-email      379 B         103 kB
+├ ƒ /api/transcripts/[id]                     379 B         103 kB
+├ ƒ /api/translations/fields                  379 B         103 kB
+├ ƒ /api/translations/modules                 379 B         103 kB
+├ ƒ /api/users                                379 B         103 kB
+├ ƒ /api/users/[id]                           379 B         103 kB
+├ ƒ /api/users/[id]/roles                     379 B         103 kB
+├ ƒ /api/users/bulk-status                    379 B         103 kB
+├ ƒ /api/v1/account                           379 B         103 kB
+├ ƒ /api/v1/account/conversations             379 B         103 kB
+├ ƒ /api/v1/account/conversations/[id]        379 B         103 kB
+├ ƒ /api/v1/account/settings                  379 B         103 kB
+├ ƒ /api/v1/bootstrap                         379 B         103 kB
+├ ƒ /api/v1/chat                              379 B         103 kB
+├ ƒ /api/v1/contributions                     379 B         103 kB
+├ ƒ /api/v1/education                         379 B         103 kB
+├ ƒ /api/v1/learning                          379 B         103 kB
+├ ƒ /api/v1/library                           379 B         103 kB
+├ ƒ /api/v1/native/authorize                  379 B         103 kB
+├ ƒ /api/v1/native/refresh                    379 B         103 kB
+├ ƒ /api/v1/native/revoke                     379 B         103 kB
+├ ƒ /api/v1/native/token                      379 B         103 kB
+├ ƒ /api/v1/research                          379 B         103 kB
+├ ƒ /api/v1/saved                             379 B         103 kB
+├ ○ /application                            14.5 kB         204 kB
+├ ƒ /auth/continue                            379 B         103 kB
+├ ƒ /chatbot                                1.02 kB         149 kB
+├ ƒ /classrooms                               379 B         103 kB
+├ ƒ /contribute                               925 B         124 kB
+├ ƒ /contribute/[module]                      869 B         141 kB
+├ ƒ /courses                                  616 B         124 kB
+├ ƒ /dashboard                              2.38 kB         130 kB
+├ ƒ /learn                                  1.16 kB         126 kB
+├ ƒ /login                                  3.77 kB         152 kB
+├ ○ /mobile-apps                             2.5 kB         131 kB
+├ ƒ /mobile-auth                            1.91 kB         135 kB
+├ ƒ /my-submissions                           764 B         124 kB
+├ ƒ /my-submissions/[id]/edit                 437 B         141 kB
+├ ○ /onboarding                             2.48 kB         134 kB
+├ ƒ /phone-login                              379 B         103 kB
+├ ƒ /privacy                                  187 B         123 kB
+├ ƒ /profile                                1.19 kB         129 kB
+├ ƒ /register                               5.04 kB         153 kB
+├ ƒ /register/complete-google               3.68 kB         145 kB
+├ ƒ /research                               3.49 kB         123 kB
+├ ƒ /saved                                  1.33 kB         125 kB
+├ ƒ /settings                               1.99 kB         125 kB
+├ ƒ /super-admin/admins                     3.21 kB         131 kB
+├ ƒ /super-admin/backup                      1.5 kB         129 kB
+├ ƒ /super-admin/dashboard                    180 B         123 kB
+├ ƒ /super-admin/languages                    192 B         123 kB
+├ ƒ /super-admin/languages/[id]             1.28 kB         133 kB
+├ ƒ /super-admin/languages/new              2.23 kB         134 kB
+├ ƒ /super-admin/system                     5.11 kB         137 kB
+├ ƒ /terms                                    187 B         123 kB
+└ ƒ /workspace                              3.41 kB         151 kB
++ First Load JS shared by all                103 kB
+  ├ chunks/1255-60d8dc7c8c9309a1.js         46.3 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js     54.2 kB
+  └ other shared chunks (total)             2.58 kB
+
+
+ƒ Middleware                                46.5 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

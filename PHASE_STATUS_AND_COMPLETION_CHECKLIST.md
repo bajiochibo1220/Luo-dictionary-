@@ -12,4 +12,6 @@ The later [mobile layout and branding follow-up](docs/system-audit/mobile-layout
 
 The [editorial workflow and interface-language follow-up](docs/system-audit/editor-interface-followup-2026-10-26.md) records the unified Review & edit queue, audited bulk deletion, scrolling workspace headings, scoped staff tasks, paired editing, JOOUST authentication background and community-specific interface-text editor. Full Dholuo translation remains incomplete: missing entries and fluent-editor review are explicitly tracked. This does not change the acceptance totals above.
 
+The [sign-in dashboard routing fix](docs/system-audit/login-routing-fix-2026-10-26.md) makes current account roles take precedence over remembered public-library return locations. Master/Super Admin accounts open their dashboard; assigned staff and public users receive their appropriate destinations. Native handoff and explicit public browsing are preserved.
+
 The previous checklist is preserved as [historical status](docs/system-audit/historical-status-checklist-2026-10-25.md).

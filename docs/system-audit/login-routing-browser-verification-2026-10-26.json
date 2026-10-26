@@ -1,0 +1,91 @@
+{
+  "fixtureAuthentication": true,
+  "productionAccountWrites": false,
+  "results": [
+    {
+      "provider": "credentials",
+      "role": "master",
+      "destination": "/super-admin/dashboard"
+    },
+    {
+      "provider": "credentials",
+      "role": "super",
+      "destination": "/super-admin/dashboard"
+    },
+    {
+      "provider": "credentials",
+      "role": "reader",
+      "destination": "/application#/dashboard?module=dictionary"
+    },
+    {
+      "provider": "credentials",
+      "role": "language_admin",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "credentials",
+      "role": "content_editor",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "credentials",
+      "role": "uploader",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "credentials",
+      "role": "publisher",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "master",
+      "destination": "/super-admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "super",
+      "destination": "/super-admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "reader",
+      "destination": "/application#/dashboard?module=dictionary"
+    },
+    {
+      "provider": "google",
+      "role": "language_admin",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "content_editor",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "uploader",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "google",
+      "role": "publisher",
+      "destination": "/admin/dashboard"
+    },
+    {
+      "provider": "native-session",
+      "role": "master",
+      "destination": "#/workspace"
+    },
+    {
+      "provider": "native-session",
+      "role": "uploader",
+      "destination": "#/workspace"
+    },
+    {
+      "provider": "native-session",
+      "role": "reader",
+      "destination": "#/account"
+    }
+  ]
+}

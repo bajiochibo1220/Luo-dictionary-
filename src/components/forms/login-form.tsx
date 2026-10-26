@@ -1,6 +1,6 @@
 "use client";
 import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
-import { applicationReturnTarget } from "@/lib/application-return";
+import { authenticationContinueTarget } from "@/lib/application-return";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -22,7 +22,7 @@ export function LoginForm() {
   function startGoogleLogin() {
     document.cookie = nativeReturnCookie(nativeReturn, window.location.protocol === "https:");
     document.cookie = `google-auth-intent=login; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
-    void signIn("google", { callbackUrl: nativeReturn || applicationReturnTarget() || "/auth/continue" });
+    void signIn("google", { callbackUrl: nativeReturn || authenticationContinueTarget() });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -54,48 +54,7 @@ export function LoginForm() {
       return;
     }
 
-    const appReturn = applicationReturnTarget();
-    if (appReturn) { router.push(appReturn); router.refresh(); return; }
-
-    // Decide where to send them based on their role
-    try {
-      const sessionRes = await fetch("/api/auth/session", {
-        cache: "no-store",
-      });
-      const session = await sessionRes.json();
-      const user = session?.user as any;
-
-      if (user?.isMasterSuperAdmin === true) {
-        toast.success(<InterfaceText source={"Welcome back, Master Super Admin"} />);
-        router.push("/super-admin/dashboard");
-        router.refresh();
-        return;
-      }
-
-      const isSuperAdmin = user?.isSuperAdmin === true;
-      const hasAdminRole = (user?.languageRoles ?? []).some((r: any) =>
-        [
-          "language_admin",
-          "uploader",
-          "publisher",
-          "content_editor",
-          "content_editor",
-        ].includes(r.role)
-      );
-
-      if (isSuperAdmin || hasAdminRole) {
-        toast.success(<InterfaceText source={"Welcome back, admin"} />);
-        router.push("/admin/dashboard");
-      } else {
-        toast.success(<InterfaceText source={"Welcome back"} />);
-        router.push("/dashboard");
-      }
-      router.refresh();
-    } catch {
-      // Fallback if session fetch fails
-      router.push("/dashboard");
-      router.refresh();
-    }
+    window.location.assign(authenticationContinueTarget());
   }
 
   return (

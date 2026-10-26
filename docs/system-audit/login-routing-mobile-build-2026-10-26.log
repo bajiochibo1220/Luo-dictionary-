@@ -1,0 +1,41 @@
+
+> luo-heritage-mobile@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+(node:7048) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1793036959889 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ 1608 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.46 kB │ gzip:   0.30 kB
+dist/assets/6d38f9d4e0f4772b-s-DBDPsn_N.woff2      8.90 kB
+dist/assets/df0a9ae256c0569c-s-YEzCLjIM.woff2     10.28 kB
+dist/assets/c5fe6dc8356a8c31-s-Ai74Rjx-.woff2     11.27 kB
+dist/assets/36008747766f78c6-s-Ct1FAkai.woff2     17.28 kB
+dist/assets/21350d82a1f187e9-s-C5ekK6td.woff2     18.74 kB
+dist/assets/19cfc7226ec3afaa-s-BQL42Lnq.woff2     19.04 kB
+dist/assets/08aedeceaf1dcd57-s-DgyGNlSC.woff2     20.17 kB
+dist/assets/0086f8992871c45b-s-DvGMrinY.woff2     21.25 kB
+dist/assets/03b436aa846269de-s-S8vInfZS.woff2     23.58 kB
+dist/assets/ba9851c3c22cd980-s-Cpd2YT5r.woff2     25.84 kB
+dist/assets/ab00a911ac2adf48-s-ghDDbscC.woff2     29.23 kB
+dist/assets/5c0c2bcbaa4149ca-s.p-BplyFJq7.woff2   37.79 kB
+dist/assets/luo-heritage-512-edrN4VfK.png         43.77 kB
+dist/assets/e4af272ccee01ff0-s.p-8kRkwJBP.woff2   48.43 kB
+dist/assets/8e9860b6e62d6359-s-B_-bZUTo.woff2     85.27 kB
+dist/assets/index-Dz6IlnW5.css                    75.60 kB │ gzip:  15.06 kB
+dist/assets/web-CKX_eeA7.js                        0.36 kB │ gzip:   0.24 kB
+dist/assets/web-B96bFAR0.js                        0.84 kB │ gzip:   0.40 kB
+dist/assets/index-Cfq5q8XV.js                    476.07 kB │ gzip: 138.25 kB
+
+✓ built in 4.80s
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 4.5s of this 4.8s build (93%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:css transform (89%, 4.2s, 1 call)
+Additional callback time came from callbacks under 1s.
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

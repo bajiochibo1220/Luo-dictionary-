@@ -21,6 +21,7 @@ import type { ApplicationAdapters, ApplicationSession } from "@/lib/application-
 import { DismissiblePopover, PopoverClose } from "./dismissible-popover";
 import { PartnerBranding } from "./partner-branding";
 import { APP_NAME } from "@/lib/brand";
+import { loginDestination, nativeLoginDestination } from "@/lib/login-destination";
 const ApplicationContext = createContext<ApplicationAdapters | null>(null);
 function useAdapters() { const value = useContext(ApplicationContext); if (!value) throw new Error("Application adapters are missing."); return value; }
 export function SharedApplication({ adapters }: { adapters: ApplicationAdapters }) {
@@ -61,9 +62,11 @@ function App() {
   const [signingIn, setSigningIn] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const identityEpoch = useRef(0);
+  const pendingNativeLanding = useRef(false);
   const sidebar = useSidebar();
   const closeMobile = sidebar?.closeMobile;
-  const isStaff = !!profile && (profile.isSuperAdmin || profile.languageRoles.some(role => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role)));
+  const isStaff = !!profile && (profile.isSuperAdmin || profile.isMasterSuperAdmin || profile.languageRoles.some(role => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role)));
+  const dashboardHref = nativeSession.isNative ? "/workspace" : loginDestination(profile ? { user: profile } : null);
   const activeModule = new URL(route, "https://client.local").searchParams.get("module");
   const isAccount = route === "/account";
   const routeUrl = new URL(route, "https://client.local");
@@ -88,6 +91,7 @@ function App() {
     const unsubscribe = nativeSession.subscribe((value, reason) => {
       if (!active) return;
       identityEpoch.current++;
+      if (reason !== "renew") pendingNativeLanding.current = !!value && nativeSession.isNative && (reason === "sign-in" || reason === "restore" && !location.hash);
       setSession(value);
       if (reason !== "renew") { setProfile(null); setHistory([]); setPersonalLoading(false); setArchived(false); }
       setPersonalError("");
@@ -116,7 +120,13 @@ function App() {
     const timeout = window.setTimeout(() => controller.abort(new Error("The connection timed out. Please try again.")), READ_TIMEOUT_MS);
     setPersonalLoading(true); setPersonalError(""); setHistory([]);
     Promise.all([account(controller.signal), conversations(archived, controller.signal)])
-      .then(([user, chats]) => { if (active && expectedIdentity === identityEpoch.current) { setProfile(user); setHistory(chats); } })
+      .then(([user, chats]) => { if (active && expectedIdentity === identityEpoch.current) {
+        setProfile(user); setHistory(chats);
+        if (pendingNativeLanding.current) {
+          pendingNativeLanding.current = false;
+          if (location.hash === "#/account") location.hash = nativeLoginDestination({ user });
+        }
+      } })
       .catch(reason => { if (active && expectedIdentity === identityEpoch.current) { setProfile(null); setPersonalError(reason instanceof Error ? reason.message : "Unable to load your account."); } })
       .finally(() => { clearTimeout(timeout); if (active && expectedIdentity === identityEpoch.current) setPersonalLoading(false); });
     return () => { active = false; clearTimeout(timeout); controller.abort(); };
@@ -158,14 +168,14 @@ function App() {
       <SidebarToggle />
       <span title={APP_NAME} className="min-w-0 flex-1 truncate font-serif text-lg">{APP_NAME}</span><InterfaceLanguageSelector />
       {session ? <DismissiblePopover className="relative shrink-0" open={accountMenuOpen} onClose={() => setAccountMenuOpen(false)}><InterfaceButton type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</InterfaceButton>
-        {accountMenuOpen && <div className="absolute right-0 z-50 mt-2 max-h-[75dvh] max-w-[calc(100vw-1rem)] overflow-y-auto w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><PopoverClose onClose={() => setAccountMenuOpen(false)} /><Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Saved conversations" /></Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Settings & profile" /></Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700"><InterfaceText source="Sign out" /></button></div>}
+        {accountMenuOpen && <div className="absolute right-0 z-50 mt-2 max-h-[75dvh] max-w-[calc(100vw-1rem)] overflow-y-auto w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><PopoverClose onClose={() => setAccountMenuOpen(false)} />{isStaff && <Link href={dashboardHref} onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold"><InterfaceText source="Admin dashboard" /></Link>}<Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Saved conversations" /></Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Settings & profile" /></Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700"><InterfaceText source="Sign out" /></button></div>}
       </DismissiblePopover>
         : nativeSession.isNative ? <InterfaceButton type="button" aria-label="Sign in" onClick={() => signIn()} disabled={signingIn} className="shrink-0 whitespace-nowrap text-sm font-semibold disabled:opacity-50"><InterfaceText source={signingIn ? "Connecting…" : "Sign in"} /></InterfaceButton>
         : <Link href="/login" className="shrink-0 whitespace-nowrap text-sm font-semibold"><InterfaceText source="Sign in" /></Link>}
     </header>
     {personalError && !isAccount && <div role="alert" className="flex shrink-0 items-start gap-3 bg-red-50 px-4 py-3 text-sm text-red-900"><p className="flex-1">{personalError}</p><InterfaceButton type="button" aria-label="Dismiss sign-in message" onClick={() => setPersonalError("")} className="font-semibold underline"><InterfaceText source="Dismiss" /></InterfaceButton></div>}
     <div className="relative flex min-h-0 flex-1">
-      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? "/workspace" : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} communityControls={<label className="block px-5 py-3 text-sm text-amber-50"><InterfaceText source="Community" /><InterfaceSelect aria-label="Choose community" value={language} onChange={event => { setLanguage(event.target.value); sidebar?.closeMobile(); }} className="mt-2 min-h-11 w-full rounded-lg border border-amber-100/20 bg-[#6b4724] px-3">{(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).filter(item => item.code !== "eng").map(item => <InterfaceOption key={item.code} value={item.code}>{item.nativeName}</InterfaceOption>)}</InterfaceSelect></label>} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
+      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? dashboardHref : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} communityControls={<label className="block px-5 py-3 text-sm text-amber-50"><InterfaceText source="Community" /><InterfaceSelect aria-label="Choose community" value={language} onChange={event => { setLanguage(event.target.value); sidebar?.closeMobile(); }} className="mt-2 min-h-11 w-full rounded-lg border border-amber-100/20 bg-[#6b4724] px-3">{(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).filter(item => item.code !== "eng").map(item => <InterfaceOption key={item.code} value={item.code}>{item.nativeName}</InterfaceOption>)}</InterfaceSelect></label>} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
       <main className="min-w-0 flex-1 overflow-y-auto pb-safe heritage-pattern">
         {isResearch ? <ResearchLibrary key={`${language}:${profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} languageId={configuration?.selectedLanguage.id ?? 1} account={profile} /> : isEducation ? <EducationHub key={`${routeUrl.pathname}:${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialView={routeUrl.pathname === "/classrooms" ? "classes" : "courses"} onOpenResource={(id, resourceLanguageId) => { const target = configuration?.languages.find(item => item.id === resourceLanguageId); if (target) setLanguage(target.code); location.hash = `/learn?resource=${encodeURIComponent(id)}`; }} /> : isWorkspace ? <ManagementWorkspace languages={configuration?.languages ?? []} key={session?.accountId || profile?.id || "guest"} request={featureRequest} transport={featureFetch} account={profile} languageId={configuration?.selectedLanguage.id ?? 1} englishLanguageId={configuration?.languages.find(item => item.code === "eng")?.id} /> : isSaved ? <SavedItems key={profile?.id || "guest"} request={featureRequest} Link={Link} /> : isContribution ? <ContributionHub key={`${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} origin={apiOrigin} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialModule={contributionModule} /> : isSettings ? <AccountSettings key={session?.accountId || profile?.id || "guest"} request={featureRequest} onSignedOut={() => { void signOut(); }} recoveryHref={new URL("/account-recovery", apiOrigin).href} /> : isLearn ? <LearningHub initialKind={routeUrl.searchParams.get("section") || "lesson"} initialResourceId={initialResourceId} key={`${language}:${routeUrl.searchParams.get("section") || "lesson"}:${initialResourceId || "list"}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} origin={apiOrigin} /> : isChat ? <SharedChatInterface key={`${language}:${session?.accountId ?? session?.refreshToken?.split(".")[0] ?? session?.accessToken ?? "guest"}`} languageCode={language} cultureCode={language} guest={!session} request={chatRequest} BackLink={MobileBackLink} Link={Link} onSessionExpired={onChatSessionExpired} initialConversationId={initialConversationId} />
           : isAccount ? session && profile ? <AccountHistoryView account={profile} history={history} archived={archived} loading={personalLoading} error={personalError} onArchivedChange={setArchived} onRetry={() => setRetry(value => value + 1)} onOpenChat={id => { location.hash = `/chatbot?conversation=${encodeURIComponent(id)}`; }} />
