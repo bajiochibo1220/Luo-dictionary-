@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef, type ComponentType, type ReactNode } from "react";
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
 import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
+import { BottomMediaControls } from "./bottom-media-controls";
 import type { ContentItem, MediaItem } from "@/lib/app-content";
 
 const FILTER_ICONS = { all: LayoutGrid, image: Image, audio: Headphones, video: Video, transcript: FileText };
@@ -65,84 +66,31 @@ export function ModuleContentView({
 
   return (
     <div className="library-page">
-      <div className="module-controls sticky top-0 z-20 mb-4 bg-[#eee5d5] p-3 shadow-sm" data-sticky-controls>
-      <header className="mb-2 flex min-w-0 items-center justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-1">
-            {languageName} · {baseName}
-          </p>
-          <h2 className="truncate font-serif text-xl md:text-3xl text-stone-900 leading-tight" title={title}>
-            {title}
-          </h2>
-        </div>
-
-        <label className="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-stone-800">
-          <span className="sr-only sm:not-sr-only">View language</span>
-          <select aria-label="Content language" value={viewLanguageCode} onChange={(event) => setViewLanguageCode(event.target.value)} className="min-h-11 max-w-28 rounded-lg border border-stone-800/20 bg-white px-2 text-sm sm:max-w-64">
-            <option value={languageCode}>{languageName}</option>
-            {languageCode !== "eng" && <option value="eng">English — {languageName} culture</option>}
-          </select>
-        </label>
-
-        {moduleCode !== "all" && canContribute && <NavigationLink
-          href={contributionHref(moduleCode)}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 bg-[#6b4724] text-amber-50 px-3 rounded-lg text-sm font-semibold hover:bg-[#5c3a1c] shrink-0 blink-contribute"
-        >
-          <Plus size={18} aria-hidden="true" />
-          <span className="sr-only sm:not-sr-only">Contribute</span>
-        </NavigationLink>}
+      <div className="module-controls sticky top-0 z-20 mb-3 bg-[#eee5d5] px-3 py-2 shadow-sm" data-sticky-controls>
+      <div className="flex min-w-0 items-center gap-2" data-search-language-row>
+        {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
+        <label className="shrink-0"><span className="sr-only">Content language</span><select aria-label="Content language" value={viewLanguageCode} onChange={event => setViewLanguageCode(event.target.value)} className="min-h-11 w-24 rounded-lg border border-stone-400 bg-white px-2 text-base sm:w-36">
+          <option value={languageCode}>{languageName}</option>
+          {languageCode !== "eng" && <option value="eng">English</option>}
+        </select></label>
+      </div>
+      <header className="mt-1 flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-baseline gap-2"><h2 className="truncate font-serif text-lg text-stone-900 sm:text-2xl" title={title}>{title}</h2><span className="truncate text-xs text-stone-700" title={baseName}>{languageName}</span></div>
+        {moduleCode !== "all" && canContribute && <NavigationLink href={contributionHref(moduleCode)} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-amber-950 hover:bg-white/60"><Plus size={18} aria-hidden="true" /><span>Contribute</span></NavigationLink>}
       </header>
-      {searchControls}
-
       {moduleCode === "all" && <div className="flex flex-nowrap gap-2 mb-3 overflow-x-auto">
         {[{ key: "all", label: "All content" }, ...categories.map(([key, label]) => ({ key, label }))].map((item) => (
           <button key={item.key} aria-pressed={category === item.key} onClick={() => setCategory(item.key)} className={`shrink-0 min-h-11 text-xs font-semibold px-4 py-1.5 rounded-full border ${category === item.key ? "bg-amber-800 text-white border-amber-800" : "bg-white/60 text-stone-800 border-stone-800/20"}`}>{item.label}</button>
         ))}
       </div>}
 
-      <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 border-b border-stone-900/15">
-        <div className="flex flex-nowrap gap-1" role="group" aria-label="Content type">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              title={f.label}
-              aria-label={f.label}
-              aria-pressed={filter === f.key}
-              onClick={() => setFilter(f.key)}
-              className={`flex shrink-0 min-h-11 min-w-11 items-center justify-center gap-2 text-xs font-semibold px-2 sm:px-4 py-2 rounded-full border transition-colors ${
-                filter === f.key
-                  ? "bg-stone-900 text-amber-50 border-stone-900 shadow-md"
-                  : "bg-black/5 backdrop-blur-sm text-stone-900 border-stone-800/25 hover:border-stone-900 hover:bg-black/10"
-              }`}
-            >
-              {(() => { const Icon = FILTER_ICONS[f.key]; return <Icon size={18} aria-hidden="true" />; })()}
-              <span className="sr-only sm:not-sr-only">{f.label}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="ml-auto flex shrink-0 gap-1">
-          {VIEW_MODES.filter(v => v.key !== view).map((v) => (
-            <button
-              key={v.key}
-              onClick={() => setView(v.key)}
-              title={v.label}
-              aria-label={`${v.label} view`}
-              aria-pressed={view === v.key}
-              className={`w-11 h-11 rounded-full flex items-center justify-center text-sm transition-all ${
-                view === v.key
-                  ? "bg-stone-900 text-amber-50 shadow-sm"
-                  : "text-stone-800 hover:bg-black/10"
-              }`}
-            >
-              {v.key === "grid" ? <LayoutGrid size={18} aria-hidden="true" /> : <List size={18} aria-hidden="true" />}
-            </button>
-          ))}
-        </div>
       </div>
-
-      </div>
+      <BottomMediaControls>
+        <div className="media-filter-buttons" role="group" aria-label="Content type">
+          {FILTERS.map(f => { const Icon = FILTER_ICONS[f.key]; return <button key={f.key} type="button" title={f.label} aria-label={f.label} aria-pressed={filter === f.key} onClick={() => setFilter(f.key)} className={`media-filter-button ${filter === f.key ? "is-active" : ""}`}><Icon size={20} aria-hidden="true" /><span>{f.label}</span></button>; })}
+        </div>
+        {VIEW_MODES.filter(mode => mode.key !== view).map(mode => <button key={mode.key} type="button" title={mode.label} aria-label={`${mode.label} view`} onClick={() => setView(mode.key)} className="media-filter-button">{mode.key === "grid" ? <LayoutGrid size={20} aria-hidden="true" /> : <List size={20} aria-hidden="true" />}<span>{mode.label}</span></button>)}
+      </BottomMediaControls>
 
       {filteredItems.length === 0 ? (
         <div className="px-4 py-8 md:py-14 text-center max-w-xl mx-auto">

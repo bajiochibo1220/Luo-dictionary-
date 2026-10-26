@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { MediaTypeFilters } from "@/components/admin/media-type-filters";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { MediaGrid } from "@/components/admin/media-grid";
@@ -12,7 +12,8 @@ export default async function MediaLibraryPage({
 }) {
   const searchParams = await promisedSearchParams;
   const session = await auth();
-  const user = session!.user as any;
+  if (!session?.user) redirect("/login");
+  const user = session.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   if (!isSuperAdmin && !(user.languageRoles ?? []).some((role: any) => role.role === "language_admin")) redirect("/admin/dashboard");
 
@@ -33,7 +34,7 @@ export default async function MediaLibraryPage({
       { record: { languageId: cultureId } },
     ] });
   } else if (managedLanguageIds) filters.push({ languageId: { in: managedLanguageIds } });
-  if (searchParams.type) filters.push({ type: searchParams.type });
+  if (searchParams.type) filters.push({ type: ["document", "transcript"].includes(searchParams.type) ? { in: ["document", "transcript"] } : searchParams.type });
   if (searchParams.module) filters.push({ OR: [
     { record: { module: { code: searchParams.module } } },
     { recordId: null, nrfMetadata: { path: ["genre"], equals: searchParams.module } },
@@ -66,7 +67,7 @@ export default async function MediaLibraryPage({
   const formatted = assets.map((a) => ({
     id: a.id,
     type: a.type,
-    url: a.url,
+    url: `/api/media/${a.id}/file`,
     publicId: a.publicId,
     resourceType: a.resourceType,
     format: a.format,
@@ -75,7 +76,7 @@ export default async function MediaLibraryPage({
     width: a.width,
     height: a.height,
     caption: a.caption,
-    thumbnailUrl: a.thumbnailUrl,
+    thumbnailUrl: a.type === "image" ? `/api/media/${a.id}/file` : null,
     createdAt: a.createdAt.toISOString(),
     language: a.language,
     languageId: a.languageId,
@@ -87,7 +88,7 @@ export default async function MediaLibraryPage({
   const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
 
   return (
-    <div>
+    <div className="pb-24">
       <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           Media Library
@@ -97,31 +98,7 @@ export default async function MediaLibraryPage({
         </p>
       </header>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        <Link
-          href="/admin/media"
-          className={`text-xs px-3 py-1.5 rounded-full ${
-            !searchParams.type && !searchParams.module
-              ? "bg-amber-600 text-white"
-              : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
-          }`}
-        >
-          All
-        </Link>
-        {["image", "video", "audio", "document"].map((t) => (
-          <Link
-            key={t}
-            href={`/admin/media?${new URLSearchParams({ ...(searchParams.module ? { module: searchParams.module } : {}), type: t })}`}
-            className={`text-xs px-3 py-1.5 rounded-full capitalize ${
-              searchParams.type === t
-                ? "bg-amber-600 text-white"
-                : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
-            }`}
-          >
-            {t}
-          </Link>
-        ))}
-      </div>
+      <MediaTypeFilters type={searchParams.type} moduleCode={searchParams.module} />
 
       <form method="GET" action="/admin/media" className="mb-5 flex flex-wrap items-center gap-3">
         {searchParams.type && <input type="hidden" name="type" value={searchParams.type} />}

@@ -43,7 +43,8 @@ test('collection search belongs inside the sticky toolbar and empty state has on
   assert.ok(html.indexOf('data-sticky-controls') < html.indexOf('role="search"'));
   assert.equal(html.split('href="/contribute/dictionary"').length - 1, 1);
   assert.match(html, /aria-label="Content language"/);
-  assert.match(html, /English.*Dholuo culture/);
+  assert.match(html, /<option value="eng">English<\/option>/);
+  assert.match(html, /data-bottom-controls/);
 });
 
 test('English view displays the paired English title and downloadable full text', () => {
@@ -88,4 +89,36 @@ test('an editor cannot send an edited community record for publishing without it
   const response = await POST(new Request('https://example.test/api/content/record/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ checklist }) }), { params: Promise.resolve({ id: 'record' }) });
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /English version/);
+});
+
+test('administrative media uses access-checked file URLs and the transcript filter includes document attachments', async () => {
+  let where;
+  const Grid = () => null;
+  const Filters = () => null;
+  const { default: Page } = loader({
+    '@/lib/auth': { auth: async () => ({ user: { id: 'admin', isSuperAdmin: true } }) },
+    '@/lib/admin-language': { getSelectedAdminCultureId: async () => 1 },
+    '@/components/admin/media-grid': { MediaGrid: Grid },
+    '@/components/admin/media-type-filters': { MediaTypeFilters: Filters },
+    '@/lib/db': { prisma: { module: { findMany: async () => [] }, mediaAsset: { findMany: async options => { where = options.where; return [{ id: 'private-image', type: 'image', url: 'https://example.test/authenticated/private.png', sizeBytes: 100n, createdAt: new Date(), language: { code: 'luo', nativeName: 'Dholuo' } }]; } } } },
+  })('src/app/(admin)/admin/media/page.tsx');
+  const element = await Page({ searchParams: Promise.resolve({ type: 'document' }) });
+  const grid = React.Children.toArray(element.props.children).find(child => child.type === Grid);
+  assert.equal(grid.props.assets[0].url, '/api/media/private-image/file');
+  assert.equal(grid.props.assets[0].thumbnailUrl, '/api/media/private-image/file');
+  assert.ok(where.AND.some(filter => filter.type?.in?.includes('document') && filter.type.in.includes('transcript')));
+});
+
+test('expired administrative media sessions redirect before accessing records', async () => {
+  const { default: Page } = loader({ '@/lib/auth': { auth: async () => null }, '@/lib/db': { prisma: {} }, 'next/navigation': { redirect: destination => { throw Object.assign(new Error('redirect'), { destination }); } } })('src/app/(admin)/admin/media/page.tsx');
+  await assert.rejects(Page({ searchParams: Promise.resolve({}) }), error => error.destination === '/login');
+});
+
+test('bottom admin media controls preserve the collection filter when selecting All', () => {
+  const Link = ({ children, ...props }) => React.createElement('a', props, children);
+  const { MediaTypeFilters } = loader({ '@/components/layout/navigation-link': { NavigationLink: Link } })('src/components/admin/media-type-filters.tsx');
+  const html = renderToStaticMarkup(React.createElement(MediaTypeFilters, { type: 'document', moduleCode: 'songs' }));
+  assert.match(html, /data-bottom-controls/);
+  assert.match(html, /href="\/admin\/media\?module=songs"/);
+  assert.equal((html.match(/aria-current="page"/g) || []).length, 1);
 });

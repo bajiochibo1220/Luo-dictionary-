@@ -17,6 +17,7 @@ import { SidebarPanel, SidebarProvider, SidebarToggle, useSidebar } from "@/comp
 import type { AppBootstrap, AppLibrary } from "@/lib/app-contract";
 import type { AppAccount, ConversationHistory } from "@/lib/account-contract";
 import type { ApplicationAdapters, ApplicationSession } from "@/lib/application-adapters";
+import { DismissiblePopover, PopoverClose } from "./dismissible-popover";
 import { PartnerBranding } from "./partner-branding";
 import { APP_NAME } from "@/lib/brand";
 const ApplicationContext = createContext<ApplicationAdapters | null>(null);
@@ -40,7 +41,7 @@ function MobileBackLink({ label = "Back", variant }: { href?: string; label?: st
 }
 
 function App() {
-  const { bootstrap, library, apiOrigin, account, conversations, nativeSession, chatRequest, featureRequest, featureFetch, artwork } = useAdapters();
+  const { bootstrap, library, apiOrigin, account, conversations, nativeSession, chatRequest, featureRequest, featureFetch } = useAdapters();
   const [route, setRoute] = useState("/dashboard");
   const [language, setLanguage] = useState("luo");
   const [configuration, setConfiguration] = useState<AppBootstrap | null>(null);
@@ -150,36 +151,26 @@ function App() {
 
   return <div className="flex h-dvh overflow-hidden flex-col bg-[#b89a68]">
     {nativeSession.isNative && <Toaster richColors />}
-    <header className="institution-masthead flex shrink-0 flex-wrap items-center gap-3 border-b border-amber-100/15 bg-[#5c3a1c] px-4 py-3 text-amber-50 pt-safe sm:flex-nowrap">
+    <header className="institution-masthead flex shrink-0 items-center gap-2 border-b border-amber-100/15 bg-[#5c3a1c] px-3 py-2 text-amber-50 pt-safe">
       <SidebarToggle />
-      <img src={artwork} width="48" height="48" alt="" className="h-12 w-12 shrink-0 rounded-xl" />
-      <div className="min-w-0 flex-1"><span title={APP_NAME} className="block truncate font-serif text-lg sm:text-2xl">{APP_NAME}</span><PartnerBranding request={featureRequest} /></div>
-      <div className="order-last flex w-full items-center justify-end gap-3 sm:order-none sm:w-auto">
-        <Link href="/chatbot" className="rounded-lg px-2 py-2 text-sm font-semibold">Chat</Link>
-        <label className="sr-only" htmlFor="language">Language</label>
-        <select id="language" value={language} onChange={event => setLanguage(event.target.value)} className="max-w-24 rounded-lg border border-amber-100/20 bg-[#6b4724] p-2 text-sm">
-          {(configuration?.languages.filter(item => item.code !== "eng") ?? [{ code: "luo", nativeName: "Dholuo" }]).map(item => <option key={item.code} value={item.code}>{item.nativeName}</option>)}
-        </select>
-        {!session && (nativeSession.isNative
-          ? <button type="button" aria-label="Create account" onClick={() => signIn("register")} disabled={signingIn} className="whitespace-nowrap rounded-full border border-amber-100/30 px-3 py-2 text-sm font-semibold disabled:opacity-50">Create account</button>
-          : <Link href="/register" className="whitespace-nowrap rounded-full border border-amber-100/30 px-3 py-2 text-sm font-semibold">Create account</Link>)}
-      </div>
-      {session ? <div className="relative shrink-0"><button type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</button>
-        {accountMenuOpen && <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Saved conversations</Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Settings &amp; profile</Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700">Sign out</button></div>}
-      </div>
+      <span title={APP_NAME} className="min-w-0 flex-1 truncate font-serif text-lg">{APP_NAME}</span>
+      {session ? <DismissiblePopover className="relative shrink-0" open={accountMenuOpen} onClose={() => setAccountMenuOpen(false)}><button type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</button>
+        {accountMenuOpen && <div className="absolute right-0 z-50 mt-2 max-h-[75dvh] max-w-[calc(100vw-1rem)] overflow-y-auto w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><PopoverClose onClose={() => setAccountMenuOpen(false)} /><Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Saved conversations</Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Settings &amp; profile</Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700">Sign out</button></div>}
+      </DismissiblePopover>
         : nativeSession.isNative ? <button type="button" aria-label="Sign in" onClick={() => signIn()} disabled={signingIn} className="shrink-0 whitespace-nowrap text-sm font-semibold disabled:opacity-50">{signingIn ? "Connecting…" : "Sign in"}</button>
         : <Link href="/login" className="shrink-0 whitespace-nowrap text-sm font-semibold">Sign in</Link>}
     </header>
     {personalError && !isAccount && <div role="alert" className="flex shrink-0 items-start gap-3 bg-red-50 px-4 py-3 text-sm text-red-900"><p className="flex-1">{personalError}</p><button type="button" aria-label="Dismiss sign-in message" onClick={() => setPersonalError("")} className="font-semibold underline">Dismiss</button></div>}
     <div className="relative flex min-h-0 flex-1">
-      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? "/workspace" : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
+      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? "/workspace" : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} communityControls={<label className="block px-5 py-3 text-sm text-amber-50">Community<select aria-label="Choose community" value={language} onChange={event => { setLanguage(event.target.value); sidebar?.closeMobile(); }} className="mt-2 min-h-11 w-full rounded-lg border border-amber-100/20 bg-[#6b4724] px-3">{(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).filter(item => item.code !== "eng").map(item => <option key={item.code} value={item.code}>{item.nativeName}</option>)}</select></label>} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
       <main className="min-w-0 flex-1 overflow-y-auto pb-safe heritage-pattern">
         {isResearch ? <ResearchLibrary key={`${language}:${profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} languageId={configuration?.selectedLanguage.id ?? 1} account={profile} /> : isEducation ? <EducationHub key={`${routeUrl.pathname}:${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialView={routeUrl.pathname === "/classrooms" ? "classes" : "courses"} onOpenResource={(id, resourceLanguageId) => { const target = configuration?.languages.find(item => item.id === resourceLanguageId); if (target) setLanguage(target.code); location.hash = `/learn?resource=${encodeURIComponent(id)}`; }} /> : isWorkspace ? <ManagementWorkspace languages={configuration?.languages ?? []} key={session?.accountId || profile?.id || "guest"} request={featureRequest} transport={featureFetch} account={profile} languageId={configuration?.selectedLanguage.id ?? 1} englishLanguageId={configuration?.languages.find(item => item.code === "eng")?.id} /> : isSaved ? <SavedItems key={profile?.id || "guest"} request={featureRequest} Link={Link} /> : isContribution ? <ContributionHub key={`${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} origin={apiOrigin} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialModule={contributionModule} /> : isSettings ? <AccountSettings key={session?.accountId || profile?.id || "guest"} request={featureRequest} onSignedOut={() => { void signOut(); }} recoveryHref={new URL("/account-recovery", apiOrigin).href} /> : isLearn ? <LearningHub initialKind={routeUrl.searchParams.get("section") || "lesson"} initialResourceId={initialResourceId} key={`${language}:${routeUrl.searchParams.get("section") || "lesson"}:${initialResourceId || "list"}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} origin={apiOrigin} /> : isChat ? <SharedChatInterface key={`${language}:${session?.accountId ?? session?.refreshToken?.split(".")[0] ?? session?.accessToken ?? "guest"}`} languageCode={language} cultureCode={language} guest={!session} request={chatRequest} BackLink={MobileBackLink} Link={Link} onSessionExpired={onChatSessionExpired} initialConversationId={initialConversationId} />
           : isAccount ? session && profile ? <AccountHistoryView account={profile} history={history} archived={archived} loading={personalLoading} error={personalError} onArchivedChange={setArchived} onRetry={() => setRetry(value => value + 1)} onOpenChat={id => { location.hash = `/chatbot?conversation=${encodeURIComponent(id)}`; }} />
           : <div className="p-8"><h1 className="font-serif text-3xl">My account</h1><p className="mt-4" role={personalError ? "alert" : "status"}>{personalError || (personalLoading ? "Loading your account…" : "Sign in to view your saved chats.")}</p>{session && <button type="button" onClick={() => setRetry(value => value + 1)} className="mt-4 underline">Try again</button>}</div>
           : loading ? <p role="status" className="p-8">Loading library…</p> : error ? <div role="alert" className="p-8"><p>{error}</p><button type="button" className="mt-4 rounded-full bg-[#6b4724] px-5 py-2 text-amber-50" onClick={() => setRetry(value => value + 1)}>Try again</button></div> : content ? <PaginatedLibrary key={`${language}:${activeModule}`} initial={content} request={featureRequest} Link={Link} /> : <DashboardOverview languageName={configuration?.selectedLanguage.nativeName || "Dholuo"} name={session ? profile?.name : undefined} />}
+        {!isChat && <PartnerBranding request={featureRequest} variant="footer" />}
       </main>
-      {!isChat && <Link href="/chatbot" className="absolute bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-amber-600 text-white shadow-xl"><svg aria-label="Open AI chatbot" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></Link>}
+      {!isChat && <Link href="/chatbot" className={`absolute ${content ? "bottom-24" : "bottom-4"} right-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 text-white shadow-xl`}><svg aria-label="Open AI chatbot" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></Link>}
     </div>
   </div>;
 }

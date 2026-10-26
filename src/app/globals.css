@@ -110,3 +110,25 @@
   background: linear-gradient(110deg, color-mix(in srgb, var(--jooust-brand) 65%, #111), color-mix(in srgb, var(--nrf-brand) 65%, #111));
 }
 .institution-border { border-bottom: 3px solid var(--jooust-brand); box-shadow: 0 1px 0 var(--nrf-brand); }
+
+/* Quiet institutional placement: large on auth pages, one pair in page footers. */
+.partner-branding { display: flex; align-items: center; gap: .75rem; }
+.partner-mark { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-bottom: 2px solid; padding: .125rem .375rem; font-size: .7rem; font-weight: 600; }
+.partner-logo { height: 1.75rem; max-width: 4.5rem; object-fit: contain; background: white; border-radius: .25rem; padding: .125rem; }
+.partner-branding-footer { justify-content: center; padding: 1rem .75rem calc(5.5rem + env(safe-area-inset-bottom, 0px)); color: #57534e; }
+.partner-branding-auth { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.partner-branding-auth .partner-mark { flex-direction: column; justify-content: flex-start; align-self: stretch; padding: .5rem; min-width: 0; }
+.partner-branding-auth .partner-logo { width: 100%; height: 5.5rem; max-width: 9rem; padding: .25rem; background: transparent; }
+.partner-caption { max-width: 12rem; text-align: center; font-size: .65rem; line-height: 1.4; }
+@media (min-width: 768px) { .partner-branding-auth .partner-logo { height: 7rem; max-width: 11rem; } }
+/* Media controls stay at the bottom; only search and language use the top. */
+.library-page { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+.library-media-dock { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 30; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 1fr); gap: .25rem; padding: .375rem .5rem calc(.375rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid #d6c8af; background: #f8f4eb; box-shadow: 0 -3px 14px #29252412; }
+.media-filter-buttons { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .125rem; }
+.media-filter-button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem; min-height: 3.25rem; min-width: 0; border-radius: .625rem; color: #57534e; }
+.media-filter-button span { font-size: .625rem; line-height: 1.2; }
+.media-filter-button:hover { background: #e9e1d2; }
+.media-filter-button.is-active { background: #6b4724; color: white; }
+body:has(.library-media-dock) .floating-chatbot { bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px)); }
+
+.media-dock-five { grid-template-columns: minmax(0, 1fr); }

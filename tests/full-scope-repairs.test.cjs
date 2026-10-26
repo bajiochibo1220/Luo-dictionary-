@@ -13,12 +13,12 @@ test('removed phone endpoint never issues or links a code',async()=>{
  const result=await POST(new Request('http://localhost:3000/api/auth/phone',{method:'POST'}));
  assert.equal(result.status,410);assert.match((await result.json()).error,/Google or email/);
 });
-test('shared module controls have accessible icon filters and a sticky horizontal toolbar',()=>{
+test('shared collection separates sticky search from accessible bottom media controls',()=>{
  const {ModuleContentView}=loader()('src/components/shared/module-content-view.tsx');
  const Link=({href,children,className})=>React.createElement('a',{href,className},children);
  const html=renderToStaticMarkup(React.createElement(ModuleContentView,{title:'Muma',baseName:'Dictionary',languageName:'Dholuo',languageCode:'luo',languageId:1,moduleCode:'dictionary',items:[],Link}));
  for(const label of ['All','Images','Audio','Video','Transcripts'])assert.ok(html.includes('aria-label="'+label+'"'));
- assert.match(html,/data-sticky-controls/);assert.match(html,/flex-nowrap/);assert.match(html,/sr-only sm:not-sr-only/);
+ assert.match(html,/data-sticky-controls/);assert.match(html,/data-bottom-controls/);assert.match(html,/library-media-dock/);
 });
 test('account email accepts admin-saved credentials when environment overrides are absent',async()=>{
  const old={EMAIL_PROVIDER:process.env.EMAIL_PROVIDER,EMAIL_FROM:process.env.EMAIL_FROM,EMAIL_API_KEY:process.env.EMAIL_API_KEY};

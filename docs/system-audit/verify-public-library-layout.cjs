@@ -61,8 +61,8 @@ async function main() {
       for (let retry = 0; retry < 30; retry++) { if (await evaluate('!!document.querySelector("[data-sticky-controls]")')) break; await new Promise(resolve => setTimeout(resolve, 100)); }
       const before = await evaluate('document.querySelector("[data-sticky-controls]").getBoundingClientRect().top');
       await evaluate('document.querySelector("main").scrollTop = 600; new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
-      const measured = await evaluate(`(() => { const bar = document.querySelector('[data-sticky-controls]'); const rect = bar.getBoundingClientRect(); const main = document.querySelector('main'); return {width: innerWidth, top: rect.top, height: rect.height, scrolled: main.scrollTop, pageOverflow: document.documentElement.scrollWidth > innerWidth, filterTops: [...bar.querySelectorAll('[aria-label="Content type"] button')].map(button => button.getBoundingClientRect().top), searchVisible: !!bar.querySelector('[role="search"]')}; })()`);
-      if (Math.abs(before - measured.top) > 1 || measured.pageOverflow || measured.scrolled < 100 || !measured.searchVisible || new Set(measured.filterTops).size !== 1 || width < 768 && measured.height > 220) throw new Error(`Mobile toolbar failed: ${JSON.stringify({ before, ...measured })}`);
+      const measured = await evaluate(`(() => { const bar = document.querySelector('[data-sticky-controls]'); const rect = bar.getBoundingClientRect(); const main = document.querySelector('main'); const dock = document.querySelector('[data-bottom-controls]'); const dockBounds = dock.getBoundingClientRect(); return {width: innerWidth, top: rect.top, height: rect.height, scrolled: main.scrollTop, pageOverflow: document.documentElement.scrollWidth > innerWidth, dockBottom: dockBounds.bottom, filterTops: [...dock.querySelectorAll('[aria-label="Content type"] button')].map(button => button.getBoundingClientRect().top), searchVisible: !!bar.querySelector('[role="search"]')}; })()`);
+      if (Math.abs(before - measured.top) > 1 || measured.pageOverflow || measured.scrolled < 100 || !measured.searchVisible || Math.abs(measured.dockBottom - 844) > 1 || new Set(measured.filterTops).size !== 1 || width < 768 && measured.height > 112) throw new Error(`Mobile toolbar failed: ${JSON.stringify({ before, ...measured })}`);
       results.push({ workspace, before, ...measured });
       if (width === 360 || width === 1440 && workspace === 'public') {
         const screenshot = await command('Page.captureScreenshot', { format: 'png' });
@@ -71,7 +71,7 @@ async function main() {
       process.stdout.write(`PASS ${workspace} ${width}px: toolbar ${Math.round(measured.height)}px, top stays ${measured.top}px, no page overflow\n`);
     }
     }
-    fs.writeFileSync('docs/system-audit/public-library-layout-2026-10-26.json', JSON.stringify({ fixture: true, results }, null, 2));
+    fs.writeFileSync('docs/system-audit/compact-library-layout-2026-10-26.json', JSON.stringify({ fixture: true, results }, null, 2));
   } finally { socket?.close(); chrome.kill(); }
 }
 main().catch(error => { process.stderr.write(`${error.stack}\n`); process.exitCode = 1; });

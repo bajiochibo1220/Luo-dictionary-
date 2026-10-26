@@ -1,6 +1,7 @@
 "use client";
 
 import { NavigationLink as Link } from "./navigation-link";
+import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
@@ -20,7 +21,7 @@ export function UserMenu({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative">
+    <DismissiblePopover open={open} onClose={() => setOpen(false)}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -35,11 +36,8 @@ export function UserMenu({
 
       {open && (
         <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
+          <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-1rem)] max-h-[75dvh] overflow-y-auto bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
+                <PopoverClose onClose={() => setOpen(false)} />
             <div className="px-4 py-2 border-b border-stone-100">
               <p className="text-sm font-medium text-stone-800 truncate">
                 {userName || "User"}
@@ -77,6 +75,6 @@ export function UserMenu({
           </div>
         </>
       )}
-    </div>
+    </DismissiblePopover>
   );
 }

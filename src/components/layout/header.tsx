@@ -6,8 +6,6 @@ import { usePathname } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "@/components/layout/user-menu";
-import { BrandMark } from "./brand-mark";
-import { PartnerBranding } from "@/components/shared/partner-branding";
 import { APP_NAME } from "@/lib/brand";
 
 const NAV_MODULES = [
@@ -44,9 +42,8 @@ export function Header() {
     <header className="institution-border bg-white border-b border-stone-200 sticky top-0 z-40">
       <div className="container mx-auto px-3 md:px-4 py-3 flex items-center justify-between gap-3">
         <Link href={`/${language.code}`} className="flex min-w-0 items-center gap-2">
-          <BrandMark className="h-10 w-10 sm:h-12 sm:w-12" />
           <span className="truncate text-xl sm:text-2xl font-serif text-stone-800">
-            {APP_NAME}<PartnerBranding />
+            {APP_NAME}
           </span>
           <span className="hidden md:inline text-xs text-amber-600 font-medium px-2 py-0.5 bg-amber-50 rounded-sm">
             {language.nativeName}

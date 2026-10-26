@@ -1,4 +1,5 @@
 ﻿"use client";
+import { PartnerBranding } from "@/components/shared/partner-branding";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -68,7 +69,7 @@ export function AppShell({ sidebar, children }: { sidebar: React.ReactNode; chil
     </div>}
     <main className="relative min-w-0 flex-1 overflow-hidden bg-[#b89a68]">
       <div className="pointer-events-none absolute inset-0 opacity-[0.10]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fff2d3' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
-      <div className="relative h-full overflow-y-auto overscroll-contain">{children}</div>
+      <div className="relative h-full overflow-y-auto overscroll-contain">{children}<PartnerBranding variant="footer" /></div>
     </main>
   </div>;
 }

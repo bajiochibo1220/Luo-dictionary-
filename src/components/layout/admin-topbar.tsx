@@ -1,12 +1,11 @@
 "use client";
 
 import { NavigationLink as Link } from "./navigation-link";
+import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { BrandMark } from "./brand-mark";
 import { SidebarToggle } from "./sidebar-controls";
-import { PartnerBranding } from "@/components/shared/partner-branding";
 import { APP_NAME } from "@/lib/brand";
 
 type AdminNotification = {
@@ -94,17 +93,16 @@ export function AdminTopbar({
   }
 
   return (
-    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 h-20 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
+    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
         <SidebarToggle />
         <div className="min-w-0"><Link
           href="/admin/dashboard"
           aria-label={`${APP_NAME} administration`}
-          className="hidden min-w-0 items-center gap-2 rounded-xl text-xl sm:flex font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
+          className="flex min-w-0 items-center gap-2 rounded-xl text-lg font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
         >
-          <BrandMark className="h-11 w-11 md:h-12 md:w-12" />
-          <span className="hidden truncate sm:block">{APP_NAME}</span>
-        </Link><PartnerBranding /></div>
+          <span className="truncate">{APP_NAME}</span>
+        </Link></div>
         {isSuperAdmin && (
           <span className="hidden xl:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
             {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
@@ -137,7 +135,7 @@ export function AdminTopbar({
             </select>
           </label>
         )}
-        <div className="relative">
+        <DismissiblePopover open={notificationsOpen} onClose={() => setNotificationsOpen(false)}>
           <button
             type="button"
             onClick={() => void toggleNotifications()}
@@ -154,8 +152,7 @@ export function AdminTopbar({
           </button>
           {notificationsOpen && (
             <>
-              <button type="button" aria-label="Close notifications" className="fixed inset-0 z-10 cursor-default" onClick={() => setNotificationsOpen(false)} />
-              <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-stone-200 py-2 z-20">
+              <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-stone-200 py-2 z-20"><PopoverClose label="Close notifications" onClose={() => setNotificationsOpen(false)} />
                 <div className="px-4 py-2 border-b border-stone-100 flex items-center justify-between">
                   <p className="text-sm font-semibold text-stone-800">Notifications</p>
                   {unreadCount > 0 && <span className="text-xs text-stone-500">{unreadCount} unread</span>}
@@ -182,9 +179,9 @@ export function AdminTopbar({
               </div>
             </>
           )}
-        </div>
+        </DismissiblePopover>
 
-        <div className="relative">
+        <DismissiblePopover open={menuOpen} onClose={() => setMenuOpen(false)}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             type="button"
@@ -199,11 +196,8 @@ export function AdminTopbar({
 
           {menuOpen && (
             <>
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setMenuOpen(false)}
-              />
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
+              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-1rem)] max-h-[75dvh] overflow-y-auto bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
+                <PopoverClose onClose={() => setMenuOpen(false)} />
                 {isSuperAdmin && <label className="block border-b px-4 py-3 text-sm text-stone-800 sm:hidden">Manage community<select aria-label="Choose community to manage" value={selectedLanguageId ?? ""} onChange={event => void selectLanguage(Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 bg-white px-2">{languages.map(language => <option key={language.id} value={language.id}>{language.nativeName}</option>)}</select></label>}
                 <div className="px-4 py-2 border-b border-stone-100">
                   <p className="text-sm font-medium text-stone-800 truncate">
@@ -238,7 +232,7 @@ export function AdminTopbar({
               </div>
             </>
           )}
-        </div>
+        </DismissiblePopover>
       </div>
     </header>
   );

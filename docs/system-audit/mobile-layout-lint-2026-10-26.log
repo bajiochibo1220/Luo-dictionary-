@@ -1,0 +1,91 @@
+
+> luolinguaai@1.0.0 lint
+> eslint src scripts tests
+
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(admin)\admin\review-queue\[id]\page.tsx
+  151:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(admin)\admin\validation-queue\[id]\page.tsx
+  157:40  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\gik-luo\[id]\page.tsx
+   52:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  152:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\muma\[id]\page.tsx
+  43:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\ngero\[id]\page.tsx
+  107:34  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\app\(public)\[lang]\piny-luo\[id]\page.tsx
+  57:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\admin\media-grid.tsx
+  146:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  153:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  200:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\admin-topbar.tsx
+  193:28  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\app-topbar.tsx
+  94:26  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\layout\user-menu.tsx
+  33:24  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\artifacts\artifact-grid.tsx
+   58:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  101:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\dictionary\dictionary-card.tsx
+  48:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\folktales\folktale-card.tsx
+  30:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\folktales\folktale-detail.tsx
+  95:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\heritage-sites\sites-map.tsx
+  147:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\oral-history\oral-history-card.tsx
+  36:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\proverbs\proverb-card.tsx
+  41:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\riddles\riddle-card.tsx
+  36:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\songs\song-card.tsx
+  55:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\modules\songs\song-detail.tsx
+  85:36  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\chat-interface.tsx
+  613:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\management-workspace.tsx
+  64:88  warning  The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\module-content-view.tsx
+  150:40  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  185:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  188:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\partner-branding.tsx
+  17:424  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\protected-media.tsx
+  26:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\src\components\shared\research-library.tsx
+  12:83  warning  The ref value 'epoch.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'epoch.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+✖ 32 problems (0 errors, 32 warnings)
+

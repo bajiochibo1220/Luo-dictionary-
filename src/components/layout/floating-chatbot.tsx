@@ -6,7 +6,7 @@ export function FloatingChatbot() {
   return (
     <Link
       href="/chatbot"
-      className="fixed bottom-4 right-4 z-30 group"
+      className="floating-chatbot fixed bottom-4 right-4 z-30 group"
       aria-label="Open AI chatbot"
     >
       <div className="relative">

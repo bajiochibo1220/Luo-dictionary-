@@ -1,11 +1,10 @@
 "use client";
 
 import { NavigationLink as Link } from "./navigation-link";
+import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { BrandMark } from "./brand-mark";
 import { SidebarToggle } from "./sidebar-controls";
-import { PartnerBranding } from "@/components/shared/partner-branding";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 
 export function AppTopbar({
@@ -30,17 +29,15 @@ export function AppTopbar({
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
-    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-3 shadow-lg relative z-30">
+    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-2 shadow-sm relative z-30">
       {/* Left: Logo */}
       <div className="flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
         <SidebarToggle />
         <Link href="/dashboard" aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
-        <BrandMark className="h-12 w-12 md:h-14 md:w-14 shadow-lg" />
         <div className="min-w-0">
           <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
             {APP_NAME}
           </h1>
-          <PartnerBranding />
           <p className="sr-only">
             {APP_TAGLINE}
           </p>
@@ -77,14 +74,6 @@ export function AppTopbar({
           Search
         </Link>
 
-        <Link
-          href="/chatbot"
-          className="hidden md:inline-flex items-center gap-2 text-sm text-amber-100/80 hover:text-amber-50 transition font-medium px-3 py-1.5 rounded-full hover:bg-amber-100/10"
-        >
-          <span>💬</span>
-          Chat
-        </Link>
-
         {isAdmin && (
           <Link
             href="/admin/dashboard"
@@ -94,7 +83,7 @@ export function AppTopbar({
           </Link>
         )}
 
-        <div className="relative">
+        <DismissiblePopover open={profileOpen} onClose={() => setProfileOpen(false)}>
           <button
             type="button"
             onClick={() => setProfileOpen((open) => !open)}
@@ -106,13 +95,8 @@ export function AppTopbar({
           </button>
           {profileOpen && (
             <>
-              <button
-                type="button"
-                aria-label="Close account menu"
-                className="fixed inset-0 z-10 cursor-default"
-                onClick={() => setProfileOpen(false)}
-              />
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-stone-200 py-2 z-20">
+              <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1rem)] max-h-[75dvh] overflow-y-auto bg-white rounded-xl shadow-xl border border-stone-200 py-2 z-20">
+                <PopoverClose onClose={() => setProfileOpen(false)} />
                 <div className="px-4 py-3 border-b border-stone-100">
                   <p className="text-sm font-semibold text-stone-800 truncate">{userName || "Account"}</p>
                   <p className="text-xs text-stone-500 truncate">{userEmail}</p>
@@ -127,7 +111,7 @@ export function AppTopbar({
               </div>
             </>
           )}
-        </div>
+        </DismissiblePopover>
       </div>
     </header>
   );

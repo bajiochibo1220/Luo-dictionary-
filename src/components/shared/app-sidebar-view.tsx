@@ -9,8 +9,9 @@ export type ModuleItem = {
   baseName: string;
 };
 
-export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Link, staffHref }: {
+export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Link, staffHref, communityControls }: {
   staffHref?: string;
+  communityControls?: ReactNode;
   modules: ModuleItem[];
   pathname: string;
   activeModule: string | null;
@@ -32,6 +33,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
         </p>
       </div>
 
+      {communityControls}
       {/* Module list */}
       <nav className="flex-1 overflow-y-auto py-2">
         {staffHref && <Link href={staffHref} onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Staff content workspace</Link>}

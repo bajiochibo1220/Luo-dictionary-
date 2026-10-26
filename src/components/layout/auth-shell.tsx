@@ -1,3 +1,4 @@
+import { PartnerBranding } from "@/components/shared/partner-branding";
 import { BrandMark } from "./brand-mark";
 import { APP_NAME } from "@/lib/brand";
 
@@ -25,11 +26,11 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <p className="font-serif text-2xl text-stone-900">{APP_NAME}</p>
         </div>
 
-        <div className="relative w-full max-w-md">{children}</div>
+        <div className="relative z-10 w-full max-w-md"><div className="mb-6 rounded-2xl border border-white/60 bg-white/85 p-4 shadow-sm"><PartnerBranding variant="auth" /></div>{children}</div>
       </main>
 
       {/* RIGHT — brand story */}
-      <aside className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-[#3d1a0a] via-[#6b3416] to-[#8f4e1f] text-white">
+      <aside className="institution-masthead hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-[#3d1a0a] via-[#6b3416] to-[#8f4e1f] text-white">
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{

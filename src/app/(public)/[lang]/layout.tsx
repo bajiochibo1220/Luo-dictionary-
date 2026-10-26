@@ -1,3 +1,4 @@
+import { PartnerBranding } from "@/components/shared/partner-branding";
 import { maintenanceMessage } from "@/lib/maintenance";
 import { MaintenanceNotice } from "@/components/layout/maintenance-notice";
 import { notFound } from "next/navigation";
@@ -46,6 +47,7 @@ export default async function LangLayout({
       <div className="min-h-screen bg-stone-50">
         <Header />
         <main className="container mx-auto px-4 py-8">{children}</main>
+        <PartnerBranding variant="footer" />
       </div>
     </LanguageProvider>
   );
