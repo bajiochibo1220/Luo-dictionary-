@@ -66,7 +66,7 @@ test('English header module links retain the selected community', () => {
     '@/components/providers/language-provider': { useLanguage: () => ({ language: { code: 'eng', nativeName: 'English' }, t: code => code }) },
   })('src/components/layout/header.tsx');
   const html = renderToStaticMarkup(React.createElement(Header));
-  for (const module of ['muma', 'ngero', 'ngeche', 'wende', 'sigana', 'search']) assert.ok(html.includes(`href="/eng/${module}?culture=kik"`));
+  for (const modulePath of ['muma', 'ngero', 'ngeche', 'wende', 'sigana', 'search']) assert.ok(html.includes(`href="/eng/${modulePath}?culture=kik"`));
   assert.match(html, /href="\/kik\/ngero"/);
 });
 
