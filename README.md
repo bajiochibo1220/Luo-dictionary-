@@ -6,9 +6,17 @@ The app is branded **Luo Heritage**, with the tagline *Language · Culture · Li
 
 Installed apps and browser tabs check for a new release after initial loading, once a minute while visible, and when returning online or to the app. Each production build automatically gets a fresh ID, shared by the UI and the uncached `/api/app-version` endpoint. The update notice offers **Update now** or **Later**; it never reloads unfinished work automatically. Find manual checks and icon replacement instructions at `/mobile-apps` or **App updates & installation** in the account menu. Development mode does not show release alerts. Both manifests retain their original app IDs and URLs and use identical full-color icon artwork; a browser may ask for approval of installed icon/name changes, or an old shortcut may need one-time reinstallation and repinning.
 
+## Web application user manual
+
+For the common web/Android/iOS interface, open `/application`. See the [current full-system implementation status](docs/FULL_SYSTEM_IMPLEMENTATION_STATUS.md) and [Sunday trainer quick start](docs/TRAINER_QUICK_START.md) for delivered workflows, configuration, verification and remaining requirements. The reference documents do not define separate runtime phases.
+
+The [user manual](docs/LUO_HERITAGE_WEB_USER_MANUAL.md) explains the web application in simple steps for readers, contributors, reviewers and administrators. Download the [PDF](docs/LUO_HERITAGE_WEB_USER_MANUAL.pdf) or editable [Word document](docs/LUO_HERITAGE_WEB_USER_MANUAL.docx), or open the [HTML copy](docs/LUO_HERITAGE_WEB_USER_MANUAL.html).
+
+**This manual is for the web application only. Android and iOS applications are still in development.** It identifies unfinished features and does not certify that the full project is complete.
+
 ## Stack
 
-- Next.js 15 (App Router), React 18; Node.js 20.19+ (validated on Node.js 24)
+- Next.js 15.5.28 (App Router), React 18; Node.js 20.19+ (validated on Node.js 24)
 - TypeScript
 - Tailwind CSS 4 + shadcn/ui (modern browsers)
 - Prisma + Neon PostgreSQL

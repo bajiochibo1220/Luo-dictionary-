@@ -10,7 +10,7 @@ export default async function NewLanguagePage() {
 
   return (
     <div>
-      <header className="mb-6 max-w-2xl mx-auto">
+      <header className="workspace-heading mb-6 max-w-2xl mx-auto">
         <Link
           href="/super-admin/languages"
           className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-3"

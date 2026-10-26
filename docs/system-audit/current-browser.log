@@ -1,0 +1,9 @@
+CHECK browser startup
+CHECK login form
+CHECK registration form
+CHECK return to login
+CHECK unsafe callback login
+CHECK password recovery screen
+PASS real login/register links retain app approval, reject external returns and fit a 360px screen; no credentials submitted or accounts created
+CHECK browser
+Shared application acceptance failed: Browser command timed out: Page.navigate

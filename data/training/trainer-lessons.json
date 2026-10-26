@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Trainer guide: accounts and privacy",
+    "description": "Practice account access and privacy controls before using cultural content.",
+    "body": {
+      "text": "Open Luo Heritage and sign in using your own account. Your interests describe how you use the application; they do not grant staff permissions. Use Profile, sessions & notifications to update your name, link a phone, review device sessions, and revoke access. Recovery and account deletion use confirmation messages sent to your email. Never share passwords or sign-in codes. Published cultural material has different permissions from personal account data.",
+      "questions": [{ "id": "account-privacy", "prompt": "Does selecting Teacher as an interest grant publishing permission?", "choices": ["Yes", "No; publishing requires an assigned staff role"], "answer": 1, "explanation": "Interests are preferences. Staff authorization is assigned separately." }],
+      "teacherNotes": "Use synthetic practice accounts. Do not display participant identities or private interviews during public training."
+    }
+  },
+  {
+    "title": "Trainer guide: contributing and review",
+    "description": "Practice private drafts, source permission and independent review.",
+    "body": {
+      "text": "Choose Contribute & submissions, select a collection and start a private draft. Add a clear title and the required cultural content. Record the source's permission and attribution preference accurately. A draft is not public. Submit complete work for review. A cultural reviewer checks accuracy and the English version. An editor makes requested corrections, and an assigned publisher completes publishing review. You cannot approve or publish your own cultural contribution. Public release requires the necessary source permission and public access settings.",
+      "questions": [{ "id": "review-permission", "prompt": "What should you do when permission has not been granted?", "choices": ["Publish it so users can review it", "Keep it private and resolve permission first"], "answer": 1, "explanation": "A source file's availability does not grant publication permission." }],
+      "teacherNotes": "Use invented practice text. Demonstrate separate contributor, cultural reviewer and publisher accounts."
+    }
+  },
+  {
+    "title": "Trainer guide: lessons and offline work",
+    "description": "Practice learning, saved items and reconnecting without duplicate attempts.",
+    "body": {
+      "text": "Open Lessons, games & calendar and select an approved lesson. Read the text, answer its questions, and finish to save progress. Use Save item to find it later on another signed-in device. Download text for offline use is available only when the rights holder permits downloads. Downloaded text expires after seven days. While offline, completed work stays queued on this device. Reconnect and use Refresh & sync to upload it. Do not discard queued attempts unless you intend to lose them. If a lesson changes or is withdrawn, refresh and follow the displayed instructions.",
+      "questions": [{ "id": "offline-retry", "prompt": "What should happen after completing a downloaded lesson without internet?", "choices": ["The attempt is lost immediately", "It stays queued and synchronizes after reconnecting"], "answer": 1, "explanation": "The local queue preserves the attempt and the server prevents duplicate counting." }],
+      "teacherNotes": "Download while online first. Test airplane mode, app restart and reconnection. Text download does not include audio/video."
+    }
+  }
+]

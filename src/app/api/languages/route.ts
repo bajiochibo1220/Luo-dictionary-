@@ -2,8 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
+import { z } from "zod";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const manage = req ? new URL(req.url).searchParams.get("manage") === "true" : false;
+  if (manage) {
+    const session = await auth();
+    if (!session?.user?.isSuperAdmin && !session?.user?.isMasterSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const data = await prisma.language.findMany({ orderBy: { displayOrder: "asc" }, select: { id: true, code: true, name: true, nativeName: true, isActive: true, isDefault: true, displayOrder: true } });
+    return NextResponse.json({ success: true, data });
+  }
   const languages = await prisma.language.findMany({
     where: { isActive: true },
     orderBy: { displayOrder: "asc" },
@@ -22,7 +30,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await req.json();
+    const parsed = z.object({ code: z.string().trim().regex(/^[a-z]{2,8}(?:-[a-z0-9]{1,8})?$/), name: z.string().trim().min(1).max(100), nativeName: z.string().trim().min(1).max(100), flagIcon: z.string().max(20).nullable().optional(), displayOrder: z.number().int().min(0).max(10000).optional(), adminEmail: z.union([z.literal(""), z.string().trim().email()]).nullable().optional() }).strict().safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ error: "Check the language code, names and administrator email." }, { status: 400 });
+    const body = parsed.data;
     const { code, name, nativeName, flagIcon, displayOrder, adminEmail } = body;
 
     if (!code || !name || !nativeName) {

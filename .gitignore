@@ -6,6 +6,7 @@
 # Data
 # Local reference corpus; not part of the application repository
 /LUO DATA/
+/PHASE ONE AND TWO/LUO DATA/
 data/raw/audio/
 !data/raw/audio/.gitkeep
 data/exports/*.jsonl
@@ -13,6 +14,14 @@ data/exports/*.jsonl
 
 # Dependencies
 node_modules/
+# Native build caches and local signing credentials
+**/.gradle/
+**/local.properties
+**/DerivedData/
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
 /PREVIOUS  IMORVED SYSTM/
 .pnp
 .pnp.js
@@ -21,6 +30,7 @@ node_modules/
 .next/
 .next-review/
 .next-turbo-review/
+.next-phase-two-auth/
 out/
 build/
 dist/

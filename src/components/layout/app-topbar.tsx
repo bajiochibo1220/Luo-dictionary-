@@ -116,6 +116,7 @@ export function AppTopbar({
                   <p className="text-xs text-stone-500 truncate">{userEmail}</p>
                 </div>
                 <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My dashboard</Link>
+                <Link href="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My account &amp; saved chats</Link>
                 <Link href="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Profile options</Link>
                 <Link href="/mobile-apps" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">App updates &amp; installation</Link>
                 {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Admin dashboard</Link>}

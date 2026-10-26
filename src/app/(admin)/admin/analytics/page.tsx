@@ -125,7 +125,7 @@ export default async function AnalyticsPage({
 
   return (
     <div>
-      <header className="mb-6 flex items-start justify-between flex-wrap gap-4">
+      <header className="workspace-heading mb-6 flex items-start justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-serif text-stone-800 mb-1">Analytics</h1>
           <p className="text-sm text-stone-500">

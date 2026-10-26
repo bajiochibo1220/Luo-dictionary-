@@ -5,6 +5,10 @@ import { AdminShell } from "@/components/layout/admin-shell";
 import { cookies } from "next/headers";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
 
+// Private children read current accounts and database content per request.
+// Do not prerender their queries while building a deployment.
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {

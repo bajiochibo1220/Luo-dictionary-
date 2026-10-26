@@ -1,0 +1,54 @@
+vite v8.3.4 building client environment for production...
+transforming...
+(node:16240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1792961604539 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ 1601 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.46 kB │ gzip:   0.30 kB
+dist/assets/6d38f9d4e0f4772b-s-DBDPsn_N.woff2      8.90 kB
+dist/assets/df0a9ae256c0569c-s-YEzCLjIM.woff2     10.28 kB
+dist/assets/c5fe6dc8356a8c31-s-Ai74Rjx-.woff2     11.27 kB
+dist/assets/36008747766f78c6-s-Ct1FAkai.woff2     17.28 kB
+dist/assets/21350d82a1f187e9-s-C5ekK6td.woff2     18.74 kB
+dist/assets/19cfc7226ec3afaa-s-BQL42Lnq.woff2     19.04 kB
+dist/assets/08aedeceaf1dcd57-s-DgyGNlSC.woff2     20.17 kB
+dist/assets/0086f8992871c45b-s-DvGMrinY.woff2     21.25 kB
+dist/assets/03b436aa846269de-s-S8vInfZS.woff2     23.58 kB
+dist/assets/ba9851c3c22cd980-s-Cpd2YT5r.woff2     25.84 kB
+dist/assets/ab00a911ac2adf48-s-ghDDbscC.woff2     29.23 kB
+dist/assets/5c0c2bcbaa4149ca-s.p-BplyFJq7.woff2   37.79 kB
+dist/assets/luo-heritage-512-edrN4VfK.png         43.77 kB
+dist/assets/e4af272ccee01ff0-s.p-8kRkwJBP.woff2   48.43 kB
+dist/assets/8e9860b6e62d6359-s-B_-bZUTo.woff2     85.27 kB
+dist/assets/index-BOT9wUxu.css                    76.47 kB │ gzip:  14.85 kB
+dist/assets/web-CePHXaZV.js                        0.36 kB │ gzip:   0.24 kB
+dist/assets/web-DrSQftSs.js                        0.84 kB │ gzip:   0.40 kB
+dist/assets/index-Cq-O3x7v.js                    423.24 kB │ gzip: 121.73 kB
+
+✓ built in 11.31s
+READY Node.js 22+
+READY Matching Capacitor platform versions
+READY Built shared screens: run npm run build if missing
+READY Public API origin: localhost development only
+PENDING HTTPS API origin for native distribution: configure VITE_API_ORIGIN for native devices; do not place secrets in VITE_* settings
+READY Shared backend bootstrap: start/deploy the backend with the versioned APIs
+READY Android project
+READY Java 21–24 for Gradle 8.14 builds: use Java 21 in JAVA_HOME and Android Studio's Gradle JDK setting
+READY Android SDK API 36: install with Android Studio SDK Manager
+READY Android platform tools
+READY Gradle wrapper
+This check does not verify signing, native login, full features or store approval. Existing database records are never changed.
+file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/clients/mobile/scripts/build-native.mjs:19
+    child.once("exit", code => code === 0 ? resolve() : reject(new Error(`${path.basename(command)} failed with exit code ${code}.`)));
+                                                               ^
+
+Error: node.exe failed with exit code 1.
+    at ChildProcess.<anonymous> (file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/clients/mobile/scripts/build-native.mjs:19:64)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.15.0

@@ -10,6 +10,7 @@ import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { logAction } from "@/lib/audit";
 import { lockEditableRecord, withApiErrors } from "@/lib/content-workflow";
 import { parseContentProvenance } from "@/lib/content-provenance";
+import { publicFields } from "@/lib/public-projection";
 
 export async function GET(
   _req: NextRequest,
@@ -26,6 +27,7 @@ export async function GET(
     include: {
       language: true,
       module: true,
+      translations: true,
       media: true,
       reviews: {
         include: { reviewer: { select: { name: true, email: true } } },
@@ -54,7 +56,9 @@ export async function GET(
       entityId: record.id,
     });
   }
-  return NextResponse.json({ success: true, data: { ...record, media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) } });
+  const result = { ...record, media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) };
+  const staff = !!user.isSuperAdmin || (user.languageRoles ?? []).some((role: { languageId: number; role: string }) => role.languageId === record.languageId && ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role));
+  return NextResponse.json({ success: true, data: record.contributorId === user.id || staff ? result : publicFields(result) });
 }
 
 async function handlePATCH(

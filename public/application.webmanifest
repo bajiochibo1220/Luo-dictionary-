@@ -1,0 +1,15 @@
+{
+  "id": "/application",
+  "name": "Luo Heritage",
+  "short_name": "Luo Heritage",
+  "start_url": "/application",
+  "scope": "/application",
+  "display": "standalone",
+  "background_color": "#b89a68",
+  "theme_color": "#5c3a1c",
+  "icons": [
+    { "src": "/icons/luo-heritage-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/luo-heritage-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/luo-heritage-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-26",
+  "slides": 138,
+  "roles": 11,
+  "screenshotSlides": 111,
+  "allPagesRendered": true,
+  "allVisibleInstructionsVerified": true,
+  "embeddedImages": true,
+  "noSeparateFileDependencies": true,
+  "internalContentsLinks": true,
+  "files": {
+    "pdf": {
+      "bytes": 4732600,
+      "sha256": "fe2d3fd85b1716a09c4cf6ef7c722a75689479c1aa39648b43cab23c1ca976e2"
+    },
+    "pptx": {
+      "bytes": 4741711,
+      "sha256": "d189dd0254bb9efb71303a1fa312b8423e0467b13da0bcd9aa68e86061001492"
+    }
+  },
+  "pdfInternalLinksChecked": 149,
+  "powerPointContentsLinksChecked": 37
+}

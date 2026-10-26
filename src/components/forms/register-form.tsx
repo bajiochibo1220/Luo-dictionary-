@@ -1,11 +1,13 @@
 "use client";
+import { applicationReturnTarget } from "@/lib/application-return";
 
 import Link from "next/link";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
+import { nativeLoginReturn, nativeAuthHref, nativeReturnCookie } from "@/lib/native-auth-contract";
 import {
   DateOfBirthPicker,
   DateOfBirth,
@@ -15,6 +17,9 @@ type Language = { id: number; code: string; name: string; nativeName: string };
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nativeReturn = nativeLoginReturn(searchParams.get("callbackUrl"));
+  const loginHref = nativeAuthHref("login", nativeReturn);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -75,33 +80,32 @@ export function RegisterForm() {
 
     if (data.data?.status === "pending") {
       toast.success("Account created. It is awaiting approval before you can continue.");
-      router.push("/login?registered=pending");
+      router.push(nativeAuthHref("login", nativeReturn, { registered: "pending" }));
       return;
     }
 
     toast.success("Account created. Signing in...");
-    const signInResult = await signIn("credentials", {
-      email: body.email,
-      password: body.password,
-      redirect: false,
-    });
+    let signInResult;
+    try {
+      signInResult = await signIn("credentials", { email: body.email, password: body.password, redirect: false });
+    } catch {
+      toast.error("Account created, but sign in could not connect. Please log in with your email and password.");
+      router.push(loginHref); router.refresh(); return;
+    }
     if (signInResult?.error) {
       toast.error("Account created, but sign in failed. Please log in with your email and password.");
-      router.push("/login");
+      router.push(loginHref);
       router.refresh();
       return;
     }
-    router.push("/dashboard");
+    router.push(nativeReturn || applicationReturnTarget() || "/dashboard");
     router.refresh();
   }
 
-  function comingSoon(p: string) {
-    toast.info(`${p} signup is coming soon`);
-  }
-
   function startGoogleSignup() {
+    document.cookie = nativeReturnCookie(nativeReturn, window.location.protocol === "https:");
     document.cookie = `google-auth-intent=register; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
-    void signIn("google", { callbackUrl: "/dashboard" });
+    void signIn("google", { callbackUrl: nativeReturn || applicationReturnTarget() || "/dashboard" });
   }
 
   return (
@@ -169,7 +173,7 @@ export function RegisterForm() {
 
         <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
           <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use Luo Heritage? (Choose any)</legend>
-          <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-stone-700">
+          <div className="mt-2 grid grid-cols-1 gap-2 text-sm text-stone-700">
             {["Student", "Researcher", "Contributor", "Teacher", "Community member"].map((interest) => (
               <label key={interest} className="flex items-center gap-2"><input type="checkbox" name="interests" value={interest.toLowerCase().replaceAll(" ", "_")} />{interest}</label>
             ))}
@@ -201,19 +205,11 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        <button
-          type="button"
-          onClick={() => comingSoon("Apple")}
-          className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-          </svg>
-        </button>
+      <div className="grid grid-cols-1 gap-2">
         <button
           type="button"
           onClick={startGoogleSignup}
+          aria-label="Continue with Google"
           disabled={!acceptedTerms}
           className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -223,24 +219,14 @@ export function RegisterForm() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
           </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => comingSoon("Microsoft")}
-          className="flex items-center justify-center py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#f25022" d="M0 0h11.5v11.5H0z" />
-            <path fill="#7fba00" d="M12.5 0H24v11.5H12.5z" />
-            <path fill="#00a4ef" d="M0 12.5h11.5V24H0z" />
-            <path fill="#ffb900" d="M12.5 12.5H24V24H12.5z" />
-          </svg>
+          <span className="ml-2">Continue with Google</span>
         </button>
       </div>
 
       <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
         <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><Link href="/" className="hover:underline">Home</Link>
       </nav>
+      <p className="text-center text-sm text-stone-700">Already have an account? <Link href={loginHref} className="font-semibold text-amber-800 underline">Sign in</Link></p>
     </div>
   );
 }

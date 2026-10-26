@@ -88,7 +88,7 @@ export default async function MediaLibraryPage({
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           Media Library
         </h1>

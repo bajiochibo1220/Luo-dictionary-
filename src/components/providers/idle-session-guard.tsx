@@ -30,6 +30,9 @@ export function IdleSessionGuard() {
     const startIdleTimer = () => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => {
+        // Offline public learning keeps a local queue owner, not server access.
+        // Reconnection still requires a valid session before any sync succeeds.
+        if (!navigator.onLine && location.pathname === "/application") return;
         void signOut({ redirectTo: "/login" });
       }, IDLE_TIMEOUT_MS);
     };

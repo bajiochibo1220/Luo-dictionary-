@@ -30,7 +30,7 @@ export default async function LanguageDetailPage({
 
   return (
     <div>
-      <header className="mb-8">
+      <header className="workspace-heading mb-8">
         <Link
           href="/super-admin/languages"
           className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-3"

@@ -1,0 +1,331 @@
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 1
+REPOSITORY DATA MODEL,
+METADATA DICTIONARY AND
+STORAGE CONVENTIONS ANNEX
+Activity 3.1.2 | JOOUST-NRF AI-Enabled Digital Repository
+Document field Specification
+Institution Jaramogi Oginga Odinga University of Science and Technology (JOOUST)
+Project NRF-supported Luo Indigenous Knowledge Systems repository
+Document purpose Implementation baseline for schema, metadata, governance, storage and acceptance
+Deployment boundary JOOUST-controlled on-premises infrastructure only
+Database baseline PostgreSQL with PostGIS; controlled object storage through MinIO or secure NAS
+Geographic scope Homa Bay, Kisumu and Siaya counties
+Status Expanded formal annex for technical implementation and review
+Date 23 July 2026
+Authority and interpretation
+This Annex expands the Activity 3.1.2 conceptual model into an implementable logical specification. It shall 
+be read together with the Technical Specifications Annex. Where access rules conflict, the most restrictive 
+active consent, community protocol, embargo or curator decision shall prevail.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 2
+1. Purpose, Scope and Design Principles
+This Annex defines the repository's logical data model, enforceable metadata dictionary, controlled 
+vocabularies, storage zones, identifiers, versioning, AI lineage, ethical governance and acceptance tests.
+ DM-01  Store canonical objects once and apply access policy through metadata and authorization 
+rules rather than security-labelled canonical folders.
+ DM-02  Separate participant identity information from research and repository metadata.
+ DM-03  Treat consent, collective cultural protocols, embargoes and curator decisions as distinct, 
+versioned governance evidence.
+ DM-04  Preserve immutable provenance from source capture through derivatives, datasets, models, 
+embeddings and releases.
+ DM-05  Operate the primary repository, backups, search and AI services entirely on JOOUST-
+controlled on-premises infrastructure.
+1.1 Interpretation rules
+ The most restrictive applicable active rule determines effective access.
+ Withdrawal affects source records, derivatives, releases, datasets, embeddings and deployment 
+registers.
+ Exact GPS and identity data are protected attributes and are not general discovery metadata.
+ Controlled-vocabulary values are stored as codes with human-readable labels; free text is used only 
+where explicitly permitted.
+ Published and research dataset releases are immutable. Corrections create a superseding release 
+and retain a tombstone for the withdrawn object.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 3
+2. Logical ERD Overview
+Figure 1 presents the principal logical entities and corrected governance relationships. Detailed junction 
+tables and physical implementation constraints are specified in the following sections.
+Figure 1. Logical ERD overview for the JOOUST repository.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 4
+3. Entity Catalogue and Cardinalities
+3.1 Governance, people and collection
+Entity Purpose Principal relationships
+Project Defines the funded repository programme. 1:N sessions, team assignments, releases.
+Location Hierarchical county, site and heritage-space record. County 1:N sites; site 1:N sessions/assets.
+Agent Common contributor identity for participant, community group and staff. 1:N participation, consent, provenance and decisions.
+ParticipantProfile Identity information held in a protected enclave. 1:1 with participant Agent; never included in general exports.
+Session Fieldwork or community collection session. N:1 location; M:N agents; M:N domains; 1:N assets.
+Participation Agent-session junction with role and pseudonym. N:1 agent and N:1 session.
+ConsentRecord Versioned participant permission and permitted uses. N:1 agent; M:N assets through AssetConsent.
+CommunityProtocol Collective cultural rule or custodian instruction. M:N objects; may supersede individual permission.
+RestrictionDecision Time-bound decision by authorized custodian or curator. Applies M:N to records, assets, transcripts and items.
+WithdrawalCase Tracks withdrawal, affected objects and closure evidence. N:1 triggering consent/protocol; 1:N actions.
+3.2 Knowledge, media and curation
+Entity Purpose Principal relationships
+CulturalRecord Central intellectual unit: narrative, practice, food, site, artifact or knowledge item. M:N domains, agents, assets, entities and related records.
+MediaAsset Canonical audio, video, image, text or field-note object. N:1 session; M:N consent; 1:N derivatives and transcript versions.
+MediaDerivative Access copy, thumbnail, waveform, redacted copy or normalized training image. N:1 source asset; immutable checksum and transformation.
+TranscriptVersion Language-specific version of an audio/video transcript. N:1 asset; 1:N segments; workflow and provenance.
+TranscriptSegment Timed utterance/sentence with speaker pseudonym. N:1 transcript version; 1:N annotations.
+TranslationVersion Versioned translation linked to source transcript/segment. N:1 source version; language and reviewer.
+AnnotationSet Versioned collection of linguistic/cultural annotations. N:1 schema; 1:N annotations; curator validation.
+Artifact Material-culture object and associated knowledge. M:N records, assets, domains, agents and locations.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 5
+Entity Purpose Principal relationships
+RepositoryItem Curated publishable object assembled from governed sources. M:N source objects and releases.
+3.3 AI, release and audit
+Entity Purpose Principal relationships
+DatasetVersion Immutable manifest of training/evaluation/export-eligible records. M:N repository objects; 1:N training runs.
+TrainingRun Parameters, code version, environment, data snapshot and outputs. N:1 dataset version; produces model version.
+ModelVersion Stored model artifact, metrics and approval/deployment state. N:1 training run; 1:N evaluations.
+EmbeddingIndex Vector-index snapshot with model and source lineage. N:1 dataset/source snapshot; rebuild status.
+RepositoryRelease Immutable public, research-only or controlled release manifest. M:N repository items; approval and checksum manifest.
+ProvenanceEvent Append-only creation, transformation, review and validation lineage. Actor, source, target, timestamp and change summary.
+AuditEvent Append-only authentication, access, restriction and export event. Actor, object, action, outcome, device and timestamp.
+4. Relationship and Integrity Rules
+Rule ID Constraint Required implementation
+REL-01 MediaAsset and ConsentRecord are many-to-many. AssetConsent junction with asset_id, consent_id, coverage role, valid_from and valid_to.
+REL-02 Sessions and Domains are many-to-many. SessionDomain junction; one row may be flagged primary.
+REL-03 Cultural records may have individual and collective contributors. RecordAgent junction using Agent; no polymorphic nullable foreign keys.
+REL-04 Restrictions apply to multiple object types. GovernedObject registry plus restriction-target junction, or type-specific junctions with database constraints.
+REL-05 Transcripts and translations are versioned. Unique(asset_id, language_code, version_no); prior versions remain immutable.
+REL-06 Repository items and releases are many-to-many. ReleaseItem with approval evidence and object checksum.
+REL-07 Deletion must not orphan audit/provenance. Restrict deletion of referenced rows; use lifecycle state and tombstones.
+REL-08 Checksums identify exact byte streams, not intellectual duplicates. Unique storage_object_key; index SHA-256 and record duplicate review status.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 6
+4.1 Key database constraints
+ Use UUID primary keys internally; retain human-readable session_id and asset_id as unique 
+alternate keys.
+ Use foreign keys with ON DELETE RESTRICT for consent, provenance, releases and audit 
+relationships.
+ Use CHECK constraints for enumerated lifecycle states and ISO language/date formats.
+ Use partial unique indexes for one active canonical derivative or approved version per role where 
+required.
+ Index project, session, county/site, domain, restriction, consent status, checksum, workflow status 
+and capture date.
+ Use PostGIS geometry for precise locations in a protected schema; expose generalized site geometry 
+to ordinary searches.
+5. Core Metadata Dictionary
+The following fields form the minimum cross-cutting dictionary. 'R' means required, 'C' conditionally required 
+and 'O' optional.
+Field Type Req. Validation / controlled value Sensitivity
+record_id UUID R Generated; immutable primary key. Internal
+project_id UUID / code R Existing Project FK; JOOUST-NRF project code. Internal
+object_type Code R record, asset, transcript, artifact, item, dataset, model. Public
+county_code Code R KSM, SYA or HBY. Public
+site_id UUID R Existing Site FK. Public/generalized
+precise_location_id UUID O Protected PostGIS location; never in public export. Restricted
+session_id String C {county}-{YYYYMMDD}-{site}-{seq3}; unique. Internal
+collection_date Date R ISO 8601 YYYY-MM-DD; not future dated. Internal
+domain_code Code R D01-D16; M:N through junction where needed. Public
+subdomain_topic String O 1-120 characters; controlled term preferred. Public
+language_code Code C BCP 47: luo, en, or explicit mixed-language annotation. Public
+agent_id UUID C Pseudonymous Agent FK; not participant identity. Sensitive
+consent_status Code R pending, active, withdrawn, expired, superseded. Restricted
+effective_access Code R public, internal, research_only, community_only, restricted, sacred, embargoed. Restricted
+embargo_until Date/time C Required when effective_access=embargoed. Restricted
+data_type Code R audio, video, image, text, fieldnote, artifact_record. Public
+canonical_uri String C Repository object key; no access label in path. Internal
+checksum_sha256 CHAR(64) C Lowercase hexadecimal; required for stored files. Internal
+mime_type String C IANA media type. Public
+version_no Integer R Positive integer; immutable once approved. Internal
+workflow_status Code R raw, transcribed, reviewed, validated, curated, published, withdrawn. Internal
+qa_reviewer_id UUID C Required for validated/curated/published states. Internal
+rights_holder String / Agent FK C Recorded for publication and release. Restricted
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 7
+Field Type Req. Validation / controlled value Sensitivity
+licence_code Code C Project-approved rights/licence vocabulary. Public
+retention_class Code R project, long_term, time_limited, pending_review, deletion_due. Restricted
+created_at / updated_at Timestamptz R Database generated; UTC. Internal
+6. Domain-Specific Metadata Extensions
+Domain Code Minimum extension fields
+Oral traditions D01 genre; performance_context; speaker_role; transmission_pathway.
+Rituals and cultural practices D02 ritual_type; ritual_leadership; taboo_marker; handling_instruction.
+Material culture D03 local_name; artifact_category; materials; production_process; sacred_or_taboo.
+Traditional knowledge and medicine D04 knowledge_type; condition_category; custodian_role; belief_linkage; disclosure_limit.
+Heritage spaces and sites D05 site_type; generalized_geometry; access_rules; oral_history_links; rituals_at_site.
+Performance arts D06 performance_type; regalia; instrument_ids; seasonality; performer_group.
+Foods and preservation D07 food_local_name; preparation_steps; preservation_method; symbolic_meaning.
+Social life and naming D08 kinship_terms; naming_rule_basis; name_change_rules.
+Emotions, identity and politeness D09 emotion_lexicon; politeness_markers; identity_phrases.
+Governance, conflict and justice D10 leadership_structure; conflict_steps; justice_terms.
+Indigenous time and calendar D11 season_terms; time_metaphors; age_measurement_terms.
+Traditional economies and work D12 livelihood_type; tool_terms; measurements; division_of_labour.
+Metaphorical and idiomatic 
+language D13 idiom_text; literal_gloss; interpretation; usage_context.
+Children's language and play D14 play_type; age_band; adult_role; language_features; guardian consent status.
+Environmental knowledge D15 ethnobotany_terms; ethnozoology_terms; conservation_rules; landform_terms.
+Life-cycle and transition rites D16 life_stage; ceremonial_speech_type; taboo_phrase_classification.
+6.1 Controlled vocabularies
+Controlled terms shall be stored in vocabulary and vocabulary_term tables with code, label, definition, status, 
+valid dates, language and superseding term. Curators may propose additions, but production use requires 
+governance approval.
+Vocabulary Required values / rule
+Effective access public; internal; research_only; community_only; restricted; sacred; embargoed.
+Consent status pending; active; withdrawn; expired; superseded.
+Workflow raw; transcribed; reviewed; validated; curated; published; withdrawn.
+Agent type participant; community_group; team_member; custodian; organization.
+Provenance action capture; ingest; transform; transcribe; translate; annotate; review; validate; publish; withdraw; delete.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 8
+Vocabulary Required values / rule
+Language BCP 47 codes; Dholuo=luo, English=en; code switching represented by segment-level language codes.
+7. Consent, Cultural Protocol and Effective Access
+7.1 Effective-access calculation
+The authorization service shall evaluate all active rules for the requested object and its source lineage. The 
+result shall be the most restrictive applicable level.
+Priority Rule source Decision effect
+1 Withdrawal or legal/ethical hold Deny use; start propagation workflow.
+2 Sacred/restricted community protocol Limit to expressly authorized custodians or deny.
+3 Active embargo Deny until embargo expiry unless an approved exception exists.
+4 Participant consent scope Limit to permitted research, teaching, excerpt or community use.
+5 Curator publication decision May further restrict; may never broaden beyond consent/protocol.
+6 Role and project authorization Allow only where user role and purpose match effective access.
+7.2 Withdrawal propagation
+ Open a WithdrawalCase and freeze affected publication/export actions.
+ Resolve all source assets and dependent transcripts, derivatives, repository items, datasets, releases, 
+embeddings and model registers through provenance links.
+ Remove or suppress affected objects from active access and create tombstone records where 
+auditability requires retention.
+ Rebuild affected release manifests and embedding indexes; issue a superseding release rather than 
+altering an immutable release silently.
+ Assess trained models. Record whether retraining, output filtering, deployment withdrawal or 
+documented residual-risk acceptance is required.
+ Close the case only after technical and governance reviewers sign the evidence record.
+8. Versioning, Provenance and AI Lineage
+Object Version rule Minimum lineage
+Canonical media Immutable bytes; correction creates a new asset linked by supersedes. Capture session, device/collector, checksum, ingest event.
+Transcript / translation Incrementing version per asset and language. Source asset/segment, method, model if AI-assisted, editor, reviewer.
+Annotation set Schema and content versioned independently. Transcript version, annotation schema, annotator and validation.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 9
+Object Version rule Minimum lineage
+Dataset version Immutable manifest and eligibility snapshot. Source object IDs/checksums, split logic, consent evaluation date.
+Model version Immutable artifact and configuration. Dataset version, code commit, parameters, environment, metrics.
+Embedding index Versioned model plus source snapshot. Embedding model, dimensions, source manifest, build date.
+Repository release Immutable signed manifest. Approved items, checksums, access class, approvals and supersession.
+8.1 Training eligibility
+ AI-DM-01  Record training_eligible, eligibility_basis, evaluated_at and evaluated_by for each dataset 
+member.
+ AI-DM-02  Do not treat public visibility as automatic permission for model training.
+ AI-DM-03  Split train/validation/test data by verified session, site or source group to prevent leakage.
+ AI-DM-04  Retain excluded-object reasons and duplicate/quality review outcomes.
+ AI-DM-05  Link every deployed model and embedding index to the exact governed dataset/source 
+snapshot.
+9. Storage Zones and Canonical URI Conventions
+Access class shall not be embedded in the canonical object path. Authorization is determined from the 
+database. Release packages may be grouped by approved audience because they are governed derivatives, 
+not canonical storage.
+Zone Purpose Example root
+00_admin Approvals, licences, controlled vocabularies and project administration. /JOOUST/NRF/LuoAI_Repository/00_admin/
+01_reference Elicitation framework, schemas and preservation standards. .../01_reference/
+02_ingest_quarantine Malware scan, validation failure and incomplete metadata holding area. .../02_ingest_quarantine/
+03_canonical Immutable original objects addressed by project/session/asset ID. .../03_canonical/{project}/{session}/{asset_id}/
+04_derivatives Transcripts, translations, thumbnails, redacted and normalized copies. .../04_derivatives/{asset_id}/{derivative_role}/v{n}/
+05_repository Curated records, item manifests and knowledge-graph exports. .../05_repository/
+06_ai Dataset manifests, training runs, models, evaluations and embedding indexes. .../06_ai/
+07_releases Immutable approved public/research/controlled release packages. .../07_releases/{release_id}/
+08_audit_integrity Checksum manifests, audit exports and fixity reports. .../08_audit_integrity/
+09_backup On-premises snapshots and recovery copies on separate controlled infrastructure. Separate JOOUST-controlled target.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 10
+9.1 Identifiers
+Identifier Pattern Example
+county_code KSM | SYA | HBY HBY
+domain_code D01-D16 D03
+session_id {county}-{YYYYMMDD}-{site}-{seq3} HBY-20251022-SIMBI-003
+asset_id {session_id}-{type}-{seq3} HBY-20251022-SIMBI-003-audio-001
+release_id R{seq3}-{YYYYMMDD} R001-20260331
+dataset_id DS-{purpose}-{version} DS-ARTIFACT-CLASS-v001
+model_id MDL-{task}-{version} MDL-ARTIFACT-CLS-v001
+9.2 Canonical and derivative examples
+Canonical audio: /03_canonical/NRF-LUOAI/HBY-2022512022-SIMBI-003/HBY-2022512022-SIMBI-003-audio-001/original.wav
+Reviewed transcript: /04_derivatives/HBY-2022512022-SIMBI-003-audio-001/transcript/luo/v2/reviewed.txt
+Normalized image: /04_derivatives/HBY-2022512022-SIMBI-003-image-001/cv_normalized/v1/640x640.jpg
+Research release: /07_releases/R001-2022602331/manifest.json
+10. Retention, Deletion, Backup and Recovery
+Control Requirement
+Retention schedule Assign every governed object a retention_class, review date and accountable owner.
+Secure deletion Use approved on-premises deletion procedures; verify canonical, derivative, cache and backup treatment.
+Tombstone Retain non-content identifier, withdrawal basis and audit link where necessary to prevent re-ingest or republication.
+Backups Daily incremental and weekly full backups to separate JOOUST-controlled on-premises storage.
+Fixity Scheduled SHA-256 verification of canonical assets and release manifests; record exceptions and remediation.
+Recovery Restore database, object store and ten representative assets within the 48-72 hour recovery objective.
+11. Security, Privacy and Access-Control Implementation
+ SEC-DM-01  Place identity profiles, consent evidence and precise geospatial data in protected 
+schemas or enclaves.
+ SEC-DM-02  Expose pseudonymous Agent identifiers to research workflows.
+ SEC-DM-03  Apply row/object authorization to records, assets, transcripts, derivatives and exports.
+ SEC-DM-04  Log authentication, views, downloads, changes, exports, publication and administrative 
+overrides.
+ SEC-DM-05  Encrypt on-premises volumes at rest and use TLS for all application and service traffic.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 11
+ SEC-DM-06  Prohibit public-cloud dependency for primary data, operational services, model 
+inference or backups.
+12. Implementation Deliverables
+ Rendered logical and physical ERD, reviewed by the repository curator and technical lead.
+ PostgreSQL DDL and migration scripts with keys, constraints, indexes and seed vocabularies.
+ Machine-readable metadata schema and validation rules.
+ Sample records for individual, group, artifact, transcript, withdrawal and release cases.
+ Authorization-policy specification and effective-access test suite.
+ Storage provisioning, fixity, backup, restore and secure-deletion SOPs.
+ Dataset/model/embedding lineage register and withdrawal-impact procedure.
+13. Acceptance Criteria
+ID Acceptance criterion Verification evidence
+AC-
+DM-01
+The ERD implements M:N asset-consent and separates community 
+protocols from participant consent. DDL, ERD and group-session test data.
+AC-
+DM-02
+Metadata fields enforce types, requiredness, controlled values and 
+protected attributes. Schema validation report and rejected-invalid-record tests.
+AC-
+DM-03
+Canonical paths contain no public/restricted classification and each 
+stored object has a unique key and SHA-256 checksum. Storage inspection and fixity report.
+AC-
+DM-04
+A withdrawal propagates to derivatives, releases, datasets and 
+embedding indexes through provenance links. Witnessed withdrawal test and closure evidence.
+AC-
+DM-05
+Transcript, translation, annotation, dataset, model and release 
+versions remain reproducible and immutable. Version-history and checksum comparison.
+AC-
+DM-06
+Exact GPS, identity and consent evidence are inaccessible to 
+ordinary research/public roles. Positive/negative access-control tests.
+AC-
+DM-07
+A group asset with different participant permissions receives the 
+most restrictive effective access. Policy-engine test matrix.
+AC-
+DM-08
+A dataset and model version resolve to exact source object IDs, 
+eligibility decisions, code/configuration and evaluation results. Lineage report.
+AC-
+DM-09
+Database and representative media objects restore successfully 
+within 48-72 hours from on-premises backups. Restore log and JOOUST sign-off.
+AC-
+DM-10
+Core repository and backup operations function without public-
+cloud services. Controlled external-network isolation test.
+NRF ANNEX  |  REPOSITORY DATA MODEL, METADATA & STORAGE CONVENTIONS
+Page 12
+14. Approval Record
+Role Name and title Signature Date
+JOOUST Technical Lead
+Repository Curator / Cultural 
+Heritage Lead
+Data Protection / Ethics 
+Representative
+Principal Investigator
+NRF / Authorized Reviewer, 
+where applicable

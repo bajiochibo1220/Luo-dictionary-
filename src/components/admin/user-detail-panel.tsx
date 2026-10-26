@@ -25,6 +25,8 @@ type UserInfo = {
 type Language = { id: number; code: string; nativeName: string };
 
 const ROLES = [
+  "teacher",
+  "researcher",
   "uploader",
   "content_editor",
   "cultural_expert",
@@ -44,7 +46,7 @@ export function UserDetailPanel({
   const router = useRouter();
   const [name, setName] = useState(user.name ?? "");
   const [status, setStatus] = useState(user.status);
-  const [newRole, setNewRole] = useState("contributor");
+  const [newRole, setNewRole] = useState("teacher");
   const [newLang, setNewLang] = useState(languages[0]?.id ?? 0);
   const [busy, setBusy] = useState(false);
 
@@ -173,9 +175,9 @@ export function UserDetailPanel({
         <p className="text-sm text-stone-700">{user.profileTypes.length ? user.profileTypes.map((type) => type.replaceAll("_", " ")).join(", ") : "No interests selected"}</p>
       </div>
 
-      {(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-xs">
+      {(isMasterSuperAdmin || user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-xs">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-          Admin Roles ({user.languageRoles.length})
+          Assigned duties ({user.languageRoles.length})
         </h2>
 
         {user.languageRoles.length === 0 ? (
@@ -226,7 +228,7 @@ export function UserDetailPanel({
               onChange={(e) => setNewRole(e.target.value)}
               className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
-              {ROLES.map((r) => (
+              {(user.isSuperAdmin || user.languageRoles.some(role => ["uploader", "publisher", "content_editor", "cultural_expert", "language_admin"].includes(role.role)) ? ROLES : ["teacher", "researcher"]).map((r) => (
                 <option key={r} value={r}>
                   {r.replace("_", " ")}
                 </option>

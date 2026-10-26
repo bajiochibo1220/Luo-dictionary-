@@ -1,13 +1,15 @@
 "use client";
+import { applicationReturnTarget } from "@/lib/application-return";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DateOfBirthPicker, type DateOfBirth } from "./date-of-birth-picker";
+import { nativeLoginReturn, nativeReturnCookie } from "@/lib/native-auth-contract";
 
 type Language = { id: number; code: string; name: string; nativeName: string };
 
-export function GoogleProfileForm({ initialName }: { initialName: string }) {
+export function GoogleProfileForm({ initialName, nativeReturn }: { initialName: string; nativeReturn?: string | null }) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -34,7 +36,8 @@ export function GoogleProfileForm({ initialName }: { initialName: string }) {
       if (!response.ok || !result.success) throw new Error(result.error || "Could not finish account setup");
       await fetch("/api/auth/session", { cache: "no-store" }).catch(() => null);
       toast.success("Your account is ready.");
-      router.replace("/dashboard");
+      document.cookie = nativeReturnCookie(null, window.location.protocol === "https:");
+      router.replace(nativeLoginReturn(nativeReturn) || applicationReturnTarget() || "/dashboard");
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not finish account setup");

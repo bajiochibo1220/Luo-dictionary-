@@ -4,9 +4,9 @@ import { getSystemSettings } from "./settings";
 
 export async function configureCloudinary() {
   const settings = await getSystemSettings();
-  const cloudName = settings.cloudinary_cloud_name || process.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = settings.cloudinary_api_key || process.env.CLOUDINARY_API_KEY;
-  const apiSecret = settings.cloudinary_api_secret || process.env.CLOUDINARY_API_SECRET;
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || settings.cloudinary_cloud_name;
+  const apiKey = process.env.CLOUDINARY_API_KEY || settings.cloudinary_api_key;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET || settings.cloudinary_api_secret;
   if (!cloudName || !apiKey || !apiSecret || cloudName === "placeholder") throw Object.assign(new Error("Cloudinary credentials are not configured."), { status: 503 });
   cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret, secure: true });
   return { cloudName, apiKey, apiSecret };

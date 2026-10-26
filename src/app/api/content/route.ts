@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
 
     const visibleRecords = records.map((record) => ({
         ...record,
-        media: record.media.filter((asset) => record.contributorId === user.id || canReviewGovernedItem(accessUser, asset, asset.languageId)),
+        media: record.media.filter((asset) => record.contributorId === user.id || canReviewGovernedItem(accessUser, asset, asset.languageId)).map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })),
       }));
 
     return NextResponse.json({

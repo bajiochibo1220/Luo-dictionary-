@@ -31,7 +31,10 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (!user) {
+  const mayReadProtectedFields = !!accessUser && !!transcript.record &&
+    canReviewContent(session, transcript.languageId) &&
+    canReviewGovernedItem(accessUser, transcript, transcript.languageId);
+  if (!mayReadProtectedFields) {
     const { id, languageId, recordId, text, languageCode, timestamps, isAligned } = transcript;
     return NextResponse.json({ success: true, data: { id, languageId, recordId, text, languageCode, timestamps, isAligned } });
   }

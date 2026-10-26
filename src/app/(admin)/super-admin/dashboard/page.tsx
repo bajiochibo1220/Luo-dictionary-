@@ -69,7 +69,7 @@ export default async function SuperAdminDashboardPage() {
 
   return (
     <div>
-      <header className="mb-8 flex items-start justify-between">
+      <header className="workspace-heading mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-serif text-stone-800 mb-1">
             Super Admin Dashboard

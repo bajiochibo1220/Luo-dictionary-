@@ -1,15 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { nativeApiHeaders } from "@/lib/native-api-headers";
 
 const PUBLIC_PATHS = [
   "/",
   "/chatbot",
   "/mobile-apps",
+  "/application",
 ];
 
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   if (pathname === "/api/app-version") return true;
+  if (pathname === "/api/v1/bootstrap") return true;
+  if (pathname === "/api/v1/library") return true;
+  if (pathname === "/api/v1/learning") return true;
+  if (pathname === "/api/v1/education") return true;
+  if (pathname === "/api/v1/account/settings") return true;
+  if (pathname === "/api/v1/saved") return true;
+  // These exact endpoints perform their own browser/bearer authentication.
+  // Other private APIs still require the existing web session middleware.
+  if (["/api/v1/account", "/api/v1/account/conversations", "/api/v1/native/authorize", "/api/v1/native/token", "/api/v1/native/refresh", "/api/v1/native/revoke"].includes(pathname)) return true;
+  if (pathname === "/api/v1/chat" || /^\/api\/v1\/account\/conversations\/[A-Za-z0-9_-]{1,128}$/.test(pathname)) return true;
   if (pathname.startsWith("/api/auth")) return true;
   if (pathname.startsWith("/api/languages")) return true;
   // The language library is readable without an account. Contributions and
@@ -29,6 +41,13 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  if (pathname.startsWith("/api/")) {
+    const cors = nativeApiHeaders(req);
+    if (req.method === "OPTIONS" && cors["Access-Control-Allow-Origin"]) return new NextResponse(null, { status: 204, headers: cors });
+    // Handler authentication validates the token and reloads current roles.
+    // This branch is delegation only; it does not itself grant access.
+    if (req.headers.has("Authorization")) return NextResponse.next({ headers: cors });
+  }
   // Older bookmarks and installed launch URLs must bypass the retired
   // language landing layout. The root selects login or the current dashboard.
   if (pathname === "/luo" || pathname === "/eng") {

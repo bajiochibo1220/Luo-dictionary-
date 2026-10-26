@@ -39,7 +39,7 @@ export default async function AdminDashboardPage() {
     ];
     const languageNames = [...new Set<string>(userRoles.map((role) => role.languageName).filter(Boolean))];
     return <main className="mx-auto max-w-6xl">
-      <header className="mb-8"><p className="text-xs uppercase tracking-widest text-amber-900">Role workspace</p><h1 className="mt-1 font-serif text-3xl text-stone-900">{languageNames.length ? languageNames.join(", ") : "Your"} Dashboard</h1><p className="mt-2 text-sm text-stone-700">This workspace shows the tasks and records available to your assigned role.</p></header>
+      <header className="workspace-heading mb-8"><p className="text-xs uppercase tracking-widest text-amber-900">Role workspace</p><h1 className="mt-1 font-serif text-3xl text-stone-900">{languageNames.length ? languageNames.join(", ") : "Your"} Dashboard</h1><p className="mt-2 text-sm text-stone-700">This workspace shows the tasks and records available to your assigned role.</p></header>
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{roleWork.map((item) => <Link key={item.title} href={item.href} className="rounded-xl border border-stone-200 bg-white p-6 shadow-xs transition hover:border-amber-500 hover:shadow-md"><p className="text-sm font-semibold text-stone-700">{item.title}</p><p className="mt-2 text-4xl font-semibold text-amber-900">{item.count}</p><p className="mt-2 text-sm text-stone-600">{item.description}</p><p className="mt-4 text-xs font-semibold uppercase tracking-wide text-amber-800">Open workspace →</p></Link>)}</section>
       {roleWork.length === 0 && <p className="rounded-xl border border-stone-200 bg-white p-6 text-sm text-stone-600">No workflow role is assigned to this account yet.</p>}
     </main>;
@@ -159,7 +159,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <header className="mb-8">
+      <header className="workspace-heading mb-8">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           {isMasterSuperAdmin ? "Master Super Admin" : primaryLang} Dashboard
         </h1>

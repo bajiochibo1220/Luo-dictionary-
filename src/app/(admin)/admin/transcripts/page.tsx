@@ -44,7 +44,7 @@ export default async function TranscriptLibraryPage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <p className="text-xs uppercase tracking-widest text-stone-600">Internal library</p>
         <h1 className="mt-1 font-serif text-3xl text-stone-900">Transcripts</h1>
         <p className="mt-2 text-sm text-stone-700">

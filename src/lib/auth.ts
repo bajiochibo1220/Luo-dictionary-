@@ -3,9 +3,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { cacheForRender } from "@/lib/render-cache";
 import { prisma } from "@/lib/db";
+import { NATIVE_RETURN_COOKIE, nativeReturnFromCookie, nativeAuthHref } from "@/lib/native-auth-contract";
+import { assertAccountRateLimit } from "@/lib/account-security";
+import { getNativeSessionUserId } from "@/lib/native-auth";
 
 export type LanguageRole = {
   languageId: number;
@@ -79,6 +82,8 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
+        if (typeof credentials.email !== "string" || credentials.email.length > 254 || typeof credentials.password !== "string" || credentials.password.length > 128) return null;
+        await assertAccountRateLimit(credentials.email, "login", 15);
 
         const user = await prisma.user.findFirst({
           where: { email: { equals: (credentials.email as string).trim(), mode: "insensitive" } },
@@ -134,12 +139,15 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
             where: { id: token.id as string },
             select: {
               status: true,
+              sessionVersion: true,
               isSuperAdmin: true,
               isMasterSuperAdmin: true,
               languageRoles: { select: { languageId: true, role: true, language: { select: { code: true, name: true } } } },
             },
           });
           if (dbUser?.status === "active") {
+            if (!user && (token.sessionVersion ?? 0) !== (dbUser.sessionVersion ?? 0)) return null;
+            token.sessionVersion = dbUser.sessionVersion ?? 0;
             token.isSuperAdmin = dbUser.isSuperAdmin || dbUser.isMasterSuperAdmin;
             token.isMasterSuperAdmin = dbUser.isMasterSuperAdmin;
             token.languageRoles = dbUser.languageRoles
@@ -177,10 +185,12 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
         const cookieStore = await cookies();
         const googleIntent = cookieStore.get("google-auth-intent")?.value;
         cookieStore.delete("google-auth-intent");
+        const nativeReturn = nativeReturnFromCookie(cookieStore.get(NATIVE_RETURN_COOKIE)?.value);
+        const loginError = (error: string) => nativeAuthHref("login", nativeReturn, { error });
         const email = user.email?.trim();
         const googleProfile = profile as { email_verified?: boolean } | undefined;
         if (!googleProfile?.email_verified || !email) {
-          return "/login?error=GoogleVerificationFailed";
+          return loginError("GoogleVerificationFailed");
         }
 
         const linkedAccount = await prisma.account.findUnique({
@@ -199,12 +209,12 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
               select: { status: true },
             });
 
-        if (accountUser?.status === "suspended") return "/login?error=AccountSuspended";
+        if (accountUser?.status === "suspended") return loginError("AccountSuspended");
         if (accountUser) return true;
 
         return googleIntent === "register"
           ? true
-          : "/login?error=GoogleAccountNotFound";
+          : loginError("GoogleAccountNotFound");
       }
 
       let accountUser = user.id
@@ -226,4 +236,14 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
 
 // React memoizes only within one server render. Each new request still checks
 // the current account and roles; no session or privileges are shared between users.
-export const auth = cacheForRender(() => uncachedAuth());
+export const auth = cacheForRender(async () => {
+  const authorization = (await headers()).get("Authorization");
+  if (authorization === null) return uncachedAuth();
+  // All existing role/consent checks now apply to native requests as well.
+  // An invalid bearer must never fall back to somebody else's browser cookie.
+  const id = await getNativeSessionUserId(authorization);
+  if (!id) return null;
+  const user = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true, name: true, image: true, status: true, isSuperAdmin: true, isMasterSuperAdmin: true, languageRoles: { select: { languageId: true, role: true, language: { select: { code: true, name: true } } } } } });
+  if (!user || user.status !== "active") return null;
+  return { expires: new Date(Date.now() + 600000).toISOString(), user: { id: user.id, email: user.email, name: user.name, image: user.image, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, role: role.role, languageCode: role.language.code, languageName: role.language.name })) } };
+});

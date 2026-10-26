@@ -53,7 +53,7 @@ export default async function UserDetailPage({
         ← Back to users
       </Link>
 
-      <header className="mb-8">
+      <header className="workspace-heading mb-8">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           {user.name || user.email}
         </h1>

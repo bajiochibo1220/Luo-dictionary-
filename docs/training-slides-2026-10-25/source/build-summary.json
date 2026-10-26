@@ -1,0 +1,86 @@
+[
+  {
+    "file": "00_START_HERE",
+    "role": "Choose your training guide",
+    "slides": 9,
+    "screenshotSlides": 3,
+    "diagrams": 2
+  },
+  {
+    "file": "01_Community_Members",
+    "role": "Community members",
+    "slides": 29,
+    "screenshotSlides": 24,
+    "diagrams": 3
+  },
+  {
+    "file": "02_Students",
+    "role": "Students and learners",
+    "slides": 19,
+    "screenshotSlides": 15,
+    "diagrams": 2
+  },
+  {
+    "file": "03_Teachers_and_Lecturers",
+    "role": "Teachers and lecturers",
+    "slides": 22,
+    "screenshotSlides": 18,
+    "diagrams": 2
+  },
+  {
+    "file": "04_Uploaders",
+    "role": "Uploaders",
+    "slides": 21,
+    "screenshotSlides": 16,
+    "diagrams": 3
+  },
+  {
+    "file": "05_Cultural_Reviewers",
+    "role": "Cultural reviewers",
+    "slides": 19,
+    "screenshotSlides": 14,
+    "diagrams": 3
+  },
+  {
+    "file": "06_Content_Editors",
+    "role": "Content editors",
+    "slides": 19,
+    "screenshotSlides": 14,
+    "diagrams": 3
+  },
+  {
+    "file": "07_Publishers",
+    "role": "Publishers",
+    "slides": 18,
+    "screenshotSlides": 13,
+    "diagrams": 3
+  },
+  {
+    "file": "08_Language_Administrators",
+    "role": "Language administrators",
+    "slides": 21,
+    "screenshotSlides": 16,
+    "diagrams": 3
+  },
+  {
+    "file": "09_Super_Admins",
+    "role": "Super Admins",
+    "slides": 19,
+    "screenshotSlides": 14,
+    "diagrams": 3
+  },
+  {
+    "file": "10_Master_Super_Admin",
+    "role": "Master Super Admin",
+    "slides": 23,
+    "screenshotSlides": 18,
+    "diagrams": 3
+  },
+  {
+    "file": "11_Researchers",
+    "role": "Researchers and institutional readers",
+    "slides": 21,
+    "screenshotSlides": 17,
+    "diagrams": 2
+  }
+]

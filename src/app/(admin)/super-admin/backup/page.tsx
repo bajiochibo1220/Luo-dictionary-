@@ -26,7 +26,7 @@ export default async function BackupPage() {
 
   return (
     <div>
-      <header className="mb-6 flex items-start justify-between">
+      <header className="workspace-heading mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-serif text-stone-800 mb-1">
             Database Backups

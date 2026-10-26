@@ -1,0 +1,2939 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-10-26",
+  "project": "Luo Heritage / LuoLinguaAI",
+  "method": "Each listed requirement has equal weight; implemented=1, partial=0.5, not implemented=0. Explicit deferrals excluded. Duplicate deliverable/acceptance rows intentionally retain their distinct source obligations; this is a traceable estimate, not a contract acceptance score. No customer or institutional acceptance has been inferred from passing tests.",
+  "sources": [
+    "JOOUST LuoLinguaAI PRD.txt",
+    "LuoLinguaAI Phase Two.txt",
+    "Request for  Funding Approval  of LuoLinguaAI Project Phase 1.txt",
+    "Phase one progress report.txt",
+    "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+    "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt"
+  ],
+  "requirements": [
+    {
+      "id": "PRD-M01-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Vocabulary",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Definitions",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "English translations",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Kiswahili translations",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Pronunciation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Audio recordings",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Usage examples",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Synonyms",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Antonyms",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-10",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Word origin",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M01-11",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 1",
+      "area": "Dholuo Dictionary",
+      "requirement": "Grammar classification",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Original proverb",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Literal translation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Meaning",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Interpretation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Context",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Situations where used",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Related proverb",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Audio narration",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M02-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 2",
+      "area": "Proverbs Repository",
+      "requirement": "Video explanation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Community histories",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Clan histories",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Migration narratives",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Historical events",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Heroes",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Elders' interviews",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Audio recordings",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Video interviews",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M03-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 3",
+      "area": "Oral History Archive",
+      "requirement": "Interactive maps",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/modules/oral-history/location-map.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Original text",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "English translation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Narration",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Characters",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Moral lesson",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "AI illustrations",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "No complete user journey found in the reviewed code. This stays in software scope.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Animation",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "No complete user journey found in the reviewed code. This stays in software scope.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Children's version",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M04-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 4",
+      "area": "Folktales (Sigana)",
+      "requirement": "Teacher notes",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/collection-fields.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Lyrics",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Translation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Meaning",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Audio",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Musical notation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Instruments",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M05-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 5",
+      "area": "Traditional Songs",
+      "requirement": "Cultural context",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-cultural-text.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Question",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Answer",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Explanation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Difficulty level",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Gamification",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M06-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 6",
+      "area": "Riddles (Ngeche)",
+      "requirement": "Multiplayer challenge",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "No complete user journey found in the reviewed code. This stays in software scope.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "Images",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "AI reconstructed models",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Deferred only for the custom model/quality evaluation requiring unavailable labelled cultural or pronunciation data.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "3D objects",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "No complete user journey found in the reviewed code. This stays in software scope.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "Historical description",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "Traditional use",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "Current status",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M07-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 7",
+      "area": "Cultural Artifacts Library",
+      "requirement": "Museum location",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/artifacts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "GPS location",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "Images",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "Virtual tour",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "No complete user journey found in the reviewed code. This stays in software scope.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "History",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "Local stories",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M08-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 8",
+      "area": "Heritage Sites",
+      "requirement": "Tourism information (where available)",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/modules/heritage-sites"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Conversational AI",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Speech recognition",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Pronunciation correction",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Deferred only for the custom model/quality evaluation requiring unavailable labelled cultural or pronunciation data.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Vocabulary quizzes",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Grammar correction",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Story generation",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Writing assistant",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M09-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 9",
+      "area": "AI Language Tutor",
+      "requirement": "Translation",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Dedicated tutor journey is absent; general chat is not an accepted tutor or language-quality evaluation.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Answer cultural questions",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Explain traditions",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Translate Dholuo",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Tell stories",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Recommend learning materials",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M10-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 10",
+      "area": "AI Chatbot",
+      "requirement": "Quiz users",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Real provider generation checked; cultural/translation quality requires expert acceptance and sufficient approved sources.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Vocabulary races",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Word puzzles",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Memory challenges",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Proverbs challenge",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Story completion",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Cultural treasure hunt",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Artifact identification",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M11-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 11",
+      "area": "Games and Gamification",
+      "requirement": "Language battles",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Multiple-choice resources exist; distinct requested game mechanics and multiplayer are not complete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Beginner lessons",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Intermediate lessons",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Advanced lessons",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Speaking exercises",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/learning-service.ts",
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Listening exercises",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Reading practice",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Writing practice",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M12-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 12",
+      "area": "Learning Centre",
+      "requirement": "Progress tracking",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/learning-service.ts"
+      ],
+      "limitation": "",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M13-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 13",
+      "area": "Cultural Calendar",
+      "requirement": "Traditional ceremonies",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M13-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 13",
+      "area": "Cultural Calendar",
+      "requirement": "Festivals",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M13-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 13",
+      "area": "Cultural Calendar",
+      "requirement": "Historical anniversaries",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M13-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 13",
+      "area": "Cultural Calendar",
+      "requirement": "Community events",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/learning-hub.tsx"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Podcasts",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Interviews",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Songs",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Speeches",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Documentaries",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M14-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 14",
+      "area": "Audio-Visual Library",
+      "requirement": "Lectures",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/public-library.ts"
+      ],
+      "limitation": "Software support is distinct from approved collection content; current public holdings are extremely limited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "Publications",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "Reports",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "Transcripts",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "Metadata",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "Field notes",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-M15-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / Module 15",
+      "area": "Research Portal",
+      "requirement": "AI datasets",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Transcript/admin/export foundations exist; full governed researcher workspace and immutable releases remain incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "OCR",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Speech-to-Text",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Provider-backed speech pipeline is unimplemented; account configuration alone would not finish it.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Text-to-Speech",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Human audio recordings are not a text-to-speech engine. No synthesis service/user journey exists. Custom Dholuo voice training is deferred separately; ordinary synthesis integration is not credited.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Machine Translation",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Named Entity Recognition",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Semantic Search",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Question Answering",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Large Language Models",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Image Recognition",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Custom cultural classifier needs approved labelled images.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S5-10",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 5",
+      "area": "AI Components",
+      "requirement": "Cultural Knowledge Graph",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Guest users",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Registered users",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Students",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Teachers",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts",
+        "src/app/api/users/[id]/roles/route.ts",
+        "tests/research.test.cjs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Researchers",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/research-service.ts",
+        "src/components/shared/research-library.tsx",
+        "tests/research.test.cjs",
+        "src/app/api/users/[id]/roles/route.ts"
+      ],
+      "limitation": "Assigned language roles, bounded record/transcript browsing, parent consent checks and read audit are implemented. Formal release/lineage obligations remain separately tracked.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Administrators",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Moderators",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S6-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 6",
+      "area": "User Management",
+      "requirement": "Content Editors",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/permissions.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "User management",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Content approval",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Analytics",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "AI monitoring",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Reports",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Dataset uploads",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Metadata management",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S7-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 7",
+      "area": "Administration Dashboard",
+      "requirement": "Backup management",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/management-workspace.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Android",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "iOS",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Shared bundle and native project exist; iOS compilation/device acceptance unverified.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Web application",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Offline mode",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Cloud synchronization",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Multi-language interface",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Low-bandwidth operation",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Secure authentication",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "Role-based permissions",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S8-10",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 8",
+      "area": "Technical Requirements",
+      "requirement": "API integration",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/components/shared/application.tsx"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Text",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Audio",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Images",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Video",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "GIS layers",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Metadata",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "AI models",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Research datasets",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S9-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 9",
+      "area": "Data Repository",
+      "requirement": "Transcripts",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Encryption",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Secure login",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "User authentication",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Role management",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Data backup",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Audit trails",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Consent management",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S10-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 10",
+      "area": "Security",
+      "requirement": "Copyright protection",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Active users",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Learning progress",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Popular stories",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Most searched words",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "AI interactions",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Downloads",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "Geographic reach",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S11-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 11",
+      "area": "Analytics",
+      "requirement": "User engagement",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/analytics/route.ts"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-01",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Mobile Application (Android)",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-02",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Mobile Application (iOS)",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-03",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Web Portal",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-04",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Administration Dashboard",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-05",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "AI Chatbot",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-06",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "AI Language Tutor",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-07",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Central Digital Repository",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-08",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "REST API Services",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-09",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "User Manual",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-10",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Technical Documentation",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-11",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Training Manual",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-12",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Source Code Repository",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-13",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Deployment Documentation",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-14",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "Maintenance Plan",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PRD-S14-15",
+      "source": "JOOUST LuoLinguaAI PRD.txt / section 14",
+      "area": "Expected Deliverables",
+      "requirement": "AI Model Documentation",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs"
+      ],
+      "limitation": "Implementation estimate based on code review; production/user acceptance is separately pending.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-01",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Downloaded lessons without internet",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/offline-learning.ts"
+      ],
+      "limitation": "Text packs and queued progress exist; media download and per-journey physical-device acceptance incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-02",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Progress synchronization on reconnect",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "tests/learning.test.cjs"
+      ],
+      "limitation": "Isolated fixture and browser-transport evidence; final device acceptance pending.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-03",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Source-grounded AI and citations",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "tests/system-hardening.test.cjs"
+      ],
+      "limitation": "Current public source hydration and real-provider responses checked; language quality not certified.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-04",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Verification and password reset email",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/account-security.ts"
+      ],
+      "limitation": "Secure token flow tested; no configured email delivery service, so actual inbox receipt is not verified.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-05",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Phone push notifications",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "clients/mobile/package.json"
+      ],
+      "limitation": "Push registration, delivery and preferences are not implemented; user credentials alone are insufficient.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-06",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Dholuo speech-to-text trial",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "src/lib/ai"
+      ],
+      "limitation": "No complete recording-to-transcript provider workflow or evaluated trial.",
+      "accepted": false
+    },
+    {
+      "id": "PH2-07",
+      "source": "LuoLinguaAI Phase Two.txt",
+      "area": "Phase Two",
+      "requirement": "Real Android and iPhone provider acceptance",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "docs/system-audit"
+      ],
+      "limitation": "Prior Android checks exist; current signed-in end-to-end device checks and iPhone checks remain.",
+      "accepted": false
+    },
+    {
+      "id": "USER-01",
+      "source": "Latest explicit user request",
+      "area": "User direction",
+      "requirement": "Google and email/password only",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "tests/full-scope-repairs.test.cjs"
+      ],
+      "limitation": "Provider credentials present does not prove fresh live Google consent succeeds.",
+      "accepted": false
+    },
+    {
+      "id": "USER-02",
+      "source": "Latest explicit user request",
+      "area": "User direction",
+      "requirement": "Sticky headings and compact horizontal mobile filters",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/module-content-view.tsx"
+      ],
+      "limitation": "Shared/admin changes implemented; browser scroll verification across every page is incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "USER-03",
+      "source": "Latest explicit user request",
+      "area": "User direction",
+      "requirement": "No coming-in-Phase-Two dead ends",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/public-navigation.ts"
+      ],
+      "limitation": "Stub modules hidden and calendar connected; full unbuilt PRD modules remain visible in this register.",
+      "accepted": false
+    },
+    {
+      "id": "AT-01",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Single and batch ingest, metadata and checksums",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/media-upload-client.ts"
+      ],
+      "limitation": "Single-item upload and import tooling exist; formal witnessed mixed-batch test remains.",
+      "accepted": false
+    },
+    {
+      "id": "AT-02",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Restricted/sacred media access control",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "tests/security.test.cjs"
+      ],
+      "limitation": "Access-boundary fixtures pass; complete storage isolation and witnessed acceptance pending.",
+      "accepted": false
+    },
+    {
+      "id": "AT-03",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Permission-filtered metadata and semantic search",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "src/lib/ai/rag.ts"
+      ],
+      "limitation": "Semantic retrieval rehydrates current eligible records; latency target not proven.",
+      "accepted": false
+    },
+    {
+      "id": "AT-04",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Transcript revisions preserve version/provenance",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/transcripts/[id]/route.ts"
+      ],
+      "limitation": "Version fields exist; immutable reconstructable revision acceptance remains.",
+      "accepted": false
+    },
+    {
+      "id": "AT-05",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Authorized redacted exports",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/app/api/nrf/export/route.ts"
+      ],
+      "limitation": "Authorization and CSV formula protection exist; full protected-field/redaction matrix incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "AT-06",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Custodian approve/revise/restrict private workflow",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/components/shared/staff-workspace.tsx"
+      ],
+      "limitation": "Staff workflow exists; distinct community protocol/custodian decision model incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "AT-07",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Public consent and independent approval gate",
+      "coverage": 1,
+      "status": "implemented",
+      "evidence": [
+        "tests/security.test.cjs"
+      ],
+      "limitation": "Publication rule fixtures; formal university sign-off pending.",
+      "accepted": false
+    },
+    {
+      "id": "AT-08",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Metadata search <=2s and semantic search <=5s",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "docs/system-audit"
+      ],
+      "limitation": "No current representative-dataset benchmark proves thresholds. Chat generation is not the search benchmark.",
+      "accepted": false
+    },
+    {
+      "id": "AT-09",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "20-user load test and 100-user scaling path",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "docs/system-audit"
+      ],
+      "limitation": "No current load-test report.",
+      "accepted": false
+    },
+    {
+      "id": "AT-12",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "TLS, at-rest encryption, elevated-role MFA and least privilege",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/auth.ts"
+      ],
+      "limitation": "Authentication/roles exist; elevated-role MFA and complete encryption verification are unfinished.",
+      "accepted": false
+    },
+    {
+      "id": "AT-13",
+      "source": "Activity_3_1_1_NRF_Technical_Specifications_Annex.txt",
+      "area": "Technical Annex",
+      "requirement": "Audit authentication, reads, restrictions and exports",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/audit.ts"
+      ],
+      "limitation": "Mutation and export audit exists; complete read/access audit matrix incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-01",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "M:N asset consent and separate community protocols",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Current flat consent fields do not implement required relational governance.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-02",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Typed controlled and protected metadata",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/phase-one-content.ts"
+      ],
+      "limitation": "Core validation exists; complete annex vocabulary/schema coverage remains.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-03",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Canonical independent URI and SHA-256 fixity",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts",
+        "src/lib/cloudinary.ts"
+      ],
+      "limitation": "Identifier/checksum foundations; full canonical object lifecycle not accepted.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-04",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Withdrawal propagates across derivatives/releases/datasets/indexes",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/governance.ts"
+      ],
+      "limitation": "Immediate public filtering and current AI hydration protect reads; full lineage propagation incomplete.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-05",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Immutable reproducible versions for all object types",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Some transcript/learning versions exist; complete release/model/annotation immutability missing.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-06",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Protect exact GPS, identity and consent evidence",
+      "coverage": 0.5,
+      "status": "partial",
+      "evidence": [
+        "src/lib/public-projection.ts"
+      ],
+      "limitation": "Public source filtering tested; every research export/attribute permission needs full review.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-07",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Most restrictive effective group consent",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "No complete participant/community policy junction and decision engine.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-08",
+      "source": "Activity_3_1_2_Repository_Data_Model_Metadata_Storage_Annex.txt",
+      "area": "Data Model Annex",
+      "requirement": "Exact dataset/model/source/evaluation lineage",
+      "coverage": 0,
+      "status": "not_implemented",
+      "evidence": [
+        "prisma/schema.prisma"
+      ],
+      "limitation": "Full immutable lineage register absent; this software remains in scope even when model training is deferred.",
+      "accepted": false
+    },
+    {
+      "id": "EXT-01",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Deployment",
+      "requirement": "Physical JOOUST server provisioning and migration",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "EXT-02",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Deployment",
+      "requirement": "Google Play submission/account and store release",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "EXT-03",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Deployment",
+      "requirement": "Apple account, signing and store publication",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "EXT-04",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Deployment",
+      "requirement": "Mac/iPhone availability and signing credentials",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AT-10",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Technical Annex",
+      "requirement": "Scheduled backups to separate on-premises storage",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AT-11",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Technical Annex",
+      "requirement": "Witnessed on-premises restore within 48–72h",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AT-14",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Technical Annex",
+      "requirement": "Core services run without public cloud",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-09",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Data Model Annex",
+      "requirement": "On-premises database/media restore acceptance",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AC-DM-10",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "Data Model Annex",
+      "requirement": "External-network-isolated on-premises core operations",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AI-DATA-01",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "AI training",
+      "requirement": "Custom Dholuo translation and voice models with unavailable reviewed paired text/audio",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    },
+    {
+      "id": "AI-DATA-02",
+      "source": "User-approved deferral / corresponding source requirement",
+      "area": "AI training",
+      "requirement": "Evaluated custom pronunciation correction with unavailable labelled recordings",
+      "coverage": null,
+      "status": "deferred",
+      "evidence": [],
+      "limitation": "Explicitly excluded from current software denominator; no completion credit awarded.",
+      "accepted": false
+    }
+  ]
+}

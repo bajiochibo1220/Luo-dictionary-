@@ -120,7 +120,7 @@ export function SystemClient({
 
   return (
     <div>
-      <header className="mb-6">
+      <div className="workspace-heading" data-sticky-controls><header className="mb-4">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           System Settings
         </h1>
@@ -129,7 +129,7 @@ export function SystemClient({
         </p>
       </header>
 
-      <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} />
+      <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} /></div>
 
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         {tab === "general" && (

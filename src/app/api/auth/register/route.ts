@@ -6,6 +6,7 @@ import { calculateAge, parseDateOfBirth } from "@/lib/dates";
 import { createHash } from "crypto";
 import { getSystemSetting } from "@/lib/settings";
 import { DEFAULT_PRIVACY, DEFAULT_TERMS } from "@/lib/legal-content";
+import { assertAccountRateLimit } from "@/lib/account-security";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = registerSchema.parse(body);
+    await assertAccountRateLimit(data.email, "register");
 
     const existing = await prisma.user.findFirst({
       where: { email: { equals: data.email, mode: "insensitive" } },
@@ -93,6 +95,7 @@ export async function POST(req: NextRequest) {
       data: { id: user.id, email: user.email, status: user.status },
     });
   } catch (err: any) {
+    if (err.status === 429) return NextResponse.json({ success: false, error: err.message }, { status: 429 });
     if (err.name === "ZodError") {
       return NextResponse.json(
         { success: false, error: err.errors[0].message },

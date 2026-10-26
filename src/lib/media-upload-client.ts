@@ -20,8 +20,8 @@ export type SignedMediaUpload = {
   overwrite: false;
 };
 
-export async function getMediaUploadSignature(file: File, details: MediaUploadDetails, publicId?: string): Promise<SignedMediaUpload> {
-  const response = await fetch("/api/media/upload/signature", {
+export async function getMediaUploadSignature(file: File, details: MediaUploadDetails, publicId?: string, transport: typeof fetch = fetch): Promise<SignedMediaUpload> {
+  const response = await transport("/api/media/upload/signature", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...details, fileName: file.name, contentType: file.type, ...(publicId ? { publicId } : {}) }),
@@ -75,8 +75,8 @@ export async function checksumSha256(file: File): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export async function finalizeMediaUpload(details: MediaUploadDetails, upload: any, checksum: string) {
-  const response = await fetch("/api/media/upload/finalize", {
+export async function finalizeMediaUpload(details: MediaUploadDetails, upload: any, checksum: string, transport: typeof fetch = fetch) {
+  const response = await transport("/api/media/upload/finalize", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...details, upload, checksum }),
@@ -86,9 +86,9 @@ export async function finalizeMediaUpload(details: MediaUploadDetails, upload: a
   return result.data;
 }
 
-export async function uploadMediaFile(file: File, details: MediaUploadDetails) {
+export async function uploadMediaFile(file: File, details: MediaUploadDetails, transport: typeof fetch = fetch) {
   const checksum = await checksumSha256(file);
-  const signed = await getMediaUploadSignature(file, details);
-  const upload = await uploadMediaInChunks(file, signed, () => getMediaUploadSignature(file, details, signed.publicId));
-  return finalizeMediaUpload(details, upload, checksum);
+  const signed = await getMediaUploadSignature(file, details, undefined, transport);
+  const upload = await uploadMediaInChunks(file, signed, () => getMediaUploadSignature(file, details, signed.publicId, transport));
+  return finalizeMediaUpload(details, upload, checksum, transport);
 }

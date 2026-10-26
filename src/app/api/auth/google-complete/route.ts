@@ -21,13 +21,13 @@ const completionSchema = z.object({
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ success: false, error: "Please sign in with Google again." }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ success: false, error: "Please sign in again." }, { status: 401 });
 
   const account = await prisma.account.findFirst({
     where: { userId: session.user.id, provider: "google" },
     select: { id: true },
   });
-  if (!account) return NextResponse.json({ success: false, error: "Finish sign-up with the Google button." }, { status: 403 });
+  if (!account) return NextResponse.json({ success: false, error: "Finish sign-up with your selected account provider." }, { status: 403 });
 
   const parsed = completionSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ success: false, error: parsed.error.issues[0]?.message ?? "Check the details and try again." }, { status: 400 });

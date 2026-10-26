@@ -73,7 +73,7 @@ export default async function EditContentPage({
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           Edit {record.module.baseName}
         </h1>

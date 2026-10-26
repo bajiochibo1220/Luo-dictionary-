@@ -33,7 +33,7 @@ export function AdminsClient({
 
   return (
     <div>
-      <header className="mb-6 flex items-start justify-between">
+      <header className="workspace-heading mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-serif text-stone-800 mb-1">
             Administrators
@@ -58,7 +58,7 @@ export function AdminsClient({
           {isMasterSuperAdmin ? "You are the Master Super Admin. Create Super Admins and assign the languages they oversee, or create uploaders, cultural experts, editors, and publishers for specific languages." : "As a Super Admin, you can create administrators only for languages assigned to you. Only the Master Super Admin can create, deactivate, or revoke Super Admin accounts."} Create accounts
           here, share the email and password with them directly, and they
           sign in at <code className="bg-white px-1.5 py-0.5 rounded-sm text-amber-800">/login</code>{" "}
-          with those credentials. Social sign-in (Google, Microsoft) is not
+          with those credentials. Social sign-in is not
           available for administrative accounts.
         </p>
       </div>

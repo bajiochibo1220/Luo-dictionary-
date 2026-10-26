@@ -1,3 +1,13 @@
+> Current implementation direction (12 October 2026): shared React/TypeScript with Capacitor, separate Android/iOS project folders and one existing cloud database/account system. Earlier framework/schedule suggestions below are historical planning; use [the current delivery plan](PHASE_TWO_DELIVERY_PLAN.md), [completion checklist](PHASE_STATUS_AND_COMPLETION_CHECKLIST.md) and [shared architecture](SHARED_APP_ARCHITECTURE.md) for current decisions and status.
+
+> Resumed development, 14 October 2026: protected phone login storage, safe session renewal and offline sign-out retry are implemented for the shared mobile client. Android's Keystore adapter and iOS's Keychain adapter are added, with no database migration or account copying. Actual verification and remaining acceptance are recorded in [the renewal notes](PHASE_TWO_NATIVE_SESSION_RENEWAL.md) and delivery plan. This is another development increment, not completion of Phase Two.
+
+> Latest shared-chat increment: shared web/mobile chat, own saved-message/actions APIs, 88 passing tests and successful web/mobile builds. Android debug build automation has since run successfully; the iOS simulator/CI workflow has not run. Full-scope work remains in the linked completion checklist; store credentials alone do not complete it.
+
+> Latest Android result: the updated development APK compiled, passed lint with zero errors/27 warnings, and installed on the USB phone. Visible layout/branding, public library, sidebar, language/view controls, lost-connection retry and signed-out chat/account boundaries passed. The small-screen app name was fixed. Cloud database stability/loading speed, HTTPS native login, iOS compilation, signed releases and full-scope acceptance remain pending; see the latest delivery-plan entry.
+
+> Later login correction: the explicit USB Android debug app now opens the existing login and registration forms; creating an account retains the return link to the app. All 92 regression tests and web/mobile/Android builds passed, and Sign in opened the real form on the phone. The user's manual authenticated return/history check is pending. The USB exception was verified disabled in compiled release code; distributed HTTPS login, persistent sessions, iPhone testing and full-scope work remain pending.
+
 # LuoLinguaAI Phase Two — Project Summary
 
 **Purpose:** A short summary of what Phase Two will deliver, what services it needs, the likely payments, and how long the work may take. All prices are estimates and exclude labour.

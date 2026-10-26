@@ -2,11 +2,17 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { loader } = require('./load-ts.cjs');
 
-test('saved storage credentials configure Cloudinary instead of stale environment defaults', async () => {
-  const configurations = [];
-  const { configureCloudinary } = loader({ cloudinary: { v2: { config: value => configurations.push(value) } }, './settings': { getSystemSettings: async () => ({ cloudinary_cloud_name: 'saved-cloud', cloudinary_api_key: 'saved-key', cloudinary_api_secret: 'saved-secret' }) } })('src/lib/cloudinary.ts');
-  assert.deepEqual(await configureCloudinary(), { cloudName: 'saved-cloud', apiKey: 'saved-key', apiSecret: 'saved-secret' });
-  assert.equal(configurations.at(-1).cloud_name, 'saved-cloud');
+test('environment storage credentials override legacy saved settings and saved values remain a fallback', async () => {
+  const keys = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+  const previous = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+  try {
+    Object.assign(process.env, {CLOUDINARY_CLOUD_NAME:'environment-cloud',CLOUDINARY_API_KEY:'environment-key',CLOUDINARY_API_SECRET:'environment-secret'});
+    const configurations = [];
+    const { configureCloudinary } = loader({ cloudinary: { v2: { config: value => configurations.push(value) } }, './settings': { getSystemSettings: async () => ({ cloudinary_cloud_name: 'saved-cloud', cloudinary_api_key: 'saved-key', cloudinary_api_secret: 'saved-secret' }) } })('src/lib/cloudinary.ts');
+    assert.deepEqual(await configureCloudinary(), {cloudName:'environment-cloud',apiKey:'environment-key',apiSecret:'environment-secret'});
+    for (const key of keys) delete process.env[key];
+    assert.deepEqual(await configureCloudinary(), { cloudName: 'saved-cloud', apiKey: 'saved-key', apiSecret: 'saved-secret' });
+  } finally { for(const key of keys) if(previous[key] === undefined) delete process.env[key]; else process.env[key]=previous[key]; }
 });
 
 test('email configuration builds the provider request and never sends during tests', async () => {

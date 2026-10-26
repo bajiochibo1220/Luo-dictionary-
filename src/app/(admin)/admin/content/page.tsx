@@ -89,7 +89,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <header className="workspace-heading mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="mb-1 text-3xl font-serif text-stone-800">Content</h1>
           <p className="text-sm text-stone-500">Items are grouped by language and content area. Select several items at the same stage to move them together.</p>

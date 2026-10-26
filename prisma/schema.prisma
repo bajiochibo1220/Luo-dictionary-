@@ -113,6 +113,9 @@ model User {
   status             String    @default("active")
   profileTypes       String[]  @default([])
   emailVerified      DateTime?
+  sessionVersion     Int       @default(0)
+  phoneNumber        String?   @unique
+  phoneVerifiedAt    DateTime?
   avatarUrl          String?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -128,6 +131,12 @@ model User {
   sessions         Session[]
   conversations    Conversation[]
   reviewedConsents ConsentRecord[]    @relation("ConsentReviewer")
+  learningStates   LearningState[]
+  activityReceipts  ActivityReceipt[]
+  courseEnrollments CourseEnrollment[]
+  classMemberships ClassMembership[]
+  assignmentSubmissions AssignmentSubmission[]
+  savedItems       SavedItem[]
 
   @@map("users")
 }
@@ -660,4 +669,210 @@ model Backup {
   createdAt DateTime @default(now())
 
   @@map("backups")
+}
+
+// Authored educational and event content uses the same reviewed public boundary
+// on every client. JSON is validated by the resource contract before storage.
+model LearningResource {
+  id              String   @id @default(uuid())
+  languageId      Int
+  kind            String
+  title           String
+  description     String   @db.Text
+  level           String   @default("beginner")
+  audience        String   @default("all")
+  body            Json
+  status          String   @default("draft")
+  consentScope    String   @default("pending")
+  restrictionLevel String  @default("internal")
+  downloadAllowed Boolean  @default(false)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  timeZone        String   @default("Africa/Nairobi")
+  location        String?
+  sourceIds       String[] @default([])
+  createdBy       String
+  reviewedBy      String?
+  version         Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  states          LearningState[]
+  courseUnits     CourseUnit[]
+  assignments     ClassAssignment[]
+
+  @@index([languageId, kind, status])
+  @@index([startsAt])
+  @@map("learning_resources")
+}
+
+model LearningState {
+  id          String   @id @default(uuid())
+  userId      String
+  resourceId  String
+  completed   Boolean  @default(false)
+  bestScore   Int      @default(0)
+  attempts    Int      @default(0)
+  position    Int      @default(0)
+  resourceVersion Int @default(1)
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource    LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, resourceId])
+  @@map("learning_states")
+}
+
+model ActivityReceipt {
+  id          String   @id @default(uuid())
+  userId      String
+  operationId String
+  fingerprint String
+  result      Json
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, operationId])
+  @@map("activity_receipts")
+}
+
+model SavedItem {
+  id          String   @id @default(uuid())
+  userId      String
+  resourceId  String
+  kind        String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, resourceId, kind])
+  @@map("saved_items")
+}
+
+model LearningCourse {
+  id          String @id @default(uuid())
+  languageId  Int
+  title       String
+  description String @db.Text
+  level       String @default("beginner")
+  sequential  Boolean @default(true)
+  status      String @default("draft")
+  version     Int @default(1)
+  createdBy   String
+  reviewedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  units       CourseUnit[]
+  enrollments CourseEnrollment[]
+  classrooms  LearningClassroom[]
+
+  @@index([languageId, status, id])
+  @@map("learning_courses")
+}
+
+model CourseUnit {
+  id              String @id @default(uuid())
+  courseId        String
+  resourceId      String
+  resourceVersion Int
+  position        Int
+  minimumScore    Int @default(70)
+  course          LearningCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  resource        LearningResource @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+
+  @@unique([courseId, resourceId])
+  @@unique([courseId, position])
+  @@map("course_units")
+}
+
+model CourseEnrollment {
+  id            String @id @default(uuid())
+  courseId      String
+  userId        String
+  courseVersion Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  course        LearningCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, userId])
+  @@index([userId])
+  @@map("course_enrollments")
+}
+
+model LearningClassroom {
+  id              String @id @default(uuid())
+  languageId      Int
+  courseId        String?
+  title           String
+  createdBy       String
+  version         Int @default(1)
+  inviteCodeHash  String? @unique
+  inviteExpiresAt DateTime?
+  archivedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  course          LearningCourse? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  members         ClassMembership[]
+  assignments     ClassAssignment[]
+
+  @@index([languageId, id])
+  @@map("learning_classrooms")
+}
+
+model ClassMembership {
+  id          String @id @default(uuid())
+  classroomId String
+  userId      String
+  role        String @default("learner")
+  joinedAt    DateTime @default(now())
+  classroom   LearningClassroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([classroomId, userId])
+  @@index([userId])
+  @@map("class_memberships")
+}
+
+model ClassAssignment {
+  id              String @id @default(uuid())
+  classroomId     String
+  resourceId      String
+  resourceVersion Int
+  title           String
+  instructions    String @db.Text
+  dueAt           DateTime?
+  closedAt        DateTime?
+  version         Int @default(1)
+  contentVersion  Int @default(1)
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  classroom       LearningClassroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  resource        LearningResource @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+  submissions     AssignmentSubmission[]
+
+  @@index([classroomId, createdAt])
+  @@map("class_assignments")
+}
+
+model AssignmentSubmission {
+  id           String @id @default(uuid())
+  assignmentId String
+  userId       String
+  answerText   String @db.Text
+  autoScore    Int?
+  teacherScore Int?
+  feedback     String? @db.Text
+  gradedBy     String?
+  gradedAt     DateTime?
+  submittedAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isLate       Boolean @default(false)
+  version      Int @default(1)
+  assignmentVersion Int @default(1)
+  assignment   ClassAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, userId])
+  @@index([userId])
+  @@map("assignment_submissions")
 }

@@ -1,0 +1,184 @@
+LuoLinguaAI Phase Two — Project Summary
+WHAT PHASE TWO WILL DELIVER
+An Android app and an iPhone app connected to the current LuoLinguaAI system.
+Lessons and approved content for the dictionary, proverbs, riddles, selected stories, songs and cultural items.
+Search, quizzes, saved words and simple learning progress.
+Downloaded lessons that can be read without internet. Progress made offline should upload when the phone
+reconnects.
+AI chat that uses approved project information and shows which sources it used.
+Phone notifications, email account messages, and optional SMS phone verification.
+A Dholuo speech-to-text trial that the Luo developer (me) can check personally.
+Real service checks: send SMS login codes and ordinary test texts, receive real account emails, and receive push
+notifications on Android and iPhone. Keep a record of which tests passed and what paid usage they consumed.
+A tested plan for moving the website, database and media to the JOOUST server.
+Testing on Android and iPhone, store submissions, backup instructions and handover notes.
+SERVICES AND PAYMENTS NEEDED
+Cost estimates use KES 130 per US dollar. Final amount may change with exchange rates, tax and provider prices.
+Service What it is for Estimated payment
+Google Play Console The account used to test and publish the Android app. Assumed available through
+JOOUST. New registration: USD 25
+once (~KES 3,250).
+Apple Developer account The account used to test and publish the iPhone app. Assumed available via JOOUST.
+Apple membership USD 99/year
+(~KES 12,870). Fee waiver request
+possible.
+Mac computer for iPhone
+release
+Apple computer tools used to prepare and sign the
+iPhone app.
+Assumed available through
+JOOUST, or online Mac service.
+Africa’s Talking account &
+SMS
+Sends real text messages, including one-time sign-in
+codes and agreed urgent alerts.
+JOOUST owns account. Entry plan
+KES 0.80/SMS before VAT (~KES
+0.93 incl. VAT). 100 test messages
+~KES 93.
+Africa’s Talking sender
+name
+Registers the name shown on real SMS messages. Budget KES 14,100 for Safaricom &
+Airtel together before VAT (~KES
+16,356 with VAT). One network:
+KES 8,700 before VAT.
+Africa’s Talking short code A short number that people can text for two-way SMS
+service.
+Not needed for login codes or one-
+way alerts. Request separate quote
+only if two-way texting is required.
+LuoLinguaAI Phase Two Summary Page 1 of 4
+Purpose: Comprehensive overview of Phase Two deliverables, required services, cost estimates (KES 130/USD), AI
+data readiness, and timeline. All prices exclude labour.
+SERVICES AND PAYMENTS NEEDED (CONTINUED)
+Service What it is for Estimated payment
+Google Cloud Speech-to-
+Text
+Changes spoken Dholuo into written words. Luo
+(Kenya) supported.
+Test via developer key. Standard
+USD 0.016/min (~KES 2.08/min
+audio). Batch ~KES 0.39/min.
+JOOUST to setup production
+account.
+Dholuo spoken audio / TTS Reads Dholuo words aloud. No computer voice confirmed. Use
+developer recordings for first
+release. Separate quote if computer
+voice required.
+Email service (e.g.,
+Resend)
+Sends verification links, password resets and account
+notices.
+JOOUST provides account. Resend
+free: 3,000/mo, 100/day. Paid plan
+USD 20/mo (~KES 2,600) if
+needed.
+Firebase & Apple Push Sends reminders and updates to phones. KES 0 for basic notification services
+at current published prices.
+Gemini Runs current AI chat, search and summaries. Charged according to use. Start
+with small monthly spending limit
+and monitor actual usage.
+Vercel & Render Free temporary places to run website and app
+connections during dev.
+KES 0 within free limits. Not for
+public production host; Render
+services sleep after inactivity.
+Neon database Free online copy of database for building and testing. KES 0 within free limits (up to 1
+GB). Move live users to JOOUST
+server or paid production plan.
+Cloudinary storage Holds and displays pictures and videos during
+development.
+KES 0 on free plan (25 monthly
+credits). Pay for plan or move files
+to JOOUST storage for public
+launch.
+JOOUST server & domain Hosts the public system after testing is complete. JOOUST working server and
+domain. No new hosting/domain fee
+included assuming sufficient space
+and internet.
+PAYMENT SUMMARY
+JOOUST is assumed to have a working Google Play account; otherwise arrange USD 25 (~KES 3,250)
+registration. iPhone publishing needs active Apple membership at USD 99/year (~KES 12,870) unless fee-waived.
+Use existing JOOUST domain; no new domain purchase included.
+Use Neon, Cloudinary, Vercel and Render free plans for development/testing within limits. JOOUST server is
+planned live host.
+JOOUST creates/owns Africa’s Talking account, adds SMS credit (~KES 0.93 each incl. VAT) and gives test keys.
+Budget separately for sender-name registration.
+Africa’s Talking sends SMS; email needs separate approved service. Gemini and speech-to-text costs depend on
+use.
+No payment collection service included as app is free. Add M-Pesa or store payment service if users will pay.
+Publishing on Google Play and Apple App Store makes apps available for download; stores do not host website,
+database or media.
+LuoLinguaAI Phase Two Summary Page 2 of 4
+CURRENT DATA AND AI READINESS
+What is already available
+Inspected Folder: LUO DATA/Data/Data folder has 354 files (~326 MB): 119 Word docs, 208 pictures, 8 JSON
+files, 5 PDFs, 5 CSVs, 2 ZIPs, 2 Excels, 2 Markdowns, 1 TSV, 1 JSONL, 1 Python file.
+Language Package: Made from 26 transcripts, containing 2,708 text sections, 16 subject labels, 6 content-type
+labels, 88 exact repeat sections. Test split by interview/session: 17 training, 6 checking, 3 final test sessions.
+Marked research-only/internal.
+Dholuo-English Table: 2,708 rows, but English text is blank/unverified unless checked.
+Media & Structure: Pictures present, but no audio/video files and no labelled image-training collection. 354 files
+include research reports and working documents, not clean AI training datasets.
+What each AI feature needs from the data
+AI feature What available data supports What is still needed
+Chatbot & Q&A Gemini chat and search code exist. Approved
+records help find source material.
+Choose approved public records, test real
+questions, check source citations, keep
+internal transcripts private.
+Search & Culture 2,708 text sections and labels are a useful
+starting point.
+Import permitted records, build search
+entries, test queries, confirm restricted
+records stay private.
+Speech-to-Text Google lists Luo (Kenya). Developer can make
+and check recordings.
+No audio in folder. Make permission-cleared
+recordings and correct text; test
+words/speakers before claiming broad
+accuracy.
+Text-to-Speech Text can create a word/sentence list to record. No ready-made Dholuo voice confirmed.
+Record audio or get quote for custom
+computer voice.
+Translation & Grammar Identifies Dholuo text with placeholder for
+English. Transcripts provide spoken examples.
+Most translations blank. Add developer-
+checked English translations and clean
+written grammar examples.
+Overall Data Readiness: Useful for source-based chat, search, simple lessons and small experiments. Not ready to train
+dependable Luo translation, grammar, speech or image models without checked translations, paired audio, balanced
+examples and approvals.
+LuoLinguaAI Phase Two Summary Page 3 of 4
+TIMELINE
+Estimated development time: ~15 weeks (7 hrs/day, 5 days/week = ~525 working hours). Phase One took ~10 days (~70 hours) for
+the web version.
+Weeks Main work
+1–2 Confirm features, approved content, store accounts, SMS needs; prepare JOOUST server access.
+3–5 Build Android and iPhone app foundations and connect to existing system.
+6–8 Add learning content, search, lessons, quizzes, saved words and progress.
+9–10 Add downloads, offline reading and progress syncing when internet returns.
+11 Add email, optional SMS codes, phone notifications, AI chat and speech-to-text trial.
+12 Connect tested system to JOOUST server, move database/media, check backups, prepare store
+submissions.
+13–14 Test on real phones and with users, fix problems, complete store submissions.
+15 Allow time for final fixes, interruptions, handover and store follow-up.
+WHY PHASE TWO NEEDS ABOUT 15 WEEKS
+Two phone systems: Android and iPhone use different tools and store rules. Each needs separate setup and
+checks.
+Offline use: Lessons must download, stay available offline, and sync later without losing progress.
+Service integration: Email, SMS, push notifications, AI chat, speech-to-text and website must work together with
+failure checks.
+Server migration: Configure system on JOOUST server, move database/media, confirm access rules and test
+backups.
+Extensive testing: Real phone checks, poor internet simulations, user task testing, and bug fixing.
+External factors: Network/power interruptions, account verifications, sender-name approvals, and store review
+timelines.
+ASSUMPTIONS AND ARRANGEMENTS
+Accounts & Hosting: JOOUST provides Google Play account, Apple Developer account/Mac access, working
+server/domain, and backups.
+Cloud & Comms: Neon, Cloudinary, Vercel, Render used for dev. JOOUST owns Africa’s Talking SMS account,
+adds credits, and provides email service access.
+AI & Checks: Developer uses personal account for Gemini/STT tests initially; production keys provided by
+JOOUST. Developer handles Luo language checks. No payment collection required.
+LuoLinguaAI Phase Two Summary Page 4 of 4

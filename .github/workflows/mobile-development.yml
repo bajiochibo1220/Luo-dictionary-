@@ -1,0 +1,88 @@
+name: Mobile development builds
+on:
+  workflow_dispatch:
+    inputs:
+      api_origin:
+        description: Reachable HTTPS backend with the current versioned APIs deployed
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: mobile-development-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            clients/mobile/package-lock.json
+      - run: npm ci
+      - run: npm exec prisma generate
+        env:
+          DATABASE_URL: postgresql://build:build@localhost:5432/build
+          DIRECT_URL: postgresql://build:build@localhost:5432/build
+      - run: npm test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm --prefix clients/mobile ci
+      - run: npm --prefix clients/mobile run build
+        env:
+          VITE_API_ORIGIN: ${{ inputs.api_origin }}
+  android:
+    needs: checks
+    runs-on: ubuntu-24.04
+    env:
+      VITE_API_ORIGIN: ${{ inputs.api_origin }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: clients/mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install project SDK components
+        run: sdkmanager 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0'
+      - run: npm ci
+      - run: npm --prefix clients/mobile ci
+      - run: npm --prefix clients/mobile run build:android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: luo-heritage-development-apk
+          path: clients/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+  ios:
+    needs: checks
+    runs-on: macos-26
+    env:
+      VITE_API_ORIGIN: ${{ inputs.api_origin }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: clients/mobile/package-lock.json
+      - run: npm ci
+      - run: npm --prefix clients/mobile ci
+      - run: npm --prefix clients/mobile run build:ios
+      - name: Package simulator app
+        working-directory: clients/mobile
+        run: ditto -c -k --sequesterRsrc --keepParent ios/DerivedData/Build/Products/Debug-iphonesimulator/App.app ios/luo-heritage-simulator.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: luo-heritage-ios-simulator
+          path: clients/mobile/ios/luo-heritage-simulator.zip
+          if-no-files-found: error
+          retention-days: 7

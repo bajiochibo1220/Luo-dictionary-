@@ -1,0 +1,3210 @@
+[
+  {
+    "stem": "00_START_HERE",
+    "title": "Choose your training guide",
+    "subtitle": "Self-study slide library • eleven roles",
+    "goal": "Open the guide that matches the work you have actually been assigned.",
+    "slides": [
+      {
+        "title": "Welcome to your self-study slide library",
+        "steps": [
+          "Each role has a PowerPoint slide deck and a matching PDF. Open the PDF for easy reading; use PowerPoint for presenting or editing.",
+          "Read one task, try it on your own account, then check the result described on the slide.",
+          "Use the guide for your assigned duty. If you have several duties, read each relevant guide."
+        ],
+        "image": null,
+        "result": "No classroom trainer is needed to follow the guides.",
+        "tip": null,
+        "diagram": [
+          "Choose a role",
+          "Read the steps",
+          "Try and check"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Start with your everyday work",
+        "steps": [
+          "Community members: browsing, accounts, contributions and AI chat.",
+          "Students: courses, classes, assignments and progress.",
+          "Teachers and lecturers: class setup, assignments, feedback and gradebooks."
+        ],
+        "image": null,
+        "result": "Open guide 01, 02 or 03.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "If you prepare or review content",
+        "steps": [
+          "Uploaders: draft, attach files, record permission and submit.",
+          "Cultural reviewers: check accuracy, request corrections and vote independently.",
+          "Content editors: correct returned work. Publishers: check the final release."
+        ],
+        "image": null,
+        "result": "Open the guide matching your assigned content duty.",
+        "tip": null,
+        "diagram": [
+          "04 Upload",
+          "05 Review",
+          "06 Edit",
+          "07 Publish"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "If you manage the platform",
+        "steps": [
+          "Language administrators: coordinate people and content in an assigned language.",
+          "Super Admins: oversee assigned languages and staff, within their authority.",
+          "Master Super Admin: institutional ownership, Super Admin authority and protected system operations."
+        ],
+        "image": null,
+        "result": "Open guide 08, 09 or 10. A wider menu does not grant every action.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "If you use the system for research",
+        "steps": [
+          "Open guide 11 for public sources, internal-access requests and transcript guidance.",
+          "A researcher interest on your profile is not permission to read private interviews.",
+          "Ask the institutional custodian before exporting or reusing restricted material."
+        ],
+        "image": "23-transcripts",
+        "result": "Research follows the source’s access and reuse conditions.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "About the screenshots",
+        "steps": [
+          "Screens are captured from the current application components using sample names and practice records.",
+          "They are illustrations of the interface, not evidence that an email was delivered, a record was published or a live account was created.",
+          "Your menu and records depend on your assigned access. Phone and computer layouts may place controls differently."
+        ],
+        "image": "05-mobile-library",
+        "result": "You can recognise controls without mistaking practice details for real cultural evidence.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Share the right files",
+        "steps": [
+          "Send a person their own role’s PDF or PowerPoint. PDF copies keep the layout consistent.",
+          "The role decks contain their own account and recovery instructions, so they can be read independently.",
+          "Keep the editable sources for future updates. Review the screenshots again when the application changes."
+        ],
+        "image": null,
+        "result": "Distribute the guides as slides, not as a long technical manual.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Need help while studying?",
+        "steps": [
+          "For a missing button, check your assigned role and language with your account administrator.",
+          "For a failed action, note the screen, button, time and exact message. Never send your password.",
+          "Practise high-impact tasks only in an approved practice environment. Do not publish or delete real data to test a guide."
+        ],
+        "image": "01-sign-in",
+        "result": "Your administrator can help with a clear description of the problem.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "stem": "01_Community_Members",
+    "title": "Community members",
+    "subtitle": "Read, learn, contribute and manage your account",
+    "goal": "You will be able to find cultural material, ask questions and submit your own contribution.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to find cultural material, ask questions and submit your own contribution.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Create and recover an account; understand the menu.",
+          "Read collections, save items, learn and ask questions.",
+          "Prepare a private contribution and send it for review."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Create a community account",
+        "steps": [
+          "Choose Create new account from the sign-in screen. Enter your name, email and date of birth.",
+          "Choose your language and interests. Read and accept the Terms and Privacy Policy.",
+          "Set your password and submit. If approval is required, wait for confirmation before signing in."
+        ],
+        "image": "02-register",
+        "result": "Your account is created or clearly marked as awaiting approval.",
+        "tip": "You can choose Google registration if offered, then complete any requested profile information.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Find your way around",
+        "steps": [
+          "Open the menu on the left. On a phone, use the menu button first.",
+          "Choose a collection such as Muma, Ngero or stories. The smaller label explains its content.",
+          "Use the same menu for lessons, courses, saved items, contributions and your account."
+        ],
+        "image": "07-public-menu",
+        "result": "You can return to a collection or personal screen without starting again.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use the library on a phone",
+        "steps": [
+          "Open a collection, such as Muma (Dictionary), from the menu.",
+          "Use the picture, headphones, video or page icon to choose a type of content. The four-square icon shows all types.",
+          "Choose the list or grid button to change the view. Scroll the entries below the controls."
+        ],
+        "image": "05-mobile-library",
+        "result": "The collection shows entries matching your chosen filter.",
+        "tip": "An empty result can mean there are no published entries of that type. Try All.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Find a word in the public dictionary",
+        "steps": [
+          "On the public website, open the dictionary page and find its search box.",
+          "Enter a Dholuo word or an English or Kiswahili meaning. Wait for the results, then read the relevant entry.",
+          "If there is no result, check spelling or try another word. A missing published entry is not proof that the word does not exist."
+        ],
+        "image": "53-dictionary-search",
+        "result": "You can use the dictionary search where it is offered.",
+        "tip": "The shared app’s Muma screen uses collection filters; it may not show this website search box.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Read, listen and change the view",
+        "steps": [
+          "Open an entry or choose the grid button, then select its card.",
+          "Use See description or See this in English when offered. Audio and video use their own play controls.",
+          "Use All if a filter shows no results. Save item is available in signed-in views that offer it."
+        ],
+        "image": "06-desktop-library",
+        "result": "You can read the entry and use the media that has actually been published.",
+        "tip": "An unavailable English description does not mean the original entry is missing.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Return to saved words and items",
+        "steps": [
+          "Sign in and choose Save item on an entry or lesson where that button is available.",
+          "Open Saved words & items from the menu. Choose Open collection to return to its source.",
+          "Choose Remove saved item when you no longer need the bookmark."
+        ],
+        "image": "37-saved-items",
+        "result": "Your saved list helps you find material again on the same account.",
+        "tip": "Saving a bookmark does not download a file for offline use.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Open a lesson and keep your progress",
+        "steps": [
+          "Choose Lessons, games & calendar. Open a published lesson.",
+          "Read the lesson and answer its questions. Choose Finish & save progress.",
+          "Read the result and feedback. Sign in with the same account on another device to keep your learning together."
+        ],
+        "image": "27-lesson-practice",
+        "result": "You see a saved result or a message saying the attempt is waiting to go online.",
+        "tip": "A score helps you learn; it does not replace a teacher’s review.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Prepare to study without internet",
+        "steps": [
+          "While connected, open a lesson that allows downloads. Choose Download text for offline use.",
+          "Keep using the same browser or app profile. Downloaded text can be read without internet for up to seven days.",
+          "Reconnect and choose Refresh & sync. Keep the app open until waiting attempts have been saved online."
+        ],
+        "image": "27-lesson-practice",
+        "result": "Permitted lesson text is available offline and saved attempts can synchronize later.",
+        "tip": "These downloads contain text, not the audio or video files. Some lessons cannot be downloaded.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Ask the AI chatbot a clear question",
+        "steps": [
+          "Open Chat or Chatbot. Choose your answer language and read the processing permission notice.",
+          "If you agree, allow AI processing. Ask one clear question and wait for the response.",
+          "Open any sources provided. Ask a follow-up question if you need a simpler explanation."
+        ],
+        "image": "24-chat",
+        "result": "You can read an answer and inspect any linked sources.",
+        "tip": "AI can make mistakes. Do not enter private interviews, passwords or learners’ personal information.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Find your access and saved chats",
+        "steps": [
+          "Open the account menu and choose My account & saved chats.",
+          "Read My access to check your assigned role. Open a chat from Recent or Archived.",
+          "For your name, sessions or notifications, open Profile, sessions & notifications from the menu."
+        ],
+        "image": "25-my-account",
+        "result": "You can find your own account details and earlier conversations.",
+        "tip": "Choosing an interest such as teacher or researcher does not give staff access.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Update your profile and read notices",
+        "steps": [
+          "Open Profile, sessions & notifications from the menu.",
+          "Change your name or interests and choose Save profile. Interests describe you; they do not grant staff duties.",
+          "Read your notifications and use Mark read when offered. Check Device sessions if you need to end an old app sign-in."
+        ],
+        "image": "30-account-settings",
+        "result": "Your profile changes are saved and notices are easy to find.",
+        "tip": "Sign out all devices ends your current sign-in too. Sign in again afterwards if you use it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Verify your email address",
+        "steps": [
+          "Open account verification and recovery from your account settings.",
+          "Choose Verify email under Action, enter your own account email and choose Send email.",
+          "Open the newest email link within 30 minutes and choose Confirm. Use a new link if the earlier one has expired."
+        ],
+        "image": "03-reset-request",
+        "result": "The confirmation verifies the address for the intended account.",
+        "tip": "The screenshot shows the same form set to Reset password. Change Action to Verify email for this task.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "If you decide to delete your account",
+        "steps": [
+          "Read the warning first. Deletion removes your sign-in, profile, saved chats and personal progress.",
+          "In account recovery, choose Delete account. Request the email link only if you intend to continue.",
+          "Open the link and read the confirmation before choosing Confirm. Required cultural-source and review records can be retained."
+        ],
+        "image": "03-reset-request",
+        "result": "You understand the consequences before requesting deletion.",
+        "tip": "This is optional, not a practice task. Active class teachers and the Master Super Admin may need to resolve their responsibilities first.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Start your own contribution",
+        "steps": [
+          "Choose Contribute & submissions or the Contribute button inside a collection.",
+          "Select the collection and choose New private draft. Enter a short title and the requested details.",
+          "Use your own material or material you have permission to share. Mark uncertain facts for review."
+        ],
+        "image": "08-contribution-title",
+        "result": "A contribution form contains your draft; it is not published.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Add pictures, audio or documents",
+        "steps": [
+          "Find Media and transcripts. Choose a file under the matching type.",
+          "For an oral history, confirm permission before choosing Start recording. Stop when finished.",
+          "Check that the correct files are selected. Keep the app open while an upload is in progress."
+        ],
+        "image": "09-attach-files",
+        "result": "The selected files stay with the contribution when it is saved successfully.",
+        "tip": "If microphone access is refused, allow it in your device settings or attach an existing recording.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Understand the three save choices",
+        "steps": [
+          "Save on this device keeps a local copy, including selected files. It does not submit your work.",
+          "Save private draft saves an online draft for your account. You need a connection.",
+          "Submit for reviewer sends the contribution for checking. Wait for confirmation before leaving."
+        ],
+        "image": "11-save-submit",
+        "result": "You know whether the work is on this device, saved online, or sent for review.",
+        "tip": "Clearing browser or app data can remove local drafts. Save again after making changes.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Check what happened to your submission",
+        "steps": [
+          "Open Contribute & submissions, then find My online submissions.",
+          "Read the status. If asked to make changes, choose Edit draft or requested revision.",
+          "Read the reviewer’s request, make the correction, and submit again when ready."
+        ],
+        "image": "11-save-submit",
+        "result": "You can tell the difference between a draft, an item under review and published material.",
+        "tip": "If an item is locked for review, ask the reviewer to return it rather than creating a duplicate.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Find one collection and change its content filter.",
+          "Open a lesson or ask a simple AI question, then check any source.",
+          "Prepare a private practice draft and identify the option that sends it for review."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "02_Students",
+    "title": "Students and learners",
+    "subtitle": "Study lessons, join classes and keep your progress",
+    "goal": "You will be able to enroll, join a class, study and find your feedback.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to enroll, join a class, study and find your feedback.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Sign in, recover access and find your learning screens.",
+          "Study lessons and courses, including downloaded text.",
+          "Join a class, submit work and read teacher feedback."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use the library on a phone",
+        "steps": [
+          "Open a collection, such as Muma (Dictionary), from the menu.",
+          "Use the picture, headphones, video or page icon to choose a type of content. The four-square icon shows all types.",
+          "Choose the list or grid button to change the view. Scroll the entries below the controls."
+        ],
+        "image": "05-mobile-library",
+        "result": "The collection shows entries matching your chosen filter.",
+        "tip": "An empty result can mean there are no published entries of that type. Try All.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Join a learning course",
+        "steps": [
+          "Open Learning pathways & courses. Choose a published course and read its description.",
+          "Open the course and enroll using the button shown. Start with the available lesson.",
+          "Use My enrollments to return later. If lessons are locked, complete the earlier lesson and required score first."
+        ],
+        "image": "28-courses",
+        "result": "The course appears among your enrollments and shows your lesson progress.",
+        "tip": "If no courses are available, ask your teacher which published course to use.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Open a lesson and keep your progress",
+        "steps": [
+          "Choose Lessons, games & calendar. Open a published lesson.",
+          "Read the lesson and answer its questions. Choose Finish & save progress.",
+          "Read the result and feedback. Sign in with the same account on another device to keep your learning together."
+        ],
+        "image": "27-lesson-practice",
+        "result": "You see a saved result or a message saying the attempt is waiting to go online.",
+        "tip": "A score helps you learn; it does not replace a teacher’s review.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Prepare to study without internet",
+        "steps": [
+          "While connected, open a lesson that allows downloads. Choose Download text for offline use.",
+          "Keep using the same browser or app profile. Downloaded text can be read without internet for up to seven days.",
+          "Reconnect and choose Refresh & sync. Keep the app open until waiting attempts have been saved online."
+        ],
+        "image": "27-lesson-practice",
+        "result": "Permitted lesson text is available offline and saved attempts can synchronize later.",
+        "tip": "These downloads contain text, not the audio or video files. Some lessons cannot be downloaded.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Join a class with your teacher’s code",
+        "steps": [
+          "Sign in. Open Teaching & my classes and choose My classes.",
+          "Ask your teacher for a current code. Enter it under Join a class, then choose Join class.",
+          "Open the class and read its assignments. Use your own account for all submissions."
+        ],
+        "image": "29-classrooms",
+        "result": "Your class appears in My classes.",
+        "tip": "Class codes expire after seven days and may be replaced earlier. Ask for a new code if needed.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Complete a class assignment",
+        "steps": [
+          "Open your class, then choose Open assignment. Read the instructions and due date.",
+          "Choose Study assignment lesson and complete the lesson. Return to the assignment when ready.",
+          "Enter the work requested and use the submission button shown. Wait for a saved confirmation."
+        ],
+        "image": "49-student-assignment",
+        "result": "Your assignment shows your submission rather than an unsaved answer.",
+        "tip": "If the assignment is closed or the lesson unavailable, contact your teacher; do not submit to a different class.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Read feedback and try again",
+        "steps": [
+          "Open the same class assignment after your teacher reviews it.",
+          "Choose Refresh assignment and feedback. Read the score and the teacher’s comments.",
+          "If a new submission is requested and allowed, correct your work and submit it again."
+        ],
+        "image": "52-student-feedback",
+        "result": "You know what to improve and which result belongs to you.",
+        "tip": "Sending revised written work clears its previous teacher grade so the teacher can review it again.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Ask the AI chatbot a clear question",
+        "steps": [
+          "Open Chat or Chatbot. Choose your answer language and read the processing permission notice.",
+          "If you agree, allow AI processing. Ask one clear question and wait for the response.",
+          "Open any sources provided. Ask a follow-up question if you need a simpler explanation."
+        ],
+        "image": "24-chat",
+        "result": "You can read an answer and inspect any linked sources.",
+        "tip": "AI can make mistakes. Do not enter private interviews, passwords or learners’ personal information.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Find your access and saved chats",
+        "steps": [
+          "Open the account menu and choose My account & saved chats.",
+          "Read My access to check your assigned role. Open a chat from Recent or Archived.",
+          "For your name, sessions or notifications, open Profile, sessions & notifications from the menu."
+        ],
+        "image": "25-my-account",
+        "result": "You can find your own account details and earlier conversations.",
+        "tip": "Choosing an interest such as teacher or researcher does not give staff access.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Keep your own learning record",
+        "steps": [
+          "Use the same account on your phone and computer.",
+          "Before changing devices, reconnect and use Refresh & sync for waiting attempts.",
+          "Do not leave a class just to change devices: leaving can delete your work in that class."
+        ],
+        "image": "25-my-account",
+        "result": "Your work stays linked to the intended account.",
+        "tip": "Tell your teacher if you accidentally created two accounts.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Enroll in the course your teacher names and open its first available lesson.",
+          "Join your class with a current code and find the assignment instructions.",
+          "Save one practice result and show where you would read teacher feedback."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "03_Teachers_and_Lecturers",
+    "title": "Teachers and lecturers",
+    "subtitle": "Guide classes, set assignments and review learning",
+    "goal": "You will be able to run a class and help students find their work and feedback.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to run a class and help students find their work and feedback.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Get teaching access and create or open a class.",
+          "Invite learners, set assignments and review submissions.",
+          "Keep class results private and close a class responsibly."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check that you have teaching access",
+        "steps": [
+          "Sign in with your own account. Open Teaching & my classes.",
+          "Look for Create class or an existing class where your role is teacher.",
+          "If these are missing, ask the language administrator to assign teaching access. Selecting teacher as an interest does not grant it."
+        ],
+        "image": "29-classrooms",
+        "result": "You know whether you can teach a class or are viewing as a learner.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Create a teaching class",
+        "steps": [
+          "Open My classes and choose Create class.",
+          "Enter the class title and requested details. Select a published course if the class needs one.",
+          "Choose Save teaching class. Keep the new class join code private until you invite learners."
+        ],
+        "image": "38-create-class",
+        "result": "The class opens and you can see its invitation controls.",
+        "tip": "Teaching a class does not automatically let you publish cultural content or courses.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Invite your learners safely",
+        "steps": [
+          "Open the class and find Class invitations. Share its current join code with the intended learners.",
+          "Ask learners to sign in and use Join a class. Check the member list afterwards.",
+          "If a code is shared too widely, choose Replace class join code or Disable class join code."
+        ],
+        "image": "39-class-invitations",
+        "result": "The correct learners are listed in the class.",
+        "tip": "Codes expire after seven days. A replacement invalidates the previous code.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Set a useful assignment",
+        "steps": [
+          "Open the class and choose Create assignment.",
+          "Choose an available published lesson. Write a clear title, instructions and due date.",
+          "Choose Save class assignment. Open it again to check exactly what learners will see."
+        ],
+        "image": "42-assignment-editor",
+        "result": "The assignment is listed for members of this class.",
+        "tip": "Use a lesson in the correct language. If a lesson is withdrawn, choose an approved replacement.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Review a learner’s submission",
+        "steps": [
+          "Open the class assignment and choose the learner’s submission.",
+          "Read their work, enter the score and write feedback that explains one clear next step.",
+          "Choose Save teacher grade and feedback. Ask for another submission when correction is needed."
+        ],
+        "image": "50-teacher-grading",
+        "result": "The learner can refresh the assignment to see the saved grade and feedback.",
+        "tip": "Check the learner’s name before saving. Do not discuss individual results in public chats.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "See the class gradebook",
+        "steps": [
+          "Open the class and choose View gradebook.",
+          "Read the assignment columns and learner rows. A teacher’s grade takes priority over a synchronized lesson score.",
+          "Use Export gradebook CSV only if you are allowed to keep a spreadsheet copy. Store it privately."
+        ],
+        "image": "41-gradebook",
+        "result": "You can identify submitted, ungraded and completed work.",
+        "tip": "A downloaded gradebook contains personal information. Do not share it as a public attachment.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Manage changes without losing work",
+        "steps": [
+          "Use Edit assignment before closing submissions. Read any warning when changing instructions.",
+          "Choose Close submissions when no more work should be accepted.",
+          "Remove a class member only after checking the consequences: that action can remove their class submissions."
+        ],
+        "image": "40-class-assignments",
+        "result": "Class membership and assignment availability match your intention.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Share teaching responsibility",
+        "steps": [
+          "Open the class and find Assign a teacher by existing account email.",
+          "Check the colleague’s exact account email and grant teaching access only if you have permission.",
+          "Confirm their role in the member list. Keep at least one teacher in each active class."
+        ],
+        "image": "39-class-invitations",
+        "result": "The intended colleague has teaching access to this class.",
+        "tip": "A class teacher is different from a system administrator.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Join a learning course",
+        "steps": [
+          "Open Learning pathways & courses. Choose a published course and read its description.",
+          "Open the course and enroll using the button shown. Start with the available lesson.",
+          "Use My enrollments to return later. If lessons are locked, complete the earlier lesson and required score first."
+        ],
+        "image": "28-courses",
+        "result": "The course appears among your enrollments and shows your lesson progress.",
+        "tip": "If no courses are available, ask your teacher which published course to use.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Open a lesson and keep your progress",
+        "steps": [
+          "Choose Lessons, games & calendar. Open a published lesson.",
+          "Read the lesson and answer its questions. Choose Finish & save progress.",
+          "Read the result and feedback. Sign in with the same account on another device to keep your learning together."
+        ],
+        "image": "27-lesson-practice",
+        "result": "You see a saved result or a message saying the attempt is waiting to go online.",
+        "tip": "A score helps you learn; it does not replace a teacher’s review.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Prepare to study without internet",
+        "steps": [
+          "While connected, open a lesson that allows downloads. Choose Download text for offline use.",
+          "Keep using the same browser or app profile. Downloaded text can be read without internet for up to seven days.",
+          "Reconnect and choose Refresh & sync. Keep the app open until waiting attempts have been saved online."
+        ],
+        "image": "27-lesson-practice",
+        "result": "Permitted lesson text is available offline and saved attempts can synchronize later.",
+        "tip": "These downloads contain text, not the audio or video files. Some lessons cannot be downloaded.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Finish a term or close a class",
+        "steps": [
+          "Save any permitted reports before closing the class.",
+          "Choose Archive class only when teaching, invitations and submissions should end. Read the confirmation.",
+          "Explain to learners that archived classes remain readable to existing members, while new activity is closed."
+        ],
+        "image": "40-class-assignments",
+        "result": "The class is archived rather than accidentally deleted.",
+        "tip": "Do not leave or remove the last teacher from an active class.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Ask the AI chatbot a clear question",
+        "steps": [
+          "Open Chat or Chatbot. Choose your answer language and read the processing permission notice.",
+          "If you agree, allow AI processing. Ask one clear question and wait for the response.",
+          "Open any sources provided. Ask a follow-up question if you need a simpler explanation."
+        ],
+        "image": "24-chat",
+        "result": "You can read an answer and inspect any linked sources.",
+        "tip": "AI can make mistakes. Do not enter private interviews, passwords or learners’ personal information.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Open a practice class and explain how a student joins it.",
+          "Identify Create assignment, the feedback area and View gradebook.",
+          "Explain the difference between closing submissions, archiving a class and removing a learner."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "04_Uploaders",
+    "title": "Uploaders",
+    "subtitle": "Prepare accurate drafts and send them for review",
+    "goal": "You will be able to add the right material, record permission and follow its review status.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to add the right material, record permission and follow its review status.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Confirm your assigned language and find Upload Content.",
+          "Prepare text, attachments, source details and private drafts.",
+          "Submit once and follow any requested corrections."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Open your uploading workspace",
+        "steps": [
+          "Sign in using the account supplied to you. Open the admin dashboard.",
+          "Choose Upload Content. Work only in the language assigned to you.",
+          "If no collection can be created, check your assigned language with the administrator."
+        ],
+        "image": "35-uploader-menu",
+        "result": "Your content list opens for the languages you are allowed to upload.",
+        "tip": "Uploaders normally see Dashboard and Upload Content. Other duties require a separate assignment.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Prepare before you upload",
+        "steps": [
+          "Check the collection, language, title and file names before starting.",
+          "Confirm who supplied the material and what permission was given. Keep evidence through the organisation’s approved process.",
+          "Use a draft when a meaning, translation or permission is uncertain. Do not guess."
+        ],
+        "image": "08-contribution-title",
+        "result": "You have the information needed for a useful draft.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Enter the contribution details",
+        "steps": [
+          "Open the appropriate new-content form from Upload Content.",
+          "Enter the title and all required collection fields. Read the text again for missing words.",
+          "Add a clear description and choose Save draft. An admin upload is a draft until submitted for review."
+        ],
+        "image": "45-admin-draft",
+        "result": "The online draft appears in your content list.",
+        "tip": "Admin forms use Save draft or Save changes. Community forms use Save private draft and Submit for reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Add pictures, audio or documents",
+        "steps": [
+          "Find Media and transcripts. Choose a file under the matching type.",
+          "For an oral history, confirm permission before choosing Start recording. Stop when finished.",
+          "Check that the correct files are selected. Keep the app open while an upload is in progress."
+        ],
+        "image": "09-attach-files",
+        "result": "The selected files stay with the contribution when it is saved successfully.",
+        "tip": "If microphone access is refused, allow it in your device settings or attach an existing recording.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Add collection details when required",
+        "steps": [
+          "Open the extra source or collection details section.",
+          "Record the known collection date, source reference, location and collector. Leave unknown details for review.",
+          "Do not put personal phone numbers, sacred site coordinates or private participant details in a public description."
+        ],
+        "image": "10-source-permission",
+        "result": "Reviewers can understand where the material came from without exposing private details.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Know where your draft is saved",
+        "steps": [
+          "In Upload Content, Save draft or Save changes saves the item online. Wait for confirmation and check the list.",
+          "The community Contribute & submissions form also offers device copies. That is a separate route from the admin upload form.",
+          "A device copy is never submitted automatically. To send an admin draft, use Send to cultural review in the online list."
+        ],
+        "image": "45-admin-draft",
+        "result": "You know which copy is saved and which action sends it for review.",
+        "tip": "Keep the original file until the online item and its attachments have been checked.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Send the online draft for cultural review",
+        "steps": [
+          "Return to Upload Content and find the saved draft.",
+          "Choose Send to cultural review beside the intended item. Send it only once.",
+          "Refresh the list and check its status. You cannot publish an item using only the uploader role."
+        ],
+        "image": "54-uploader-draft-list",
+        "result": "The draft is marked as submitted or under review.",
+        "tip": "The English version link opens a separate translation. Complete it where required before review.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Respond to a correction request",
+        "steps": [
+          "Find the returned item and read the reviewer’s notes.",
+          "Open the editable draft, make only the necessary corrections and save.",
+          "Submit the corrected item again or follow the editor’s handover. Tell the reviewer what changed."
+        ],
+        "image": "08-contribution-title",
+        "result": "The corrected version is ready for another independent check.",
+        "tip": "Editors use Editor Queue. Uploaders use the editable items available in Upload Content.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check files before you finish",
+        "steps": [
+          "Reopen the saved item and inspect every attached file.",
+          "If an upload failed, reconnect and check whether the text or file was already saved before retrying.",
+          "Keep your original source file until the organisation confirms it is safely stored."
+        ],
+        "image": "09-attach-files",
+        "result": "The item has the intended files and no accidental duplicate uploads.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Locate your assigned collection and create a private practice draft.",
+          "Explain the permission setting you would choose when permission is uncertain.",
+          "Show where you would submit the draft, and explain why you cannot publish it yourself."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "05_Cultural_Reviewers",
+    "title": "Cultural reviewers",
+    "subtitle": "Check accuracy, meaning and respectful use",
+    "goal": "You will be able to make a clear, independent cultural review decision.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to make a clear, independent cultural review decision.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Open Cultural Review and examine the item and its source.",
+          "Approve accurate material or request clear changes.",
+          "Use independent voting for a proposed cultural rejection."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Open the right review item",
+        "steps": [
+          "Choose Cultural Review in your staff menu.",
+          "Open a submitted item in your assigned language. Check that you did not prepare the material yourself.",
+          "Read its source, access settings, full text and attached media before deciding."
+        ],
+        "image": "12-cultural-review",
+        "result": "You are reviewing the current version of the intended item.",
+        "tip": "An item can change while another reviewer works on it. Refresh if the system asks you to.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Complete the cultural checks",
+        "steps": [
+          "Open Cultural Review and choose the item. Read its text, source details and attached files.",
+          "Check spelling, translation, grammar, pronunciation, examples and cultural context. Tick only what you have checked.",
+          "Add useful notes. If the item is correct, choose Approve & Send to Publisher."
+        ],
+        "image": "12-cultural-review",
+        "result": "The item moves to the publisher queue after a successful cultural review.",
+        "tip": "If you cannot check a recording or meaning, ask for help rather than ticking the box.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Request an editor’s correction",
+        "steps": [
+          "Describe the problem in the notes: say where it is, why it matters and what needs checking.",
+          "Choose Request Editor Changes when a correction is needed.",
+          "The editor fixes the draft and sends it back to cultural review. Check the corrected version again."
+        ],
+        "image": "12-cultural-review",
+        "result": "The editor receives a clear change request; the item is not published.",
+        "tip": "Write useful comments such as “Check the meaning in paragraph two,” rather than “Wrong.”",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Raise a serious cultural concern",
+        "steps": [
+          "If material may be culturally false or harmful, explain your concern in the notes.",
+          "Choose Propose rejection for reviewer vote. This asks other assigned reviewers to check it.",
+          "Do not treat your proposal as a completed rejection. Wait for the required independent votes."
+        ],
+        "image": "12-cultural-review",
+        "result": "The concern goes to an independent review vote.",
+        "tip": "For a serious privacy problem, also contact the responsible administrator promptly.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Vote on another reviewer’s proposal",
+        "steps": [
+          "Open the proposed cultural rejection. Read the reason and the original source.",
+          "If you are eligible, choose whether the item is culturally valid or invalid. Give a clear reason for an invalid vote.",
+          "Check the confirmation and vote count. You cannot vote on your own proposal or vote twice."
+        ],
+        "image": "13-rejection-vote",
+        "result": "Your independent vote is recorded. The system applies the required threshold.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Keep a useful review history",
+        "steps": [
+          "Open Review History to find your recorded actions.",
+          "Use the item’s title and review notes when explaining a decision to an editor or coordinator.",
+          "If an error is found later, report it with the item reference rather than editing history or concealing the earlier decision."
+        ],
+        "image": "12-cultural-review",
+        "result": "Other staff can understand how the decision was reached.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Review learning material with the same care",
+        "steps": [
+          "Open Lessons, games & calendar if your role offers the content workspace.",
+          "Read a submitted lesson, its questions, answers, source and audience. Use the review action only if independently assigned.",
+          "A course review is separate from reviewing its individual lessons. Ask the coordinator if the action is not available."
+        ],
+        "image": "26-lessons",
+        "result": "Learning material receives the appropriate independent checks.",
+        "tip": "A role that can review material does not automatically let its author approve their own work.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Explain one checklist item using an approved practice contribution.",
+          "Describe how to request an editor change and how the item returns to you.",
+          "Explain why a proposed rejection needs independent votes."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "06_Content_Editors",
+    "title": "Content editors",
+    "subtitle": "Make clear corrections and return work for review",
+    "goal": "You will be able to correct content without bypassing the review process.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to correct content without bypassing the review process.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Find returned items in Editor Queue.",
+          "Correct text, translations and files while protecting the source.",
+          "Save the changed version and return it for cultural review."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Correct an item returned by a reviewer",
+        "steps": [
+          "Open Editor Queue. Find the item and choose Edit details.",
+          "Read the requested changes. Correct the text or files, then save your changes.",
+          "Return to the queue and choose Send to cultural review. The reviewer must check the corrected version."
+        ],
+        "image": "14-editor-queue",
+        "result": "The corrected item returns to cultural review.",
+        "tip": "Saving an edit does not publish it. Keep the source’s meaning and credit.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Make a careful edit",
+        "steps": [
+          "Read the reviewer’s request before changing the draft. Keep the original meaning.",
+          "Correct spelling, formatting, descriptions and the requested collection details. Do not invent missing translations.",
+          "Save changes, reopen the item and check that the corrected version is shown."
+        ],
+        "image": "08-contribution-title",
+        "result": "The saved draft reflects the requested correction.",
+        "tip": "For a disputed meaning, ask a cultural reviewer rather than silently replacing it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Add pictures, audio or documents",
+        "steps": [
+          "Find Media and transcripts. Choose a file under the matching type.",
+          "For an oral history, confirm permission before choosing Start recording. Stop when finished.",
+          "Check that the correct files are selected. Keep the app open while an upload is in progress."
+        ],
+        "image": "09-attach-files",
+        "result": "The selected files stay with the contribution when it is saved successfully.",
+        "tip": "If microphone access is refused, allow it in your device settings or attach an existing recording.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Return the item to the reviewer",
+        "steps": [
+          "Go back to Editor Queue after saving your changes.",
+          "Choose Send to cultural review beside the intended item.",
+          "Read the success message. The item should leave the editable queue when the handover succeeds."
+        ],
+        "image": "14-editor-queue",
+        "result": "The current corrected version is ready for cultural review.",
+        "tip": "If the item has already moved, refresh instead of sending a stale copy.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Prepare a lesson or game draft",
+        "steps": [
+          "Open Lessons, games & calendar and use Content workspace when offered.",
+          "Choose Create content. Write the title, content, level and audience; add checked questions and answers.",
+          "Save the private draft and submit for independent review. Do not approve your own resource."
+        ],
+        "image": "44-lesson-editor",
+        "result": "The resource is a draft or submitted item, not automatically public.",
+        "tip": "A written question game is different from a live multiplayer game.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Build a course from approved lessons",
+        "steps": [
+          "Open Learning pathways & courses and enable Course staff workspace.",
+          "Choose Create course. Use published lessons from the same language, place them in order and set required scores.",
+          "Save course draft, open it and submit it for independent course review."
+        ],
+        "image": "28-courses",
+        "result": "The course draft links the intended approved lessons.",
+        "tip": "Changing a published course requires another review before publication.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Avoid duplicate or unfinished corrections",
+        "steps": [
+          "If saving fails, keep the draft open and check the connection.",
+          "Reopen or refresh only after preserving unsaved text in a trusted place. Check the current item version.",
+          "If another person has already changed the item, read their changes before trying again."
+        ],
+        "image": "14-editor-queue",
+        "result": "You update the intended current version and avoid overwriting another person’s work.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Find a practice correction and identify the requested change.",
+          "Save a corrected draft and locate Send to cultural review.",
+          "Explain why editing, cultural review and publication are separate actions."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "07_Publishers",
+    "title": "Publishers",
+    "subtitle": "Make the final release decision responsibly",
+    "goal": "You will be able to check a reviewed item and distinguish public release from internal approval.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to check a reviewed item and distinguish public release from internal approval.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Find culturally reviewed items in Publishing Queue.",
+          "Check source permission, access and media before release.",
+          "Publish eligible material and verify what readers can see."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Check carefully before choosing Publish",
+        "steps": [
+          "Open Publishing Queue and read the culturally reviewed item.",
+          "Check the text, attached files, source permission and public access settings. Add a note if needed.",
+          "Choose Publish only when the item is ready. Read the confirmation: an internal approval can remain private."
+        ],
+        "image": "15-publish",
+        "result": "Eligible public material becomes available to readers; internal material remains protected.",
+        "tip": "A Publish button is not permission to release sacred, restricted or research-only material.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use a final pre-publication check",
+        "steps": [
+          "Confirm the title, language and current version are correct and the cultural review is complete.",
+          "Open the files and read descriptions, translations and source credit. Check that public sharing is actually permitted.",
+          "If anything is unclear, stop and contact the reviewer or language administrator before publishing."
+        ],
+        "image": "15-publish",
+        "result": "The release decision is based on the complete item and its permission evidence.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Understand the confirmation message",
+        "steps": [
+          "After choosing Publish, read the full success message.",
+          "Public release means eligible readers can see the item. Internal curation means it remains private.",
+          "Do not change consent or access merely to make an internally approved item appear in the public library."
+        ],
+        "image": "15-publish",
+        "result": "You know whether the item was publicly released or privately curated.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check the reader’s view",
+        "steps": [
+          "Open the public library, preferably in a separate signed-out browser window.",
+          "Choose the correct collection and content type. Find the released item and try its files.",
+          "If it is missing, confirm the release message, language, permission and selected filter before escalating."
+        ],
+        "image": "06-desktop-library",
+        "result": "The intended public item is readable and its files are usable.",
+        "tip": "Do not test private content by sharing a staff-only link with a member of the public.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Keep the publication record",
+        "steps": [
+          "Open Published History to find earlier releases.",
+          "Record any concern with the item’s title and reference, and notify the language administrator.",
+          "If an urgent rights or privacy issue is found, request the approved withdrawal process. Do not assume a saved edit removes a public item."
+        ],
+        "image": "15-publish",
+        "result": "Publication decisions and later concerns can be traced.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Publish lessons and courses separately",
+        "steps": [
+          "In the learning content workspace, inspect validated resources and use publish only when permitted.",
+          "For a course, open its staff view and choose Publish course after independent review.",
+          "Confirm that both the course and its linked lessons are available to the intended learners."
+        ],
+        "image": "28-courses",
+        "result": "Learners see a usable course with available lessons.",
+        "tip": "You cannot independently approve a resource you authored yourself.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Explain the checks you make before Publish.",
+          "Distinguish a public release from an internal approval.",
+          "Find the public collection and explain how you would report an incorrect release."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "08_Language_Administrators",
+    "title": "Language administrators",
+    "subtitle": "Coordinate people and content for your language",
+    "goal": "You will be able to manage your language’s work while keeping staff duties clear.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to manage your language’s work while keeping staff duties clear.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Understand your language’s menu, people and content.",
+          "Coordinate uploads, cultural review, editing and publication.",
+          "Check teaching access, translations, activity and problems."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Read your language workspace",
+        "steps": [
+          "Open the admin dashboard and confirm the selected language.",
+          "Use Content, Cultural Review, Editor Queue and Publishing Queue to find work at each stage.",
+          "Use Media, Users and Transcripts only for the material and people in your permitted scope."
+        ],
+        "image": "31-language-admin-menu",
+        "result": "You can direct a question to the right screen and staff member.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Help users without changing the wrong account",
+        "steps": [
+          "Open Users. Find the person by their own name and email.",
+          "Open their details and check their language and current access before changing anything.",
+          "Use only the changes allowed by your role. Read every confirmation before suspending or activating accounts."
+        ],
+        "image": "18-users",
+        "result": "The intended account has the correct status and access.",
+        "tip": "Do not select every account to solve a problem affecting one person.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Give a person only the access they need",
+        "steps": [
+          "Open the person’s account details and verify their email.",
+          "Use the role controls available to you for your language. If staff creation is not offered, ask a Super Admin.",
+          "Confirm the assignment in the person’s access list and ask them to sign in again if the menu has not refreshed."
+        ],
+        "image": "18-users",
+        "result": "The right person can do their assigned task in the intended language.",
+        "tip": "Language access does not allow you to grant Super Admin ownership.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Coordinate a review without skipping stages",
+        "steps": [
+          "Check the oldest waiting items and who is assigned to each stage.",
+          "Ask the uploader to complete missing source details, the reviewer to check accuracy, or the editor to make requested changes.",
+          "Keep independent review: broad access does not make it appropriate to approve your own submission."
+        ],
+        "image": "12-cultural-review",
+        "result": "Work moves through the intended people and checks.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Complete the cultural checks",
+        "steps": [
+          "Open Cultural Review and choose the item. Read its text, source details and attached files.",
+          "Check spelling, translation, grammar, pronunciation, examples and cultural context. Tick only what you have checked.",
+          "Add useful notes. If the item is correct, choose Approve & Send to Publisher."
+        ],
+        "image": "12-cultural-review",
+        "result": "The item moves to the publisher queue after a successful cultural review.",
+        "tip": "If you cannot check a recording or meaning, ask for help rather than ticking the box.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Correct an item returned by a reviewer",
+        "steps": [
+          "Open Editor Queue. Find the item and choose Edit details.",
+          "Read the requested changes. Correct the text or files, then save your changes.",
+          "Return to the queue and choose Send to cultural review. The reviewer must check the corrected version."
+        ],
+        "image": "14-editor-queue",
+        "result": "The corrected item returns to cultural review.",
+        "tip": "Saving an edit does not publish it. Keep the source’s meaning and credit.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check carefully before choosing Publish",
+        "steps": [
+          "Open Publishing Queue and read the culturally reviewed item.",
+          "Check the text, attached files, source permission and public access settings. Add a note if needed.",
+          "Choose Publish only when the item is ready. Read the confirmation: an internal approval can remain private."
+        ],
+        "image": "15-publish",
+        "result": "Eligible public material becomes available to readers; internal material remains protected.",
+        "tip": "A Publish button is not permission to release sacred, restricted or research-only material.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check media and translation quality",
+        "steps": [
+          "Open Media and the relevant content item. Check files, labels and access settings.",
+          "Use Translations to review the language labels and available translations. Missing text needs a checked translation.",
+          "Ask the responsible content editor or reviewer to correct inaccurate material."
+        ],
+        "image": "09-attach-files",
+        "result": "The collection is usable in the intended language without misleading labels.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Handle teaching access and learning content",
+        "steps": [
+          "Confirm that a teacher has been given actual teaching access; an interest on their profile is not enough.",
+          "Check that lessons and courses are published only after independent review.",
+          "Ask teachers to handle class membership, assignments and gradebooks within their classes."
+        ],
+        "image": "29-classrooms",
+        "result": "Teachers can use the right classes and learners can open approved lessons.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Read activity and AI reports carefully",
+        "steps": [
+          "Open Analytics for the activity recorded by the system.",
+          "Use AI Monitoring to review recorded questions, feedback and concerns within your allowed access.",
+          "Treat low counts as a reason to investigate usage, not as proof of a technical fault. Escalate private-data or accuracy concerns."
+        ],
+        "image": "31-language-admin-menu",
+        "result": "You can explain recorded activity without inventing missing results.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Handle a permission or privacy complaint",
+        "steps": [
+          "Note the affected item and what the person says is wrong. Avoid copying the private content into your report.",
+          "Notify the responsible institutional owner and arrange the permitted restriction or withdrawal action.",
+          "Check that the final public view matches the decision and retain the review record."
+        ],
+        "image": "10-source-permission",
+        "result": "A concern has an owner and a documented response.",
+        "tip": "Do not resolve a complaint by silently removing source evidence or review history.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Name the person responsible for each stage of a contribution.",
+          "Check a practice account’s language and duties without granting extra power.",
+          "Explain how you would handle a missing teacher button or a privacy complaint."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "09_Super_Admins",
+    "title": "Super Admins",
+    "subtitle": "Oversee assigned languages and support staff",
+    "goal": "You will be able to coordinate access and monitor work without confusing oversight with editorial permission.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to coordinate access and monitor work without confusing oversight with editorial permission.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Understand what your wider menu allows and what remains restricted.",
+          "Manage staff for your assigned languages and help users.",
+          "Monitor content, activity and system settings responsibly."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Understand your wider menu",
+        "steps": [
+          "Use Workflow and Library to inspect content, people and collections.",
+          "Use Insights to see Analytics, AI Monitoring and Audit Logs.",
+          "Administration contains Languages, Admins, Backup and System. Visibility does not mean every action is allowed."
+        ],
+        "image": "32-super-admin-menu",
+        "result": "You can find the right area without assuming that every visible button is yours to use.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Know the limits of Super Admin access",
+        "steps": [
+          "You oversee the languages assigned to you and may create permitted staff within that scope.",
+          "Editing, cultural review, uploading and publishing still require their assigned language duties.",
+          "Only the Master Super Admin can create or remove Super Admin authority. Database backups are also reserved for that owner."
+        ],
+        "image": "51-super-admin-staff",
+        "result": "You know when to act and when to refer the request to the Master Super Admin.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Create a staff account for the right person",
+        "steps": [
+          "Open Admins, then choose + Add Admin. Confirm the person’s email and name.",
+          "Choose only the role and language the person needs. Set a strong temporary password.",
+          "Save the account. Share access details privately with that person and ask them to set their own password."
+        ],
+        "image": "17-add-admin",
+        "result": "The staff member appears in Administrators with the intended role and language.",
+        "tip": "Only the Master Super Admin can create or remove Super Admin authority.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Help users without changing the wrong account",
+        "steps": [
+          "Open Users. Find the person by their own name and email.",
+          "Open their details and check their language and current access before changing anything.",
+          "Use only the changes allowed by your role. Read every confirmation before suspending or activating accounts."
+        ],
+        "image": "18-users",
+        "result": "The intended account has the correct status and access.",
+        "tip": "Do not select every account to solve a problem affecting one person.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Check staff assignments regularly",
+        "steps": [
+          "Open Admins and verify each person’s email, status, language and duty.",
+          "If a person changes duties, update access through the permitted controls; do not share another account.",
+          "Read every revoke or deactivate confirmation. Revoking staff duties is different from deleting the person’s account."
+        ],
+        "image": "51-super-admin-staff",
+        "result": "Staff have the access needed for current work and no unnecessary authority.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Help a user regain access",
+        "steps": [
+          "Confirm which email and language they should be using. Do not ask for their password.",
+          "Guide them to Forgotten password? and the newest email link. Check whether the account is active.",
+          "If password emails are not being delivered, ask the authorised system owner to check Email settings and the test result."
+        ],
+        "image": "03-reset-request",
+        "result": "The user receives the right recovery instructions without exposing their credentials.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Review activity and recorded decisions",
+        "steps": [
+          "Use Analytics and AI Monitoring to inspect recorded activity and feedback.",
+          "Use Audit Logs to see who changed a record or setting and when.",
+          "Investigate unexpected changes with the responsible staff member. Do not alter evidence to hide a mistake."
+        ],
+        "image": "32-super-admin-menu",
+        "result": "You can follow a concern to the relevant person and recorded action.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use System settings carefully",
+        "steps": [
+          "Open System and read the selected tab before changing anything.",
+          "Change only a setting you understand and are authorised to manage. Save the intended group of settings.",
+          "Check the result afterwards. For service keys, backup, legal ownership or an unavailable control, contact the Master Super Admin."
+        ],
+        "image": "19-system",
+        "result": "A deliberate saved change has the intended effect.",
+        "tip": "Do not include secret service keys in screenshots, slides, email or support messages.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Coordinate content and learning concerns",
+        "steps": [
+          "Route incomplete uploads to uploaders, corrections to editors and cultural concerns to reviewers.",
+          "Ask the assigned publisher to check release readiness. Do not bypass the independent checks.",
+          "For class work, involve the teacher. Keep learner results and research material private."
+        ],
+        "image": "12-cultural-review",
+        "result": "The right person handles the issue without excessive access.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Explain the difference between a Super Admin and the Master Super Admin.",
+          "Create no live accounts during practice; instead identify the correct role and language in the form.",
+          "Find the recovery, monitoring and escalation paths for a reported problem."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "10_Master_Super_Admin",
+    "title": "Master Super Admin",
+    "subtitle": "Own platform access and protect the institutional system",
+    "goal": "You will be able to oversee high-impact actions, delegate responsibly and keep the platform’s records safe.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to oversee high-impact actions, delegate responsibly and keep the platform’s records safe.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Manage Super Admin authority, languages and institutional settings.",
+          "Check account recovery, backups, public terms and service health.",
+          "Use documented checks before high-impact changes and handover."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Your role carries overall responsibility",
+        "steps": [
+          "Use your own protected account. Confirm My access shows Master Super Admin.",
+          "Keep the organisation’s ownership, support arrangements and recovery contact current.",
+          "Delegate ordinary work to named staff; broad access is not a reason to bypass independent review."
+        ],
+        "image": "36-master-access",
+        "result": "You know which responsibilities must remain with the institutional owner.",
+        "tip": "Check My access on your own account; the screenshot uses a labelled practice account.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Create or change Super Admin authority",
+        "steps": [
+          "Open Admins, then + Add Admin to prepare a new staff account.",
+          "Select Super Admin only for a trusted person with an agreed responsibility. Assign the languages they oversee.",
+          "Check the saved account carefully. Read the consequences before revoking or deactivating a Super Admin."
+        ],
+        "image": "17-add-admin",
+        "result": "Only the intended person receives the intended authority.",
+        "tip": "Never create a shared administrator account for a team.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Create a staff account for the right person",
+        "steps": [
+          "Open Admins, then choose + Add Admin. Confirm the person’s email and name.",
+          "Choose only the role and language the person needs. Set a strong temporary password.",
+          "Save the account. Share access details privately with that person and ask them to set their own password."
+        ],
+        "image": "17-add-admin",
+        "result": "The staff member appears in Administrators with the intended role and language.",
+        "tip": "Only the Master Super Admin can create or remove Super Admin authority.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Maintain your staff list",
+        "steps": [
+          "Open Administrators and review each name, email, language and role.",
+          "Remove unneeded authority through the permitted controls after confirming ownership of ongoing work.",
+          "Keep cultural reviewers, editors and publishers distinct wherever possible. Record the reason for important access changes."
+        ],
+        "image": "16-administrators",
+        "result": "Current staff responsibilities are clear and former staff cannot retain unwanted access.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Add a language deliberately",
+        "steps": [
+          "Open Languages and choose + Add Language.",
+          "Follow the numbered language setup: enter the code, name and local name, then check the module and administrator choices.",
+          "Review the summary before saving. Creating a language does not create reviewed translations or public cultural content."
+        ],
+        "image": "33-new-language",
+        "result": "The intended language exists with its configuration ready for checked content.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Review a language before activation",
+        "steps": [
+          "Open Languages and select the language.",
+          "Check its labels, assigned staff and collections. Confirm that any public content is reviewed and permitted.",
+          "Use the available activation controls only when the organisation agrees it is ready."
+        ],
+        "image": "21-languages",
+        "result": "The public language selection reflects your deliberate decision.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "How a contribution reaches readers",
+        "steps": [
+          "The uploader or contributor prepares a draft and submits it.",
+          "A cultural reviewer checks accuracy. An editor makes requested corrections and returns the item for review.",
+          "A publisher checks the final item and permission. Only an approved public release becomes visible to readers."
+        ],
+        "image": null,
+        "result": "An item may return for changes. Drafts and private approvals are not public publication.",
+        "tip": "Different people should perform the independent checks. Do not approve your own work.",
+        "diagram": [
+          "Prepare draft",
+          "Cultural review",
+          "Publisher check",
+          "Public release"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "Check account email settings",
+        "steps": [
+          "Open System, then Email. Confirm the approved provider, verified sender address and private service key.",
+          "Save the email settings. Choose Send test email to send to your own signed-in account.",
+          "Check both the screen result and your inbox. A provider accepting a message is not proof it reached the inbox."
+        ],
+        "image": "20-email-settings",
+        "result": "You have evidence that the account email path is configured and can be tested.",
+        "tip": "Keep keys secret. Password reset cannot send email while provider credentials or sender approval are missing.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Help with a failed password reset",
+        "steps": [
+          "Confirm Email settings and the test result before asking the user to retry.",
+          "Ask the user to request a fresh link, check spam and use the newest link within 30 minutes.",
+          "Keep the user’s reset link and new password private. Record the problem without including either."
+        ],
+        "image": "03-reset-request",
+        "result": "The user can follow a safe recovery path once email delivery is available.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Make and protect a database backup",
+        "steps": [
+          "Open Backup and choose Backup Now when a backup is authorised.",
+          "Wait for confirmation, then check the new file in the list. Store any downloaded copy in the organisation’s protected location.",
+          "Ask the technical maintainer to verify recovery. A database backup does not contain the actual picture, audio or video files."
+        ],
+        "image": "22-backups",
+        "result": "A protected database snapshot is recorded; separate media backup and recovery checks are arranged.",
+        "tip": "Backup files contain sensitive account data. Never attach them to a public message or training exercise.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check public terms and support information",
+        "steps": [
+          "Open System and review the General settings and Terms & Privacy tab.",
+          "Replace draft organisation details with the verified operator and support information before publishing those texts.",
+          "Have the responsible institution approve the wording. Check the public pages after saving."
+        ],
+        "image": "19-system",
+        "result": "Readers can find the correct organisation and support information.",
+        "tip": "Do not publish a legal draft containing bracketed placeholders or unapproved promises.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Treat AI settings and feedback responsibly",
+        "steps": [
+          "Use API Keys and AI Monitoring only for the services and records you are permitted to manage.",
+          "Keep service credentials private. Test ordinary questions without submitting restricted interviews or personal information.",
+          "Investigate wrong answers using their sources and feedback. Do not describe untested language or image models as reliable."
+        ],
+        "image": "24-chat",
+        "result": "AI support is used with clear source and privacy checks.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use maintenance and ownership controls carefully",
+        "steps": [
+          "Before enabling maintenance, tell the affected staff and agree when access will return.",
+          "Read each control and confirmation. Confirm the public view afterwards.",
+          "Do not delete the Master Super Admin account to transfer responsibility. Arrange the approved institutional ownership process first."
+        ],
+        "image": "19-system",
+        "result": "High-impact changes have an owner, a reason and a checked result.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Prepare an orderly handover",
+        "steps": [
+          "Give each person their own account, role guide and approved website address.",
+          "Keep private service details, backup locations and recovery contacts in a restricted handover record.",
+          "Record which service and device checks have actually passed. Treat physical-server migration and store release as separate planned work."
+        ],
+        "image": "32-super-admin-menu",
+        "result": "The next responsible person can operate the system without sharing passwords or guessing what was tested.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Identify which duties you may delegate and which require Master Super Admin authority.",
+          "Explain how to check account email delivery without sharing a key or reset link.",
+          "Explain what the database backup includes, what it excludes, and how you would request a recovery check."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  },
+  {
+    "stem": "11_Researchers",
+    "title": "Researchers and institutional readers",
+    "subtitle": "Find usable sources and respect collection permissions",
+    "goal": "You will be able to distinguish public reading from authorised research access and request help safely.",
+    "slides": [
+      {
+        "title": "Start here: learn at your own pace",
+        "steps": [
+          "Read a slide, try its action, then check the result. Tap means click. Gold circles mark important controls in the screenshots.",
+          "Use your own account. Your organisation supplies the correct website address and any staff access.",
+          "Screenshots show the current interface with practice details. Actual names, content and menus may differ."
+        ],
+        "image": null,
+        "result": "You will be able to distinguish public reading from authorised research access and request help safely.",
+        "tip": "If your menu looks different, first check My access. Do not ask someone to lend you their account.",
+        "diagram": [
+          "Read the step",
+          "Try it yourself",
+          "Check the result"
+        ],
+        "notes": ""
+      },
+      {
+        "title": "What this guide covers",
+        "steps": [
+          "Use public collections and sources responsibly.",
+          "Understand what the researcher interest does and does not allow.",
+          "Read internal transcripts only when separately authorised."
+        ],
+        "image": null,
+        "result": "Use the slide numbers to return to a task. The PDF has page bookmarks; PowerPoint has a contents view.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Sign in to your own account",
+        "steps": [
+          "Open the Luo Heritage address supplied by your organisation. Choose Sign in or Log in.",
+          "Enter your email and password, then choose Log in. Check your spelling if it fails.",
+          "Community members may also use Google. Staff should use the account supplied by their administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "Your account or dashboard opens.",
+        "tip": "Never share your password. Use only an address you trust.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Forgot your password?",
+        "steps": [
+          "On the sign-in screen, choose Forgotten password? Select Reset password.",
+          "Enter your account email. Choose Send email, then check your inbox and spam folder.",
+          "Open the newest reset link within 30 minutes. A link can be used only once."
+        ],
+        "image": "03-reset-request",
+        "result": "An account email arrives if the address is eligible and the email service is available.",
+        "tip": "If no email arrives, contact the person who manages your account. Do not keep requesting links.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Choose a new password",
+        "steps": [
+          "Open the password reset link from your own inbox.",
+          "Enter a new password of at least 12 characters. A short phrase with several words is easier to remember.",
+          "Choose Confirm. Return to sign in and use the new password on each device."
+        ],
+        "image": "04-reset-confirm",
+        "result": "The password changes and old sign-ins are ended.",
+        "tip": "Do not forward the reset link. If it has expired, request a new one.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Understand your access before you begin",
+        "steps": [
+          "A researcher interest describes your purpose. It does not unlock private interviews or staff screens.",
+          "Start with the public library and approved sources available to ordinary accounts.",
+          "For internal research material, contact the person responsible for the collection. Use only the access they formally assign."
+        ],
+        "image": "25-my-account",
+        "result": "You know which material you may use without borrowing another person’s account.",
+        "tip": "This guide does not promise a self-service private-dataset download portal.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use the library on a phone",
+        "steps": [
+          "Open a collection, such as Muma (Dictionary), from the menu.",
+          "Use the picture, headphones, video or page icon to choose a type of content. The four-square icon shows all types.",
+          "Choose the list or grid button to change the view. Scroll the entries below the controls."
+        ],
+        "image": "05-mobile-library",
+        "result": "The collection shows entries matching your chosen filter.",
+        "tip": "An empty result can mean there are no published entries of that type. Try All.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Find a word in the public dictionary",
+        "steps": [
+          "On the public website, open the dictionary page and find its search box.",
+          "Enter a Dholuo word or an English or Kiswahili meaning. Wait for the results, then read the relevant entry.",
+          "If there is no result, check spelling or try another word. A missing published entry is not proof that the word does not exist."
+        ],
+        "image": "53-dictionary-search",
+        "result": "You can use the dictionary search where it is offered.",
+        "tip": "The shared app’s Muma screen uses collection filters; it may not show this website search box.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Use a source, not only an AI answer",
+        "steps": [
+          "Open the approved entry and read its description, language and source credit.",
+          "For an AI answer, open the cited platform entries and compare the answer with them.",
+          "Record the source title and permitted reference details for your research notes. Follow the organisation’s citation and reuse rules."
+        ],
+        "image": "06-desktop-library",
+        "result": "Your notes refer to actual approved material rather than an uncited generated answer.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Ask the AI chatbot a clear question",
+        "steps": [
+          "Open Chat or Chatbot. Choose your answer language and read the processing permission notice.",
+          "If you agree, allow AI processing. Ask one clear question and wait for the response.",
+          "Open any sources provided. Ask a follow-up question if you need a simpler explanation."
+        ],
+        "image": "24-chat",
+        "result": "You can read an answer and inspect any linked sources.",
+        "tip": "AI can make mistakes. Do not enter private interviews, passwords or learners’ personal information.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Request private research access properly",
+        "steps": [
+          "Describe your research purpose, the collection needed and who will use it.",
+          "Ask the person responsible for the collection what permission, consent and access conditions apply.",
+          "Wait for approval. Do not treat a visible title, an imported file or a colleague’s copy as permission to reuse it."
+        ],
+        "image": "23-transcripts",
+        "result": "The access request can be considered by the responsible person.",
+        "tip": "Research-only, teaching and public sharing are different permissions.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "For authorised reviewers: open transcripts",
+        "steps": [
+          "This step applies only if you have separately been assigned a role that can read the internal transcript library.",
+          "Open Transcripts from the staff menu. Choose the permitted session in your assigned language.",
+          "Check the session reference and read only the material allowed by your approval."
+        ],
+        "image": "23-transcripts",
+        "result": "An authorised reader reaches the correct internal session.",
+        "tip": "If Transcripts is missing or access is refused, ask the custodian. Do not try another user’s login.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Read transcript sections carefully",
+        "steps": [
+          "Open the permitted session and choose a segment, or Expand all segments.",
+          "Keep the source reference with your notes. An AI summary is not a replacement for the original text.",
+          "Do not translate, publish, export or submit internal text to an external AI service without the required permission."
+        ],
+        "image": "34-transcript-segments",
+        "result": "Your work retains its connection to the permitted original source.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Check permission before sharing",
+        "steps": [
+          "Under Source and access, choose Source permission. If unsure, leave Not sure yet / ask a reviewer.",
+          "Choose how to credit the source. Use a person’s name only when they agree.",
+          "Keep restricted, sacred or research-only material private. Ask a reviewer before changing access."
+        ],
+        "image": "10-source-permission",
+        "result": "The draft records who may use the material and how the source should be credited.",
+        "tip": "Permission to collect material is not automatically permission to publish it.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "What the permission labels mean",
+        "steps": [
+          "Source permission: has the source agreed to the proposed use? Choose Not sure yet when you do not know.",
+          "Consent scope: what use was agreed? Public excerpt means an approved public part; research only and teaching have different limits.",
+          "Restriction level: who may see it? Internal and restricted are not public. Sacred material needs the collection owner’s special care."
+        ],
+        "image": "10-source-permission",
+        "result": "You understand the labels before you change them.",
+        "tip": "If the permission record is unclear, keep the item private and ask the responsible reviewer.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Request an export rather than assuming permission",
+        "steps": [
+          "Tell the collection owner exactly which records and fields are needed and why.",
+          "Ask for the approved export and any citation, storage, sharing or deletion conditions.",
+          "Check the files and permission record together. Keep participant identities and sensitive locations protected."
+        ],
+        "image": "23-transcripts",
+        "result": "Any research copy has a documented purpose and agreed conditions.",
+        "tip": "An administrator’s technical ability to export is not the same as permission for your study.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Report a source or consent concern",
+        "steps": [
+          "Note the item title and reference, and describe the concern without copying restricted text.",
+          "Contact the person responsible for the collection or the administrator who granted your access.",
+          "Pause any disputed reuse until the responsible person confirms what is permitted."
+        ],
+        "image": "10-source-permission",
+        "result": "The rights concern is handled without spreading the disputed material.",
+        "tip": null,
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Protect your account and other people",
+        "steps": [
+          "Use your own account. Sign out on a shared computer or phone.",
+          "Do not copy private interviews, class results or account lists into public chats or messages.",
+          "If a screen shows information you should not see, stop and tell the account administrator."
+        ],
+        "image": "25-my-account",
+        "result": "Your work remains linked to the right person and private information stays protected.",
+        "tip": "Send support the screen name and error message, never your password or a reset link.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "When something does not work",
+        "steps": [
+          "Check your internet connection. Read the message on screen before trying again.",
+          "If your sign-in has expired, sign in again. If a button is missing, ask which role and language you have.",
+          "If it still fails, note the time, screen, button and exact message. Send these to your account administrator."
+        ],
+        "image": "01-sign-in",
+        "result": "You can explain the problem clearly without exposing private information.",
+        "tip": "Before repeating an upload or submission, check whether the first attempt was already saved.",
+        "diagram": null,
+        "notes": ""
+      },
+      {
+        "title": "Try it yourself: your readiness check",
+        "steps": [
+          "Find a public source and explain how you would cite it.",
+          "Explain why the researcher interest does not grant internal access.",
+          "Describe how you would request a transcript or dataset export and check its reuse conditions."
+        ],
+        "image": null,
+        "result": "You are ready for routine work when you can complete these steps without help.",
+        "tip": "Use only approved practice material. Do not publish, delete accounts or change live settings just to practise.",
+        "diagram": [
+          "Try",
+          "Check",
+          "Ask if unsure"
+        ],
+        "notes": ""
+      }
+    ],
+    "sources": []
+  }
+]

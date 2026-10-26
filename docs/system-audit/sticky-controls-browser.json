@@ -1,0 +1,69 @@
+{
+  "fixture": true,
+  "results": [
+    {
+      "width": 360,
+      "first": 122,
+      "second": 122,
+      "filters": [
+        {
+          "label": "All",
+          "top": 293,
+          "width": 44
+        },
+        {
+          "label": "Images",
+          "top": 293,
+          "width": 44
+        },
+        {
+          "label": "Audio",
+          "top": 293,
+          "width": 44
+        },
+        {
+          "label": "Video",
+          "top": 293,
+          "width": 44
+        },
+        {
+          "label": "Transcripts",
+          "top": 293,
+          "width": 44
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "first": 73,
+      "second": 73,
+      "filters": [
+        {
+          "label": "All",
+          "top": 162,
+          "width": 75.015625
+        },
+        {
+          "label": "Images",
+          "top": 162,
+          "width": 102.21875
+        },
+        {
+          "label": "Audio",
+          "top": 162,
+          "width": 94.015625
+        },
+        {
+          "label": "Video",
+          "top": 162,
+          "width": 93.765625
+        },
+        {
+          "label": "Transcripts",
+          "top": 162,
+          "width": 125.921875
+        }
+      ]
+    }
+  ]
+}

@@ -45,7 +45,7 @@ export default async function TranslationsPage({
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           Translations
         </h1>
@@ -126,7 +126,7 @@ export default async function TranslationsPage({
                   endpoint="modules"
                   initialValue={t?.title ?? m.baseName}
                   label={m.baseName}
-                  hint={m.isStub ? "Stub (Phase 2)" : undefined}
+                  hint={m.isStub ? "Collection configuration pending" : undefined}
                 />
               );
             })}

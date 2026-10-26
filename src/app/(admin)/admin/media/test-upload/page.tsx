@@ -60,7 +60,7 @@ export default function TestUploadPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           Test Upload
         </h1>

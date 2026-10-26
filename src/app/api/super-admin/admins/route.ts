@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
@@ -23,7 +24,9 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: session?.user ? 403 : 401 });
     const master = session.user.isMasterSuperAdmin;
-    const body = await req.json();
+    const parsed = z.object({ email: z.string().trim().email().max(254), name: z.string().trim().max(100).nullable().optional(), password: z.string().min(8).max(128), role: z.enum(["super_admin", "language_admin", "uploader", "publisher", "content_editor", "cultural_expert"]), languageId: z.number().int().positive().optional(), languageIds: z.array(z.number().int().positive()).max(64).optional() }).strict().safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ error: "Check the email, password, role and language choices." }, { status: 400 });
+    const body = parsed.data;
     const { email, name, role, password } = body;
     const languageIds: number[] = role === "super_admin"
       ? [...new Set<number>((Array.isArray(body.languageIds) ? body.languageIds : []).map(Number).filter(Number.isInteger))]
@@ -53,6 +56,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: { id: user.id, email: user.email } });
   } catch (err: any) {
     console.error("[admins POST]", err);
-    return NextResponse.json({ success: false, error: err.message || "Failed to create admin" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Could not create the staff account. Please retry." }, { status: 500 });
   }
 }

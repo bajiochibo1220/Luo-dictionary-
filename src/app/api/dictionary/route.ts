@@ -1,3 +1,4 @@
+import { publicFields } from "@/lib/public-projection";
 import { assertServiceAvailable } from "@/lib/maintenance";
 import { withApiErrors } from "@/lib/content-workflow";
 import { NextRequest, NextResponse } from "next/server";
@@ -126,7 +127,7 @@ async function handleGET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: combined,
+      data: publicFields(combined),
       meta: { page, total: total + recordTotal, limit },
     });
   } catch (err: any) {

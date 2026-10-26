@@ -1,0 +1,163 @@
+NRF “Technical Specifications Annex
+Detailed technical specifications for the JOOUST–NRF project’s AI-enabled digital repository, designed to store and serve multimodal cultural heritage data (text, audio, image, video) with strict consent-based governance, and to integrate AI discovery and storytelling features.
+
+1) Purpose and scope
+The repository shall provide a secure, scalable, and culturally responsive platform for ingesting, storing, processing, retrieving, and presenting Luo Indigenous Knowledge Systems content collected in Homa Bay, Kisumu, and Siaya. It shall support:
+Controlled storage of raw and curated datasets
+Consent- and sensitivity-based access controls
+AI-assisted search, classification, linking, and storytelling
+Research-grade export for NLP and computer vision pipelines
+Long-term preservation and auditable governance suitable for NRF reporting
+
+2) Users, roles, and access model
+2.1 User categories
+System Administrator (JOOUST ICT/Technical Lead): infrastructure, backups, security policies
+Repository Curator (Cultural Heritage Lead): approves content publication, assigns restrictions
+Research Team (PI/Co-PIs/Students): ingest, annotate, validate, analyze, internal retrieval
+Community Custodian / Elders’ Council Representatives: validation access, feedback workflows
+Public Users (optional): access to explicitly permitted “public” materials only
+
+2.2 Access control
+The repository shall implement Role-Based Access Control (RBAC) plus Attribute-Based Access Control (ABAC) using:
+restriction_level: public / internal / restricted / sacred
+consent_scope: research_only / teaching / public_excerpt / community_only / embargoed
+county/site filters where community rules require locality-based governance
+object-level rules applying separately to record, media asset, and transcript
+
+2.3 Authentication
+Staff login via JOOUST SSO if available; otherwise OIDC (Keycloak recommended)
+MFA for admin and curator accounts
+Session timeouts and device login controls for elevated roles
+
+3) Functional specifications
+3.1 Content ingestion and registration
+The repository shall provide:
+Batch ingestion (folder upload) and single-item upload
+Mandatory metadata capture at ingest (domain, genre, county/site, consent, restriction)
+Automated file integrity checks (checksum SHA-256)
+Automated extraction of media technical metadata (duration, format, resolution)
+Ingest status workflow: raw → transcribed → reviewed → validated → curated → published
+3.2 Data storage and retrieval
+Storage of multimodal files in an object store (local NAS/S3-compatible storage)
+Metadata, consent, access rules, and indices stored in a relational database
+Retrieval through:
+keyword search
+filters (domain, genre, county, site, restriction)
+AI-based semantic search (vector similarity) for authorized users
+3.3 AI-enabled discovery features
+The repository shall support:
+Genre classification: proverb, riddle, folk story, song, ritual narrative
+Theme tagging aligned to elicitation domains (governance, kinship, ecology, etc.)
+Named entity extraction (sites, artifacts, clans, practices) with curator validation
+Cross-linking of records to artifacts, sites, and practices (knowledge graph layer)
+“Storytelling” presentation module for non-sacred, permitted narratives (e.g., reconstructed story view with linked audio excerpts and glossary)
+3.4 Community validation and feedback
+Private “validation workspace” where custodians can review curated items
+Feedback capture (approve/revise/restrict) with audit trail
+Ability to revise restriction levels following community decisions (curator-controlled)
+3.5 Export and interoperability
+For authorized users, export shall support:
+JSONL for NLP training input
+COCO/CSV style exports for CV datasets (images + labels + metadata)
+Metadata exports (CSV/JSON)
+API endpoints for integration with analysis scripts and web portal
+
+4) Data model requirements
+4.1 Core objects
+Cultural Record (central unit): domain, genre, summary, county/site, restriction, consent linkage
+Media Asset: audio/video/image + URI + checksums + technical fields + restriction override
+Transcript/Translation/Annotation: versioned, linked to media assets and records
+Artifact record: artifact type/use/materials + media + linkages to narratives/practices
+Entities and Relationships: for knowledge graph (artifact ↔ practice ↔ site ↔ narrative)
+
+4.2 Versioning and provenance
+Every transcript and curated object shall support version numbering and provenance logs:
+who created/edited
+when
+what changed
+which source media/segment was used
+
+5) Non-functional specifications
+5.1 Performance
+Search response time: ≤ 2 seconds for metadata search (typical loads)
+AI semantic search response: ≤ 5 seconds (depending on index size)
+Concurrent users: baseline 20 internal users, scalable to 100+ as adoption grows
+Support datasets growing to:
+2–10 TB media storage over time (practical for this project)
+50k–500k transcript segments
+5.2 Availability and resilience
+Minimum availability target: 99% during working hours
+Daily backups (incremental) + weekly full backups
+Disaster recovery plan: restore metadata DB and object store within 48–72 hours
+5.3 Security
+Encryption at rest (disk-level encryption for server volumes; optional object-store encryption)
+TLS/HTTPS for all web traffic
+Principle of least privilege across users and services
+Audit logs for:
+authentication events
+content access (view/download)
+restriction changes
+export events
+5.4 Privacy and ethical safeguards
+Support pseudonymization of participant identifiers
+Restrict direct access to consent forms (separate secure enclave)
+Geo-location handling: store generalized location where needed (site-level rather than exact GPS) depending on consent and sensitivity
+
+6) System architecture specification
+6.1 Recommended stack (robust and feasible at JOOUST)
+Backend API: Python (FastAPI) or Node.js (NestJS)
+Database: PostgreSQL + PostGIS
+Object storage: local MinIO (S3-compatible) OR secure NAS folder with controlled access
+Search:
+Baseline: PostgreSQL full-text search
+Enhanced: OpenSearch/Elastic for full-text
+Vector search (for semantic retrieval):
+pgvector (in PostgreSQL) OR separate vector DB (optional)
+Frontend: React/Vue web portal
+Auth: Keycloak (OIDC) or JOOUST SSO integration
+AI services: containerized inference services (Docker) callable via internal API
+6.2 Deployment footprint
+Primary host: JOOUST on-prem (Dell PowerEdge R740) as core compute/storage node
+Optional cloud mirror: encrypted backups or selective public dataset hosting only
+
+7) Repository workflows
+7.1 Ingest workflow states
+Raw ingested (media stored; metadata minimal; restricted by default)
+Transcribed (AI draft transcript)
+Reviewed (manual verification and cleaning)
+Validated (approved by linguist/cultural heritage reviewer)
+Curated (metadata enriched, glossary/annotations, links created)
+Published (exposed according to access controls)
+7.2 Content publication rules
+Nothing becomes public unless:
+consent_scope permits public access AND
+restriction level is public AND
+curator approval is granted
+
+8) File and naming conventions for file_uri
+The repository shall adopt deterministic URIs:
+/JOOUST/NRF/LuoAI_Repository/02_fieldwork/{county}/{site}/{session_id}/domain={domain_code}/raw/{media_type}/{asset_id}.{ext}
+
+and processed derivatives:
+
+.../processed/transcripts/{version}/{asset_id}_transcript_v{n}.txt
+
+All assets must include checksums and a unique asset_id.
+
+9) Testing and acceptance criteria
+9.1 Minimum acceptance tests
+Ingest: upload + metadata capture + checksum stored
+RBAC/ABAC: restricted content is not accessible to unauthorized users
+Search: returns results consistent with permissions and filters
+Versioning: transcript revisions preserved with audit trail
+Export: JSONL export only includes authorized records and redacts restricted fields
+Backup restore: test restore of DB + 10 sample media assets
+
+10) Deliverables and documentation
+The technical team shall produce:
+System design document (architecture + data model + security plan)
+Metadata schema and controlled vocabularies aligned to elicitation domains
+SOPs for ingest, validation, restriction changes, and public release
+Admin guide (backups, restore, user provisioning)
+User guide for curators and researchers
+If you want this packaged as a formal NRF “Technical Specifications Annex” (with headings, numbering, and acceptance criteria tables), tell me whether JOOUST prefers on-prem only or hybrid (on-prem + cloud backup), and I’ll format it accordingly without changing the substance.

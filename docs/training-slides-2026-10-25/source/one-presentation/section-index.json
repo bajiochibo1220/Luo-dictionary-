@@ -1,0 +1,86 @@
+{
+  "totalSlides": 138,
+  "common": {
+    "start": 4,
+    "end": 19
+  },
+  "roles": [
+    {
+      "role": "Community members",
+      "start": 20,
+      "goal": "You will be able to find cultural material, ask questions and submit your own contribution.",
+      "stem": "01_Community_Members",
+      "end": 32
+    },
+    {
+      "role": "Students and learners",
+      "start": 33,
+      "goal": "You will be able to enroll, join a class, study and find your feedback.",
+      "stem": "02_Students",
+      "end": 37
+    },
+    {
+      "role": "Teachers and lecturers",
+      "start": 38,
+      "goal": "You will be able to run a class and help students find their work and feedback.",
+      "stem": "03_Teachers_and_Lecturers",
+      "end": 48
+    },
+    {
+      "role": "Uploaders",
+      "start": 49,
+      "goal": "You will be able to add the right material, record permission and follow its review status.",
+      "stem": "04_Uploaders",
+      "end": 59
+    },
+    {
+      "role": "Cultural reviewers",
+      "start": 60,
+      "goal": "You will be able to make a clear, independent cultural review decision.",
+      "stem": "05_Cultural_Reviewers",
+      "end": 69
+    },
+    {
+      "role": "Content editors",
+      "start": 70,
+      "goal": "You will be able to correct content without bypassing the review process.",
+      "stem": "06_Content_Editors",
+      "end": 78
+    },
+    {
+      "role": "Publishers",
+      "start": 79,
+      "goal": "You will be able to check a reviewed item and distinguish public release from internal approval.",
+      "stem": "07_Publishers",
+      "end": 87
+    },
+    {
+      "role": "Language administrators",
+      "start": 88,
+      "goal": "You will be able to manage your language’s work while keeping staff duties clear.",
+      "stem": "08_Language_Administrators",
+      "end": 100
+    },
+    {
+      "role": "Super Admins",
+      "start": 101,
+      "goal": "You will be able to coordinate access and monitor work without confusing oversight with editorial permission.",
+      "stem": "09_Super_Admins",
+      "end": 111
+    },
+    {
+      "role": "Master Super Admin",
+      "start": 112,
+      "goal": "You will be able to oversee high-impact actions, delegate responsibly and keep the platform’s records safe.",
+      "stem": "10_Master_Super_Admin",
+      "end": 126
+    },
+    {
+      "role": "Researchers and institutional readers",
+      "start": 127,
+      "goal": "You will be able to distinguish public reading from authorised research access and request help safely.",
+      "stem": "11_Researchers",
+      "end": 137
+    }
+  ]
+}

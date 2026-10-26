@@ -1,3 +1,4 @@
+import { publicCulturalText } from "@/lib/public-cultural-text";
 import { prisma } from "@/lib/db";
 import { getGemini } from "./gemini";
 import { publicMediaWhere, isPubliclyEligible } from "@/lib/governance";
@@ -24,15 +25,7 @@ function buildRecordText(record: {
 }): string {
   const parts = [record.title];
   if (record.summary) parts.push(record.summary);
-  const d = record.data as any;
-  if (d) {
-    for (const [key, v] of Object.entries(d)) {
-      if (["sourcePermission", "attributionPreference"].includes(key)) continue;
-      if (typeof v === "string") parts.push(v);
-      else if (Array.isArray(v))
-        parts.push(v.filter((x) => typeof x === "string").join(" "));
-    }
-  }
+  parts.push(publicCulturalText(record.data));
   for (const media of record.media ?? []) {
     parts.push(`${media.type} ${media.format} ${media.caption ?? ""} ${media.altText ?? ""}`);
   }

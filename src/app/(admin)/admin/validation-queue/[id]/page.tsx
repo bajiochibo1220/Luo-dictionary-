@@ -79,7 +79,7 @@ export default async function ValidationDetailPage({
         ← Back to queue
       </Link>
 
-      <header className="mb-8">
+      <header className="workspace-heading mb-8">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-sm">
             {record.module.baseName}

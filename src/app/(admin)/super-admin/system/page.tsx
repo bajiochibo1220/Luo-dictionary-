@@ -1,3 +1,4 @@
+import { maskSettings } from "@/lib/settings-policy";
 import { getSystemSettings } from "@/lib/settings";
 import { prisma } from "@/lib/db";
 import { SystemClient } from "./system-client";
@@ -17,23 +18,7 @@ export default async function SystemPage() {
     auth(),
   ]);
 
-  const sensitive = [
-    "gemini_api_key",
-    "cloudinary_api_secret",
-    "smtp_password",
-  ];
-
-  const masked: Record<string, string> = {};
-  for (const [k, v] of Object.entries(settings)) {
-    if (sensitive.includes(k) && v) {
-      masked[k] =
-        v.length <= 8
-          ? "•".repeat(v.length)
-          : v.slice(0, 4) + "•".repeat(20) + v.slice(-4);
-    } else {
-      masked[k] = v;
-    }
-  }
+  const masked = maskSettings(settings);
 
   const defaults: Record<string, string> = {
     site_name: "Luo Heritage",

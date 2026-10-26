@@ -1,0 +1,31 @@
+{
+  "verifiedAt": "2026-10-25T21:35:16.142Z",
+  "webBuildId": "9eac3b77-8574-487e-bb43-6581d9794779",
+  "android": {
+    "artifact": "clients/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "bytes": 5421050,
+    "sha256": "69c1687ccbf67a7ab0e859e50d970d5b7e62cd89f4dc55dae5db019584435761",
+    "purpose": "Explicit USB development build; use adb reverse tcp:3000 tcp:3000",
+    "storeRelease": false,
+    "physicalDeviceAcceptance": false
+  },
+  "mobileBundle": {
+    "javascriptFiles": [
+      "index-CZYzlcKx.js",
+      "web-aGo8Xb1I.js",
+      "web-Dd4RzDfw.js"
+    ],
+    "checkedConfiguredSecretVariables": [
+      "DATABASE_URL",
+      "AUTH_GOOGLE_SECRET",
+      "GEMINI_API_KEY",
+      "CLOUDINARY_API_SECRET"
+    ],
+    "configuredSecretMatches": 0,
+    "scanLimit": "Only configured local environment values were checked. This is not a comprehensive security audit."
+  },
+  "ios": {
+    "projectPresent": true,
+    "compiledOnThisWindowsHost": false
+  }
+}

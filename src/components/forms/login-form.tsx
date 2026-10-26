@@ -1,4 +1,5 @@
 "use client";
+import { applicationReturnTarget } from "@/lib/application-return";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -6,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { nativeLoginReturn, nativeAuthHref, nativeReturnCookie } from "@/lib/native-auth-contract";
 
 export function LoginForm() {
   const router = useRouter();
@@ -13,10 +15,13 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const googleError = searchParams.get("error");
+  const nativeReturn = nativeLoginReturn(searchParams.get("callbackUrl"));
+  const registrationHref = nativeAuthHref("register", nativeReturn);
 
   function startGoogleLogin() {
+    document.cookie = nativeReturnCookie(nativeReturn, window.location.protocol === "https:");
     document.cookie = `google-auth-intent=login; Max-Age=180; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
-    void signIn("google", { callbackUrl: "/auth/continue" });
+    void signIn("google", { callbackUrl: nativeReturn || applicationReturnTarget() || "/auth/continue" });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -41,6 +46,15 @@ export function LoginForm() {
       toast.error("Incorrect email or password");
       return;
     }
+
+    if (nativeReturn) {
+      router.push(nativeReturn);
+      router.refresh();
+      return;
+    }
+
+    const appReturn = applicationReturnTarget();
+    if (appReturn) { router.push(appReturn); router.refresh(); return; }
 
     // Decide where to send them based on their role
     try {
@@ -83,15 +97,12 @@ export function LoginForm() {
     }
   }
 
-  function comingSoon(provider: string) {
-    toast.info(`${provider} login is coming in Phase 2`);
-  }
-
   return (
     <div className="space-y-4">
+      <Link href="/application" className="block min-h-11 text-center font-semibold underline">Browse the public library</Link>
       {googleError && <div role="alert" className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
         {googleError === "GoogleAccountNotFound"
-          ? <>We could not find an account for this Google email. <Link href="/register" className="font-semibold underline">Create an account to continue.</Link></>
+          ? <>We could not find an account for this Google email. <Link href={registrationHref} className="font-semibold underline">Create an account to continue.</Link></>
           : googleError === "AccountSuspended"
           ? "This account is not available. Please contact an administrator."
           : "We could not sign you in with Google. Please try again or create an account."}
@@ -136,13 +147,9 @@ export function LoginForm() {
       </form>
 
       <div className="text-center">
-        <button
-          type="button"
-          onClick={() => comingSoon("Password reset")}
-          className="text-sm text-amber-800 hover:text-amber-900 font-medium"
-        >
+        <Link href="/account-recovery" className="inline-flex min-h-11 items-center text-sm font-medium text-amber-800 hover:text-amber-900">
           Forgotten password?
-        </button>
+        </Link>
       </div>
 
       <div className="relative py-4">
@@ -156,17 +163,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => comingSoon("Apple")}
-          className="flex items-center justify-center gap-2 py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition text-sm font-medium text-stone-700"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-          </svg>
-          Apple
-        </button>
+      <div className="grid grid-cols-1 gap-2">
         <button
           type="button"
           onClick={startGoogleLogin}
@@ -180,34 +177,11 @@ export function LoginForm() {
           </svg>
           Google
         </button>
-        <button
-          type="button"
-          onClick={() => comingSoon("Phone")}
-          className="flex items-center justify-center gap-2 py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition text-sm font-medium text-stone-700"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-          Phone
-        </button>
-        <button
-          type="button"
-          onClick={() => comingSoon("Microsoft")}
-          className="flex items-center justify-center gap-2 py-3 bg-white border border-stone-300 rounded-full hover:bg-stone-50 transition text-sm font-medium text-stone-700"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="#f25022" d="M0 0h11.5v11.5H0z" />
-            <path fill="#7fba00" d="M12.5 0H24v11.5H12.5z" />
-            <path fill="#00a4ef" d="M0 12.5h11.5V24H0z" />
-            <path fill="#ffb900" d="M12.5 12.5H24V24H12.5z" />
-          </svg>
-          Microsoft
-        </button>
       </div>
 
       <div className="pt-4 text-center">
         <Link
-          href="/register"
+          href={registrationHref}
           className="inline-block w-full px-8 py-3 border-2 border-amber-800 text-amber-800 rounded-full font-semibold hover:bg-amber-800 hover:text-white transition text-[15px]"
         >
           Create new account

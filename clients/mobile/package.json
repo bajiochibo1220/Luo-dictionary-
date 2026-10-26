@@ -1,0 +1,44 @@
+{
+  "name": "luo-heritage-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "doctor": "node scripts/doctor.mjs",
+    "build:android": "node scripts/build-native.mjs android debug",
+    "build:android:usb": "node scripts/build-native.mjs android debug --local-usb",
+    "build:ios": "node scripts/build-native.mjs ios debug",
+    "assets:native": "node ../../scripts/generate-native-assets.cjs",
+    "native:sync": "npm run build && cap sync",
+    "native:sync:android": "npm run build && cap sync android",
+    "native:sync:ios": "npm run build && cap sync ios",
+    "native:android": "cap open android",
+    "native:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/browser": "8.0.5",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3",
+    "lucide-react": "0.453.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sonner": "1.5.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.12.0",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "6.1.2",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.6.3",
+    "vite": "8.3.4"
+  }
+}

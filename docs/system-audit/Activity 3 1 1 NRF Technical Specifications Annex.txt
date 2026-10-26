@@ -1,0 +1,289 @@
+TECHNICAL SPECIFICATIONS ANNEX
+AI-Enabled Digital Repository for Luo Indigenous Knowledge Systems
+Activity 3.1.1
+Document field
+Specification
+Institution
+Jaramogi Oginga Odinga University of Science and Technology (JOOUST)
+Programme
+National Research Fund (NRF) Project
+Document type
+Technical Specifications Annex
+Deployment model
+On-premises only
+Primary platform
+JOOUST on-premises infrastructure; Dell PowerEdge R740 core node
+Coverage
+Homa Bay, Kisumu and Siaya counties
+Status
+Formal technical baseline for implementation and acceptance
+Date
+23 July 2026
+
+Purpose of this Annex
+This Annex defines the functional, data, security, infrastructure, workflow, testing and documentation requirements for the JOOUST-NRF AI-enabled cultural heritage repository. It is intended to support implementation, procurement, verification and NRF reporting.
+
+1. Purpose and Scope
+The repository shall provide a secure, scalable and culturally responsive platform for ingesting, storing, processing, retrieving and presenting Luo Indigenous Knowledge Systems content collected in Homa Bay, Kisumu and Siaya.
+SCP-01  Provide controlled storage of raw and curated datasets.
+SCP-02  Enforce consent- and sensitivity-based access controls.
+SCP-03  Support AI-assisted search, classification, linking and storytelling.
+SCP-04  Provide research-grade exports for NLP and computer-vision pipelines.
+SCP-05  Support long-term preservation and auditable governance suitable for NRF reporting.
+2. Users, Roles and Access Model
+2.1 User Categories
+Role
+Authority and responsibilities
+System Administrator (JOOUST ICT/Technical Lead)
+Infrastructure administration, backups and security policies.
+Repository Curator (Cultural Heritage Lead)
+Content-publication approval and assignment of restrictions.
+Research Team (PI, Co-PIs and Students)
+Ingest, annotation, validation, analysis and internal retrieval.
+Community Custodian / Elders' Council Representatives
+Validation access and participation in feedback workflows.
+Public Users (optional)
+Access only to materials explicitly permitted for public use.
+
+2.2 Access Control
+The repository shall implement Role-Based Access Control (RBAC) together with Attribute-Based Access Control (ABAC).
+IAM-01  Apply restriction_level values: public, internal, restricted and sacred.
+IAM-02  Apply consent_scope values: research_only, teaching, public_excerpt, community_only and embargoed.
+IAM-03  Apply county and site filters where community rules require locality-based governance.
+IAM-04  Apply object-level rules separately to each cultural record, media asset and transcript.
+2.3 Authentication
+IAM-05  Use JOOUST single sign-on where available; otherwise use an OIDC provider, with Keycloak recommended.
+IAM-06  Require multi-factor authentication for administrator and curator accounts.
+IAM-07  Enforce session timeouts and device-login controls for elevated roles.
+3. Functional Specifications
+3.1 Content Ingestion and Registration
+FUN-01  Provide batch ingestion by folder upload and single-item upload.
+FUN-02  Require metadata at ingest: domain, genre, county/site, consent and restriction.
+FUN-03  Perform automated file-integrity checks and store SHA-256 checksums.
+FUN-04  Extract technical media metadata, including duration, format and resolution.
+FUN-05  Support the status workflow: raw -> transcribed -> reviewed -> validated -> curated -> published.
+3.2 Data Storage and Retrieval
+FUN-06  Store multimodal files in an on-premises object store using local NAS or S3-compatible storage.
+FUN-07  Store metadata, consent, access rules and indices in a relational database.
+FUN-08  Provide keyword search and filters for domain, genre, county, site and restriction.
+FUN-09  Provide AI-based semantic search through vector similarity for authorized users.
+3.3 AI-Enabled Discovery
+AI-01  Classify genres including proverb, riddle, folk story, song and ritual narrative.
+AI-02  Apply theme tags aligned to elicitation domains, including governance, kinship and ecology.
+AI-03  Extract named entities such as sites, artifacts, clans and practices, subject to curator validation.
+AI-04  Cross-link records to artifacts, sites and practices through a knowledge-graph layer.
+AI-05  Provide a storytelling presentation module for permitted, non-sacred narratives, including linked audio excerpts and glossary content.
+3.4 Community Validation and Feedback
+FUN-10  Provide a private validation workspace for custodians to review curated items.
+FUN-11  Capture approve, revise and restrict feedback decisions with an audit trail.
+FUN-12  Permit curator-controlled revision of restriction levels following community decisions.
+3.5 Export and Interoperability
+INT-01  Export authorized NLP training content in JSONL format.
+INT-02  Export authorized computer-vision datasets in COCO/CSV style, including images, labels and metadata.
+INT-03  Export metadata in CSV and JSON formats.
+INT-04  Provide internal API endpoints for analysis scripts and the web portal.
+4. Data Model Requirements
+4.1 Core Objects
+Object
+Required content and relationships
+Cultural Record
+Central unit containing domain, genre, summary, county/site, restriction and consent linkage.
+Media Asset
+Audio, video or image; URI; checksum; technical fields; and restriction override.
+Transcript / Translation / Annotation
+Versioned object linked to media assets and cultural records.
+Artifact Record
+Artifact type, use, materials, media and links to narratives and practices.
+Entities and Relationships
+Knowledge-graph relationships among artifacts, practices, sites and narratives.
+
+4.2 Versioning and Provenance
+Every transcript and curated object shall support version numbering and provenance logs recording:
+the person who created or edited the object;
+the date and time of the action;
+the content that changed; and
+the source media or segment used.
+5. Non-Functional Specifications
+5.1 Performance and Capacity
+Requirement
+Minimum target
+Metadata search response
+No more than 2 seconds under typical loads.
+AI semantic-search response
+No more than 5 seconds, subject to index size.
+Concurrent users
+Baseline of 20 internal users, scalable to 100 or more.
+Media storage growth
+Support 2-10 TB over the project lifecycle.
+Transcript-segment growth
+Support 50,000-500,000 transcript segments.
+
+5.2 Availability and Resilience
+NFR-01  Achieve at least 99% availability during working hours.
+NFR-02  Perform daily incremental backups and weekly full backups to JOOUST-controlled on-premises storage.
+NFR-03  Maintain an on-premises disaster-recovery plan capable of restoring the metadata database and object store within 48-72 hours.
+NFR-04  Keep backup copies on physically or logically separate JOOUST-controlled on-premises infrastructure; no operational or backup data shall depend on public-cloud services.
+5.3 Security
+SEC-01  Encrypt server volumes at rest; use object-store encryption where supported.
+SEC-02  Use TLS/HTTPS for all web traffic.
+SEC-03  Apply least privilege across users and services.
+SEC-04  Audit authentication events, content views/downloads, restriction changes and export events.
+5.4 Privacy and Ethical Safeguards
+ETH-01  Support pseudonymization of participant identifiers.
+ETH-02  Place consent forms in a separate secure enclave and restrict direct access.
+ETH-03  Generalize location data, where required by consent and sensitivity, to site level rather than exact GPS coordinates.
+6. System Architecture Specification
+6.1 On-Premises Technology Stack
+Layer
+Approved specification
+Backend API
+Python FastAPI or Node.js NestJS, deployed on premises.
+Database
+PostgreSQL with PostGIS.
+Object storage
+Local MinIO (S3-compatible) or a controlled secure NAS folder.
+Baseline search
+PostgreSQL full-text search.
+Enhanced full-text search
+On-premises OpenSearch or Elasticsearch.
+Vector search
+pgvector in PostgreSQL or an optional on-premises vector database.
+Frontend
+React or Vue web portal.
+Authentication
+Keycloak (OIDC) or JOOUST SSO integration.
+AI services
+Containerized inference services callable through an internal API.
+
+6.2 Deployment Footprint
+ARC-01  Use the JOOUST on-premises Dell PowerEdge R740 as the core compute and storage node.
+ARC-02  Host application, database, search, vector retrieval, object storage and AI-inference services within JOOUST-controlled infrastructure.
+ARC-03  Use only JOOUST-controlled on-premises backup and replication targets; cloud mirroring and cloud-hosted operational services are out of scope.
+7. Repository Workflows
+7.1 Ingest Workflow States
+State
+Definition
+Raw ingested
+Media stored; metadata minimal; restricted by default.
+Transcribed
+AI-generated draft transcript exists.
+Reviewed
+Transcript has undergone manual verification and cleaning.
+Validated
+Approved by a linguist or cultural-heritage reviewer.
+Curated
+Metadata enriched; glossary, annotations and links created.
+Published
+Exposed only according to access-control rules.
+
+7.2 Publication Rules
+Nothing shall become public unless all of the following conditions are satisfied:
+consent_scope permits public access;
+restriction_level is public; and
+curator approval has been granted.
+8. File and Naming Conventions
+The repository shall adopt deterministic file URIs.
+/JOOUST/NRF/LuoAI_Repository/02_fieldwork/{county}/{site}/{session_id}/domain={domain_code}/raw/{media_type}/{asset_id}.{ext}
+Processed derivatives shall follow:
+.../processed/transcripts/{version}/{asset_id}_transcript_v{n}.txt
+Every asset shall have a unique asset_id and a stored checksum.
+
+9. Testing and Acceptance Criteria
+Acceptance shall be based on witnessed functional tests, configuration inspection and retained evidence. A criterion passes only where the expected result is achieved without exposing content beyond its authorized scope.
+9.1 Functional and Governance Acceptance
+ID
+Acceptance criterion
+Verification method
+Required evidence
+AT-01
+Single and batch uploads capture mandatory metadata and store a matching SHA-256 checksum.
+Upload representative audio, image and video samples; recompute hashes.
+Ingest records, checksum comparison and screenshots.
+AT-02
+Restricted and sacred content is inaccessible to unauthorized roles and excluded from unauthorized search results.
+Execute positive and negative RBAC/ABAC tests for record, asset and transcript levels.
+Access-control test log and audit events.
+AT-03
+Metadata and semantic search respect permissions and required filters.
+Run approved queries by domain, genre, county, site and restriction under different roles.
+Query results and permission test matrix.
+AT-04
+Transcript revisions retain version history, editor, timestamp, change details and source linkage.
+Create and revise a transcript twice, then inspect provenance.
+Version history and provenance export.
+AT-05
+JSONL, COCO/CSV and metadata exports contain only authorized records and redact restricted fields.
+Export under researcher and curator roles and inspect sample output.
+Export files, redaction checklist and audit log.
+AT-06
+Community custodians can approve, revise or restrict items in a private workspace, with an audit trail.
+Complete one test cycle for each feedback decision.
+Workflow log and restriction-change history.
+AT-07
+No item can be published unless public consent, public restriction level and curator approval are all present.
+Attempt publication with each prerequisite omitted, then with all present.
+Publication test log and curator approval record.
+
+9.2 Performance, Resilience and Security Acceptance
+ID
+Acceptance criterion
+Verification method
+Required evidence
+AT-08
+Typical metadata-search responses are no more than 2 seconds; semantic-search responses are no more than 5 seconds.
+Run timed queries against a representative indexed dataset.
+Performance report with query timings.
+AT-09
+The platform supports 20 concurrent internal users and demonstrates a scaling path to 100 or more.
+Execute a baseline load test and review capacity configuration.
+Load-test report and capacity plan.
+AT-10
+Daily incremental and weekly full backups run to separate JOOUST-controlled on-premises storage.
+Inspect schedules and complete witnessed backup jobs.
+Backup logs and storage-location record.
+AT-11
+The database and ten sample media assets can be restored within the 48-72 hour recovery objective.
+Perform a controlled restore to an isolated on-premises environment.
+Restore log, integrity checks and sign-off.
+AT-12
+TLS/HTTPS, encryption at rest, MFA for elevated roles and least-privilege service accounts are configured.
+Inspect configuration and test administrator/curator authentication.
+Configuration extracts and security test checklist.
+AT-13
+Audit logs record authentication, content access, restriction changes and exports.
+Perform one event of each type and retrieve corresponding logs.
+Timestamped audit-log extract.
+AT-14
+Core services and backups operate without dependency on public-cloud infrastructure.
+Disconnect external network access during a controlled service test.
+On-premises architecture record and test log.
+
+
+10. Deliverables and Documentation
+DEL-01  System design document covering architecture, data model and security plan.
+DEL-02  Metadata schema and controlled vocabularies aligned to elicitation domains.
+DEL-03  Standard operating procedures for ingest, validation, restriction changes and public release.
+DEL-04  Administrator guide covering backups, restore and user provisioning.
+DEL-05  User guide for repository curators and researchers.
+DEL-06  Completed acceptance-test report with evidence references and JOOUST sign-off.
+10.1 Formal Acceptance Record
+Acceptance role
+Name and title
+Signature
+Date
+JOOUST Technical Lead
+Dr. Isaya Onjala
+
+
+Cultural Heritage Lead / Repository Curator
+Dr. Ndiema
+
+
+Principal Investigator
+Dr. Isaya Onjala
+
+
+NRF / Authorized Reviewer, where applicable
+
+
+

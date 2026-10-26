@@ -1,4 +1,9 @@
-import type { Session } from "next-auth";
+// Structural session contract keeps authorization usable in bundled clients
+// without pulling Next.js server/experimental React types into native builds.
+type Session = {
+  expires?: string;
+  user?: { id?: string; email?: string | null; name?: string | null; isSuperAdmin?: boolean; isMasterSuperAdmin?: boolean; languageRoles?: LanguageRole[] };
+};
 
 export type LanguageRole = {
   languageId: number;

@@ -1,0 +1,327 @@
+{
+  "date": "2026-10-25",
+  "languages": [
+    {
+      "code": "luo",
+      "isActive": true
+    },
+    {
+      "code": "eng",
+      "isActive": true
+    }
+  ],
+  "modules": [
+    {
+      "code": "dictionary",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "dholuo",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "english",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "kiswahili",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "pronunciation",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "grammarClass",
+          "fieldType": "text"
+        }
+      ]
+    },
+    {
+      "code": "proverbs",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "original_text",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "translation",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "meaning",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "interpretation",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "context",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "usage",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "riddles",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "question",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "answer",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "translation",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "context",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "oral_histories",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "title",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "community",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "clan",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "narrator",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "location",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "county",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "transcript",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "folktales",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "teacher_notes",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "children_version",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "moral",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "translation",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "original",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "songs",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "title",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "lyrics",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "translation",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "meaning",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "instruments",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "cultural_context",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "artifacts",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "usage",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "clan",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "origin",
+          "fieldType": "text"
+        },
+        {
+          "fieldCode": "description",
+          "fieldType": "textarea"
+        }
+      ]
+    },
+    {
+      "code": "heritage_sites",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": [
+        {
+          "fieldCode": "visiting_info",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "history",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "description",
+          "fieldType": "textarea"
+        },
+        {
+          "fieldCode": "county",
+          "fieldType": "text"
+        }
+      ]
+    },
+    {
+      "code": "cultural_calendar",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "audio_visual",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "chatbot",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "games",
+      "isActive": true,
+      "isStub": true,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "learning",
+      "isActive": true,
+      "isStub": true,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "ai_tutor",
+      "isActive": true,
+      "isStub": true,
+      "fieldDefinitions": []
+    },
+    {
+      "code": "research",
+      "isActive": true,
+      "isStub": false,
+      "fieldDefinitions": []
+    }
+  ],
+  "dictionaryEntries": 0,
+  "publicDictionaryEntries": 0,
+  "records": [
+    {
+      "_count": 1,
+      "status": "validated",
+      "consentScope": "pending",
+      "restrictionLevel": "internal"
+    },
+    {
+      "_count": 1,
+      "status": "published",
+      "consentScope": "public_excerpt",
+      "restrictionLevel": "public"
+    },
+    {
+      "_count": 26,
+      "status": "submitted",
+      "consentScope": "research_only",
+      "restrictionLevel": "internal"
+    },
+    {
+      "_count": 4,
+      "status": "needs_edit",
+      "consentScope": "pending",
+      "restrictionLevel": "internal"
+    },
+    {
+      "_count": 48,
+      "status": "submitted",
+      "consentScope": "pending",
+      "restrictionLevel": "internal"
+    }
+  ],
+  "media": [
+    {
+      "_count": 51,
+      "type": "image"
+    }
+  ],
+  "transcripts": 2708,
+  "learningResources": [
+    {
+      "_count": 3,
+      "kind": "lesson",
+      "status": "draft"
+    }
+  ],
+  "courses": 0,
+  "classes": 0
+}

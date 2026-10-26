@@ -85,7 +85,7 @@ export default async function DashboardLayout({
           </div>
         }
       >
-        <AppShell sidebar={<AppSidebar modules={formattedModules} />}>
+        <AppShell sidebar={<AppSidebar modules={formattedModules} isStaff={isAdmin} />}>
           {children}
         </AppShell>
       </Suspense>

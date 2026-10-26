@@ -4,10 +4,11 @@ import { auth } from "@/lib/auth";
 import { ChatInterface } from "@/components/ai/chat-interface";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
 import { prisma } from "@/lib/db";
+import { ConversationIdSchema } from "@/lib/chat-contract";
 
 export const dynamic = "force-dynamic";
 
-export default async function ChatbotPage() {
+export default async function ChatbotPage({ searchParams }: { searchParams: Promise<{ conversation?: string }> }) {
   const message = await maintenanceMessage();
   if (message) return <MaintenanceNotice message={message} />;
   const session = await auth();
@@ -29,5 +30,6 @@ export default async function ChatbotPage() {
     languageCode = "eng";
   }
 
-  return <ChatInterface languageCode={languageCode} cultureCode={cultureCode} guest={!session?.user} />;
+  const selected = ConversationIdSchema.safeParse((await searchParams).conversation);
+  return <ChatInterface languageCode={languageCode} cultureCode={cultureCode} guest={!session?.user} initialConversationId={selected.success ? selected.data : undefined} />;
 }

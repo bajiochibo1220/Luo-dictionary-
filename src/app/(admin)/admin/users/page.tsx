@@ -49,7 +49,7 @@ export default async function UsersPage({
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">Users</h1>
         <p className="text-sm text-stone-500">
           {formatted.length} {formatted.length === 1 ? "user" : "users"}

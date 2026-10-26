@@ -12,6 +12,13 @@ export async function GET(
   if (!Number.isSafeInteger(id) || id < 1) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  const session = await auth();
+  if (_req.headers.has("Authorization") && !session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const mayManage = !!session?.user && (session.user.isSuperAdmin || session.user.isMasterSuperAdmin || session.user.languageRoles.some(role => role.languageId === id && role.role === "language_admin"));
+  if (!mayManage) {
+    const publicLanguage = await prisma.language.findFirst({ where: { id, isActive: true }, select: { id: true, code: true, name: true, nativeName: true, isActive: true } });
+    return publicLanguage ? NextResponse.json({ success: true, data: publicLanguage }) : NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const language = await prisma.language.findUnique({
     where: { id },
     include: {

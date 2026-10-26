@@ -32,7 +32,7 @@ export default async function ReviewQueuePage() {
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="mb-1 text-3xl font-serif text-stone-800">Review Queue</h1>
         <p className="text-sm text-stone-500">{records.length} {records.length === 1 ? "item" : "items"} awaiting publisher release</p>
       </header>

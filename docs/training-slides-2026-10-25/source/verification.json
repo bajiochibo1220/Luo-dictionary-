@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-25",
+  "guides": 12,
+  "roles": 11,
+  "slides": 240,
+  "checks": [
+    {
+      "guide": "00_START_HERE",
+      "slides": 9,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "01_Community_Members",
+      "slides": 29,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "02_Students",
+      "slides": 19,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "03_Teachers_and_Lecturers",
+      "slides": 22,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "04_Uploaders",
+      "slides": 21,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "05_Cultural_Reviewers",
+      "slides": 19,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "06_Content_Editors",
+      "slides": 19,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "07_Publishers",
+      "slides": 18,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "08_Language_Administrators",
+      "slides": 21,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "09_Super_Admins",
+      "slides": 19,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "10_Master_Super_Admin",
+      "slides": 23,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    },
+    {
+      "guide": "11_Researchers",
+      "slides": 21,
+      "allVisibleInstructions": true,
+      "screenshotsEmbedded": true,
+      "contentsLinksChecked": true,
+      "allPDFPagesRendered": true
+    }
+  ],
+  "archiveChecked": true,
+  "limits": "Interface screenshots use isolated sample data, not live authentication, provider delivery, publication, or real-device acceptance. PowerPoint packages were structurally checked; visual previews were rendered from matching PDFs."
+}

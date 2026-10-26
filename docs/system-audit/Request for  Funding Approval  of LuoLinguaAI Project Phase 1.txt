@@ -1,0 +1,106 @@
+JARAMOGI OGINGA ODINGA UNIVERSITY OF SCIENCE AND
+TECHNOLOGY
+OFFICE OF THE SENIOR LECTURER / LEAD RESEARCHER
+REQUEST FOR APPROVAL
+TO: The Vice-Chancellor, Jaramogi Oginga Odinga University of Science and Technology
+(JOOUST)
+THROUGH: DVC (Academic, Student Affairs & Research), JOOUST
+FROM: Dr. Onjala, JOOUST
+DATE: October 26, 2023
+SUBJECT: REQUEST FOR APPROVAL OF FUNDING FOR THE DEVELOPMENT OF LUOLINGUAAI
+PLATFORM (PHASE 1)
+1.0 BACKGROUND
+The LuoLinguaAI platform is a digital ecosystem designed to preserve, document, and promote the Dholuo language and
+Luo  cultural  heritage  through  Artificial  Intelligence.  This  initiative  aligns  with  JOOUST's  strategic  objectives  in
+Technology-Enabled  Learning  (TEL)  and  digital  content  creation,  and  builds  on  existing  research  and  cultural
+documentation already undertaken at the University. 
+This Phase 1 development is positioned within the broader context of the NRF-funded AI-enabled digital repository for
+Luo Indigenous Knowledge Systems, which covers Homa Bay, Kisumu, and Siaya counties. Phase 1 will therefore be
+designed with future integration to the NRF repository architecture in mind, ensuring alignment on data models, file
+naming conventions, and API readiness. 
+2.0 SCOPE (PHASE 1)
+This initial phase will deliver a functional web-based minimum viable product (MVP) including: 
+Comprehensive dictionary module (Luo ↔ English)
+Proverbs and riddles repository
+Oral history archive
+Basic administrative dashboard
+Live hosted web portal
+Alignment with NRF Repository:
+ASPECT PHASE 1 APPROACH NRF REPOSITORY STANDARD
+Data Models Will adopt core object structure (CulturalRecord, Media Asset, Transcript) As specified in NRF TechnicalSpecifications
+File Naming Will use deterministic URIs with asset_idand checksums /JOOUST/NRF/LuoAI_Repository/...
+• 
+• 
+• 
+• 
+• 
+JOOUST / Request for Approval — LuoLinguaAI (Phase 1) Page 1 of 3
+ASPECT PHASE 1 APPROACH NRF REPOSITORY STANDARD
+API Design RESTful endpoints with JSON responses Will align for future interoperability
+Metadata Domain, genre, county/site, consent,restriction Matches NRF metadata schema
+Phase 2 (Future Phase):  Mobile application development (Android and iOS) with offline mode, AI Chatbot integration,
+full gamification module, and deeper integration with the NRF repository. This phase will be proposed upon successful
+delivery of Phase 1 and will require additional funding. 
+3.0 DEVELOPMENT TEAM AND BUDGET JUSTIFICATION
+The budget of KES 300,000 covers a lean development team of two (2) personnel over a six-week period, plus essential
+infrastructure costs. The breakdown is as follows: 
+ROLE QUANTITY DURATION DAILY RATE (KES) TOTAL (KES)
+Full Stack Developer 1 30 days 5,000 150,000
+UI/UX Designer + QA 1 20 days 4,000 80,000
+Subtotal - Personnel 230,000
+Hosting & Infrastructure 40,000
+Contingency 30,000
+GRAND TOTAL 300,000
+Justification:
+Full Stack Developer (KES 150,000): Responsible for backend development, database architecture, API integration,
+frontend web development, and deployment. This developer will also ensure alignment with NRF data models and
+naming conventions. This is a senior-level developer required to deliver a functional platform within the tight six-week
+timeline.
+UI/UX Designer + QA (KES 80,000): Responsible for user interface design across all modules, user experience
+testing, and quality assurance to ensure the platform is functional and user-friendly.
+Hosting & Infrastructure (KES 40,000): Covers cloud hosting services, domain registration, database hosting, and
+SSL certificate for secure deployment.
+Contingency (KES 30,000): For unforeseen expenses, additional server resources, or minor scope adjustments during
+development.
+4.0 TIMELINE
+The development will be completed within six (6) weeks from the date of funding approval, leveraging the existing
+Dholuo dataset already compiled through prior research efforts at JOOUST. 
+WEEK ACTIVITY
+Week 1–2 Database setup, backend architecture, user management, NRF alignment planning
+• 
+• 
+• 
+• 
+JOOUST / Request for Approval — LuoLinguaAI (Phase 1) Page 2 of 3
+WEEK ACTIVITY
+Week 3–4 Dictionary module, proverbs and riddles repository
+Week 5 Oral history archive, admin dashboard
+Week 6 Integration, testing, deployment, and training
+5.0 STRATEGIC VALUE
+This project will:
+Position JOOUST as a leader in indigenous language preservation and AI innovation
+Generate valuable intellectual property and research assets
+Support the University's digital learning agenda
+Create a scalable foundation for additional Kenyan languages
+Provide a platform for future research grants and international collaboration
+Serve as a public-facing access point for the NRF-funded repository
+6.0 REQUEST FOR APPROVAL
+Approval is sought for the allocation of KES 300,000 (Three Hundred Thousand Shillings)  to facilitate the immediate
+development of Phase 1 of the LuoLinguaAI platform within the proposed six-week timeline. 
+Important Note: Phase 1 cannot be realised without funding. The costs cover essential personnel, hosting, and
+infrastructure that cannot be provided in-kind by the University. Successful delivery of Phase 1 will position the University
+to secure additional funding for Phase 2 and deeper integration with the NRF repository. 
+7.0 APPROVAL AND SIGN-OFF
+ROLE NAME SIGNATURE DATE
+Prepared By Dr. Onjala
+Recommended By DVC (Academic, Student Affairs
+& Research)
+Approved By Vice-Chancellor
+Attachment: Product Requirements Document (PRD) 
+• 
+• 
+• 
+• 
+• 
+• 
+JOOUST / Request for Approval — LuoLinguaAI (Phase 1) Page 3 of 3

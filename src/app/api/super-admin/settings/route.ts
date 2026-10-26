@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { EDITABLE_SETTINGS, isSecretSetting, maskSettings } from "@/lib/settings-policy";
 import { auth } from "@/lib/auth";
 import {
   getSystemSettings,
   setSystemSettings,
 } from "@/lib/settings";
 import { logAction } from "@/lib/audit";
-
-const SENSITIVE_KEYS = [
-  "gemini_api_key",
-  "cloudinary_api_secret",
-  "smtp_password",
-];
-
-function mask(value: string): string {
-  if (!value) return "";
-  if (value.length <= 8) return "•".repeat(value.length);
-  return value.slice(0, 4) + "•".repeat(20) + value.slice(-4);
-}
 
 export async function GET() {
   const session = await auth();
@@ -26,13 +15,7 @@ export async function GET() {
 
   const settings = await getSystemSettings();
 
-  // Mask sensitive values
-  const masked: Record<string, string> = {};
-  for (const [k, v] of Object.entries(settings)) {
-    masked[k] = SENSITIVE_KEYS.includes(k) && v ? mask(v) : v;
-  }
-
-  return NextResponse.json({ success: true, data: masked });
+  return NextResponse.json({ success: true, data: maskSettings(settings) });
 }
 
 export async function PATCH(req: NextRequest) {
@@ -46,7 +29,7 @@ export async function PATCH(req: NextRequest) {
   const updates: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(body)) {
-    if (key.startsWith("rate-limit:") || typeof value !== "string" || value.length > 50_000) return NextResponse.json({ error: "Invalid setting" }, { status: 400 });
+    if (!EDITABLE_SETTINGS.has(key) || typeof value !== "string" || value.length > 50_000) return NextResponse.json({ error: "Invalid setting" }, { status: 400 });
     if ((key === "terms_content" || key === "privacy_content") && !(session.user as any).isMasterSuperAdmin) {
       return NextResponse.json({ error: "Only the master super admin can edit legal documents" }, { status: 403 });
     }
@@ -55,7 +38,7 @@ export async function PATCH(req: NextRequest) {
     }
     // Skip masked values (user didn't change them)
     if (
-      SENSITIVE_KEYS.includes(key) &&
+      isSecretSetting(key) &&
       value.includes("•")
     ) {
       continue;

@@ -1,4 +1,5 @@
 import { assertServiceAvailable } from "@/lib/maintenance";
+import { publicFields } from "@/lib/public-projection";
 import { withApiErrors } from "@/lib/content-workflow";
 import { addContentVersion } from "@/lib/content-revisions";
 import { createDefaultRecordTranslations } from "@/lib/content-translations";
@@ -47,7 +48,7 @@ async function handleGET(
     );
   }
 
-  return NextResponse.json({ success: true, data: entry });
+  return NextResponse.json({ success: true, data: publicFields(entry) });
 }
 
 async function handlePATCH(

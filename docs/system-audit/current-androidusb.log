@@ -1,0 +1,366 @@
+vite v8.3.4 building client environment for production...
+transforming...
+(node:20188) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1792963369398 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ 1601 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.46 kB │ gzip:   0.29 kB
+dist/assets/6d38f9d4e0f4772b-s-DBDPsn_N.woff2      8.90 kB
+dist/assets/df0a9ae256c0569c-s-YEzCLjIM.woff2     10.28 kB
+dist/assets/c5fe6dc8356a8c31-s-Ai74Rjx-.woff2     11.27 kB
+dist/assets/36008747766f78c6-s-Ct1FAkai.woff2     17.28 kB
+dist/assets/21350d82a1f187e9-s-C5ekK6td.woff2     18.74 kB
+dist/assets/19cfc7226ec3afaa-s-BQL42Lnq.woff2     19.04 kB
+dist/assets/08aedeceaf1dcd57-s-DgyGNlSC.woff2     20.17 kB
+dist/assets/0086f8992871c45b-s-DvGMrinY.woff2     21.25 kB
+dist/assets/03b436aa846269de-s-S8vInfZS.woff2     23.58 kB
+dist/assets/ba9851c3c22cd980-s-Cpd2YT5r.woff2     25.84 kB
+dist/assets/ab00a911ac2adf48-s-ghDDbscC.woff2     29.23 kB
+dist/assets/5c0c2bcbaa4149ca-s.p-BplyFJq7.woff2   37.79 kB
+dist/assets/luo-heritage-512-edrN4VfK.png         43.77 kB
+dist/assets/e4af272ccee01ff0-s.p-8kRkwJBP.woff2   48.43 kB
+dist/assets/8e9860b6e62d6359-s-B_-bZUTo.woff2     85.27 kB
+dist/assets/index-Dio1mzJD.css                    76.51 kB │ gzip:  14.85 kB
+dist/assets/web-Dd4RzDfw.js                        0.36 kB │ gzip:   0.24 kB
+dist/assets/web-aGo8Xb1I.js                        0.84 kB │ gzip:   0.39 kB
+dist/assets/index-CZYzlcKx.js                    425.01 kB │ gzip: 122.08 kB
+
+✓ built in 7.05s
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 6.5s of this 7.0s build (93%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:css transform (88%, 6.2s, 1 call)
+Additional callback time came from callbacks under 1s.
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+READY Node.js 22+
+READY Matching Capacitor platform versions
+READY Built shared screens: run npm run build if missing
+READY Public API origin: localhost development only
+READY Local USB development origin: use adb reverse tcp:3000 tcp:3000; native USB sign-in is enabled only in this explicit Android debug build
+READY Shared backend bootstrap: start/deploy the backend with the versioned APIs
+READY Android project
+READY Java 21–24 for Gradle 8.14 builds: use Java 21 in JAVA_HOME and Android Studio's Gradle JDK setting
+READY Android SDK API 36: install with Android Studio SDK Manager
+READY Android platform tools
+READY Gradle wrapper
+This check does not verify signing, native login, full features or store approval. Existing database records are never changed.
+√ Copying web assets from dist to android\app\src\main\assets\public in 130.29ms
+√ Creating capacitor.config.json in android\app\src\main\assets in 6.20ms
+√ copy android in 244.92ms
+√ Updating Android plugins in 22.77ms
+[info] Found 2 Capacitor plugins for android:
+       @capacitor/app@8.1.2
+       @capacitor/browser@8.0.5
+√ update android in 1.39s
+[info] Sync finished in 1.778s
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if "Windows_NT" == "Windows_NT" setlocal
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set DIRNAME=D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\ 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if "D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\" == "" set DIRNAME=. 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set APP_BASE_NAME=gradlew 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set APP_HOME=D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\ 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>for %i in ("D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\") do set APP_HOME=%~fi 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set APP_HOME=D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\ 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m" 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if defined JAVA_HOME goto findJavaFromJavaHome 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set JAVA_HOME=D:\Android\Java\jdk-21.0.12.1+1 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set JAVA_EXE=D:\Android\Java\jdk-21.0.12.1+1/bin/java.exe 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if exist "D:\Android\Java\jdk-21.0.12.1+1/bin/java.exe" goto execute 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>set CLASSPATH= 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>"D:\Android\Java\jdk-21.0.12.1+1/bin/java.exe" "-Xmx64m" "-Xms64m"   "-Dorg.gradle.appname=gradlew" -classpath "" -jar "D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\\gradle\wrapper\gradle-wrapper.jar" --no-daemon --max-workers=2 -PluoUsbAuth=true :app:assembleDebug :app:lintDebug 
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-app:preBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-browser:preBuild UP-TO-DATE
+> Task :capacitor-browser:preDebugBuild UP-TO-DATE
+> Task :capacitor-browser:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:processDebugNavigationResources UP-TO-DATE
+> Task :capacitor-app:processDebugNavigationResources UP-TO-DATE
+> Task :capacitor-browser:processDebugNavigationResources UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+> Task :capacitor-cordova-android-plugins:processDebugNavigationResources
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResources UP-TO-DATE
+> Task :capacitor-android:packageDebugResources UP-TO-DATE
+> Task :capacitor-app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-app:generateDebugResources UP-TO-DATE
+> Task :capacitor-app:packageDebugResources UP-TO-DATE
+> Task :capacitor-browser:generateDebugResValues UP-TO-DATE
+> Task :capacitor-browser:generateDebugResources UP-TO-DATE
+> Task :capacitor-browser:packageDebugResources UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:generateDebugResources
+> Task :capacitor-cordova-android-plugins:packageDebugResources
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:processDebugManifest UP-TO-DATE
+> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-app:processDebugManifest UP-TO-DATE
+> Task :capacitor-browser:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-browser:processDebugManifest UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile UP-TO-DATE
+> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:generateDebugRFile UP-TO-DATE
+> Task :capacitor-browser:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-browser:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-browser:generateDebugRFile UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+> Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugRFile
+> Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-browser:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-browser:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-browser:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugAssets UP-TO-DATE
+> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-app:compileDebugShaders NO-SOURCE
+> Task :capacitor-app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-app:mergeDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+> Task :capacitor-browser:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-browser:compileDebugShaders NO-SOURCE
+> Task :capacitor-browser:generateDebugAssets UP-TO-DATE
+> Task :capacitor-browser:mergeDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugAssets
+> Task :app:mergeDebugAssets
+> Task :capacitor-app:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:compressDebugAssets
+> Task :capacitor-browser:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:dexBuilderDebug UP-TO-DATE
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-browser:processDebugJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :capacitor-app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-browser:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirDebug
+> Task :app:mergeProjectDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-browser:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-browser:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-browser:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:checkDebugAarMetadata UP-TO-DATE
+> Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :capacitor-android:extractDebugAnnotations UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-android:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-android:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-android:mergeDebugJavaResource UP-TO-DATE
+> Task :capacitor-android:syncDebugLibJars UP-TO-DATE
+> Task :capacitor-android:bundleDebugLocalLintAar UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
+> Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+> Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:prepareLintJarForPublish UP-TO-DATE
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+> Task :capacitor-app:checkDebugAarMetadata UP-TO-DATE
+> Task :capacitor-app:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-app:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :capacitor-app:extractDebugAnnotations UP-TO-DATE
+> Task :capacitor-app:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-app:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-app:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-app:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-app:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-app:mergeDebugJavaResource UP-TO-DATE
+> Task :capacitor-app:syncDebugLibJars UP-TO-DATE
+> Task :capacitor-app:bundleDebugLocalLintAar UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+> Task :capacitor-cordova-android-plugins:syncDebugLibJars
+> Task :capacitor-cordova-android-plugins:bundleDebugLocalLintAar
+> Task :capacitor-browser:checkDebugAarMetadata UP-TO-DATE
+> Task :capacitor-browser:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-browser:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :capacitor-browser:extractDebugAnnotations UP-TO-DATE
+> Task :capacitor-browser:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :capacitor-browser:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-browser:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-browser:prepareDebugArtProfile UP-TO-DATE
+> Task :capacitor-browser:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-browser:mergeDebugJavaResource UP-TO-DATE
+> Task :capacitor-browser:syncDebugLibJars UP-TO-DATE
+> Task :capacitor-browser:bundleDebugLocalLintAar UP-TO-DATE
+> Task :app:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :app:preDebugAndroidTestBuild SKIPPED
+> Task :app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-android:createFullJarDebug UP-TO-DATE
+> Task :capacitor-android:writeDebugLintModelMetadata UP-TO-DATE
+> Task :capacitor-app:createFullJarDebug UP-TO-DATE
+> Task :capacitor-app:writeDebugLintModelMetadata UP-TO-DATE
+> Task :capacitor-browser:createFullJarDebug UP-TO-DATE
+> Task :capacitor-browser:writeDebugLintModelMetadata UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:createFullJarDebug
+> Task :capacitor-cordova-android-plugins:writeDebugLintModelMetadata
+> Task :app:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:generateDebugLintModel UP-TO-DATE
+> Task :capacitor-app:extractProguardFiles UP-TO-DATE
+> Task :capacitor-app:generateDebugLintModel UP-TO-DATE
+> Task :capacitor-browser:extractProguardFiles UP-TO-DATE
+> Task :capacitor-browser:generateDebugLintModel UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:extractProguardFiles
+> Task :capacitor-cordova-android-plugins:generateDebugLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebug UP-TO-DATE
+> Task :capacitor-app:lintAnalyzeDebug UP-TO-DATE
+> Task :capacitor-browser:lintAnalyzeDebug UP-TO-DATE
+> Task :app:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :app:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-android:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :capacitor-android:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-app:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-app:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :capacitor-app:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-app:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-app:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :capacitor-app:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-browser:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-browser:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-browser:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :capacitor-browser:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-browser:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-browser:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :capacitor-browser:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestResValues
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestLintModel
+> Task :capacitor-cordova-android-plugins:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugUnitTestLintModel
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebug
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugAndroidTest
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugUnitTest
+> Task :app:lintAnalyzeDebug
+> Task :app:lintReportDebug UP-TO-DATE
+> Task :app:lintDebug
+
+[Incubating] Problems report is available at: file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/clients/mobile/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 4m 2s
+205 actionable tasks: 40 executed, 165 up-to-date
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if 0 EQU 0 goto mainEnd 
+
+D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android>if "Windows_NT" == "Windows_NT" endlocal
+Development APK: D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\clients\mobile\android\app\build\outputs\apk\debug\app-debug.apk
+Built mobile client 0.1.0. Native build success still requires installation/device acceptance.

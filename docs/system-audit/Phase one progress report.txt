@@ -1,0 +1,96 @@
+LuoLinguaAI: Phase One Progress Report
+1. Purpose of this report
+This report explains what has been built for LuoLinguaAI, what still needs to be done, and what belongs to Phase Two. The PRD
+describes a large system with 15 main modules. The project discussion set a six-week period for Phase One. The one-week period
+was for an early version that can be seen and reviewed. It was not the full six-week Phase One.
+The report uses the PRD, the project files, and the current system so you can open the deployed system and review the work.
+2. Overall progress
+The first working version of the web system has been built and deployed. The database is running. Users can open the system on a
+phone or computer, and some Luo artifact pictures have been added and can be seen by users.
+This is real progress toward Phase One. It does not mean that every part of the PRD is complete. The main work still needed is to
+add and check more approved Luo content, complete the agreed Phase One features, and test the main tasks.
+3. Phase One achievements
+Area What has been achieved
+Web system The web system has been built and deployed using Vercel. It can be opened through a web link.
+Phone and computer access The system can be installed from the browser. It was tested on a phone and on a laptop, and its app
+icon appears on both screens, making it easy to open like an app.
+Database The Neon database is running and connected to the system, storing system information such as
+users and cultural records.
+System design The database has places for language settings, user roles, cultural information, dictionary entries,
+translations, pictures and other media, transcripts, and AI search information.
+LuoLinguaAI Progress Report Page 1 of 4
+Area What has been achieved (Cont.)
+Public pages The system has pages for key content areas, including the dictionary, proverbs, riddles, oral histories,
+stories, songs, artifacts, and heritage sites.
+Admin tools Admin pages and tools have been built for managing users and content, reviewing submissions,
+managing media, and viewing system information.
+User access Login and account features, including admin roles, have been built into the system. The public
+Google sign-in has been configured for the current version.
+Artifact pictures Some artifact pictures have been uploaded. Users can see them in the system.
+AI search and chatbot Connected to Gemini with code for semantic search and RAG chatbot (retrieving stored records to
+assist answer generation).
+Transcript tools Code exists to make a short summary of a transcript and identify names of people, places, and clans
+(pending checks against approved Luo source material).
+Phone installation: what it means: The phone and laptop installation is an installable web app: the browser puts an icon on
+the screen and opens the website in an app-like window. It is not yet a separate Android or iOS app published through Google
+Play or Apple’s App Store.
+4. Phase One work still to complete
+Work still needed Why it matters
+Add more approved Luo content Source archive has many transcripts, reports, and pictures, but they have not all been added
+to the live system so there is enough real content to review main sections.
+Finish selected Phase One sections Pages exist for several modules, but each needs enough checked content and a complete
+user experience.
+Complete virtual Luo museum Artifact pictures are visible, which is a start. More approved artifact and heritage-site records,
+descriptions, and pictures are needed. A full 3D or virtual-tour experience is a larger feature
+and needs a separate decision.
+LuoLinguaAI Progress Report Page 2 of 4
+Work still needed (Cont.) Why it matters
+Add and check available media Current source files include pictures, but no audio or video files were found. Audio and video
+features need the project team to provide files and confirm sharing rights.
+Test the main tasks Check viewing/search, admin additions/approvals, phone/computer image uploads, and live AI
+search/chatbot using real approved records.
+Check AI answers Chatbot should give answers based on approved Luo content and show which records it used.
+People who know the culture should review answers for accuracy.
+Add rest of approved data Prepared transcript data needs to be carefully moved into the system with source/access info.
+Having a file in the folder doesn't automatically put it in the live DB.
+Review access and consent Some transcripts are marked research or internal use. Before public display or external AI use,
+the team must confirm this use is allowed.
+Complete final handover Prepare simple instructions for using the system, managing content, backing up the database,
+and reporting problems.
+Note: The supplied NLP package describes 26 prepared transcripts divided into 2,708 text sections. This is useful source material. It is not proof that
+all these sections are already in the live system or approved for public use.
+5. Phase One modules from the PRD
+PRD area Current status
+Dholuo dictionary & Proverbs Pages and database support present. Small sample available; more checked words, proverbs,
+meanings, and examples needed.
+Riddles & Oral histories Quiz feature, pages, and transcript support present. Small sample available; more approved
+transcripts and explanations needed.
+Folktales, Songs & Artifacts Pages present. Collection details, lyrics, approved sound recordings, and records need
+expansion. Artifact pages have visible pictures.
+Heritage sites, Chatbot & Others Map components, chatbot/RAG code present. Tutor, learning centre, calendar, AV library, and
+research portal are incomplete or stubbed.
+LuoLinguaAI Progress Report Page 3 of 4
+6. Phase Two: later work
+Phase Two should begin after agreed Phase One work is reviewed. Uncompleted PRD features: separate Android/iOS apps, offline
+mode with auto-sync, speech-to-text / text-to-speech, pronunciation practice, full AI language tutor, OCR, machine translation,
+image recognition, cultural knowledge graph, full lessons/progress, 3D artifact models, story animation, virtual tours, research
+portal, AV library, full multi-language support (Kikuyu is inactive), and university data-centre migration.
+Phase Two groundwork already present: Phone-install feature, early transcript summary and name-finding tools, and database
+starter entries for future learning, games, research, and additional languages.
+7. Important note about AI
+Current AI features use Gemini to work with system information. The system has not trained a new Luo language model; text
+vectors help find related information. The AI should only use approved project information, and its answers and summaries should
+be reviewed by culture and language experts.
+8. Recommended next steps for Phase One
+Confirm which content sections must be ready for the Phase One review.
+Confirm which transcripts, pictures, and other media can be shown publicly and used with AI.
+Add a useful set of approved content to selected sections, including the artifact collection.
+Test main public, admin, media, and AI tasks on the deployed site using phone and computer.
+Record feedback and agree which remaining tasks belong to Phase One vs. Phase Two.
+9. Closing statement
+Phase One has made clear progress: the web system is deployed, the Neon database is running, the system can be installed from
+phone/laptop browsers, admin and content features are built, artifact pictures are visible, and initial AI tools are in place.
+The main unfinished work is adding approved content and media, completing/testing selected Phase One features, and reviewing
+the system. Broader mobile apps and advanced AI features belong to Phase Two unless the project team formally changes the
+agreed scope.
+LuoLinguaAI Progress Report Page 4 of 4

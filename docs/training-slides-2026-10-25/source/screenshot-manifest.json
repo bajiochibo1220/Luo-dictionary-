@@ -1,0 +1,711 @@
+[
+  {
+    "id": "01-sign-in",
+    "source": "src/components/forms/login-form.tsx",
+    "sourceSha256": "6521915d6a8f972ef89e816b90d656a939b5292f945f40a2a51ab5ab915e85dc",
+    "export": "LoginForm",
+    "width": 700,
+    "height": 800,
+    "markers": [
+      "Email address",
+      "Log in",
+      "Google",
+      "Forgotten password?"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "02-register",
+    "source": "src/components/forms/register-form.tsx",
+    "sourceSha256": "3c207a041c6640f238332b8c08ef1eccbf4e4ddccc78d923ef26bb1e01f4f753",
+    "export": "RegisterForm",
+    "width": 700,
+    "height": 900,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "03-reset-request",
+    "source": "src/components/forms/account-recovery-form.tsx",
+    "sourceSha256": "f1aaae6c08f260a2cdac780f7e327de11e2b66aa65087a8850673db9635c39f2",
+    "export": "AccountRecoveryForm",
+    "width": 700,
+    "height": 600,
+    "markers": [
+      "Action",
+      "Email",
+      "Send email"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "04-reset-confirm",
+    "source": "src/components/forms/account-recovery-form.tsx",
+    "sourceSha256": "f1aaae6c08f260a2cdac780f7e327de11e2b66aa65087a8850673db9635c39f2",
+    "export": "AccountRecoveryForm",
+    "width": 700,
+    "height": 540,
+    "markers": [
+      "New password",
+      "Confirm"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "05-mobile-library",
+    "source": "src/components/shared/module-content-view.tsx",
+    "sourceSha256": "27db146e9ebf92733499d37c05dc034689d5603dbae3e6696aba382bffd23d1d",
+    "export": "ModuleContentView",
+    "width": 390,
+    "height": 844,
+    "markers": [
+      "Contribute",
+      "Images",
+      "Audio"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "06-desktop-library",
+    "source": "src/components/shared/module-content-view.tsx",
+    "sourceSha256": "27db146e9ebf92733499d37c05dc034689d5603dbae3e6696aba382bffd23d1d",
+    "export": "ModuleContentView",
+    "width": 1180,
+    "height": 760,
+    "markers": [
+      "View language",
+      "Contribute",
+      "Images"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "07-public-menu",
+    "source": "src/components/shared/app-sidebar-view.tsx",
+    "sourceSha256": "5523b33fb45abfd0bbe9f07cb5eafd84f38800153b46d37c5d09957ac4032032",
+    "export": "AppSidebarView",
+    "width": 430,
+    "height": 900,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "08-contribution-title",
+    "source": "src/components/shared/content-form.tsx",
+    "sourceSha256": "19e3a1bdacb88aef70b594150dbaf5d42bd5b96f6887f3873414f479521ddc2e",
+    "export": "ContentFormCore",
+    "width": 1180,
+    "height": 800,
+    "markers": [
+      "Title",
+      "Content"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "09-attach-files",
+    "source": "src/components/shared/content-form.tsx",
+    "sourceSha256": "19e3a1bdacb88aef70b594150dbaf5d42bd5b96f6887f3873414f479521ddc2e",
+    "export": "ContentFormCore",
+    "width": 1180,
+    "height": 750,
+    "scrollText": "Media and transcripts",
+    "markers": [
+      "Image",
+      "Video",
+      "Audio",
+      "Start recording"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "10-source-permission",
+    "source": "src/components/shared/content-form.tsx",
+    "sourceSha256": "19e3a1bdacb88aef70b594150dbaf5d42bd5b96f6887f3873414f479521ddc2e",
+    "export": "ContentFormCore",
+    "width": 1180,
+    "height": 750,
+    "scrollText": "Source and access",
+    "markers": [
+      "Source permission",
+      "Source credit",
+      "Consent scope",
+      "Restriction level"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "11-save-submit",
+    "source": "src/components/shared/content-form.tsx",
+    "sourceSha256": "19e3a1bdacb88aef70b594150dbaf5d42bd5b96f6887f3873414f479521ddc2e",
+    "export": "ContentFormCore",
+    "width": 1180,
+    "height": 650,
+    "scrollBottom": true,
+    "markers": [
+      "Save on this device",
+      "Save private draft",
+      "Submit for reviewer"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "12-cultural-review",
+    "source": "src/components/admin/validation-actions.tsx",
+    "sourceSha256": "5066381e537a08cd647b13207017171a070e89d4d9cd52db57b8ea72fbfdf718",
+    "export": "ValidationActions",
+    "width": 1180,
+    "height": 900,
+    "markers": [
+      "Validation Checklist",
+      "Approve & Send to Publisher",
+      "Request Editor Changes"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "13-rejection-vote",
+    "source": "src/components/admin/validation-actions.tsx",
+    "sourceSha256": "5066381e537a08cd647b13207017171a070e89d4d9cd52db57b8ea72fbfdf718",
+    "export": "ValidationActions",
+    "width": 1180,
+    "height": 700,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "14-editor-queue",
+    "source": "src/app/(admin)/admin/editor-queue/page.tsx",
+    "sourceSha256": "bfdafdc95dedf1edcc2dcd29a76bcf54471621a52dc8996fe7d7f0f4cfe682be",
+    "export": "default",
+    "width": 1180,
+    "height": 650,
+    "markers": [
+      "Edit details",
+      "Send to cultural review"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "15-publish",
+    "source": "src/components/admin/review-actions.tsx",
+    "sourceSha256": "e4d1abd787b9f39263bcbbf935d1ceab2cb0d7617900309bc914b70f94b37c31",
+    "export": "ReviewActions",
+    "width": 1180,
+    "height": 620,
+    "markers": [
+      "Optional publishing note...",
+      "Publish"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "16-administrators",
+    "source": "src/app/(admin)/super-admin/admins/admins-client.tsx",
+    "sourceSha256": "f575115942996e68c55c27ce2b29d442e46789617f636d9b193ad34578cf3154",
+    "export": "AdminsClient",
+    "width": 1180,
+    "height": 820,
+    "markers": [
+      "+ Add Admin",
+      "Revoke"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "17-add-admin",
+    "source": "src/components/admin/add-admin-modal.tsx",
+    "sourceSha256": "f2417496702a94e049d757ad8058aa3317d4ce0a00de77511d357ce3142137ae",
+    "export": "AddAdminModal",
+    "width": 1180,
+    "height": 850,
+    "markers": [
+      "Email *",
+      "Role *"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "18-users",
+    "source": "src/components/admin/user-table.tsx",
+    "sourceSha256": "5b3bee499e24b43cbd5266901289e086aa680936bac02e73d804c0246852d7a6",
+    "export": "UserTable",
+    "width": 1180,
+    "height": 600,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "19-system",
+    "source": "src/app/(admin)/super-admin/system/system-client.tsx",
+    "sourceSha256": "19dbf160e3c747e3e5fb0a483b3a88c8d350aaedc9f4f4aab7c6551ecaf76256",
+    "export": "SystemClient",
+    "width": 1180,
+    "height": 820,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "20-email-settings",
+    "source": "src/app/(admin)/super-admin/system/system-client.tsx",
+    "sourceSha256": "19dbf160e3c747e3e5fb0a483b3a88c8d350aaedc9f4f4aab7c6551ecaf76256",
+    "export": "SystemClient",
+    "width": 1180,
+    "height": 820,
+    "markers": [
+      "Email",
+      "Send test email"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "21-languages",
+    "source": "src/app/(admin)/super-admin/languages/page.tsx",
+    "sourceSha256": "8abf55d453519da2a3e4967a7efd3482827698f80968af26e4f889833208ac45",
+    "export": "default",
+    "width": 1180,
+    "height": 650,
+    "markers": [
+      "+ Add Language"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "22-backups",
+    "source": "src/app/(admin)/super-admin/backup/page.tsx",
+    "sourceSha256": "2413bbca28c81ed24bae8768e2cf1f3af35dc3ddec7630eacfefa939ee54620b",
+    "export": "default",
+    "width": 1180,
+    "height": 750,
+    "markers": [
+      "Backup Now"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "23-transcripts",
+    "source": "src/app/(admin)/admin/transcripts/page.tsx",
+    "sourceSha256": "e47027d1848b2746151edbd333c42f1373f70de9fb270fb9a223f643c8ea5f87",
+    "export": "default",
+    "width": 1180,
+    "height": 650,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "24-chat",
+    "source": "src/components/shared/chat-interface.tsx",
+    "sourceSha256": "9ac4866fee76ca3c2fac4999fd977b00ab58e97b1e06dfa7d99be5e61a884484",
+    "export": "SharedChatInterface",
+    "width": 1180,
+    "height": 850,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "25-my-account",
+    "source": "src/components/shared/account-history-view.tsx",
+    "sourceSha256": "d6a469d2ac2b418ce3736bd7b78601f5d4ca7c25c51027e1db5e3a0e6d51e733",
+    "export": "AccountHistoryView",
+    "width": 1180,
+    "height": 780,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "26-lessons",
+    "source": "src/components/shared/learning-hub.tsx",
+    "sourceSha256": "45f9215b2f2542add1cea33fe051c89d9139a235984323e5319ed648b279f129",
+    "export": "LearningHub",
+    "width": 1180,
+    "height": 760,
+    "markers": [
+      "Open lesson",
+      "Save item"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "27-lesson-practice",
+    "source": "src/components/shared/learning-hub.tsx",
+    "sourceSha256": "45f9215b2f2542add1cea33fe051c89d9139a235984323e5319ed648b279f129",
+    "export": "LearningHub",
+    "width": 1180,
+    "height": 900,
+    "markers": [
+      "Finish & save progress",
+      "Download text for offline use"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "28-courses",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "EducationHub",
+    "width": 1180,
+    "height": 760,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions",
+    "callouts": []
+  },
+  {
+    "id": "29-classrooms",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "EducationHub",
+    "width": 1180,
+    "height": 900,
+    "markers": [
+      "Create class",
+      "Join a class",
+      "Open class"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "30-account-settings",
+    "source": "src/components/shared/account-settings.tsx",
+    "sourceSha256": "18f6ef6e2431c0e8c5949a84c7c175ec4196297707e9e86ba83ad4ddb3e6c0f4",
+    "export": "AccountSettings",
+    "width": 1180,
+    "height": 900,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "31-language-admin-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 900,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "32-super-admin-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 1000,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "33-new-language",
+    "source": "src/components/admin/language-wizard.tsx",
+    "sourceSha256": "0bd23ba4817ababc8b22ff7971cac6af49e94dfe426127a47d6a5f9e04d99563",
+    "export": "LanguageWizard",
+    "width": 1180,
+    "height": 850,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "34-transcript-segments",
+    "source": "src/components/admin/transcript-segments.tsx",
+    "sourceSha256": "07134cfc63d20bc0ec50fbbeb06b19cf69b01e6446d8e7fa38d19c2fad51d2cc",
+    "export": "TranscriptSegments",
+    "width": 1180,
+    "height": 600,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "35-uploader-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 550,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "36-master-access",
+    "source": "src/components/shared/account-history-view.tsx",
+    "sourceSha256": "d6a469d2ac2b418ce3736bd7b78601f5d4ca7c25c51027e1db5e3a0e6d51e733",
+    "export": "AccountHistoryView",
+    "width": 1180,
+    "height": 820,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "37-saved-items",
+    "source": "src/components/shared/saved-items.tsx",
+    "sourceSha256": "483713a947d29aa0e9ff1606bece8af5cadb59163a63ce1adb65bef365977e54",
+    "export": "SavedItems",
+    "width": 1180,
+    "height": 650,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "38-create-class",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "ClassCreator",
+    "width": 1180,
+    "height": 700,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "39-class-invitations",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "ClassroomDetail",
+    "width": 1180,
+    "height": 820,
+    "markers": [
+      "Class join code",
+      "Replace class join code",
+      "Disable class join code"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "40-class-assignments",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "ClassroomDetail",
+    "width": 1180,
+    "height": 750,
+    "scrollText": "Assignments",
+    "markers": [
+      "Create assignment",
+      "Open assignment",
+      "Close submissions"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "41-gradebook",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "ClassroomDetail",
+    "width": 1180,
+    "height": 780,
+    "scrollText": "Class gradebook",
+    "markers": [
+      "Export gradebook CSV"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "42-assignment-editor",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "AssignmentEditor",
+    "width": 1180,
+    "height": 950,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions",
+    "callouts": []
+  },
+  {
+    "id": "43-course-details",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "CourseDetail",
+    "width": 1180,
+    "height": 800,
+    "markers": [
+      "Open course lesson",
+      "Refresh course progress"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "44-lesson-editor",
+    "source": "src/components/shared/learning-hub.tsx",
+    "sourceSha256": "45f9215b2f2542add1cea33fe051c89d9139a235984323e5319ed648b279f129",
+    "export": "ResourceEditor",
+    "width": 1180,
+    "height": 850,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "45-admin-draft",
+    "source": "src/components/shared/content-form.tsx",
+    "sourceSha256": "19e3a1bdacb88aef70b594150dbaf5d42bd5b96f6887f3873414f479521ddc2e",
+    "export": "ContentFormCore",
+    "width": 1180,
+    "height": 650,
+    "scrollBottom": true,
+    "markers": [
+      "Save draft"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions",
+    "callouts": [
+      {
+        "label": "Save draft",
+        "found": true
+      }
+    ]
+  },
+  {
+    "id": "46-publisher-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 550,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "47-cultural-review-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 550,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "48-editor-menu",
+    "source": "src/components/layout/admin-sidebar.tsx",
+    "sourceSha256": "77724b6d3e054c6289af55d634bfed5dd936d4ca10aa51e9356950cf8e28747b",
+    "export": "AdminSidebar",
+    "width": 420,
+    "height": 550,
+    "markers": [],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "49-student-assignment",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "AssignmentDetailView",
+    "width": 1180,
+    "height": 830,
+    "markers": [
+      "Study assignment lesson",
+      "My written assignment",
+      "Submit class assignment"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "50-teacher-grading",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "AssignmentDetailView",
+    "width": 1180,
+    "height": 900,
+    "markers": [
+      "Save teacher grade and feedback"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "51-super-admin-staff",
+    "source": "src/app/(admin)/super-admin/admins/admins-client.tsx",
+    "sourceSha256": "f575115942996e68c55c27ce2b29d442e46789617f636d9b193ad34578cf3154",
+    "export": "AdminsClient",
+    "width": 1180,
+    "height": 820,
+    "markers": [
+      "+ Add Admin"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "52-student-feedback",
+    "source": "src/components/shared/education-hub.tsx",
+    "sourceSha256": "929ab735222adc8da88a45145df49898f3ebbabe757b109e4e265ef9ef99aff0",
+    "export": "AssignmentDetailView",
+    "width": 1180,
+    "height": 900,
+    "scrollBottom": true,
+    "markers": [
+      "Refresh assignment and feedback"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "53-dictionary-search",
+    "source": "src/components/modules/dictionary/dictionary-search.tsx",
+    "sourceSha256": "dbc55fbfd6bebb8cbcb50626e9c16f186794c0a6d2cc870608cfbb6480365c7c",
+    "export": "DictionarySearch",
+    "width": 1180,
+    "height": 650,
+    "markers": [
+      "Search Dholuo, English, or Kiswahili..."
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  },
+  {
+    "id": "54-uploader-draft-list",
+    "source": "src/components/admin/content-table.tsx",
+    "sourceSha256": "2ef5c99e79011ace297b5854545fa38f65c4ef1391316ebdcf7a59aceefa14fc",
+    "export": "ContentTable",
+    "width": 1180,
+    "height": 560,
+    "markers": [
+      "Send to cultural review",
+      "English version"
+    ],
+    "sampleData": true,
+    "captureType": "Browser screenshot of actual application component with isolated sample state; no production actions"
+  }
+]

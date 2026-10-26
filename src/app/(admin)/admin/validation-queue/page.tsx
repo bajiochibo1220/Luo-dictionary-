@@ -38,7 +38,7 @@ export default async function ValidationQueuePage() {
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="mb-1 text-3xl font-serif text-stone-800">Cultural Validation Queue</h1>
         <p className="text-sm text-stone-500">{records.length} {records.length === 1 ? "item" : "items"} awaiting linguistic and cultural review</p>
       </header>

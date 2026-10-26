@@ -23,7 +23,7 @@ test('English public dashboard includes translated published cultural records fr
     '@/lib/auth': { auth: async () => ({ user: { id: 'administrator', languageRoles: [{ languageId: 2, languageCode: 'eng', languageName: 'English' }] } }) },
     '@/lib/db': { prisma: {
       language: { findUnique: async () => ({ id: 2 }) },
-      module: { findMany: async () => [{ id: 3, code: 'songs', baseName: 'Songs', translations: [] }] },
+      module: { findMany: async () => [{ id: 3, code: 'songs', baseName: 'Songs', translations: [], _count: { fieldDefinitions: 4 } }] },
       culturalRecord: { findMany: async options => {
         query = options;
         return [{ id: 'song', languageId: 1, moduleId: 3, title: 'Source title', summary: 'Source summary', data: {}, createdAt: new Date('2026-01-01'), media: [], translations: [{ languageId: 2, title: 'English title', summary: 'English summary', data: {} }] }];
@@ -33,7 +33,7 @@ test('English public dashboard includes translated published cultural records fr
   const element = await load('src/app/(dashboard)/dashboard/page.tsx').default({ searchParams: Promise.resolve({ module: 'songs' }) });
   assert.equal(query.where.languageId, undefined);
   assert.equal(query.where.status, 'published');
-  assert.match(JSON.stringify(query.include.media.where), /"consentScope":"public_excerpt"/);
+  assert.match(JSON.stringify(query.select.media.where), /"consentScope":"public_excerpt"/);
   assert.equal(element.props.items[0].title, 'English title');
   assert.equal(element.props.items[0].summary, 'English summary');
 });
@@ -56,7 +56,7 @@ test('audio-visual library includes eligible media across modules without relaxi
   assert.equal(query.where.status, 'published');
   assert.ok(query.where.media.some);
   assert.match(JSON.stringify(query.where.media.some), /public_excerpt/);
-  assert.match(JSON.stringify(query.include.media.where), /public_excerpt/);
+  assert.match(JSON.stringify(query.select.media.where), /public_excerpt/);
   assert.equal(element.props.items[0].moduleCode, 'oral_histories');
   assert.equal(element.props.canContribute, false);
 });

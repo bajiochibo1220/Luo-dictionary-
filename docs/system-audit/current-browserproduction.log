@@ -1,0 +1,35 @@
+CHECK browser startup
+CHECK login form
+CHECK registration form
+CHECK return to login
+CHECK unsafe callback login
+CHECK password recovery screen
+PASS real login/register links retain app approval, reject external returns and fit a 360px screen; no credentials submitted or accounts created
+CHECK browser
+CHECK shared learning list
+CHECK offline shell installation
+CHECK button Open lesson
+CHECK lesson detail
+CHECK button Download text
+CHECK persistent text pack
+PASS shared lesson detail and persisted download
+CHECK offline reload from service worker and IndexedDB
+CHECK button Open lesson
+CHECK offline questions
+CHECK button Finish & save
+CHECK queued offline attempt
+CHECK queued attempt survives app restart
+PASS offline shell reload and queued attempt restart
+CHECK reconnect and progress synchronization
+PASS shared web application: approved text download, real offline shell reload, restored queue owner, offline attempt, restart persistence and one reconnect sync (API transport mocked)
+CHECK contribution form
+CHECK button Save on this device
+CHECK device contribution persisted
+CHECK button Resume device draft
+CHECK selected File survived reload
+CHECK button Delete device copy
+CHECK device copy deletion
+CHECK contribution reload after deletion
+PASS contribution device drafts: text and File bytes survive actual offline restart; cached forms restore; explicit deletion persists; no server submission
+CHECK synthetic scroll library
+PASS actual shared library at 360px and 1440px: pinned controls, one filter row, accessible 44px targets and no horizontal page overflow (synthetic API data).

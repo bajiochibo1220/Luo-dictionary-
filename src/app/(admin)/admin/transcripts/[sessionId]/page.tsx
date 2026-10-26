@@ -57,7 +57,7 @@ export default async function TranscriptSessionPage({
       <Link href="/admin/transcripts" className="text-sm text-amber-900 underline">
         Back to transcripts
       </Link>
-      <header className="mb-6 mt-4">
+      <header className="workspace-heading mb-6 mt-4">
         <p className="text-xs uppercase tracking-widest text-stone-600">
           {record.language.nativeName} · {record.consentScope.replaceAll("_", " ")} / {record.restrictionLevel}
         </p>

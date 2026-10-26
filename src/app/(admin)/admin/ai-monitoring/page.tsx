@@ -70,7 +70,7 @@ export default async function AiMonitoringPage({
 
   return (
     <div>
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
           AI Monitoring
         </h1>
@@ -139,7 +139,7 @@ export default async function AiMonitoringPage({
             </div>
             {recentQueries.length === 0 ? (
               <div className="p-12 text-center text-stone-400 text-sm">
-                No chatbot queries yet — AI feature coming in Prompt 37
+                No chatbot questions have been recorded for your permitted languages.
               </div>
             ) : (
               <table className="w-full text-sm">

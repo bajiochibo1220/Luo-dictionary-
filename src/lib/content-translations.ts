@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { cookies } from "next/headers";
 import { publicMediaWhere, publicRecordWhere, publicGovernanceWhere } from "@/lib/governance";
+import { publicFields } from "@/lib/public-projection";
 
 export async function getContentCultureLanguageId(defaultLanguageId: number): Promise<number> {
   const defaultLanguage = await prisma.language.findUnique({ where: { id: defaultLanguageId }, select: { code: true } });
@@ -30,21 +31,22 @@ export function localizeRecord<T extends {
   summary: string | null;
   translations?: { languageId: number; title?: string | null; data: unknown; summary: string | null }[];
 }>(record: T, languageId: number) {
+  const named = !!record.data && typeof record.data === "object" && (record.data as Record<string, unknown>).attributionPreference === "name";
   const stripPrivateContributionFields = (data: unknown) => {
     if (!data || typeof data !== "object" || Array.isArray(data)) return data;
     const { sourcePermission: _sourcePermission, attributionPreference: _attributionPreference, ...publicData } = data as Record<string, unknown>;
     return Object.fromEntries(Object.entries(publicData).filter(([key]) => !key.startsWith("__")));
   };
   if (record.languageId === languageId) {
-    return { ...record, data: stripPrivateContributionFields(record.data) };
+    return publicFields({ ...record, data: stripPrivateContributionFields(record.data) }, named);
   }
   const translation = record.translations?.find((item) => item.languageId === languageId);
-  return {
+  return publicFields({
     ...record,
     title: translation?.title ?? record.title,
     data: stripPrivateContributionFields(translation?.data ?? {}),
     summary: translation?.summary ?? null,
-  };
+  }, named);
 }
 
 export async function findLocalizedRecord(recordId: string, languageId: number, moduleCode: string, cultureLanguageId?: number) {

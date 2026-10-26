@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { repositoryExportFields, mayReadConsentEvidence, spreadsheetCell } from "@/lib/repository-export";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
@@ -10,10 +11,7 @@ const EXPORT_ROLES = new Set(["researcher", "language_admin", "cultural_expert",
 const RELEASED_STATUSES = ["curated", "validated", "published"];
 const METADATA_COLUMNS = ["kind", "id", "recordId", "dictionaryId", "languageId", "title", "dholuo", "english", "module", "status", "type", "format", "checksum", "sizeBytes", "durationSecs", "width", "height", "assetId", "nrfUri", "nrfMetadata", "consentScope", "restrictionLevel", "sourcePermission", "attributionPreference", "embargoUntil", "countyCode", "siteName", "sourceReference", "sessionId", "createdAt", "updatedAt"];
 
-function csvCell(value: unknown): string {
-  const text = value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
-  return `"${text.replaceAll('"', '""')}"`;
-}
+const csvCell = spreadsheetCell;
 
 function toCsv(rows: Record<string, unknown>[], columns: string[]): string {
   return [columns.join(","), ...rows.map((row) => columns.map((column) => csvCell(row[column])).join(","))].join("\r\n");
@@ -86,8 +84,9 @@ async function exportVisionDataset(
     const categoryId = label ? categoryIds.get(label) : undefined;
     return categoryId ? [{ id: index + 1, image_id: index + 1, category_id: categoryId, caption: label }] : [];
   });
+  const safeImages = images.map((image, index) => repositoryExportFields(image, mayReadConsentEvidence(user, permitted[index].languageId)));
   const body = format === "csv"
-    ? toCsv(permitted.map((asset, index) => ({
+    ? toCsv(permitted.map((asset, index) => repositoryExportFields({
         image_id: index + 1,
         file_name: asset.nrfUri,
         width: asset.width,
@@ -99,8 +98,8 @@ async function exportVisionDataset(
         county_code: asset.countyCode,
         site_name: asset.siteName,
         session_id: asset.sessionId,
-      })), ["image_id", "file_name", "width", "height", "checksum_sha256", "label", "consent_scope", "restriction_level", "county_code", "site_name", "session_id"])
-    : JSON.stringify({ info: { description: "Luo Heritage authorized image metadata export", language: language?.code ?? null }, images, annotations, categories }, null, 2);
+      }, mayReadConsentEvidence(user, asset.languageId))), ["image_id", "file_name", "width", "height", "checksum_sha256", "label", "consent_scope", "restriction_level", "county_code", "site_name", "session_id"])
+    : JSON.stringify({ info: { description: "Luo Heritage authorized image metadata export", language: language?.code ?? null }, images: safeImages, annotations, categories }, null, 2);
   await logAction({
     userId: user.id,
     action: "nrf.export",
@@ -130,7 +129,9 @@ export async function GET(request: NextRequest) {
   const format = search.get("format") ?? (dataset === "nlp" ? "jsonl" : "json");
   const languageCode = search.get("language") ?? undefined;
   const cursor = search.get("cursor") ?? undefined;
-  const limit = Math.min(5000, Math.max(1, Number(search.get("limit") ?? 1000)));
+  const requestedLimit = Number(search.get("limit") ?? 1000);
+  if (!Number.isSafeInteger(requestedLimit) || requestedLimit < 1 || requestedLimit > 5000 || cursor && !/^[A-Za-z0-9_-]{1,128}$/.test(cursor)) return NextResponse.json({success: false, error: "Use a valid page limit and cursor."}, {status: 400});
+  const limit = requestedLimit;
   if (!["metadata", "nlp", "vision"].includes(dataset) || !["json", "csv", "jsonl"].includes(format)) {
     return NextResponse.json({ success: false, error: "Use dataset=metadata|nlp|vision and format=json|csv|jsonl" }, { status: 400 });
   }
@@ -237,6 +238,7 @@ export async function GET(request: NextRequest) {
     nextCursor = hasMore ? selected[selected.length - 1]?.id ?? null : null;
   }
 
+  rows = rows.map(row => repositoryExportFields(row, mayReadConsentEvidence(user, typeof row.languageId === "number" ? row.languageId : language?.id)));
   const body = format === "jsonl"
     ? rows.map((row) => JSON.stringify(row)).join("\n")
     : format === "csv"

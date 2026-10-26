@@ -3,12 +3,14 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/register-form";
+import { nativeLoginReturn } from "@/lib/native-auth-contract";
 
 export const dynamic = "force-dynamic";
 
-export default async function RegisterPage() {
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
+  const nativeReturn = nativeLoginReturn((await searchParams).callbackUrl);
   const session = await auth();
-  if (session?.user?.id) redirect("/auth/continue");
+  if (session?.user?.id) redirect(nativeReturn || "/auth/continue");
   return (
     <div className="w-full">
       <div className="mb-8">

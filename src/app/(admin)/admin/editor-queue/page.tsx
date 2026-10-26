@@ -45,7 +45,7 @@ export default async function EditorQueuePage() {
 
   return (
     <main className="mx-auto max-w-6xl">
-      <header className="mb-6">
+      <header className="workspace-heading mb-6">
         <p className="text-xs uppercase tracking-widest text-stone-500">Stage 2 · Content editors</p>
         <h1 className="mt-1 font-serif text-3xl text-stone-900">Editor Queue</h1>
         <p className="mt-2 text-sm text-stone-600">These items were returned by cultural reviewers for edits. Make the requested changes, then send them back for cultural review.</p>

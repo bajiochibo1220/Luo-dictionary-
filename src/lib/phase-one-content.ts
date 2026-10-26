@@ -16,7 +16,7 @@ export function hasPublicReleaseSourcePermission(
   return values.sourcePermission === "confirmed";
 }
 
-/** Validate the minimum bilingual/content shape when a Phase One item is submitted. */
+/** Validate the minimum bilingual/content shape when a cultural item is submitted. */
 export function validatePhaseOneSubmission(
   moduleCode: string,
   title: string,
