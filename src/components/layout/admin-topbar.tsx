@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceLanguageSelector, InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
 
 import { NavigationLink as Link } from "./navigation-link";
 import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
@@ -105,38 +106,25 @@ export function AdminTopbar({
         </Link></div>
         {isSuperAdmin && (
           <span className="hidden xl:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
-            {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
+            <InterfaceText source={isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"} />
           </span>
         )}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
-        {isSuperAdmin && (
-          <label className="hidden sm:flex items-center gap-2 text-xs text-amber-100/80">
-            <span className="hidden lg:inline">Language</span>
-            <select
-              aria-label="Choose language to manage"
-              value={selectedLanguageId ?? ""}
-              onChange={(event) => void selectLanguage(Number(event.target.value))}
-              className="max-w-24 sm:max-w-32 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400"
-            >
-              {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}{language.isActive ? "" : " (inactive)"}</option>)}
-            </select>
-          </label>
-        )}
+      <div className="flex shrink-0 items-center gap-1.5 md:gap-3"><InterfaceLanguageSelector />
         {isSuperAdmin && (
           <label className="hidden lg:flex items-center gap-2 text-xs text-amber-100/80">
-            <span>Culture</span>
-            <select aria-label="Choose culture content" value={selectedCultureId ?? "all"}
+            <span><InterfaceText source="Culture" /></span>
+            <InterfaceSelect aria-label="Choose culture content" value={selectedCultureId ?? "all"}
               onChange={(event) => void selectCulture(event.target.value === "all" ? null : Number(event.target.value))}
               className="max-w-36 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400">
-              <option value="all">All cultures</option>
-              {languages.filter(language => language.code !== "eng").map((language) => <option key={language.id} value={language.id}>{language.nativeName}</option>)}
-            </select>
+              <InterfaceOption value="all">All cultures</InterfaceOption>
+              {languages.filter(language => language.code !== "eng").map((language) => <InterfaceOption key={language.id} value={language.id}>{language.nativeName}</InterfaceOption>)}
+            </InterfaceSelect>
           </label>
         )}
         <DismissiblePopover open={notificationsOpen} onClose={() => setNotificationsOpen(false)}>
-          <button
+          <InterfaceButton
             type="button"
             onClick={() => void toggleNotifications()}
             className="text-xl text-amber-100/80 hover:text-amber-50 p-2 relative rounded-full hover:bg-amber-100/10"
@@ -149,15 +137,15 @@ export function AdminTopbar({
                   {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
-          </button>
+          </InterfaceButton>
           {notificationsOpen && (
             <>
               <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-stone-200 py-2 z-20"><PopoverClose label="Close notifications" onClose={() => setNotificationsOpen(false)} />
                 <div className="px-4 py-2 border-b border-stone-100 flex items-center justify-between">
-                  <p className="text-sm font-semibold text-stone-800">Notifications</p>
-                  {unreadCount > 0 && <span className="text-xs text-stone-500">{unreadCount} unread</span>}
+                  <p className="text-sm font-semibold text-stone-800"><InterfaceText source="Notifications" /></p>
+                  {unreadCount > 0 && <span className="text-xs text-stone-500">{unreadCount}<InterfaceText source=" unread" /></span>}
                 </div>
-                {notificationsLoading ? <p className="px-4 py-5 text-sm text-stone-500">Loading notifications…</p> : notifications.length === 0 ? <p className="px-4 py-5 text-sm text-stone-500">You’re all caught up.</p> : (
+                {notificationsLoading ? <p className="px-4 py-5 text-sm text-stone-500"><InterfaceText source="Loading notifications…" /></p> : notifications.length === 0 ? <p className="px-4 py-5 text-sm text-stone-500"><InterfaceText source="You’re all caught up." /></p> : (
                   <ul className="max-h-80 overflow-y-auto">
                     {notifications.map((notification) => (
                       <li key={notification.id} className={`border-b border-stone-100 last:border-0 ${notification.read ? "" : "bg-amber-50/70"}`}>
@@ -182,7 +170,7 @@ export function AdminTopbar({
         </DismissiblePopover>
 
         <DismissiblePopover open={menuOpen} onClose={() => setMenuOpen(false)}>
-          <button
+          <InterfaceButton
             onClick={() => setMenuOpen(!menuOpen)}
             type="button"
             aria-label="Open account menu"
@@ -192,13 +180,13 @@ export function AdminTopbar({
             <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 text-stone-900 ring-1 ring-amber-200/40 flex items-center justify-center text-sm font-medium overflow-hidden">
               {userImage ? <img src={userImage} alt="" className="w-full h-full rounded-full object-cover" /> : (userName || userEmail).charAt(0).toUpperCase()}
             </div>
-          </button>
+          </InterfaceButton>
 
           {menuOpen && (
             <>
               <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-1rem)] max-h-[75dvh] overflow-y-auto bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
                 <PopoverClose onClose={() => setMenuOpen(false)} />
-                {isSuperAdmin && <label className="block border-b px-4 py-3 text-sm text-stone-800 sm:hidden">Manage community<select aria-label="Choose community to manage" value={selectedLanguageId ?? ""} onChange={event => void selectLanguage(Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 bg-white px-2">{languages.map(language => <option key={language.id} value={language.id}>{language.nativeName}</option>)}</select></label>}
+                {isSuperAdmin && <label className="block border-b px-4 py-3 text-sm text-stone-800 sm:hidden"><InterfaceText source="Manage community" /><InterfaceSelect aria-label="Choose community to manage" value={selectedLanguageId ?? ""} onChange={event => void selectLanguage(Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 bg-white px-2">{languages.map(language => <InterfaceOption key={language.id} value={language.id}>{language.nativeName}</InterfaceOption>)}</InterfaceSelect></label>}
                 <div className="px-4 py-2 border-b border-stone-100">
                   <p className="text-sm font-medium text-stone-800 truncate">
                     {userName || "Admin"}
@@ -211,24 +199,18 @@ export function AdminTopbar({
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
-                >
-                  View public site
-                </Link>
+                ><InterfaceText source="View public site" /></Link>
                 <Link
                   href="/admin/dashboard"
                   onClick={() => setMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
-                >
-                  Admin dashboard
-                </Link>
-                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50">Super Admin dashboard</Link>}
-                <Link href="/mobile-apps" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50">App updates &amp; installation</Link>
+                ><InterfaceText source="Admin dashboard" /></Link>
+                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Super Admin dashboard" /></Link>}
+                <Link href="/mobile-apps" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="App updates & installation" /></Link>
                 <button
                   onClick={() => signOut({ redirectTo: "/login" })}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                >
-                  Sign out
-                </button>
+                ><InterfaceText source="Sign out" /></button>
               </div>
             </>
           )}

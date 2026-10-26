@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -54,17 +55,13 @@ export default async function TranscriptSessionPage({
 
   return (
     <div className="mx-auto max-w-5xl">
-      <Link href="/admin/transcripts" className="text-sm text-amber-900 underline">
-        Back to transcripts
-      </Link>
+      <Link href="/admin/transcripts" className="text-sm text-amber-900 underline"><InterfaceText source="Back to transcripts" /></Link>
       <header className="workspace-heading mb-6 mt-4">
         <p className="text-xs uppercase tracking-widest text-stone-600">
           {record.language.nativeName} · {record.consentScope.replaceAll("_", " ")} / {record.restrictionLevel}
         </p>
         <h1 className="mt-1 font-serif text-3xl text-stone-900">{record.title}</h1>
-        <p className="mt-2 text-sm text-stone-600">
-          Session {record.sessionId} · {visibleTranscripts.length} transcript segments
-        </p>
+        <p className="mt-2 text-sm text-stone-600"><InterfaceText source="Session " />{record.sessionId} · {visibleTranscripts.length}<InterfaceText source=" transcript segments" /></p>
       </header>
 
       <TranscriptSegments segments={visibleTranscripts} />

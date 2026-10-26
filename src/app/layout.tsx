@@ -4,6 +4,7 @@ import { AuthProvider } from "@/components/providers/session-provider";
 import { InstallAppPrompt } from "@/components/pwa/install-app-prompt";
 import { AppUpdatesProvider } from "@/components/pwa/app-updates";
 import { APP_NAME } from "@/lib/brand";
+import { InterfaceLanguageProvider } from "@/components/shared/interface-language";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,11 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <AppUpdatesProvider currentVersion={process.env.NEXT_PUBLIC_APP_VERSION || "development"}>
+        <InterfaceLanguageProvider><AppUpdatesProvider currentVersion={process.env.NEXT_PUBLIC_APP_VERSION || "development"}>
           <AuthProvider>{children}</AuthProvider>
           <InstallAppPrompt />
           <Toaster richColors position="bottom-center" closeButton />
-        </AppUpdatesProvider>
+        </AppUpdatesProvider></InterfaceLanguageProvider>
       </body>
     </html>
   );

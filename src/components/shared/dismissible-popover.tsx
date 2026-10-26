@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 
@@ -23,5 +24,5 @@ export function DismissiblePopover({ open, onClose, children, className = "relat
 }
 
 export function PopoverClose({ onClose, label = "Close account menu" }: { onClose: () => void; label?: string }) {
-  return <div className="flex justify-end border-b border-stone-100 px-2"><button type="button" onClick={onClose} aria-label={label} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-stone-700 hover:bg-stone-100"><span>Close</span><X size={18} aria-hidden="true" /></button></div>;
+  return <div className="flex justify-end border-b border-stone-100 px-2"><button type="button" onClick={onClose} aria-label={label} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-stone-700 hover:bg-stone-100"><span><InterfaceText source="Close" /></span><X size={18} aria-hidden="true" /></button></div>;
 }

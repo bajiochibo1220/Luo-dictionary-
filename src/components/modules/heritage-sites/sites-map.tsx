@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -56,10 +57,8 @@ export function SitesMap({
   if (sites.length === 0) {
     return (
       <div className="text-center py-16 text-stone-400">
-        <p className="text-lg">No heritage sites published yet</p>
-        <p className="text-sm mt-2">
-          Sites are being documented across Luo regions
-        </p>
+        <p className="text-lg"><InterfaceText source="No heritage sites published yet" /></p>
+        <p className="text-sm mt-2"><InterfaceText source="Sites are being documented across Luo regions" /></p>
       </div>
     );
   }
@@ -76,9 +75,7 @@ export function SitesMap({
                 ? "bg-amber-600 text-white"
                 : "bg-white text-stone-600 border border-stone-200 hover:border-amber-400"
             }`}
-          >
-            All sites
-          </button>
+          ><InterfaceText source="All sites" /></button>
           {counties.map((c) => (
             <button
               key={c}
@@ -125,9 +122,7 @@ export function SitesMap({
                   <Link
                     href={`/${langCode}/piny-luo/${s.id}`}
                     className="text-xs text-amber-600 hover:underline"
-                  >
-                    View details →
-                  </Link>
+                  ><InterfaceText source="View details →" /></Link>
                 </div>
               </Popup>
             </Marker>

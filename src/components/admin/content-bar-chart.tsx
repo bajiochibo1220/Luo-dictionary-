@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 export function ContentBarChart({
   data,
 }: {
@@ -7,9 +8,7 @@ export function ContentBarChart({
 
   if (data.length === 0) {
     return (
-      <p className="text-sm text-stone-400 text-center py-8">
-        No content yet
-      </p>
+      <p className="text-sm text-stone-400 text-center py-8"><InterfaceText source="No content yet" /></p>
     );
   }
 

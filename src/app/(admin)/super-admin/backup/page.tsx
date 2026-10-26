@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -28,30 +29,23 @@ export default async function BackupPage() {
     <div>
       <header className="workspace-heading mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-serif text-stone-800 mb-1">
-            Database Backups
-          </h1>
+          <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Database Backups" /></h1>
           <p className="text-sm text-stone-500">
-            {formatted.length} {formatted.length === 1 ? "backup" : "backups"}{" "}
-            · {totalMB} MB total
-          </p>
+            {formatted.length} <InterfaceText source={formatted.length === 1 ? "backup" : "backups"} />{" "}
+            · {totalMB}<InterfaceText source=" MB total" /></p>
         </div>
         <BackupActions />
       </header>
 
       <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6 mb-8">
-        <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2">
-          How It Works
-        </h2>
+        <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2"><InterfaceText source="How It Works" /></h2>
         <ul className="text-sm text-stone-700 space-y-1">
-          <li>Cloudinary file bytes require a separate storage backup. These snapshots contain account credentials and must be kept private.</li>
+          <li><InterfaceText source="Cloudinary file bytes require a separate storage backup. These snapshots contain account credentials and must be kept private." /></li>
           <li>
-            • <strong>Backup Now</strong> exports all database tables to a JSON
-            file
-          </li>
-          <li>• Files are saved in <code>data/exports/backups/</code></li>
-          <li>• Each backup includes a SHA-256 checksum for integrity</li>
-          <li>• Download any backup or delete old ones from this page</li>
+            • <strong><InterfaceText source="Backup Now" /></strong><InterfaceText source=" exports all database tables to a JSON file" /></li>
+          <li><InterfaceText source="• Files are saved in " /><code><InterfaceText source="data/exports/backups/" /></code></li>
+          <li><InterfaceText source="• Each backup includes a SHA-256 checksum for integrity" /></li>
+          <li><InterfaceText source="• Download any backup or delete old ones from this page" /></li>
         </ul>
       </div>
 

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 
@@ -44,9 +45,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
 
   if (logs.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
-        No audit logs in this period
-      </div>
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400"><InterfaceText source="No audit logs in this period" /></div>
     );
   }
 
@@ -55,21 +54,11 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Time
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              User
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Action
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Entity
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              IP
-            </th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Time" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="User" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Action" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Entity" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="IP" /></th>
           </tr>
         </thead>
         <tbody>
@@ -115,9 +104,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       {l.oldValue && (
                         <div>
-                          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                            Before
-                          </p>
+                          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Before" /></p>
                           <pre className="bg-white p-3 rounded-sm border border-stone-200 overflow-auto max-h-40 text-stone-700">
                             {JSON.stringify(l.oldValue, null, 2)}
                           </pre>
@@ -125,9 +112,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                       )}
                       {l.newValue && (
                         <div>
-                          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                            After
-                          </p>
+                          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="After" /></p>
                           <pre className="bg-white p-3 rounded-sm border border-stone-200 overflow-auto max-h-40 text-stone-700">
                             {JSON.stringify(l.newValue, null, 2)}
                           </pre>

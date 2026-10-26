@@ -1,0 +1,15 @@
+(node:18820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1793031368371 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS application: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS native: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS dashboard: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS language-admin: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS super-admin: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS legacy-menu: five widths, fixed bottom filters, compact search, five account-menu dismissal methods.
+PASS login 360px: both saved logos loaded before authentication.
+PASS login 1440px: both saved logos loaded before authentication.
+PASS register 360px: both saved logos loaded before authentication.
+PASS register 1440px: both saved logos loaded before authentication.
+PASS editor follow-up: headings scroll away at three widths, 40-item selection, clear full-screen background, Dholuo/English switching preserves form data, paired copy edits save.

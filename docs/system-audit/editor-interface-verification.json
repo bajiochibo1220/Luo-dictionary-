@@ -1,0 +1,1106 @@
+{
+  "fixtureContent": true,
+  "realSavedBranding": true,
+  "results": [
+    {
+      "kind": "application",
+      "width": 320,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "application",
+      "width": 360,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "application",
+      "width": 390,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "application",
+      "width": 768,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "application",
+      "width": 1440,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "native",
+      "width": 320,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "native",
+      "width": 360,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "native",
+      "width": 390,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "native",
+      "width": 768,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "native",
+      "width": 1440,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "dashboard",
+      "width": 320,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "dashboard",
+      "width": 360,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "dashboard",
+      "width": 390,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "dashboard",
+      "width": 768,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "dashboard",
+      "width": 1440,
+      "before": {
+        "top": 61,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 61
+      },
+      "after": {
+        "top": 61,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "language-admin",
+      "width": 320,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "language-admin",
+      "width": 360,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "language-admin",
+      "width": 390,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "language-admin",
+      "width": 768,
+      "before": {
+        "top": 88,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 88,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "language-admin",
+      "width": 1440,
+      "before": {
+        "top": 88,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 88,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "super-admin",
+      "width": 320,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "super-admin",
+      "width": 360,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "super-admin",
+      "width": 390,
+      "before": {
+        "top": 72,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 72,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "super-admin",
+      "width": 768,
+      "before": {
+        "top": 88,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 88,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "super-admin",
+      "width": 1440,
+      "before": {
+        "top": 88,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 88,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "legacy-menu",
+      "width": 320,
+      "before": {
+        "top": 56,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 56,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "legacy-menu",
+      "width": 360,
+      "before": {
+        "top": 56,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 56,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "legacy-menu",
+      "width": 390,
+      "before": {
+        "top": 56,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 56,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "legacy-menu",
+      "width": 768,
+      "before": {
+        "top": 56,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 56,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "legacy-menu",
+      "width": 1440,
+      "before": {
+        "top": 56,
+        "height": 108,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "header": 56
+      },
+      "after": {
+        "top": 56,
+        "dockTop": 779,
+        "dockBottom": 844,
+        "overflow": false,
+        "aligned": true,
+        "scrolled": 600,
+        "filters": [
+          786,
+          786,
+          786,
+          786,
+          786
+        ]
+      },
+      "menuDismissal": [
+        "close",
+        "trigger",
+        "escape",
+        "outside",
+        "navigate"
+      ]
+    },
+    {
+      "kind": "login",
+      "width": 360,
+      "logos": [
+        {
+          "name": "JOOUST",
+          "height": 88,
+          "top": 201
+        },
+        {
+          "name": "NRF",
+          "height": 88,
+          "top": 201
+        }
+      ]
+    },
+    {
+      "kind": "login",
+      "width": 1440,
+      "logos": [
+        {
+          "name": "JOOUST",
+          "height": 112,
+          "top": 233
+        },
+        {
+          "name": "NRF",
+          "height": 112,
+          "top": 233
+        }
+      ]
+    },
+    {
+      "kind": "register",
+      "width": 360,
+      "logos": [
+        {
+          "name": "JOOUST",
+          "height": 88,
+          "top": 201
+        },
+        {
+          "name": "NRF",
+          "height": 88,
+          "top": 201
+        }
+      ]
+    },
+    {
+      "kind": "register",
+      "width": 1440,
+      "logos": [
+        {
+          "name": "JOOUST",
+          "height": 112,
+          "top": 233
+        },
+        {
+          "name": "NRF",
+          "height": 112,
+          "top": 233
+        }
+      ]
+    },
+    {
+      "kind": "review",
+      "width": 320,
+      "headingScrollsAway": true,
+      "bulkSelection": 40
+    },
+    {
+      "kind": "review",
+      "width": 390,
+      "headingScrollsAway": true,
+      "bulkSelection": 40
+    },
+    {
+      "kind": "review",
+      "width": 1440,
+      "headingScrollsAway": true,
+      "bulkSelection": 40
+    },
+    {
+      "kind": "localization",
+      "width": 360,
+      "background": {
+        "filter": "none",
+        "size": "cover",
+        "width": 360,
+        "height": 844,
+        "url": "url(\"https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg\")"
+      },
+      "languageSwitchPreservesInput": true
+    },
+    {
+      "kind": "localization",
+      "width": 1440,
+      "background": {
+        "filter": "none",
+        "size": "cover",
+        "width": 1425,
+        "height": 844,
+        "url": "url(\"https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg\")"
+      },
+      "languageSwitchPreservesInput": true
+    },
+    {
+      "kind": "interface-editor",
+      "pairedCopySave": true
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -127,11 +128,10 @@ export default async function AnalyticsPage({
     <div>
       <header className="workspace-heading mb-6 flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-stone-800 mb-1">Analytics</h1>
+          <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Analytics" /></h1>
           <p className="text-sm text-stone-500">
-            {totalEvents} events · {uniqueUserIds.length} unique users · last{" "}
-            {days} days
-          </p>
+            {totalEvents}<InterfaceText source=" events · " />{uniqueUserIds.length}<InterfaceText source=" unique users · last" />{" "}
+            {days}<InterfaceText source=" days" /></p>
         </div>
 
         <div className="flex gap-2">
@@ -161,7 +161,7 @@ export default async function AnalyticsPage({
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
         >
-          {isSuperAdmin ? "All languages" : "All assigned languages"}
+          <InterfaceText source={isSuperAdmin ? "All languages" : "All assigned languages"} />
         </Link>
         {languages.map((l) => (
           <Link

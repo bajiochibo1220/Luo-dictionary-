@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -50,25 +51,25 @@ export function TranslationEditor({
         throw new Error(err.error || "Failed");
       }
 
-      toast.success("Saved");
+      toast.success(<InterfaceText source={"Saved"} />);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Save failed");
+      toast.error(<InterfaceText source={e.message || "Save failed"} />);
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-stone-100 last:border-0">
-      <div className="w-48 shrink-0">
+    <div className="flex flex-wrap items-center gap-3 py-3 border-b border-stone-100 last:border-0">
+      <div className="w-full min-w-0 sm:w-48 sm:shrink-0">
         <p className="text-sm text-stone-700">{label}</p>
         {hint && <p className="text-xs text-stone-400 mt-0.5">{hint}</p>}
       </div>
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <input
           type="text"
           value={value}

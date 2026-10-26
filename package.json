@@ -16,6 +16,7 @@
     "db:reset": "prisma migrate reset",
     "test": "node --test tests/*.test.cjs",
     "typecheck": "tsc --noEmit --incremental false",
+    "i18n:catalog": "node scripts/localize-interface.cjs",
     "db:backup": "tsx scripts/backup-database.ts",
     "db:restore": "tsx scripts/restore-database.ts",
     "media:backup": "tsx scripts/backup-media.ts",

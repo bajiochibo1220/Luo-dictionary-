@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { NATIVE_AUTH_CALLBACK } from "@/lib/native-auth-contract";
@@ -25,12 +26,12 @@ export function NativeSignInApproval({ name, authorization }: { name: string; au
     finally { setBusy(false); }
   }
   return <div className="space-y-6">
-    <h1 className="font-serif text-3xl">Continue to Luo Heritage</h1>
-    <p>Signed in as <strong>{name}</strong>.</p>
-    <p>Continue only if you started sign-in from the Luo Heritage app. Your account and saved history will be the same as on the web.</p>
+    <h1 className="font-serif text-3xl"><InterfaceText source="Continue to Luo Heritage" /></h1>
+    <p><InterfaceText source="Signed in as " /><strong>{name}</strong>.</p>
+    <p><InterfaceText source="Continue only if you started sign-in from the Luo Heritage app. Your account and saved history will be the same as on the web." /></p>
     {error && <p role="alert" className="text-red-800">{error}</p>}
-    {callback ? <a href={callback} className="block rounded-full bg-amber-700 px-6 py-4 text-center font-semibold text-white">Return to app</a>
-      : <button type="button" onClick={approve} disabled={busy} className="w-full rounded-full bg-amber-700 px-6 py-4 font-semibold text-white disabled:opacity-50">{busy ? "Connecting…" : "Continue to app"}</button>}
-    <a href="/dashboard" className="block text-center text-amber-900 underline">Stay on the web</a>
+    {callback ? <a href={callback} className="block rounded-full bg-amber-700 px-6 py-4 text-center font-semibold text-white"><InterfaceText source="Return to app" /></a>
+      : <button type="button" onClick={approve} disabled={busy} className="w-full rounded-full bg-amber-700 px-6 py-4 font-semibold text-white disabled:opacity-50"><InterfaceText source={busy ? "Connecting…" : "Continue to app"} /></button>}
+    <a href="/dashboard" className="block text-center text-amber-900 underline"><InterfaceText source="Stay on the web" /></a>
   </div>;
 }

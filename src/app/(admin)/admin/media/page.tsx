@@ -1,3 +1,4 @@
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 import { MediaTypeFilters } from "@/components/admin/media-type-filters";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -90,24 +91,21 @@ export default async function MediaLibraryPage({
   return (
     <div className="pb-24">
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          Media Library
-        </h1>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Media Library" /></h1>
         <p className="text-sm text-stone-500">
-          {formatted.length} files · {sizeMB} MB
-        </p>
+          {formatted.length}<InterfaceText source=" files · " />{sizeMB}<InterfaceText source=" MB" /></p>
       </header>
 
       <MediaTypeFilters type={searchParams.type} moduleCode={searchParams.module} />
 
       <form method="GET" action="/admin/media" className="mb-5 flex flex-wrap items-center gap-3">
         {searchParams.type && <input type="hidden" name="type" value={searchParams.type} />}
-        <label htmlFor="media-module" className="text-sm font-medium text-stone-700">Content module</label>
+        <label htmlFor="media-module" className="text-sm font-medium text-stone-700"><InterfaceText source="Content module" /></label>
         <select id="media-module" name="module" defaultValue={searchParams.module ?? ""} className="min-w-52 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800">
-          <option value="">All modules</option>
-          {modules.map((module) => <option key={module.code} value={module.code}>{module.baseName}</option>)}
+          <InterfaceOption value="">All modules</InterfaceOption>
+          {modules.map((module) => <InterfaceOption key={module.code} value={module.code}>{module.baseName}</InterfaceOption>)}
         </select>
-        <button type="submit" className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800">Filter</button>
+        <button type="submit" className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"><InterfaceText source="Filter" /></button>
       </form>
 
       <MediaGrid assets={formatted} canDelete={isSuperAdmin} />

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -37,11 +38,11 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
       const json = await res.json();
       if (!json.success) throw new Error(json.error || "Failed");
 
-      toast.success("Language created with all modules cloned");
+      toast.success(<InterfaceText source={"Language created with all modules cloned"} />);
       router.push(`/super-admin/languages/${json.data.id}`);
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Failed to create language");
+      toast.error(<InterfaceText source={e.message || "Failed to create language"} />);
     } finally {
       setBusy(false);
     }
@@ -76,15 +77,12 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
       {/* Step 1 — Basic Info */}
       {step === 1 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-serif text-stone-800 mb-4">
-            Basic Information
-          </h2>
+          <h2 className="text-xl font-serif text-stone-800 mb-4"><InterfaceText source="Basic Information" /></h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Language code <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Language code " /><span className="text-red-500">*</span>
               </label>
-              <input
+              <InterfaceInput
                 value={code}
                 onChange={(e) => setCode(e.target.value.toLowerCase())}
                 placeholder="e.g. kik"
@@ -92,9 +90,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Display order
-              </label>
+              <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Display order" /></label>
               <input
                 type="number"
                 value={displayOrder}
@@ -104,10 +100,9 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">
-              English name <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="English name " /><span className="text-red-500">*</span>
             </label>
-            <input
+            <InterfaceInput
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Kikuyu"
@@ -115,10 +110,9 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">
-              Native name <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Native name " /><span className="text-red-500">*</span>
             </label>
-            <input
+            <InterfaceInput
               value={nativeName}
               onChange={(e) => setNativeName(e.target.value)}
               placeholder="e.g. Gĩkũyũ"
@@ -126,10 +120,8 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">
-              Flag icon (emoji, optional)
-            </label>
-            <input
+            <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Flag icon (emoji, optional)" /></label>
+            <InterfaceInput
               value={flagIcon}
               onChange={(e) => setFlagIcon(e.target.value)}
               placeholder="🌍"
@@ -143,18 +135,11 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
       {/* Step 2 — Admin */}
       {step === 2 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-serif text-stone-800 mb-4">
-            Language Admin
-          </h2>
-          <p className="text-sm text-stone-500 mb-4">
-            Optionally assign an admin who will manage this language. They must
-            already have a Luo Heritage account.
-          </p>
+          <h2 className="text-xl font-serif text-stone-800 mb-4"><InterfaceText source="Language Admin" /></h2>
+          <p className="text-sm text-stone-500 mb-4"><InterfaceText source="Optionally assign an admin who will manage this language. They must already have a Luo Heritage account." /></p>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">
-              Admin email (optional)
-            </label>
-            <input
+            <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Admin email (optional)" /></label>
+            <InterfaceInput
               type="email"
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
@@ -168,13 +153,8 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
       {/* Step 3 — Module titles */}
       {step === 3 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-serif text-stone-800 mb-4">
-            Module Titles
-          </h2>
-          <p className="text-sm text-stone-500 mb-4">
-            All {modules.length} modules will be cloned with English defaults.
-            The language admin can rename them later.
-          </p>
+          <h2 className="text-xl font-serif text-stone-800 mb-4"><InterfaceText source="Module Titles" /></h2>
+          <p className="text-sm text-stone-500 mb-4"><InterfaceText source="All " />{modules.length}<InterfaceText source=" modules will be cloned with English defaults. The language admin can rename them later." /></p>
           <div className="bg-stone-50 rounded-lg p-4 max-h-64 overflow-y-auto">
             <ul className="space-y-1 text-sm">
               {modules.map((m) => (
@@ -196,44 +176,33 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
       {/* Step 4 — Confirm */}
       {step === 4 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-serif text-stone-800 mb-4">
-            Confirm & Create
-          </h2>
+          <h2 className="text-xl font-serif text-stone-800 mb-4"><InterfaceText source="Confirm & Create" /></h2>
           <div className="bg-stone-50 rounded-lg p-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-stone-500">Code</span>
+              <span className="text-stone-500"><InterfaceText source="Code" /></span>
               <span className="text-stone-800 font-medium">{code}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-500">Name</span>
+              <span className="text-stone-500"><InterfaceText source="Name" /></span>
               <span className="text-stone-800 font-medium">{name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-500">Native name</span>
+              <span className="text-stone-500"><InterfaceText source="Native name" /></span>
               <span className="text-stone-800 font-medium">{nativeName}</span>
             </div>
             {adminEmail && (
               <div className="flex justify-between">
-                <span className="text-stone-500">Admin</span>
+                <span className="text-stone-500"><InterfaceText source="Admin" /></span>
                 <span className="text-stone-800 font-medium">
                   {adminEmail}
                 </span>
               </div>
             )}
             <div className="pt-2 border-t border-stone-200 mt-2">
-              <p className="text-xs text-stone-500 mb-1">Will create:</p>
-              <p className="text-xs text-stone-600">
-                • 1 language record
-                <br />• {modules.length} module translations
-                <br />• All field translations
-                <br />• 2 default settings
-                <br />• Language admin role (if provided)
-              </p>
+              <p className="text-xs text-stone-500 mb-1"><InterfaceText source="Will create:" /></p>
+              <p className="text-xs text-stone-600"><InterfaceText source="• 1 language record" /><br />• {modules.length}<InterfaceText source=" module translations" /><br /><InterfaceText source="• All field translations" /><br /><InterfaceText source="• 2 default settings" /><br /><InterfaceText source="• Language admin role (if provided)" /></p>
             </div>
-            <p className="text-xs text-amber-600 pt-2 border-t border-stone-200 mt-2">
-              Status: <strong>Inactive</strong> — you can activate it after
-              setup.
-            </p>
+            <p className="text-xs text-amber-600 pt-2 border-t border-stone-200 mt-2"><InterfaceText source="Status: " /><strong><InterfaceText source="Inactive" /></strong><InterfaceText source=" — you can activate it after setup." /></p>
           </div>
         </div>
       )}
@@ -244,9 +213,7 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
           onClick={() => setStep(Math.max(1, step - 1))}
           disabled={step === 1}
           className="px-4 py-2 bg-white border border-stone-300 text-stone-700 rounded-lg text-sm font-medium hover:bg-stone-50 disabled:opacity-50"
-        >
-          Back
-        </button>
+        ><InterfaceText source="Back" /></button>
 
         {step < 4 ? (
           <button
@@ -256,16 +223,14 @@ export function LanguageWizard({ modules }: { modules: Module[] }) {
               (step === 3 && modules.length === 0)
             }
             className="px-6 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
-          >
-            Next
-          </button>
+          ><InterfaceText source="Next" /></button>
         ) : (
           <button
             onClick={submit}
             disabled={busy}
             className="px-6 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
           >
-            {busy ? "Creating..." : "Create Language"}
+            <InterfaceText source={busy ? "Creating..." : "Create Language"} />
           </button>
         )}
       </div>

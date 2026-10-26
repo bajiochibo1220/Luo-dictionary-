@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
@@ -38,9 +39,7 @@ export function OralHistoryCard({
       <Link href={`/${langCode}/sigana/${item.id}`} className="block">
       <div className="p-6">
         <div className="flex items-start justify-between gap-3 mb-3">
-          <span className="text-xs uppercase tracking-wider text-amber-600">
-            Oral History
-          </span>
+          <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Oral History" /></span>
           {d.county && (
             <span className="text-xs px-2 py-0.5 bg-stone-100 text-stone-600 rounded-full">
               {d.county}
@@ -67,13 +66,13 @@ export function OralHistoryCard({
         <div className="pt-3 border-t border-stone-100 space-y-1 text-xs text-stone-500">
           {d.narrator && (
             <p>
-              <span className="text-stone-400">Narrated by:</span>{" "}
+              <span className="text-stone-400"><InterfaceText source="Narrated by:" /></span>{" "}
               {d.narrator}
             </p>
           )}
           {d.community && (
             <p>
-              <span className="text-stone-400">Community:</span>{" "}
+              <span className="text-stone-400"><InterfaceText source="Community:" /></span>{" "}
               {d.community}
             </p>
           )}

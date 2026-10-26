@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState, useEffect, useCallback } from "react";
 import { ProverbCard } from "./proverb-card";
@@ -47,7 +48,7 @@ export function ProverbGrid({
     <div>
       {/* Filters */}
       <div className="mb-8 space-y-4">
-        <input
+        <InterfaceInput
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -64,9 +65,7 @@ export function ProverbGrid({
                   ? "bg-amber-600 text-white"
                   : "bg-white text-stone-600 border border-stone-200 hover:border-amber-400"
               }`}
-            >
-              All
-            </button>
+            ><InterfaceText source="All" /></button>
             {allThemes.map((t) => (
               <button
                 key={t}
@@ -85,12 +84,12 @@ export function ProverbGrid({
       </div>
 
       {loading && (
-        <p className="text-sm text-amber-600 mb-4 text-center">Loading...</p>
+        <p className="text-sm text-amber-600 mb-4 text-center"><InterfaceText source="Loading..." /></p>
       )}
 
       {proverbs.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg">No proverbs found</p>
+          <p className="text-lg"><InterfaceText source="No proverbs found" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientLocationMap as LocationMap } from "@/components/modules/oral-history/client-location-map";
@@ -28,21 +29,17 @@ export default async function HeritageSiteDetailPage({
       <Link
         href={`/${language.code}/piny-luo`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Heritage Sites
-      </Link>
+      ><InterfaceText source="← Back to Heritage Sites" /></Link>
 
       <header className="mb-8">
         <EnglishVersionLink langCode={language.code} href={`/${language.code}/piny-luo/${record.id}`} />
-        <span className="text-xs uppercase tracking-wider text-amber-600">
-          Heritage Site
-        </span>
+        <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Heritage Site" /></span>
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-3">
           {record.title}
         </h1>
         {d.county && (
           <p className="text-stone-500">
-            <span className="text-stone-400">County:</span> {d.county}
+            <span className="text-stone-400"><InterfaceText source="County:" /></span> {d.county}
           </p>
         )}
       </header>
@@ -66,7 +63,7 @@ export default async function HeritageSiteDetailPage({
 
       {d.latitude && d.longitude && (
         <section className="mb-8">
-          <h2 className="text-xl font-serif text-stone-700 mb-3">Location</h2>
+          <h2 className="text-xl font-serif text-stone-700 mb-3"><InterfaceText source="Location" /></h2>
           <LocationMap
             latitude={d.latitude}
             longitude={d.longitude}
@@ -78,16 +75,14 @@ export default async function HeritageSiteDetailPage({
 
       {d.description && (
         <section className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 mb-8">
-          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            Description
-          </h2>
+          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Description" /></h2>
           <p className="text-stone-700 leading-relaxed">{d.description}</p>
         </section>
       )}
 
       {d.history && (
         <section className="mb-8">
-          <h2 className="text-xl font-serif text-stone-700 mb-3">History</h2>
+          <h2 className="text-xl font-serif text-stone-700 mb-3"><InterfaceText source="History" /></h2>
           <p className="text-stone-700 leading-relaxed whitespace-pre-line">
             {d.history}
           </p>
@@ -96,9 +91,7 @@ export default async function HeritageSiteDetailPage({
 
       {d.visiting_info && (
         <section className="bg-linear-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
-          <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2">
-            Visiting Information
-          </h2>
+          <h2 className="text-xs uppercase tracking-wider text-amber-700 mb-2"><InterfaceText source="Visiting Information" /></h2>
           <p className="text-stone-800 leading-relaxed">{d.visiting_info}</p>
         </section>
       )}

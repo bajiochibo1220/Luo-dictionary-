@@ -1,12 +1,15 @@
+import { InterfaceLanguageSelector, InterfaceText } from "@/components/shared/interface-language";
 import { PartnerBranding } from "@/components/shared/partner-branding";
 import { BrandMark } from "./brand-mark";
 import { APP_NAME } from "@/lib/brand";
+import { AuthLogoBackground } from "@/components/shared/auth-logo-background";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="auth-page relative isolate min-h-screen flex flex-col">
+      <AuthLogoBackground />
       {/* LEFT — form */}
-      <main className="relative flex-1 flex flex-col items-center justify-center px-6 py-8 lg:py-12 lg:px-16 bg-[#cfc09a] overflow-hidden">
+      <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-6 lg:py-12 lg:px-16 overflow-hidden">
         {/* Diamond pattern */}
         <div
           className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -16,100 +19,16 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           }}
         />
 
-        {/* Warm glows */}
-        <div className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full bg-amber-200/50 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-[300px] h-[300px] rounded-full bg-orange-200/40 blur-3xl pointer-events-none" />
-
-        {/* Mobile logo */}
-        <div className="relative mb-8 flex w-full max-w-md items-center gap-3 z-10 lg:hidden">
+        {/* Application identity stays outside the form. */}
+        <div className="relative mb-8 flex w-full max-w-md items-center gap-3 z-10">
           <BrandMark className="h-14 w-14 shadow-lg" />
           <p className="font-serif text-2xl text-stone-900">{APP_NAME}</p>
         </div>
 
-        <div className="relative z-10 w-full max-w-md"><div className="mb-6 rounded-2xl border border-white/60 bg-white/85 p-4 shadow-sm"><PartnerBranding variant="auth" /></div>{children}</div>
+        <div className="relative z-10 w-full max-w-md rounded-3xl border border-white bg-[#fffdf7] p-5 shadow-xl sm:p-7"><div className="mb-4 flex justify-end"><InterfaceLanguageSelector /></div><div className="mb-6 border-b border-stone-200 pb-4"><PartnerBranding variant="auth" /></div>{children}</div>
       </main>
 
-      {/* RIGHT — brand story */}
-      <aside className="institution-masthead hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-[#3d1a0a] via-[#6b3416] to-[#8f4e1f] text-white">
-        <div
-          className="absolute inset-0 opacity-[0.06] pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='white' stroke-width='1'/%3E%3Ccircle cx='30' cy='30' r='6' fill='none' stroke='white' stroke-width='1'/%3E%3C/svg%3E")`,
-            backgroundSize: "60px 60px",
-          }}
-        />
 
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-400/25 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-300/20 blur-3xl" />
-
-        <div className="relative z-10 flex flex-col justify-between p-16 w-full">
-          <div className="flex items-center gap-3">
-            <BrandMark className="h-20 w-20 shadow-xl" />
-            <div>
-              <p className="font-serif text-3xl leading-tight">{APP_NAME}</p>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/70">
-                JOOUST · NRF
-              </p>
-            </div>
-          </div>
-
-          <div className="max-w-lg">
-            <p className="text-xs uppercase tracking-[0.25em] text-amber-300 font-medium mb-6">
-              Preserving Kenya&apos;s Indigenous Languages
-            </p>
-
-            <h1 className="font-serif text-5xl leading-[1.05] mb-8">
-              Every language
-              <br />
-              carries a
-              <span className="italic text-amber-300"> universe.</span>
-            </h1>
-
-            <p className="text-lg text-amber-50/80 leading-relaxed mb-10">
-              Join the community preserving the Dholuo language and Luo
-              indigenous knowledge — for elders, learners, and every
-              generation still to come.
-            </p>
-
-            <div className="space-y-4">
-              <FeatureRow icon="📖" title="Living Dictionary" text="Words, examples, audio, and grammar" />
-              <FeatureRow icon="🗣️" title="Elder Contributions" text="Direct from the Luo community" />
-              <FeatureRow icon="✨" title="AI Cultural Assistant" text="Answers grounded in curated content" />
-              <FeatureRow icon="🌍" title="Replicable for All Kenya" text="One platform, many languages" />
-            </div>
-          </div>
-
-          <div>
-            <div className="w-16 h-0.5 bg-amber-400 mb-4" />
-            <p className="text-sm text-amber-200/60 max-w-md leading-relaxed italic">
-              &ldquo;A people without the knowledge of their past history,
-              origin and culture is like a tree without roots.&rdquo;
-            </p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  );
-}
-
-function FeatureRow({
-  icon,
-  title,
-  text,
-}: {
-  icon: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="flex items-start gap-4">
-      <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center text-lg shrink-0">
-        {icon}
-      </div>
-      <div>
-        <p className="text-sm font-medium text-white">{title}</p>
-        <p className="text-xs text-amber-100/70 mt-0.5">{text}</p>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -67,7 +68,7 @@ export function Header() {
             href={alternatePath}
             className="hidden sm:inline-flex text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded-sm px-2 py-1"
           >
-            {alternateCode === "luo" ? "Dholuo" : "English"}
+            <InterfaceText source={alternateCode === "luo" ? "Dholuo" : "English"} />
           </Link>
 
           {session?.user ? (
@@ -83,13 +84,11 @@ export function Header() {
               <Link
                 href="/login"
                 className="text-xs text-stone-500 hover:text-amber-600"
-              >
-                Sign in
-              </Link>
+              ><InterfaceText source="Sign in" /></Link>
             </div>
           )}
 
-          <button
+          <InterfaceButton
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
             className="xl:hidden text-stone-700 text-xl"
@@ -97,13 +96,13 @@ export function Header() {
             aria-expanded={menuOpen}
           >
             ☰
-          </button>
+          </InterfaceButton>
         </div>
       </div>
 
       {menuOpen && (
         <nav className="xl:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
-          <Link href={alternatePath} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden">Switch to {alternateCode === "luo" ? "Dholuo" : "English"}</Link>
+          <Link href={alternatePath} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden"><InterfaceText source="Switch to " /><InterfaceText source={alternateCode === "luo" ? "Dholuo" : "English"} /></Link>
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}

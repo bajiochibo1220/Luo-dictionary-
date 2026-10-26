@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -25,17 +26,13 @@ export default async function ProverbDetailPage({
       <Link
         href={`/${language.code}/ngero`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Proverbs
-      </Link>
+      ><InterfaceText source="← Back to Proverbs" /></Link>
 
       <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12">
         <EnglishVersionLink langCode={language.code} href={`/${language.code}/ngero/${record.id}`} />
         {/* Original */}
         <div className="mb-10">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-            Original
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Original" /></p>
           <p className="text-3xl md:text-4xl font-serif text-stone-800 leading-snug">
             &ldquo;{d.original_text || record.title}&rdquo;
           </p>
@@ -43,52 +40,40 @@ export default async function ProverbDetailPage({
 
         {/* Translation */}
         <div className="mb-8 pb-8 border-b border-stone-100">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            Translation
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Translation" /></p>
           <p className="text-xl text-stone-600 italic">{d.translation || d.description || d.transcript || ""}</p>
         </div>
 
         <div className="space-y-6">
           <div>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-              Meaning
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Meaning" /></h2>
             <p className="text-lg text-stone-800">{d.meaning || d.description || ""}</p>
           </div>
 
           {d.interpretation && (
             <div>
-              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-                Interpretation
-              </h2>
+              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Interpretation" /></h2>
               <p className="text-stone-700">{d.interpretation}</p>
             </div>
           )}
 
           {d.context && (
             <div>
-              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-                Context
-              </h2>
+              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Context" /></h2>
               <p className="text-stone-700">{d.context}</p>
             </div>
           )}
 
           {d.usage && (
             <div>
-              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-                Usage
-              </h2>
+              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Usage" /></h2>
               <p className="text-stone-700">{d.usage}</p>
             </div>
           )}
 
           {record.tags.length > 0 && (
             <div>
-              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-                Themes
-              </h2>
+              <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Themes" /></h2>
               <div className="flex flex-wrap gap-2">
                 {record.tags.map((t) => (
                   <span
@@ -107,7 +92,7 @@ export default async function ProverbDetailPage({
         {item.type === "image" ? <img src={item.url} alt={record.title} className="max-h-[32rem] w-full object-contain" /> :
           item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-[32rem] w-full bg-stone-950" /> :
           item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
-          <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+          <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
       </div>)}
     </div>
   );

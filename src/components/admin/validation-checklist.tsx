@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 
@@ -26,9 +27,7 @@ export function ValidationChecklist({
 
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Validation Checklist
-      </h2>
+      <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Validation Checklist" /></h2>
       <ul className="space-y-3">
         {CHECKS.map((c) => (
           <li key={c.key}>

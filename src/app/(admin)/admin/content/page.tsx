@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { canReadRecord } from "@/lib/governance";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -12,6 +13,7 @@ type SearchParams = { status?: string; module?: string; languageId?: string };
 export default async function ContentPage({ searchParams: promisedSearchParams }: { searchParams: Promise<SearchParams> }) {
   const searchParams = await promisedSearchParams;
   const session = await auth();
+  if (!session?.user) redirect("/login");
   const user = session!.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const isMasterSuperAdmin = !!user.isMasterSuperAdmin;
@@ -91,11 +93,11 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     <div>
       <header className="workspace-heading mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="mb-1 text-3xl font-serif text-stone-800">Content</h1>
-          <p className="text-sm text-stone-500">Items are grouped by language and content area. Select several items at the same stage to move them together.</p>
+          <h1 className="mb-1 text-3xl font-serif text-stone-800"><InterfaceText source="Content" /></h1>
+          <p className="text-sm text-stone-500"><InterfaceText source="Items are grouped by language and content area. Select several items at the same stage to move them together." /></p>
         </div>
         {!!createLanguageId && canUploadContent(session, createLanguageId) && <details className="relative shrink-0">
-          <summary className="flex min-h-11 cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white">+ New upload</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white"><InterfaceText source="+ New upload" /></summary>
           <div className="absolute right-0 z-30 mt-2 grid max-h-[60dvh] w-64 max-w-[calc(100vw-2rem)] gap-1 overflow-y-auto rounded-xl border border-stone-300 bg-white p-2 shadow-xl">
           {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub && !!createLanguageId && canUploadContent(session, createLanguageId)).map((contentModule) => (
             <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-stone-900 hover:bg-amber-50">
@@ -107,9 +109,9 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
       </header>
 
       {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by language <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.languageId ? "· selected" : "· all"}</span></summary>
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by language " /><span className="ml-1 text-xs font-normal text-stone-400"><InterfaceText source={searchParams.languageId ? "· selected" : "· all"} /></span></summary>
         <nav aria-label="Filter by language" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ languageId: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All languages</Link>
+        <Link href={paramsFor({ languageId: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All languages" /></Link>
         {(await prisma.language.findMany({ where: { isActive: true }, orderBy: { displayOrder: "asc" }, select: { id: true, nativeName: true } })).map((language) => (
           <Link key={language.id} href={paramsFor({ languageId: String(language.id) })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.languageId === String(language.id) ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{language.nativeName}</Link>
         ))}
@@ -117,9 +119,9 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
       </details>}
 
       <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by content area <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((contentModule) => contentModule.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by content area " /><span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((contentModule) => contentModule.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
         <nav aria-label="Filter by content area" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ module: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.module ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All content areas</Link>
+        <Link href={paramsFor({ module: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.module ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All content areas" /></Link>
         {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub).map((contentModule) => (
           <Link key={contentModule.code} href={paramsFor({ module: contentModule.code })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.module === contentModule.code ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{contentModule.baseName}</Link>
         ))}
@@ -127,9 +129,9 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
       </details>
 
       <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter by status <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status ? `· ${searchParams.status.replaceAll("_", " ")}` : "· all"}</span></summary>
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by status " /><span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status ? `· ${searchParams.status.replaceAll("_", " ")}` : "· all"}</span></summary>
         <nav aria-label="Filter by status" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ status: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>All statuses</Link>
+        <Link href={paramsFor({ status: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All statuses" /></Link>
         {["draft", "submitted", "needs_edit", "under_review", "curated", "published", "rejected"].map((status) => (
           <Link key={status} href={paramsFor({ status })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.status === status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{status.replaceAll("_", " ")}</Link>
         ))}

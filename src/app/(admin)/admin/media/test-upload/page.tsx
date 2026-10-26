@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 
@@ -14,7 +15,7 @@ export default function TestUploadPage() {
 
   async function upload() {
     if (!file) {
-      toast.error("Pick a file first");
+      toast.error(<InterfaceText source={"Pick a file first"} />);
       return;
     }
     setUploading(true);
@@ -43,16 +44,16 @@ export default function TestUploadPage() {
       const json = await res.json();
 
       if (!json.success) {
-        toast.error(json.error || "Upload failed");
+        toast.error(<InterfaceText source={json.error || "Upload failed"} />);
         setResult(json);
         return;
       }
 
-      toast.success("Uploaded!");
+      toast.success(<InterfaceText source={"Uploaded!"} />);
       setResult(json.data);
       router.refresh();
     } catch (err: any) {
-      toast.error(err.message || "Upload failed");
+      toast.error(<InterfaceText source={err.message || "Upload failed"} />);
     } finally {
       setUploading(false);
     }
@@ -61,18 +62,12 @@ export default function TestUploadPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          Test Upload
-        </h1>
-        <p className="text-sm text-stone-500">
-          Temporary page to test Cloudinary upload. Remove after verification.
-        </p>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Test Upload" /></h1>
+        <p className="text-sm text-stone-500"><InterfaceText source="Temporary page to test Cloudinary upload. Remove after verification." /></p>
       </header>
 
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-8">
-        <label className="block text-sm font-medium text-stone-700 mb-2">
-          Choose a file (image, video, or audio)
-        </label>
+        <label className="block text-sm font-medium text-stone-700 mb-2"><InterfaceText source="Choose a file (image, video, or audio)" /></label>
         <input
           type="file"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
@@ -82,14 +77,13 @@ export default function TestUploadPage() {
         {file && (
           <div className="text-xs text-stone-500 mb-4 space-y-1">
             <p>
-              <strong>Name:</strong> {file.name}
+              <strong><InterfaceText source="Name:" /></strong> {file.name}
             </p>
             <p>
-              <strong>Type:</strong> {file.type}
+              <strong><InterfaceText source="Type:" /></strong> {file.type}
             </p>
             <p>
-              <strong>Size:</strong> {(file.size / 1024).toFixed(1)} KB
-            </p>
+              <strong><InterfaceText source="Size:" /></strong> {(file.size / 1024).toFixed(1)}<InterfaceText source=" KB" /></p>
           </div>
         )}
 
@@ -98,14 +92,12 @@ export default function TestUploadPage() {
           disabled={!file || uploading}
           className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium disabled:opacity-50"
         >
-          {uploading ? "Uploading..." : "Upload to Cloudinary"}
+          <InterfaceText source={uploading ? "Uploading..." : "Upload to Cloudinary"} />
         </button>
 
         {result && (
           <div className="mt-6 p-4 bg-stone-50 rounded-lg border border-stone-200">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-              Result
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Result" /></p>
             <pre className="text-xs text-stone-700 overflow-auto max-h-60">
               {JSON.stringify(result, null, 2)}
             </pre>
@@ -116,15 +108,11 @@ export default function TestUploadPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-amber-600 hover:underline text-sm block"
-                >
-                  Open uploaded file →
-                </a>
+                ><InterfaceText source="Open uploaded file →" /></a>
                 <Link
                   href="/admin/media"
                   className="text-amber-600 hover:underline text-sm block"
-                >
-                  Go to Media Library →
-                </Link>
+                ><InterfaceText source="Go to Media Library →" /></Link>
               </div>
             )}
           </div>

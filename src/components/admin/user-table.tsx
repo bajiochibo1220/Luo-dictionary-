@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -39,44 +40,34 @@ export function UserTable({ users, canBulkManage = false }: { users: UserRow[]; 
       const response = await fetch("/api/users/bulk-status", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userIds: selected, status }) });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "Could not update accounts.");
-      toast.success(`${result.count} accounts ${status === "suspended" ? "suspended" : "activated"}`);
+      toast.success(<InterfaceText source={`${result.count} accounts ${status === "suspended" ? "suspended" : "activated"}`} />);
       setSelected([]);
       router.refresh();
-    } catch (error: any) { toast.error(error.message || "Could not update accounts."); }
+    } catch (error: any) { toast.error(<InterfaceText source={error.message || "Could not update accounts."} />); }
     finally { setBusy(false); }
   }
   if (users.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
-        No users found
-      </div>
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400"><InterfaceText source="No users found" /></div>
     );
   }
 
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
       {canBulkManage && <div className="flex items-center justify-between gap-3 border-b border-stone-100 p-3 text-sm">
-        <label className="flex items-center gap-2"><input type="checkbox" checked={selected.length === users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).length && selected.length > 0} onChange={(e) => setSelected(e.target.checked ? users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).map((u) => u.id) : [])} />Select accounts</label>
-        {selected.length > 0 && <div className="flex gap-2"><button disabled={busy} onClick={() => void bulkStatus("suspended")} className="rounded-sm bg-red-50 px-3 py-1.5 text-xs text-red-700">Suspend selected ({selected.length})</button><button disabled={busy} onClick={() => void bulkStatus("active")} className="rounded-sm bg-green-50 px-3 py-1.5 text-xs text-green-700">Activate selected</button></div>}
+        <label className="flex items-center gap-2"><input type="checkbox" checked={selected.length === users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).length && selected.length > 0} onChange={(e) => setSelected(e.target.checked ? users.filter((u) => !u.isSuperAdmin && !u.isMasterSuperAdmin).map((u) => u.id) : [])} /><InterfaceText source="Select accounts" /></label>
+        {selected.length > 0 && <div className="flex gap-2"><button disabled={busy} onClick={() => void bulkStatus("suspended")} className="rounded-sm bg-red-50 px-3 py-1.5 text-xs text-red-700"><InterfaceText source="Suspend selected (" />{selected.length})</button><button disabled={busy} onClick={() => void bulkStatus("active")} className="rounded-sm bg-green-50 px-3 py-1.5 text-xs text-green-700"><InterfaceText source="Activate selected" /></button></div>}
       </div>}
-      <p className="border-b border-stone-100 px-3 py-2 text-xs text-stone-400 md:hidden">Swipe left or right to see all user details</p>
+      <p className="border-b border-stone-100 px-3 py-2 text-xs text-stone-400 md:hidden"><InterfaceText source="Swipe left or right to see all user details" /></p>
       <div className="mobile-table-scroll">
       <table className="w-full min-w-[760px] text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
             {canBulkManage && <th className="w-10" />}
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              User
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Roles
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Status
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Joined
-            </th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="User" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Roles" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Status" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Joined" /></th>
           </tr>
         </thead>
         <tbody>
@@ -97,11 +88,9 @@ export function UserTable({ users, canBulkManage = false }: { users: UserRow[]; 
               </td>
               <td className="px-4 py-3">
                 {u.isSuperAdmin ? (
-                  <span className="inline-block text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700">
-                    Super Admin
-                  </span>
+                  <span className="inline-block text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700"><InterfaceText source="Super Admin" /></span>
                 ) : u.languageRoles.length === 0 ? (
-                  <span className="text-xs text-stone-400">No roles</span>
+                  <span className="text-xs text-stone-400"><InterfaceText source="No roles" /></span>
                 ) : (
                   <div className="flex flex-wrap gap-1">
                     {u.languageRoles.slice(0, 2).map((r) => (

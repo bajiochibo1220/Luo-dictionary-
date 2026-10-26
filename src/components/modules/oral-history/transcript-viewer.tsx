@@ -1,11 +1,10 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 export function TranscriptViewer({ text }: { text: string }) {
   if (!text) {
     return (
-      <div className="text-sm text-stone-400 italic py-8 text-center">
-        No transcript available yet
-      </div>
+      <div className="text-sm text-stone-400 italic py-8 text-center"><InterfaceText source="No transcript available yet" /></div>
     );
   }
 

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { UserTable } from "@/components/admin/user-table";
@@ -50,14 +51,14 @@ export default async function UsersPage({
   return (
     <div>
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">Users</h1>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Users" /></h1>
         <p className="text-sm text-stone-500">
-          {formatted.length} {formatted.length === 1 ? "user" : "users"}
+          {formatted.length} <InterfaceText source={formatted.length === 1 ? "user" : "users"} />
         </p>
       </header>
 
       <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700">Filter users <span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status || searchParams.role ? "· filters active" : "· all users"}</span></summary>
+        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter users " /><span className="ml-1 text-xs font-normal text-stone-400"><InterfaceText source={searchParams.status || searchParams.role ? "· filters active" : "· all users"} /></span></summary>
       <div className="mt-3 flex flex-wrap gap-2">
         <Link
           href="/admin/users"
@@ -66,9 +67,7 @@ export default async function UsersPage({
               ? "bg-amber-600 text-white"
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
-        >
-          All
-        </Link>
+        ><InterfaceText source="All" /></Link>
         {["active", "suspended", "pending"].map((s) => (
           <Link
             key={s}

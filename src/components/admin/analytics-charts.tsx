@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import {
   LineChart,
@@ -21,9 +22,7 @@ const DEVICE_COLORS = ["#d97706", "#10b981", "#3b82f6"];
 export function VisitorTrend({ data }: { data: Trend[] }) {
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Activity events per day
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Activity events per day" /></h3>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data}>
           <XAxis
@@ -60,11 +59,9 @@ export function DevicePie({
   const filtered = data.filter((d) => d.count > 0);
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Devices
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Devices" /></h3>
       {filtered.length === 0 ? (
-        <p className="text-sm text-stone-400 py-12 text-center">No data yet</p>
+        <p className="text-sm text-stone-400 py-12 text-center"><InterfaceText source="No data yet" /></p>
       ) : (
         <>
           <ResponsiveContainer width="100%" height={200}>
@@ -110,11 +107,9 @@ export function TopSearches({
 }) {
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Top Searches
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Top Searches" /></h3>
       {data.length === 0 ? (
-        <p className="text-sm text-stone-400 py-4 text-center">No searches yet</p>
+        <p className="text-sm text-stone-400 py-4 text-center"><InterfaceText source="No searches yet" /></p>
       ) : (
         <ul className="space-y-2">
           {data.map((s, i) => (
@@ -137,11 +132,9 @@ export function GeoBar({
 }) {
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Geographic Reach
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Geographic Reach" /></h3>
       {data.length === 0 ? (
-        <p className="text-sm text-stone-400 py-8 text-center">No data yet</p>
+        <p className="text-sm text-stone-400 py-8 text-center"><InterfaceText source="No data yet" /></p>
       ) : (
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={data} layout="vertical">

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -75,7 +76,7 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
   return (
     <div>
       <div className="relative mb-6">
-        <input
+        <InterfaceInput
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -83,18 +84,14 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
           className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 bg-white shadow-xs"
         />
         {loading && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600">
-            Searching...
-          </span>
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600"><InterfaceText source="Searching..." /></span>
         )}
       </div>
 
       {error && <p role="alert" className="text-red-700 mb-4">{error}</p>}
       {!searched && !loading && !error && (
         <div className="text-center py-8">
-          <p className="text-sm text-stone-500 mb-4">
-            Try one of these:
-          </p>
+          <p className="text-sm text-stone-500 mb-4"><InterfaceText source="Try one of these:" /></p>
           <div className="flex flex-wrap justify-center gap-2">
             {SUGGESTED.map((s) => (
               <button
@@ -111,18 +108,15 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
 
       {searched && results.length === 0 && (
         <div className="text-center py-12 text-stone-400">
-          <p>No matching content found</p>
-          <p className="text-sm mt-2">
-            Try rephrasing or asking about another topic
-          </p>
+          <p><InterfaceText source="No matching content found" /></p>
+          <p className="text-sm mt-2"><InterfaceText source="Try rephrasing or asking about another topic" /></p>
         </div>
       )}
 
       {results.length > 0 && (
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            {results.length} result{results.length === 1 ? "" : "s"} by relevance
-          </p>
+            {results.length}<InterfaceText source=" result" /><InterfaceText source={results.length === 1 ? "" : "s"} /><InterfaceText source=" by relevance" /></p>
           {results.map((r) => {
             const pct = Math.round(r.similarity * 100);
             return (
@@ -137,8 +131,7 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
                         {r.module}
                       </span>
                       <span className="text-xs text-stone-400">
-                        · {pct}% match
-                      </span>
+                        · {pct}<InterfaceText source="% match" /></span>
                     </div>
                     <Link
                       href={`/${langCode}/${mapModuleToPath(r.moduleCode)}/${r.id}`}
@@ -159,17 +152,17 @@ export function SemanticSearch({ langCode }: { langCode: string }) {
                   }
                   className="text-xs text-amber-600 hover:underline"
                 >
-                  {expanded === r.id ? "Hide" : "Why this result?"}
+                  <InterfaceText source={expanded === r.id ? "Hide" : "Why this result?"} />
                 </button>
 
                 {expanded === r.id && (
                   <div className="mt-3 pt-3 border-t border-stone-100 text-xs text-stone-500 space-y-1">
                     <p>
-                      <strong>Similarity score:</strong>{" "}
+                      <strong><InterfaceText source="Similarity score:" /></strong>{" "}
                       {r.similarity.toFixed(3)}
                     </p>
                     <p>
-                      <strong>Matched content:</strong>
+                      <strong><InterfaceText source="Matched content:" /></strong>
                     </p>
                     <pre className="bg-stone-50 p-2 rounded-sm text-xs whitespace-pre-wrap max-h-32 overflow-auto">
                       {r.excerpt}

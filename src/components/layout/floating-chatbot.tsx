@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 
@@ -28,9 +29,7 @@ export function FloatingChatbot() {
           </svg>
         </div>
         {/* Label on hover */}
-        <span className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-stone-900 text-amber-50 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none">
-          Ask the AI
-        </span>
+        <span className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-stone-900 text-amber-50 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none"><InterfaceText source="Ask the AI" /></span>
       </div>
     </Link>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { ContentFormCore } from "@/components/shared/content-form";
-export function DynamicContentForm(props: Omit<Parameters<typeof ContentFormCore>[0], "navigate" | "refresh" | "transport">) {
+export function DynamicContentForm({ stayOnPage = false, ...props }: Omit<Parameters<typeof ContentFormCore>[0], "navigate" | "refresh" | "transport"> & { stayOnPage?: boolean }) {
   const router = useRouter();
-  return <ContentFormCore {...props} navigate={router.push} refresh={router.refresh} />;
+  return <ContentFormCore {...props} navigate={stayOnPage ? () => {} : router.push} refresh={router.refresh} />;
 }

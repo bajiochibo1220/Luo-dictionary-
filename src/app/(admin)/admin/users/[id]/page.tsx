@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -49,9 +50,7 @@ export default async function UserDetailPage({
       <Link
         href="/admin/users"
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to users
-      </Link>
+      ><InterfaceText source="← Back to users" /></Link>
 
       <header className="workspace-heading mb-8">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
@@ -62,25 +61,19 @@ export default async function UserDetailPage({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Contributions
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Contributions" /></p>
           <p className="text-2xl font-serif text-stone-800">
             {contributionCount}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Language Roles
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Language Roles" /></p>
           <p className="text-2xl font-serif text-stone-800">
             {user.languageRoles.length}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Joined
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Joined" /></p>
           <p className="text-sm text-stone-700">
             {new Date(user.createdAt).toLocaleDateString("en-KE", {
               dateStyle: "medium",

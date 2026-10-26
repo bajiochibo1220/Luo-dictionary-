@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { mayReviewRecord, canReadMedia } from "@/lib/governance";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -51,9 +52,7 @@ export default async function ReviewDetailPage({
       <Link
         href="/admin/review-queue"
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        â† Back to queue
-      </Link>
+      ><InterfaceText source="â† Back to queue" /></Link>
 
       <header className="workspace-heading mb-8">
         <div className="flex items-center gap-2 mb-2">
@@ -65,62 +64,49 @@ export default async function ReviewDetailPage({
           </span>
         </div>
         <h1 className="text-3xl font-serif text-stone-800">{record.title}</h1>
-        <p className="text-sm text-stone-500 mt-1">
-          Submitted {new Date(record.createdAt).toLocaleString("en-KE")}
+        <p className="text-sm text-stone-500 mt-1"><InterfaceText source="Submitted " />{new Date(record.createdAt).toLocaleString("en-KE")}
         </p>
       </header>
 
       {/* Contributor info with age */}
       <section className="bg-amber-50 border-2 border-amber-200 rounded-xl p-5 mb-6">
-        <h2 className="text-xs uppercase tracking-wider text-amber-800 mb-3 font-bold">
-            Contributor and cultural review
-        </h2>
+        <h2 className="text-xs uppercase tracking-wider text-amber-800 mb-3 font-bold"><InterfaceText source="Contributor and cultural review" /></h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-stone-500">
-              Name
-            </p>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500"><InterfaceText source="Name" /></p>
             <p className="text-stone-800 font-medium">
               {record.contributor?.name || "â€”"}
             </p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-stone-500">
-              Email
-            </p>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500"><InterfaceText source="Email" /></p>
             <p className="text-stone-700 text-sm">
               {record.contributor?.email || "â€”"}
             </p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-stone-500">
-              Age at submission
-            </p>
+            <p className="text-[10px] uppercase tracking-wider text-stone-500"><InterfaceText source="Age at submission" /></p>
             <p className="text-amber-800 font-bold text-lg">
               {record.contributorAge ?? record.contributor?.age ?? "â€”"}
             </p>
           </div>
         </div>
-        <p className="mt-3 border-t border-amber-200 pt-3 text-xs text-stone-700">
-          Cultural review passed by {record.validator?.name || record.validator?.email || "a editor"}. Age alone does not prove or disprove authenticity.
-        </p>
+        <p className="mt-3 border-t border-amber-200 pt-3 text-xs text-stone-700"><InterfaceText source="Cultural review passed by " />{record.validator?.name || record.validator?.email || "a editor"}<InterfaceText source=". Age alone does not prove or disprove authenticity." /></p>
       </section>
 
       <section className="mb-6 rounded-xl border border-stone-100 bg-white p-5 shadow-xs">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">Final access check</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500"><InterfaceText source="Final access check" /></h2>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
-          <div><dt className="text-xs text-stone-500">Consent</dt><dd className="font-medium text-stone-800">{record.consentScope.replaceAll("_", " ")}</dd></div>
-          <div><dt className="text-xs text-stone-500">Restriction</dt><dd className="font-medium text-stone-800">{record.restrictionLevel}</dd></div>
-          <div><dt className="text-xs text-stone-500">Source permission</dt><dd className="font-medium text-stone-800">{String(d?.sourcePermission || "not confirmed").replaceAll("_", " ")}</dd></div>
+          <div><dt className="text-xs text-stone-500"><InterfaceText source="Consent" /></dt><dd className="font-medium text-stone-800">{record.consentScope.replaceAll("_", " ")}</dd></div>
+          <div><dt className="text-xs text-stone-500"><InterfaceText source="Restriction" /></dt><dd className="font-medium text-stone-800">{record.restrictionLevel}</dd></div>
+          <div><dt className="text-xs text-stone-500"><InterfaceText source="Source permission" /></dt><dd className="font-medium text-stone-800">{String(d?.sourcePermission || "not confirmed").replaceAll("_", " ")}</dd></div>
         </dl>
-        {record.media.length > 0 && <p className="mt-3 text-xs text-stone-600">Final approval also releases the {record.media.length} attached file{record.media.length === 1 ? "" : "s"}. Check every file and its source permission before approving. You do not need to upload the files again.</p>}
+        {record.media.length > 0 && <p className="mt-3 text-xs text-stone-600"><InterfaceText source="Final approval also releases the " />{record.media.length}<InterfaceText source=" attached file" /><InterfaceText source={record.media.length === 1 ? "" : "s"} /><InterfaceText source=". Check every file and its source permission before approving. You do not need to upload the files again." /></p>}
       </section>
 
       {/* Content fields */}
       <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-8 mb-6">
-        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-          Content
-        </h2>
+        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Content" /></h2>
         <dl className="space-y-4">
           {fieldDefs.map((f) => {
             const value = d?.[f.fieldCode];
@@ -141,8 +127,7 @@ export default async function ReviewDetailPage({
 
         {record.media.length > 0 && (
           <div className="mt-6 pt-6 border-t border-stone-100">
-            <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-              Media ({record.media.length})
+            <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Media (" />{record.media.length})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {record.media.map((m) => (
@@ -160,9 +145,7 @@ export default async function ReviewDetailPage({
                   )}
                   <div className="px-3 py-2 text-xs text-stone-500 border-t border-stone-200">
                     <p className="font-medium text-stone-700 capitalize">{m.type}</p>
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline">
-                      Open original â†’
-                    </a>
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline"><InterfaceText source="Open original â†’" /></a>
                   </div>
                 </div>
               ))}
@@ -174,9 +157,7 @@ export default async function ReviewDetailPage({
       {/* Review history */}
       {record.reviews.length > 0 && (
         <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-6">
-          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-            Review History
-          </h2>
+          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Review History" /></h2>
           <ul className="space-y-3">
             {record.reviews.map((rv) => (
               <li key={rv.id} className="text-sm border-l-2 border-stone-200 pl-3">

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -45,22 +46,18 @@ export default async function TranscriptLibraryPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="workspace-heading mb-6">
-        <p className="text-xs uppercase tracking-widest text-stone-600">Internal library</p>
-        <h1 className="mt-1 font-serif text-3xl text-stone-900">Transcripts</h1>
-        <p className="mt-2 text-sm text-stone-700">
-          Research-only transcripts available to reviewers for the languages they manage.
-        </p>
+        <p className="text-xs uppercase tracking-widest text-stone-600"><InterfaceText source="Internal library" /></p>
+        <h1 className="mt-1 font-serif text-3xl text-stone-900"><InterfaceText source="Transcripts" /></h1>
+        <p className="mt-2 text-sm text-stone-700"><InterfaceText source="Research-only transcripts available to reviewers for the languages they manage." /></p>
       </header>
 
       {visibleRecords.length === 0 ? (
-        <div className="rounded-xl border border-stone-900/10 bg-white/80 p-8 text-sm text-stone-600">
-          No transcripts are available for this language selection.
-        </div>
+        <div className="rounded-xl border border-stone-900/10 bg-white/80 p-8 text-sm text-stone-600"><InterfaceText source="No transcripts are available for this language selection." /></div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-stone-900/10 bg-white/90 shadow-xs">
           <div className="grid grid-cols-[1fr_auto] gap-4 border-b border-stone-200 px-4 py-3 text-xs uppercase tracking-wide text-stone-500">
-            <span>Collection session</span>
-            <span>Segments</span>
+            <span><InterfaceText source="Collection session" /></span>
+            <span><InterfaceText source="Segments" /></span>
           </div>
           {visibleRecords.map((record) => (
             <Link

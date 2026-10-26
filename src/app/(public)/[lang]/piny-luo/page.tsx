@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -42,9 +43,7 @@ export default async function HeritageSitesPage({
           {pageTitle}
         </h1>
         <p className="text-stone-500">
-          {records.length} {records.length === 1 ? "site" : "sites"} · Sacred
-          and historical places of the Luo
-        </p>
+          {records.length} <InterfaceText source={records.length === 1 ? "site" : "sites"} /><InterfaceText source=" · Sacred and historical places of the Luo" /></p>
       </header>
 
       <SitesMapLoader sites={localizedRecords as any} langCode={language.code} />

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -55,22 +56,18 @@ export function ProverbCard({
           onClick={() => setExpanded(!expanded)}
           className="text-xs uppercase tracking-wider text-amber-600 hover:text-amber-700 font-medium"
         >
-          {expanded ? "Hide meaning" : "Reveal meaning"}
+          <InterfaceText source={expanded ? "Hide meaning" : "Reveal meaning"} />
         </button>
 
         {expanded && (
           <div className="mt-4 pt-4 border-t border-stone-100 space-y-2">
             <p className="text-stone-700">
-              <span className="text-xs uppercase tracking-wider text-stone-400 mr-2">
-                Meaning:
-              </span>
+              <span className="text-xs uppercase tracking-wider text-stone-400 mr-2"><InterfaceText source="Meaning:" /></span>
               {meaning || "No meaning provided yet."}
             </p>
             {d.context && (
               <p className="text-sm text-stone-500">
-                <span className="text-xs uppercase tracking-wider text-stone-400 mr-2">
-                  Context:
-                </span>
+                <span className="text-xs uppercase tracking-wider text-stone-400 mr-2"><InterfaceText source="Context:" /></span>
                 {d.context}
               </p>
             )}
@@ -94,9 +91,7 @@ export function ProverbCard({
       <Link
         href={`/${langCode}/ngero/${proverb.id}`}
         className="block px-6 py-3 bg-stone-50 text-xs uppercase tracking-wider text-stone-500 hover:bg-amber-50 hover:text-amber-700 transition border-t border-stone-100"
-      >
-        Full story →
-      </Link>
+      ><InterfaceText source="Full story →" /></Link>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceLanguageSelector, InterfaceText } from "@/components/shared/interface-language";
 
 import { NavigationLink as Link } from "./navigation-link";
 import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
@@ -53,7 +54,7 @@ export function AppTopbar({
       </div>
 
       {/* Right: Actions */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2"><InterfaceLanguageSelector />
         <Link
           href={`/${languageCode}/search`}
           className="hidden md:inline-flex items-center gap-2 text-sm text-amber-100/80 hover:text-amber-50 transition font-medium px-3 py-1.5 rounded-full hover:bg-amber-100/10"
@@ -70,21 +71,17 @@ export function AppTopbar({
           >
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
-          </svg>
-          Search
-        </Link>
+          </svg><InterfaceText source="Search" /></Link>
 
         {isAdmin && (
           <Link
             href="/admin/dashboard"
             className="hidden sm:inline-flex text-xs bg-amber-400 text-stone-900 px-3 py-1.5 rounded-full hover:bg-amber-300 transition font-semibold shadow-sm"
-          >
-            Admin
-          </Link>
+          ><InterfaceText source="Admin" /></Link>
         )}
 
         <DismissiblePopover open={profileOpen} onClose={() => setProfileOpen(false)}>
-          <button
+          <InterfaceButton
             type="button"
             onClick={() => setProfileOpen((open) => !open)}
             aria-label="Open account menu"
@@ -92,7 +89,7 @@ export function AppTopbar({
             className="w-10 h-10 rounded-full bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center text-stone-900 font-serif text-base font-bold shadow-lg ring-1 ring-amber-200/30"
           >
             {userImage ? <img src={userImage} alt="" className="w-full h-full rounded-full object-cover" /> : userInitial}
-          </button>
+          </InterfaceButton>
           {profileOpen && (
             <>
               <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1rem)] max-h-[75dvh] overflow-y-auto bg-white rounded-xl shadow-xl border border-stone-200 py-2 z-20">
@@ -101,13 +98,13 @@ export function AppTopbar({
                   <p className="text-sm font-semibold text-stone-800 truncate">{userName || "Account"}</p>
                   <p className="text-xs text-stone-500 truncate">{userEmail}</p>
                 </div>
-                <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My dashboard</Link>
-                <Link href="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">My account &amp; saved chats</Link>
-                <Link href="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Profile options</Link>
-                <Link href="/mobile-apps" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">App updates &amp; installation</Link>
-                {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Admin dashboard</Link>}
-                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">Super Admin dashboard</Link>}
-                <button type="button" onClick={() => signOut({ redirectTo: "/login" })} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">Sign out</button>
+                <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My dashboard" /></Link>
+                <Link href="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My account & saved chats" /></Link>
+                <Link href="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Profile options" /></Link>
+                <Link href="/mobile-apps" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="App updates & installation" /></Link>
+                {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Admin dashboard" /></Link>}
+                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Super Admin dashboard" /></Link>}
+                <button type="button" onClick={() => signOut({ redirectTo: "/login" })} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"><InterfaceText source="Sign out" /></button>
               </div>
             </>
           )}

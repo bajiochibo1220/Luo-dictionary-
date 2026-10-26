@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { RefreshCw } from "lucide-react";
@@ -84,13 +85,13 @@ export function AppUpdatesProvider({ children, currentVersion }: { children: Rea
       <div className="flex items-start gap-3">
         <RefreshCw size={22} className="mt-0.5 shrink-0 text-amber-800" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="font-semibold">Update available</p>
-          <p className="mt-1 text-sm text-stone-700">A new version of Luo Heritage is ready. Save any unfinished work before updating.</p>
+          <p className="font-semibold"><InterfaceText source="Update available" /></p>
+          <p className="mt-1 text-sm text-stone-700"><InterfaceText source="A new version of Luo Heritage is ready. Save any unfinished work before updating." /></p>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
-        <button type="button" onClick={() => setDismissedVersion(availableVersion)} className="rounded-full px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-amber-800">Later</button>
-        <button type="button" onClick={() => window.location.reload()} className="rounded-full bg-amber-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800">Update now</button>
+        <button type="button" onClick={() => setDismissedVersion(availableVersion)} className="rounded-full px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-amber-800"><InterfaceText source="Later" /></button>
+        <button type="button" onClick={() => window.location.reload()} className="rounded-full bg-amber-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800"><InterfaceText source="Update now" /></button>
       </div>
     </section>}
   </AppUpdatesContext.Provider>;
@@ -109,7 +110,7 @@ export function CheckAppUpdates() {
   return <div className="mt-4">
     <button type="button" disabled={updates.status === "checking"} onClick={() => void updates.checkForUpdates(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-amber-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-900 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800">
       <RefreshCw size={16} className={updates.status === "checking" ? "animate-spin" : ""} aria-hidden="true" />
-      {updates.status === "checking" ? "Checking…" : "Check for updates"}
+      <InterfaceText source={updates.status === "checking" ? "Checking…" : "Check for updates"} />
     </button>
     <p role="status" className="mt-3 text-sm text-stone-700">{messages[updates.status]}</p>
   </div>;

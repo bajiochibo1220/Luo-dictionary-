@@ -12,6 +12,7 @@ const PUBLIC_PATHS = [
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   if (pathname === "/api/branding") return true;
+  if (pathname === "/api/interface-copy") return true;
   if (pathname === "/api/app-version") return true;
   if (pathname === "/api/v1/bootstrap") return true;
   if (pathname === "/api/v1/library") return true;

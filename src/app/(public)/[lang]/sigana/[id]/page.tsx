@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientLocationMap as LocationMap } from "@/components/modules/oral-history/client-location-map";
@@ -42,15 +43,11 @@ export default async function OralHistoryDetailPage({
       <Link
         href={`/${language.code}/sigana`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Oral Histories
-      </Link>
+      ><InterfaceText source="← Back to Oral Histories" /></Link>
 
       <header className="mb-8">
         <EnglishVersionLink langCode={language.code} href={`/${language.code}/sigana/${record.id}`} />
-        <span className="text-xs uppercase tracking-wider text-amber-600">
-          Oral History
-        </span>
+        <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Oral History" /></span>
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-3">
           {record.title}
         </h1>
@@ -58,29 +55,29 @@ export default async function OralHistoryDetailPage({
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-500">
           {d.narrator && (
             <span>
-              <span className="text-stone-400">Narrated by:</span>{" "}
+              <span className="text-stone-400"><InterfaceText source="Narrated by:" /></span>{" "}
               {d.narrator}
             </span>
           )}
           {d.community && (
             <span>
-              <span className="text-stone-400">Community:</span>{" "}
+              <span className="text-stone-400"><InterfaceText source="Community:" /></span>{" "}
               {d.community}
             </span>
           )}
           {d.clan && (
             <span>
-              <span className="text-stone-400">Clan:</span> {d.clan}
+              <span className="text-stone-400"><InterfaceText source="Clan:" /></span> {d.clan}
             </span>
           )}
           {d.county && (
             <span>
-              <span className="text-stone-400">County:</span> {d.county}
+              <span className="text-stone-400"><InterfaceText source="County:" /></span> {d.county}
             </span>
           )}
           {d.recorded_date && (
             <span>
-              <span className="text-stone-400">Recorded:</span>{" "}
+              <span className="text-stone-400"><InterfaceText source="Recorded:" /></span>{" "}
               {d.recorded_date}
             </span>
           )}
@@ -91,40 +88,28 @@ export default async function OralHistoryDetailPage({
         <div>
           {record.media.length > 0 ? (
             <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-4">
-              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-                Audio Recording
-              </p>
+              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Audio Recording" /></p>
               <audio
                 controls
                 className="w-full"
                 src={record.media.find((m) => m.type === "audio")?.url}
-              >
-                Your browser does not support audio.
-              </audio>
+              ><InterfaceText source="Your browser does not support audio." /></audio>
             </div>
           ) : (
-            <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 mb-4 text-center text-sm text-stone-500">
-              Audio recording not yet uploaded
-            </div>
+            <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 mb-4 text-center text-sm text-stone-500"><InterfaceText source="Audio recording not yet uploaded" /></div>
           )}
 
           {record.summary ? (
             <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
-              <p className="text-xs uppercase tracking-wider text-amber-700 mb-3">
-                ✨ AI Summary
-              </p>
+              <p className="text-xs uppercase tracking-wider text-amber-700 mb-3"><InterfaceText source="✨ AI Summary" /></p>
               <p className="text-stone-700 leading-relaxed">
                 {record.summary}
               </p>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-stone-100 p-6 text-center">
-              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-                AI Summary
-              </p>
-              <p className="text-sm text-stone-500 mb-3">
-                Generate an AI summary of this transcript
-              </p>
+              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="AI Summary" /></p>
+              <p className="text-sm text-stone-500 mb-3"><InterfaceText source="Generate an AI summary of this transcript" /></p>
               <SummarizeButton recordId={record.id} />
             </div>
           )}
@@ -132,9 +117,7 @@ export default async function OralHistoryDetailPage({
 
         <div>
           <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-              Transcript
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Transcript" /></p>
             <div className="max-h-96 overflow-y-auto pr-2">
               <TranscriptViewer text={publicTranscriptText} />
             </div>
@@ -144,9 +127,7 @@ export default async function OralHistoryDetailPage({
 
       {coords && (
         <section className="mb-12">
-          <h2 className="text-xl font-serif text-stone-700 mb-3">
-            Location
-          </h2>
+          <h2 className="text-xl font-serif text-stone-700 mb-3"><InterfaceText source="Location" /></h2>
           <LocationMap
             latitude={coords[0]}
             longitude={coords[1]}
@@ -157,9 +138,7 @@ export default async function OralHistoryDetailPage({
 
       {record.tags.length > 0 && (
         <section>
-          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            Themes
-          </h2>
+          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Themes" /></h2>
           <div className="flex flex-wrap gap-2">
             {record.tags.map((t) => (
               <span

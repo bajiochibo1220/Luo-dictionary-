@@ -1,77 +1,29 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { canReadRecord } from "@/lib/governance";
-import Link from "next/link";
+import { canEditContent } from "@/lib/permissions";
+import { ReviewQueueList } from "@/components/admin/review-queue-list";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 
 export default async function ValidationQueuePage() {
   const session = await auth();
-  const user = session!.user as any;
-  const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
-  const managedLanguageIds = ((user.languageRoles ?? []) as any[])
-    .filter((role) => ["content_editor", "language_admin"].includes(role.role))
-    .map((role) => role.languageId);
-  if (!isSuperAdmin && !managedLanguageIds.length) redirect("/admin/dashboard");
-
-  const where: any = {
-    OR: [
-      { status: "submitted" },
-      { status: "under_review", validatorId: null },
-      { status: "rejection_review" },
-    ],
-  };
-  if (!isSuperAdmin) where.languageId = { in: managedLanguageIds };
-
+  if (!session?.user) redirect("/login");
+  const user = session.user;
+  const oversight = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
+  const languageIds = (user.languageRoles ?? []).filter(role => ["content_editor", "language_admin"].includes(role.role)).map(role => role.languageId);
+  if (!oversight && !languageIds.length) redirect("/admin/dashboard");
   const candidates = await prisma.culturalRecord.findMany({
-    where,
-    orderBy: [{ moduleId: "asc" }, { createdAt: "asc" }],
-    include: {
-      language: { select: { code: true, nativeName: true } },
-      module: { select: { code: true, baseName: true } },
+    where: {
+      OR: [{ status: "submitted" }, { status: "needs_edit" }, { status: "under_review", validatorId: null }, { status: "rejection_review" }],
+      ...(oversight ? {} : { languageId: { in: languageIds } }),
     },
+    orderBy: [{ moduleId: "asc" }, { createdAt: "asc" }],
+    include: { language: { select: { nativeName: true } }, module: { select: { baseName: true } } },
   });
-  const records = candidates.filter((record) => canReadRecord(session!.user, record));
-  const grouped = new Map<string, typeof records>();
-  for (const record of records) {
-    grouped.set(record.module.code, [...(grouped.get(record.module.code) ?? []), record]);
-  }
-
-  return (
-    <div>
-      <header className="workspace-heading mb-6">
-        <h1 className="mb-1 text-3xl font-serif text-stone-800">Review &amp; edit</h1>
-        <p className="text-sm text-stone-500">{records.length} {records.length === 1 ? "item" : "items"} awaiting linguistic and cultural review</p>
-      </header>
-      {records.length === 0 ? (
-        <div className="rounded-xl border border-stone-100 bg-white p-12 text-center">
-          <p className="mb-4 text-4xl">✓</p>
-          <p className="text-stone-600">No content awaiting validation</p>
-          <p className="mt-2 text-sm text-stone-400">New contributions arrive here for cultural and language authenticity review.</p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {[...grouped.entries()].map(([moduleCode, items]) => (
-            <section key={moduleCode} className="overflow-hidden rounded-xl border border-stone-200 bg-white">
-              <h2 className="border-b border-stone-200 bg-stone-50 px-5 py-3 font-semibold text-stone-800">
-                {items[0].module.baseName} <span className="ml-1 text-sm font-normal text-stone-500">({items.length})</span>
-              </h2>
-              <div className="divide-y divide-stone-100">
-                {items.map((record) => (
-                  <article key={record.id} className="flex items-center justify-between gap-4 p-5 hover:bg-amber-50/40">
-                    <div className="min-w-0">
-                      <p className="mb-1 text-xs text-stone-500">
-                        {record.language.nativeName}{record.status === "rejection_review" ? " · Peer rejection vote" : ""}
-                      </p>
-                      <h3 className="font-serif text-lg text-stone-800">{record.title}</h3>
-                    </div>
-                    <Link href={`/admin/validation-queue/${record.id}`} className="shrink-0 text-xs font-medium uppercase tracking-wider text-amber-700 hover:text-amber-800">Review →</Link>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  const records = candidates.filter(record => canReadRecord(user, record));
+  return <div className="mx-auto max-w-6xl">
+    <header className="workspace-heading mb-4"><h1 className="font-serif text-3xl"><InterfaceText source="Review & edit" /></h1><p className="mt-2 text-sm text-stone-700"><InterfaceText source="Review new uploads and continue unfinished edits here. Check the community-language and English versions, then send for publishing." /></p></header>
+    <ReviewQueueList items={records.map(record => ({ id: record.id, title: record.title, status: record.status, language: record.language.nativeName, module: record.module.baseName, canDelete: canEditContent(session, record.languageId) }))} />
+  </div>;
 }

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
@@ -40,9 +41,7 @@ export default async function ArtifactDetailPage({
       <Link
         href={`/${language.code}/gik-luo`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Artifacts
-      </Link>
+      ><InterfaceText source="← Back to Artifacts" /></Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <div className="md:col-span-2"><EnglishVersionLink langCode={language.code} href={`/${language.code}/gik-luo/${record.id}`} /></div>
@@ -63,9 +62,7 @@ export default async function ArtifactDetailPage({
 
         {/* Info */}
         <div>
-          <span className="text-xs uppercase tracking-wider text-amber-600">
-            Artifact
-          </span>
+          <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Artifact" /></span>
           <h1 className="text-4xl font-serif text-stone-800 mt-2 mb-6">
             {record.title}
           </h1>
@@ -73,9 +70,7 @@ export default async function ArtifactDetailPage({
           <dl className="space-y-4">
             {d.description && (
               <div>
-                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                  Description
-                </dt>
+                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Description" /></dt>
                 <dd className="text-stone-700 leading-relaxed">
                   {d.description}
                 </dd>
@@ -84,27 +79,21 @@ export default async function ArtifactDetailPage({
 
             {d.origin && (
               <div>
-                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                  Origin
-                </dt>
+                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Origin" /></dt>
                 <dd className="text-stone-700">{d.origin}</dd>
               </div>
             )}
 
             {d.clan && (
               <div>
-                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                  Clan
-                </dt>
+                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Clan" /></dt>
                 <dd className="text-stone-700">{d.clan}</dd>
               </div>
             )}
 
             {d.usage && (
               <div>
-                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                  Usage
-                </dt>
+                <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Usage" /></dt>
                 <dd className="text-stone-700">{d.usage}</dd>
               </div>
             )}
@@ -129,15 +118,13 @@ export default async function ArtifactDetailPage({
         <section key={item.id} className="mb-6 bg-white rounded-xl border border-stone-100 p-5">
           {item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
             item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
-            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
         </section>
       ))}
 
       {related.length > 0 && (
         <section>
-          <h2 className="text-xl font-serif text-stone-700 mb-4">
-            Related Artifacts
-          </h2>
+          <h2 className="text-xl font-serif text-stone-700 mb-4"><InterfaceText source="Related Artifacts" /></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {localizedRelated.map((r) => {
               const img = r.media.find((m) => m.type === "image");

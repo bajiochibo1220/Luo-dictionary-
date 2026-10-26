@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -25,10 +26,10 @@ export function AiFlagButton({
       });
       if (!res.ok) throw new Error("Failed");
       setState(!state);
-      toast.success(state ? "Unflagged" : "Flagged for review");
+      toast.success(<InterfaceText source={state ? "Unflagged" : "Flagged for review"} />);
       router.refresh();
     } catch {
-      toast.error("Failed to update");
+      toast.error(<InterfaceText source={"Failed to update"} />);
     } finally {
       setBusy(false);
     }

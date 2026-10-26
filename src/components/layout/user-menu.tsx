@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceText } from "@/components/shared/interface-language";
 
 import { NavigationLink as Link } from "./navigation-link";
 import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
@@ -22,7 +23,7 @@ export function UserMenu({
 
   return (
     <DismissiblePopover open={open} onClose={() => setOpen(false)}>
-      <button
+      <InterfaceButton
         type="button"
         onClick={() => setOpen(!open)}
         aria-label="Open account menu"
@@ -32,7 +33,7 @@ export function UserMenu({
         <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-medium overflow-hidden">
           {userImage ? <img src={userImage} alt="" className="w-full h-full object-cover" /> : (userName || userEmail).charAt(0).toUpperCase()}
         </div>
-      </button>
+      </InterfaceButton>
 
       {open && (
         <>
@@ -47,31 +48,23 @@ export function UserMenu({
             <Link
               href="/dashboard"
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
-            >
-              Public site
-            </Link>
+            ><InterfaceText source="Public site" /></Link>
             <Link
               href="/dashboard"
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
-            >
-              My dashboard
-            </Link>
-            <Link href="/profile" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50">Profile options</Link>
+            ><InterfaceText source="My dashboard" /></Link>
+            <Link href="/profile" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Profile options" /></Link>
             {isAdmin && (
               <Link
                 href="/admin/dashboard"
                 className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
-              >
-                Admin dashboard
-              </Link>
+              ><InterfaceText source="Admin dashboard" /></Link>
             )}
-            {isSuperAdmin && <Link href="/super-admin/dashboard" className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50">Super Admin dashboard</Link>}
+            {isSuperAdmin && <Link href="/super-admin/dashboard" className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"><InterfaceText source="Super Admin dashboard" /></Link>}
             <button
               onClick={() => signOut({ redirectTo: "/login" })}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-            >
-              Sign out
-            </button>
+            ><InterfaceText source="Sign out" /></button>
           </div>
         </>
       )}

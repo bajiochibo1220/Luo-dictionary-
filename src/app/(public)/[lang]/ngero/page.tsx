@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -49,9 +50,7 @@ export default async function ProverbsPage({
           {pageTitle}
         </h1>
         <p className="text-stone-500">
-          {records.length} {records.length === 1 ? "proverb" : "proverbs"} ·{" "}
-          Wisdom passed down through generations
-        </p>
+          {records.length} <InterfaceText source={records.length === 1 ? "proverb" : "proverbs"} /> ·{" "}<InterfaceText source="Wisdom passed down through generations" /></p>
       </header>
 
       <ProverbGrid

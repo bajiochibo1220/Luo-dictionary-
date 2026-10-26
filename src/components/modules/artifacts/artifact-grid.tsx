@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -30,10 +31,8 @@ export function ArtifactGrid({
   if (artifacts.length === 0) {
     return (
       <div className="text-center py-16 text-stone-400">
-        <p className="text-lg">No artifacts published yet</p>
-        <p className="text-sm mt-2">
-          Cultural artifacts are being documented
-        </p>
+        <p className="text-lg"><InterfaceText source="No artifacts published yet" /></p>
+        <p className="text-sm mt-2"><InterfaceText source="Cultural artifacts are being documented" /></p>
       </div>
     );
   }
@@ -71,8 +70,7 @@ export function ArtifactGrid({
                   {a.title}
                 </h3>
                 {a.data.origin && (
-                  <p className="text-xs text-stone-500 mb-2">
-                    Origin: {a.data.origin}
+                  <p className="text-xs text-stone-500 mb-2"><InterfaceText source="Origin: " />{a.data.origin}
                   </p>
                 )}
                 {a.data.description && (
@@ -83,9 +81,7 @@ export function ArtifactGrid({
                 <Link
                   href={`/${langCode}/gik-luo/${a.id}`}
                   className="text-xs uppercase tracking-wider text-amber-600 hover:text-amber-700"
-                >
-                  View details →
-                </Link>
+                ><InterfaceText source="View details →" /></Link>
               </div>
             </div>
           );

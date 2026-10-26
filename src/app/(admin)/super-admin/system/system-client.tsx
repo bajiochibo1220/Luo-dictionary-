@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 
@@ -79,10 +80,10 @@ export function SystemClient({
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed");
       }
-      toast.success("Settings saved");
+      toast.success(<InterfaceText source={"Settings saved"} />);
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Save failed");
+      toast.error(<InterfaceText source={e.message || "Save failed"} />);
     } finally {
       setBusy(false);
     }
@@ -94,8 +95,8 @@ export function SystemClient({
       const res = await fetch("/api/super-admin/settings/test-email", { method: "POST" });
       const result = await res.json();
       if (!res.ok || !result.success) throw new Error(result.error || "Email test failed");
-      toast.success("The provider accepted the test email to your account address.");
-    } catch (error: any) { toast.error(error.message || "Email test failed"); }
+      toast.success(<InterfaceText source={"The provider accepted the test email to your account address."} />);
+    } catch (error: any) { toast.error(<InterfaceText source={error.message || "Email test failed"} />); }
     finally { setBusy(false); }
   }
 
@@ -110,10 +111,10 @@ export function SystemClient({
       const result = await res.json();
       if (!res.ok || !result.success) throw new Error(result.error || "AI indexing failed");
       const { succeeded, skipped, failed } = result.data;
-      toast.success(`AI index ready: ${succeeded} updated, ${skipped} already current, ${failed} failed`);
+      toast.success(<InterfaceText source={`AI index ready: ${succeeded} updated, ${skipped} already current, ${failed} failed`} />);
       if (failed) console.error("AI reindex failures:", result.data.errors);
     } catch (error: any) {
-      toast.error(error.message || "AI indexing failed");
+      toast.error(<InterfaceText source={error.message || "AI indexing failed"} />);
     } finally {
       setBusy(false);
     }
@@ -123,12 +124,8 @@ export function SystemClient({
   return (
     <div>
       <div className="workspace-heading" data-sticky-controls><header className="mb-4">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          System Settings
-        </h1>
-        <p className="text-sm text-stone-500">
-          Platform-wide configuration — only visible to super admins
-        </p>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="System Settings" /></h1>
+        <p className="text-sm text-stone-500"><InterfaceText source="Platform-wide configuration — only visible to super admins" /></p>
       </header>
 
       <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} /></div>
@@ -137,9 +134,7 @@ export function SystemClient({
         {tab === "general" && <PartnerBrandingSettings request={webFeatureRequest} />}
       {tab === "general" && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              General Configuration
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="General Configuration" /></h2>
 
             <Field values={values} update={update}               label="Site name"
               settingKey="site_name"
@@ -158,9 +153,7 @@ export function SystemClient({
             />
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Default language
-              </label>
+              <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Default language" /></label>
               <select
                 value={values.default_language_id ?? ""}
                 onChange={(e) =>
@@ -169,9 +162,9 @@ export function SystemClient({
                 className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
               >
                 {languages.map((l) => (
-                  <option key={l.id} value={String(l.id)}>
+                  <InterfaceOption key={l.id} value={String(l.id)}>
                     {l.nativeName} ({l.name})
-                  </option>
+                  </InterfaceOption>
                 ))}
               </select>
             </div>
@@ -188,21 +181,16 @@ export function SystemClient({
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
             >
-              {busy ? "Saving..." : "Save General"}
+              <InterfaceText source={busy ? "Saving..." : "Save General"} />
             </button>
           </>
         )}
 
         {tab === "api-keys" && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              API Credentials
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="API Credentials" /></h2>
 
-            <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-6 text-xs text-amber-800">
-              Sensitive values are masked. Only edit a field if you want to
-              change it.
-            </div>
+            <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-6 text-xs text-amber-800"><InterfaceText source="Sensitive values are masked. Only edit a field if you want to change it." /></div>
 
             <Field values={values} update={update}               label="Gemini API Key"
               settingKey="gemini_api_key"
@@ -238,33 +226,27 @@ export function SystemClient({
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
             >
-              {busy ? "Saving..." : "Save API Keys"}
+              <InterfaceText source={busy ? "Saving..." : "Save API Keys"} />
             </button>
 
             <div className="mt-8 border-t border-stone-100 pt-6">
-              <h3 className="text-sm font-semibold text-stone-700">AI content index</h3>
-              <p className="mt-1 mb-3 text-xs text-stone-500">Rebuild missing language indexes for published records, dictionary entries, and transcripts after the database migration.</p>
+              <h3 className="text-sm font-semibold text-stone-700"><InterfaceText source="AI content index" /></h3>
+              <p className="mt-1 mb-3 text-xs text-stone-500"><InterfaceText source="Rebuild missing language indexes for published records, dictionary entries, and transcripts after the database migration." /></p>
               <button onClick={rebuildAiIndex} disabled={busy} className="px-5 py-2.5 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 disabled:opacity-50">
-                {busy ? "Working..." : "Rebuild AI Index"}
+                <InterfaceText source={busy ? "Working..." : "Rebuild AI Index"} />
               </button>
             </div>
 
             <div className="mt-8 pt-6 border-t border-stone-100">
-              <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-                Environment Status
-              </h3>
+              <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Environment Status" /></h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-stone-600">
-                    DATABASE_URL configured
-                  </span>
+                  <span className="text-stone-600"><InterfaceText source="DATABASE_URL configured" /></span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-stone-600">
-                    NEXTAUTH_SECRET configured
-                  </span>
+                  <span className="text-stone-600"><InterfaceText source="NEXTAUTH_SECRET configured" /></span>
                 </li>
               </ul>
             </div>
@@ -273,9 +255,7 @@ export function SystemClient({
 
         {tab === "email" && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              Email Configuration
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Email Configuration" /></h2>
 
             <Field values={values} update={update}               label="Email Provider"
               settingKey="smtp_provider"
@@ -301,47 +281,34 @@ export function SystemClient({
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
             >
-              {busy ? "Saving..." : "Save Email"}
+              <InterfaceText source={busy ? "Saving..." : "Save Email"} />
             </button>
-            <button disabled={busy} onClick={sendTestEmail} className="ml-3 rounded-lg border px-5 py-2.5 disabled:opacity-50">Send test email to me</button>
-            <p className="mt-3 text-sm text-stone-500">Save first. Test delivery uses your own account address and requires a verified sender. Account notifications currently appear inside the app.</p>
+            <button disabled={busy} onClick={sendTestEmail} className="ml-3 rounded-lg border px-5 py-2.5 disabled:opacity-50"><InterfaceText source="Send test email to me" /></button>
+            <p className="mt-3 text-sm text-stone-500"><InterfaceText source="Save first. Test delivery uses your own account address and requires a verified sender. Account notifications currently appear inside the app." /></p>
           </>
         )}
 
         {tab === "storage" && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              Storage
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Storage" /></h2>
             <div className="bg-stone-50 rounded-lg p-4 mb-4">
-              <p className="text-sm text-stone-600 mb-2">
-                Media files are stored on Cloudinary (free tier: 25 GB storage,
-                25 GB bandwidth/month).
-              </p>
-              <p className="text-sm text-stone-600">
-                Database storage: Neon PostgreSQL (free tier: 0.5 GB).
-              </p>
+              <p className="text-sm text-stone-600 mb-2"><InterfaceText source="Media files are stored on Cloudinary (free tier: 25 GB storage, 25 GB bandwidth/month)." /></p>
+              <p className="text-sm text-stone-600"><InterfaceText source="Database storage: Neon PostgreSQL (free tier: 0.5 GB)." /></p>
             </div>
             <Link
               href="/admin/media"
               className="inline-block px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700"
-            >
-              Open Media Library →
-            </Link>
+            ><InterfaceText source="Open Media Library →" /></Link>
             <Link
               href="/super-admin/backup"
               className="inline-block ml-3 px-6 py-2.5 bg-white border border-stone-300 text-stone-700 rounded-lg text-sm font-medium hover:bg-stone-50"
-            >
-              Manage Backups →
-            </Link>
+            ><InterfaceText source="Manage Backups →" /></Link>
           </>
         )}
 
         {tab === "maintenance" && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              Maintenance Mode
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Maintenance Mode" /></h2>
 
             <div className="flex items-center gap-3 mb-4">
               <button
@@ -366,16 +333,14 @@ export function SystemClient({
                 />
               </button>
               <span className="text-sm text-stone-700">
-                {values.maintenance_mode === "on"
+                <InterfaceText source={values.maintenance_mode === "on"
                   ? "Maintenance mode is ON — only super admins can access the site"
-                  : "Maintenance mode is OFF — public site is live"}
+                  : "Maintenance mode is OFF — public site is live"} />
               </span>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Maintenance message
-              </label>
+              <label className="block text-sm font-medium text-stone-700 mb-1"><InterfaceText source="Maintenance message" /></label>
               <textarea
                 rows={3}
                 value={values.maintenance_message ?? ""}
@@ -393,20 +358,20 @@ export function SystemClient({
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
             >
-              {busy ? "Saving..." : "Save Maintenance Settings"}
+              <InterfaceText source={busy ? "Saving..." : "Save Maintenance Settings"} />
             </button>
           </>
         )}
 
         {tab === "legal" && isMasterSuperAdmin && (
           <>
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public legal documents</h2>
-            <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">These drafts are visible to users. Replace every bracketed placeholder with the Operator’s verified details and have counsel review the documents before relying on them. Saving publishes the text on the public Terms and Privacy pages.</p>
-            <label className="mb-2 block text-sm font-medium text-stone-700">Terms and Conditions</label>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Public legal documents" /></h2>
+            <p className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900"><InterfaceText source="These drafts are visible to users. Replace every bracketed placeholder with the Operator’s verified details and have counsel review the documents before relying on them. Saving publishes the text on the public Terms and Privacy pages." /></p>
+            <label className="mb-2 block text-sm font-medium text-stone-700"><InterfaceText source="Terms and Conditions" /></label>
             <textarea rows={18} value={values.terms_content ?? ""} onChange={(e) => update("terms_content", e.target.value)} className="mb-6 w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-amber-500" />
-            <label className="mb-2 block text-sm font-medium text-stone-700">Privacy Policy</label>
+            <label className="mb-2 block text-sm font-medium text-stone-700"><InterfaceText source="Privacy Policy" /></label>
             <textarea rows={18} value={values.privacy_content ?? ""} onChange={(e) => update("privacy_content", e.target.value)} className="w-full rounded-lg border border-stone-300 px-3 py-2 font-mono text-xs leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-amber-500" />
-            <button onClick={() => save(["terms_content", "privacy_content"])} disabled={busy} className="mt-5 rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50">{busy ? "Saving…" : "Save and publish legal documents"}</button>
+            <button onClick={() => save(["terms_content", "privacy_content"])} disabled={busy} className="mt-5 rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"><InterfaceText source={busy ? "Saving…" : "Save and publish legal documents"} /></button>
           </>
         )}
       </div>

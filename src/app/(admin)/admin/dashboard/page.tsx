@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -22,26 +23,23 @@ export default async function AdminDashboardPage() {
     const roleLanguages = (roleName: string) => [...new Set<number>(userRoles.filter((role) => role.role === roleName).map((role) => Number(role.languageId)))];
     const uploaderLanguages = roleLanguages("uploader");
     const cultureLanguages = roleLanguages("content_editor");
-    const editorLanguages = roleLanguages("content_editor");
     const publisherLanguages = roleLanguages("publisher");
-    const [uploadsToFinish, culturePending, editorPending, publishPending, publishedHistory] = await Promise.all([
+    const [uploadsToFinish, culturePending, publishPending, publishedHistory] = await Promise.all([
       uploaderLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: uploaderLanguages }, contributorId: user.id, status: "draft" } }) : 0,
-      cultureLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: cultureLanguages }, OR: [{ status: "submitted" }, { status: "under_review", validatorId: null }, { status: "rejection_review" }], AND: [{ OR: [{ contributorId: null }, { contributorId: { not: user.id } }] }] } }) : 0,
-      editorLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: editorLanguages }, status: "needs_edit" } }) : 0,
+      cultureLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: cultureLanguages }, OR: [{ status: "submitted" }, { status: "needs_edit" }, { status: "under_review", validatorId: null }, { status: "rejection_review" }], } }) : 0,
       publisherLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: publisherLanguages }, status: "under_review", validatorId: { not: null } } }) : 0,
       publisherLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: publisherLanguages }, status: "published" } }) : 0,
     ]);
     const roleWork = [
       ...(uploaderLanguages.length ? [{ title: "Uploads to complete", count: uploadsToFinish, href: "/admin/content?status=draft", description: "Continue preparing your assigned content and media." }] : []),
-      ...(cultureLanguages.length ? [{ title: "Cultural reviews", count: culturePending, href: "/admin/validation-queue", description: "Compare the Indigenous-language item with its English version." }] : []),
-      ...(editorLanguages.length ? [{ title: "Items needing edits", count: editorPending, href: "/admin/editor-queue", description: "Complete requested edits and return items to cultural review." }] : []),
+      ...(cultureLanguages.length ? [{ title: "Review & edit", count: culturePending, href: "/admin/validation-queue", description: "Compare the Indigenous-language item with its English version." }] : []),
       ...(publisherLanguages.length ? [{ title: "Ready to publish", count: publishPending, href: "/admin/review-queue", description: "Publish culturally approved items for your assigned languages." }, { title: "Published history", count: publishedHistory, href: "/admin/published-history", description: "Review the published content for your assigned languages." }] : []),
     ];
     const languageNames = [...new Set<string>(userRoles.map((role) => role.languageName).filter(Boolean))];
     return <main className="mx-auto max-w-6xl">
-      <header className="workspace-heading mb-8"><p className="text-xs uppercase tracking-widest text-amber-900">Role workspace</p><h1 className="mt-1 font-serif text-3xl text-stone-900">{languageNames.length ? languageNames.join(", ") : "Your"} Dashboard</h1><p className="mt-2 text-sm text-stone-700">This workspace shows the tasks and records available to your assigned role.</p></header>
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{roleWork.map((item) => <Link key={item.title} href={item.href} className="rounded-xl border border-stone-200 bg-white p-6 shadow-xs transition hover:border-amber-500 hover:shadow-md"><p className="text-sm font-semibold text-stone-700">{item.title}</p><p className="mt-2 text-4xl font-semibold text-amber-900">{item.count}</p><p className="mt-2 text-sm text-stone-600">{item.description}</p><p className="mt-4 text-xs font-semibold uppercase tracking-wide text-amber-800">Open workspace →</p></Link>)}</section>
-      {roleWork.length === 0 && <p className="rounded-xl border border-stone-200 bg-white p-6 text-sm text-stone-600">No workflow role is assigned to this account yet.</p>}
+      <header className="workspace-heading mb-8"><p className="text-xs uppercase tracking-widest text-amber-900"><InterfaceText source="Role workspace" /></p><h1 className="mt-1 font-serif text-3xl text-stone-900">{languageNames.length ? languageNames.join(", ") : "Your"}<InterfaceText source=" Dashboard" /></h1><p className="mt-2 text-sm text-stone-700"><InterfaceText source="This workspace shows the tasks and records available to your assigned role." /></p></header>
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{roleWork.map((item) => <Link key={item.title} href={item.href} className="rounded-xl border border-stone-200 bg-white p-6 shadow-xs transition hover:border-amber-500 hover:shadow-md"><p className="text-sm font-semibold text-stone-700"><InterfaceText source={item.title} /></p><p className="mt-2 text-4xl font-semibold text-amber-900">{item.count}</p><p className="mt-2 text-sm text-stone-600"><InterfaceText source={item.description} /></p><p className="mt-4 text-xs font-semibold uppercase tracking-wide text-amber-800"><InterfaceText source="Open workspace →" /></p></Link>)}</section>
+      {roleWork.length === 0 && <p className="rounded-xl border border-stone-200 bg-white p-6 text-sm text-stone-600"><InterfaceText source="No workflow role is assigned to this account yet." /></p>}
     </main>;
   }
 
@@ -57,13 +55,7 @@ export default async function AdminDashboardPage() {
       ).map((l) => l.id)
     : ((user.languageRoles ?? []) as any[])
         .filter((r) =>
-          [
-            "language_admin",
-            "uploader",
-            "publisher",
-            "content_editor",
-            "content_editor",
-          ].includes(r.role)
+          ["language_admin"].includes(r.role)
         )
         .map((r) => r.languageId);
   const recordScope: any = isSuperAdmin && selectedCultureId
@@ -109,7 +101,7 @@ export default async function AdminDashboardPage() {
         AND: [{ OR: [{ contributorId: null }, { contributorId: { not: user.id } }] }],
       },
     }) : Promise.resolve(0),
-    hasEditorRole ? prisma.culturalRecord.count({ where: { ...recordScope, status: "needs_edit", validatorId: { not: null } } }) : Promise.resolve(0),
+    hasEditorRole ? prisma.culturalRecord.count({ where: { ...recordScope, status: "needs_edit" } }) : Promise.resolve(0),
     hasFinalRole ? prisma.culturalRecord.count({ where: { ...recordScope, status: "under_review", validatorId: { not: null } } }) : Promise.resolve(0),
   ]);
 
@@ -139,8 +131,7 @@ export default async function AdminDashboardPage() {
   const satisfactionPct = rated === 0 ? 0 : Math.round((up / rated) * 100);
 
   const workQueues = [
-    ...(hasCultureRole ? [{ title: isSuperAdmin && !userRoles.some((role) => role.role === "content_editor") ? "Editor review oversight" : "Cultural review", count: cultureQueueCount, href: "/admin/validation-queue", help: "A editor must check each item first." }] : []),
-    ...(hasEditorRole ? [{ title: "Editor work", count: editorQueueCount, href: "/admin/editor-queue", help: "Edit items returned by editors." }] : []),
+    ...(hasCultureRole ? [{ title: isSuperAdmin && !userRoles.some((role) => role.role === "content_editor") ? "Editor review oversight" : "Review & edit", count: cultureQueueCount + editorQueueCount, href: "/admin/validation-queue", help: "Review new uploads and continue unfinished edits in one place." }] : []),
     ...(hasFinalRole ? [{ title: "Publishing", count: finalQueueCount, href: "/admin/review-queue", help: "Publish items that passed cultural review and any requested editing." }] : []),
     ...(hasUploaderRole ? [{ title: "Upload content", count: pendingRecords, href: "/admin/content", help: "Upload content in your assigned language areas and send it for cultural review." }] : []),
   ];
@@ -161,19 +152,17 @@ export default async function AdminDashboardPage() {
     <div>
       <header className="workspace-heading mb-8">
         <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          {isMasterSuperAdmin ? "Master Super Admin" : primaryLang} Dashboard
-        </h1>
-        <p className="text-sm text-stone-500">
-          Managing {managedLanguageIds.length}{" "}
-          {managedLanguageIds.length === 1 ? "language" : "languages"}
+          {isMasterSuperAdmin ? "Master Super Admin" : primaryLang}<InterfaceText source=" Dashboard" /></h1>
+        <p className="text-sm text-stone-500"><InterfaceText source="Managing " />{managedLanguageIds.length}{" "}
+          <InterfaceText source={managedLanguageIds.length === 1 ? "language" : "languages"} />
         </p>
       </header>
 
       {workQueues.length > 0 && <section aria-labelledby="work-queue-title" className="mb-8">
         <div className="mb-3 flex items-end justify-between gap-3">
           <div>
-            <h2 id="work-queue-title" className="text-lg font-semibold text-stone-800">Your next work</h2>
-            <p className="text-sm text-stone-500">Each item moves to the next role only after this stage is complete.</p>
+            <h2 id="work-queue-title" className="text-lg font-semibold text-stone-800"><InterfaceText source="Your next work" /></h2>
+            <p className="text-sm text-stone-500"><InterfaceText source="Each item moves to the next role only after this stage is complete." /></p>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -182,8 +171,8 @@ export default async function AdminDashboardPage() {
               <h3 className="font-semibold text-stone-800">{queue.title}</h3>
               <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">{queue.count}</span>
             </div>
-            <p className="mt-2 text-sm text-stone-600">{queue.help}</p>
-            <p className="mt-3 text-xs font-semibold text-amber-800">Open queue →</p>
+            <p className="mt-2 text-sm text-stone-600"><InterfaceText source={queue.help} /></p>
+            <p className="mt-3 text-xs font-semibold text-amber-800"><InterfaceText source="Open queue →" /></p>
           </Link>)}
         </div>
       </section>}
@@ -203,9 +192,7 @@ export default async function AdminDashboardPage() {
       {/* Charts + summaries */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-2 bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-          <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-6">
-            Content by Module
-          </h3>
+          <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-6"><InterfaceText source="Content by Module" /></h3>
           <ContentBarChart data={activeModules} />
         </div>
 

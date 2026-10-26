@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -72,17 +73,16 @@ export default async function EditContentPage({
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          Edit {record.module.baseName}
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Edit " />{record.module.baseName}
         </h1>
         <p className="text-sm text-stone-500">
-          {language.nativeName}{editingTranslation ? " translation" : ""} · Status: {record.status}
+          {language.nativeName}<InterfaceText source={editingTranslation ? " translation" : ""} /><InterfaceText source=" · Status: " />{record.status}
         </p>
       </header>
 
       <nav className="flex gap-4 mb-6">
-        <Link href={`/my-submissions/${record.id}/edit`}>Edit {record.language.nativeName}</Link>
-        {translations.map(item => <Link key={item.id} href={`/my-submissions/${record.id}/edit?languageId=${item.languageId}`}>Edit {item.language.nativeName}</Link>)}
+        <Link href={`/my-submissions/${record.id}/edit`}><InterfaceText source="Edit " />{record.language.nativeName}</Link>
+        {translations.map(item => <Link key={item.id} href={`/my-submissions/${record.id}/edit?languageId=${item.languageId}`}><InterfaceText source="Edit " />{item.language.nativeName}</Link>)}
       </nav>
       <DynamicContentForm
         moduleCode={record.module.code}

@@ -10,4 +10,6 @@ The [26 October public-library update](docs/system-audit/public-library-improvem
 
 The later [mobile layout and branding follow-up](docs/system-audit/mobile-layout-and-branding-followup-2026-10-26.md) records the requested fixed bottom media bar, compact search/language row, prominent uploaded logos on login and registration, and account-menu dismissal fixes across public and admin views. It supersedes the earlier header-logo/top-filter arrangement.
 
+The [editorial workflow and interface-language follow-up](docs/system-audit/editor-interface-followup-2026-10-26.md) records the unified Review & edit queue, audited bulk deletion, scrolling workspace headings, scoped staff tasks, paired editing, JOOUST authentication background and community-specific interface-text editor. Full Dholuo translation remains incomplete: missing entries and fluent-editor review are explicitly tracked. This does not change the acceptance totals above.
+
 The previous checklist is preserved as [historical status](docs/system-audit/historical-status-checklist-2026-10-25.md).

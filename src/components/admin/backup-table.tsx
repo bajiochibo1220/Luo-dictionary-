@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -31,10 +32,10 @@ export function BackupTable({ backups }: { backups: Backup[] }) {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Backup deleted");
+      toast.success(<InterfaceText source={"Backup deleted"} />);
       router.refresh();
     } catch {
-      toast.error("Delete failed");
+      toast.error(<InterfaceText source={"Delete failed"} />);
     } finally {
       setBusy(null);
     }
@@ -43,10 +44,8 @@ export function BackupTable({ backups }: { backups: Backup[] }) {
   if (backups.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
-        <p className="text-lg mb-2">No backups yet</p>
-        <p className="text-sm">
-          Click &ldquo;Backup Now&rdquo; to create your first backup
-        </p>
+        <p className="text-lg mb-2"><InterfaceText source="No backups yet" /></p>
+        <p className="text-sm"><InterfaceText source="Click “Backup Now” to create your first backup" /></p>
       </div>
     );
   }
@@ -56,21 +55,11 @@ export function BackupTable({ backups }: { backups: Backup[] }) {
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Filename
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Size
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Type
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Created
-            </th>
-            <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Actions
-            </th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Filename" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Size" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Type" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Created" /></th>
+            <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Actions" /></th>
           </tr>
         </thead>
         <tbody>
@@ -107,15 +96,13 @@ export function BackupTable({ backups }: { backups: Backup[] }) {
                 <a
                   href={`/api/super-admin/backup/${b.id}`}
                   className="text-xs text-amber-600 hover:underline"
-                >
-                  Download
-                </a>
+                ><InterfaceText source="Download" /></a>
                 <button
                   onClick={() => deleteBackup(b.id, b.filename)}
                   disabled={busy === b.id}
                   className="text-xs text-red-600 hover:underline disabled:opacity-50"
                 >
-                  {busy === b.id ? "..." : "Delete"}
+                  <InterfaceText source={busy === b.id ? "..." : "Delete"} />
                 </button>
               </td>
             </tr>

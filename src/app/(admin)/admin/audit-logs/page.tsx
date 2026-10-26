@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { AuditLogTable } from "@/components/admin/audit-log-table";
@@ -53,19 +54,14 @@ export default async function AuditLogsPage({
     <div>
       <header className="workspace-heading mb-6 flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-stone-800 mb-1">
-            Audit Logs
-          </h1>
+          <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Audit Logs" /></h1>
           <p className="text-sm text-stone-500">
-            {total} entries · last {days} days
-          </p>
+            {total}<InterfaceText source=" entries · last " />{days}<InterfaceText source=" days" /></p>
         </div>
         <Link
           href={`/api/audit-logs?days=${days}&format=csv`}
           className="px-4 py-2 bg-white border border-stone-200 text-stone-700 rounded-lg text-sm font-medium hover:border-amber-400"
-        >
-          Export CSV
-        </Link>
+        ><InterfaceText source="Export CSV" /></Link>
       </header>
 
       {/* Filters */}

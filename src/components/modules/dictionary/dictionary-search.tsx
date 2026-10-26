@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState, useEffect, useCallback } from "react";
 import { DictionaryCard } from "./dictionary-card";
@@ -57,7 +58,7 @@ export function DictionarySearch({
   return (
     <div>
       <div className="relative mb-8">
-        <input
+        <InterfaceInput
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -65,9 +66,7 @@ export function DictionarySearch({
           className="w-full px-6 py-4 text-lg border border-stone-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white shadow-xs"
         />
         {loading && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600">
-            Searching...
-          </span>
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-amber-600"><InterfaceText source="Searching..." /></span>
         )}
       </div>
 
@@ -75,8 +74,7 @@ export function DictionarySearch({
         <div className="text-center py-16 text-stone-400">
           <p className="text-lg">{emptyMessage}</p>
           {query && (
-            <p className="text-sm mt-2">
-              No results for &ldquo;{query}&rdquo;
+            <p className="text-sm mt-2"><InterfaceText source="No results for “" />{query}&rdquo;
             </p>
           )}
         </div>
@@ -93,7 +91,7 @@ export function DictionarySearch({
       )}
       {results.length < total && <div className="mt-8 text-center">
         <button type="button" onClick={() => search(query, page + 1)} disabled={loading} className="rounded-full border border-amber-800 px-5 py-3 text-sm font-semibold text-amber-900 disabled:opacity-50">
-          {loading ? "Loading..." : "Show more entries"}
+          <InterfaceText source={loading ? "Loading..." : "Show more entries"} />
         </button>
       </div>}
     </div>

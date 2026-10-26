@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 
 export function QuickActions() {
@@ -14,9 +15,7 @@ export function QuickActions() {
 
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Quick Actions
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Quick Actions" /></h3>
       <div className="grid grid-cols-2 gap-3">
         {actions.map((a) => (
           <Link

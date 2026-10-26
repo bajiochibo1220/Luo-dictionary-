@@ -20,6 +20,7 @@ exports.loader = function loader(mocks = {}) {
       if (Object.hasOwn(mocks, name)) return mocks[name];
       if (name.startsWith('@/') || name.startsWith('.')) {
         const base = name.startsWith('@/') ? path.resolve('src', name.slice(2)) : path.resolve(path.dirname(filename), name);
+        if (base.endsWith('.json') && fs.existsSync(base)) return require(base);
         for (const candidate of [base + '.ts', base + '.tsx', path.join(base, 'index.ts')]) if (fs.existsSync(candidate)) return load(candidate);
       }
       return require(name);

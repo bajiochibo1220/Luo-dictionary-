@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
@@ -52,8 +53,7 @@ export function DictionaryCard({
         <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="mt-3 max-h-48 w-full rounded-lg" />
       ) : null)}
       {entry.kiswahili && (
-        <p className="text-stone-400 text-sm mt-1">
-          Kiswahili: {entry.kiswahili}
+        <p className="text-stone-400 text-sm mt-1"><InterfaceText source="Kiswahili: " />{entry.kiswahili}
         </p>
       )}
       </Link>

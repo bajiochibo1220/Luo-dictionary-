@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { SemanticSearch } from "@/components/ai/semantic-search";
@@ -16,12 +17,8 @@ export default async function SearchPage({
   return (
     <div>
       <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-serif text-stone-800 mb-2">
-          Semantic Search
-        </h1>
-        <p className="text-stone-500">
-          Search by meaning, not just exact words — powered by AI
-        </p>
+        <h1 className="text-3xl md:text-4xl font-serif text-stone-800 mb-2"><InterfaceText source="Semantic Search" /></h1>
+        <p className="text-stone-500"><InterfaceText source="Search by meaning, not just exact words — powered by AI" /></p>
       </header>
 
       <SemanticSearch langCode={language.code} />

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -49,9 +50,8 @@ export default async function OralHistoriesPage({
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2">
           {pageTitle}
         </h1>
-        <p className="text-stone-500">
-          Stories from Luo elders · {records.length}{" "}
-          {records.length === 1 ? "story" : "stories"}
+        <p className="text-stone-500"><InterfaceText source="Stories from Luo elders · " />{records.length}{" "}
+          <InterfaceText source={records.length === 1 ? "story" : "stories"} />
         </p>
       </header>
 
@@ -70,10 +70,8 @@ export default async function OralHistoriesPage({
 
       {records.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg">No oral histories published yet</p>
-          <p className="text-sm mt-2">
-            Elders can contribute via the dashboard
-          </p>
+          <p className="text-lg"><InterfaceText source="No oral histories published yet" /></p>
+          <p className="text-sm mt-2"><InterfaceText source="Elders can contribute via the dashboard" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -41,9 +42,7 @@ export default async function ArtifactsPage({
         </h1>
         <p className="text-stone-500">
           {records.length}{" "}
-          {records.length === 1 ? "artifact" : "artifacts"} · Traditional
-          objects and their stories
-        </p>
+          <InterfaceText source={records.length === 1 ? "artifact" : "artifacts"} /><InterfaceText source=" · Traditional objects and their stories" /></p>
       </header>
 
       <ArtifactGrid artifacts={localizedRecords as any} langCode={language.code} />

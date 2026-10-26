@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -39,29 +40,21 @@ export default async function MySubmissionsPage() {
       </div>
 
       <header className="mb-6">
-        <h1 className="font-serif text-3xl text-stone-900 mb-1">
-          My Submissions
-        </h1>
+        <h1 className="font-serif text-3xl text-stone-900 mb-1"><InterfaceText source="My Submissions" /></h1>
         <p className="text-sm text-stone-800/70">
           {submissions.length}{" "}
-          {submissions.length === 1 ? "submission" : "submissions"}
+          <InterfaceText source={submissions.length === 1 ? "submission" : "submissions"} />
         </p>
       </header>
 
       {submissions.length === 0 ? (
         <div className="py-20 text-center max-w-xl mx-auto">
-          <p className="font-serif text-2xl text-stone-900 mb-3">
-            No submissions yet
-          </p>
-          <p className="text-sm text-stone-800/70 mb-6">
-            Start contributing to the cultural repository
-          </p>
+          <p className="font-serif text-2xl text-stone-900 mb-3"><InterfaceText source="No submissions yet" /></p>
+          <p className="text-sm text-stone-800/70 mb-6"><InterfaceText source="Start contributing to the cultural repository" /></p>
           <Link
             href="/contribute"
             className="inline-block bg-stone-900 text-amber-50 px-6 py-3 rounded-full text-sm font-semibold hover:bg-amber-900 transition shadow-md"
-          >
-            Contribute now
-          </Link>
+          ><InterfaceText source="Contribute now" /></Link>
         </div>
       ) : (
         <div className="space-y-3 max-w-3xl">
@@ -94,12 +87,10 @@ export default async function MySubmissionsPage() {
                 </span>
               </div>
 
-              {["draft", "needs_edit", "rejected", "curated"].includes(s.status) && <Link className="inline-block mt-3 text-amber-900 underline" href={`/my-submissions/${s.id}/edit`}>Edit / complete translations</Link>}
+              {["draft", "needs_edit", "rejected", "curated"].includes(s.status) && <Link className="inline-block mt-3 text-amber-900 underline" href={`/my-submissions/${s.id}/edit`}><InterfaceText source="Edit / complete translations" /></Link>}
               {s.reviews.length > 0 && s.reviews[0].comments && (
                 <div className="mt-3 pt-3 border-t border-stone-900/10">
-                  <p className="text-xs uppercase tracking-wider text-stone-800/60 mb-1 font-semibold">
-                    Reviewer feedback
-                  </p>
+                  <p className="text-xs uppercase tracking-wider text-stone-800/60 mb-1 font-semibold"><InterfaceText source="Reviewer feedback" /></p>
                   <p className="text-sm text-stone-800/80 italic">
                     &ldquo;{s.reviews[0].comments}&rdquo;
                   </p>

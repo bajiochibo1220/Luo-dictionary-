@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { NavigationLink as Link } from "@/components/layout/navigation-link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -12,7 +13,7 @@ export default async function ContributeHubPage() {
   const languageRoles = (user.languageRoles ?? []) as any[];
   const primaryRole = languageRoles[0];
   const language = await prisma.language.findFirst({ where: primaryRole ? { id: primaryRole.languageId, isActive: true } : { isActive: true }, orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }] });
-  if (!language) return <div className="p-10">No active language is available. Contact an administrator.</div>;
+  if (!language) return <div className="p-10"><InterfaceText source="No active language is available. Contact an administrator." /></div>;
   const languageId = language.id;
   const languageName = language.nativeName;
 
@@ -37,15 +38,9 @@ export default async function ContributeHubPage() {
 
       <header className="mb-8">
         <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-1">
-          {languageName} · Contribute
-        </p>
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-900 leading-tight mb-2">
-          What would you like to share?
-        </h2>
-        <p className="text-sm text-stone-800/70 max-w-2xl leading-relaxed">
-          Pick a module below. Your contribution will be reviewed and
-          published.
-        </p>
+          {languageName}<InterfaceText source=" · Contribute" /></p>
+        <h2 className="font-serif text-3xl md:text-4xl text-stone-900 leading-tight mb-2"><InterfaceText source="What would you like to share?" /></h2>
+        <p className="text-sm text-stone-800/70 max-w-2xl leading-relaxed"><InterfaceText source="Pick a module below. Your contribution will be reviewed and published." /></p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -64,7 +59,7 @@ export default async function ContributeHubPage() {
                   <span className="text-2xl">{iconFor(m.code)}</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-widest text-amber-900/60 font-semibold">
-                  {count} {count === 1 ? "entry" : "entries"}
+                  {count} <InterfaceText source={count === 1 ? "entry" : "entries"} />
                 </span>
               </div>
 
@@ -76,9 +71,7 @@ export default async function ContributeHubPage() {
               </p>
 
               <div className="flex items-center justify-between pt-3 border-t border-stone-900/10">
-                <span className="text-xs font-semibold text-amber-900">
-                  + Add contribution
-                </span>
+                <span className="text-xs font-semibold text-amber-900"><InterfaceText source="+ Add contribution" /></span>
                 <span className="w-8 h-8 rounded-full bg-black/5 group-hover:bg-amber-700 flex items-center justify-center text-stone-600 group-hover:text-white transition-all duration-300 group-hover:translate-x-1">
                   →
                 </span>

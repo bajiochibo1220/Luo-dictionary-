@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceOption, InterfaceText, InterfaceTextarea, useInterfaceLanguage } from "@/components/shared/interface-language";
 
 import { useEffect, useRef, useState } from "react";
 import { completeCollectionFields } from "@/lib/collection-fields";
@@ -53,7 +54,11 @@ export function ContentFormCore({
   existingMedia?: ExistingMedia[];
   deviceDraft?: { scope: string; initial?: DeviceContributionDraft; onChange: () => void };
 }) {
-  const fieldDefs = completeCollectionFields(moduleCode, configuredFields);
+  const { t, local: localInterface } = useInterfaceLanguage();
+  const fieldDefs = completeCollectionFields(moduleCode, configuredFields).map(field => {
+    const label = t(field.baseLabel, isTranslation ? false : localInterface);
+    return { ...field, label: label === field.baseLabel && localInterface && !isTranslation ? field.label : label };
+  });
   const local = deviceDraft?.initial;
   const [deviceId] = useState(() => local?.id || (deviceDraft ? globalThis.crypto.randomUUID() : ""));
   const [deviceSaving, setDeviceSaving] = useState(false);
@@ -111,8 +116,8 @@ export function ContentFormCore({
     try {
       const draft = snapshot(); await saveDeviceDraft(deviceDraft.scope, draft);
       setDeviceSavedAt(draft.updatedAt); deviceDraft.onChange();
-      toast.success("Saved on this device, including selected files. Nothing was submitted.");
-    } catch (reason) { toast.error(reason instanceof Error ? reason.message : "Device storage is unavailable."); }
+      toast.success(<InterfaceText source={"Saved on this device, including selected files. Nothing was submitted."} />);
+    } catch (reason) { toast.error(<InterfaceText source={reason instanceof Error ? reason.message : "Device storage is unavailable."} />); }
     finally { setDeviceSaving(false); }
   }
 
@@ -123,18 +128,18 @@ export function ContentFormCore({
   async function save(status: "draft" | "submitted") {
     if (loading || deviceSaving || isRecording) return;
     if (requiresSourcePermission && status === "submitted" && sourcePermission === "not_granted") {
-      toast.error("Keep this as a draft until permission is granted.");
+      toast.error(<InterfaceText source={"Keep this as a draft until permission is granted."} />);
       return;
     }
     // Validate required fields
     if (!title.trim()) {
-      toast.error("Title is required");
+      toast.error(<InterfaceText source={"Title is required"} />);
       return;
     }
 
     for (const f of fieldDefs) {
       if (status === "submitted" && !isTranslation && f.isRequired && !String(values[f.fieldCode] ?? "").trim()) {
-        toast.error(`${f.label} is required`);
+        toast.error(<InterfaceText source={`${f.label} is required`} />);
         return;
       }
     }
@@ -204,19 +209,19 @@ export function ContentFormCore({
       }
 
       toast.success(
-        isTranslation
+        <InterfaceText source={isTranslation
           ? "Translation saved"
           : isAdmin
-          ? recordId ? "Changes saved. Continue the item's review stage from the Content list." : "Draft saved. Send it to cultural review from the Content list when ready."
+          ? recordId ? "Changes saved. Check both language versions, then continue the review." : "Draft saved. Send it to cultural review from the Content list when ready."
           : status === "submitted"
           ? "Submitted for cultural review"
-          : "Saved as draft"
+          : "Saved as draft"} />
       );
 
       router.push(redirectTo);
       router.refresh();
     } catch (err: any) {
-      toast.error(err.message || "Failed to save");
+      toast.error(<InterfaceText source={err.message || "Failed to save"} />);
     } finally {
       setLoading(false);
     }
@@ -224,11 +229,11 @@ export function ContentFormCore({
 
   async function startAudioRecording() {
     if (sourcePermission !== "confirmed") {
-      toast.error("Confirm the speaker or knowledge holder has given permission before recording.");
+      toast.error(<InterfaceText source={"Confirm the speaker or knowledge holder has given permission before recording."} />);
       return;
     }
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
-      toast.error("Audio recording is not supported in this browser. You can upload an audio file instead.");
+      toast.error(<InterfaceText source={"Audio recording is not supported in this browser. You can upload an audio file instead."} />);
       return;
     }
     try {
@@ -249,7 +254,7 @@ export function ContentFormCore({
         streamRef.current = null;
         recorderRef.current = null;
         setIsRecording(false);
-        toast.success("Recording attached. Save a draft or submit it for review.");
+        toast.success(<InterfaceText source={"Recording attached. Save a draft or submit it for review."} />);
       };
       recorder.start();
       recorderRef.current = recorder;
@@ -257,7 +262,7 @@ export function ContentFormCore({
     } catch {
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
-      toast.error("Microphone access was unavailable. Check browser permission or upload an audio file.");
+      toast.error(<InterfaceText source={"Microphone access was unavailable. Check browser permission or upload an audio file."} />);
     }
   }
 
@@ -268,10 +273,9 @@ export function ContentFormCore({
   return (
     <form onSubmit={(event) => { event.preventDefault(); void save(isAdmin ? "draft" : "submitted"); }} className="bg-amber-50/95 backdrop-blur-sm rounded-2xl border border-stone-900/10 p-6 md:p-8 shadow-lg">
       <div className="mb-6">
-        <label htmlFor="contribution-title" className="block text-sm font-semibold text-stone-800 mb-1.5">
-          Title <span className="text-red-600">*</span>
+        <label htmlFor="contribution-title" className="block text-sm font-semibold text-stone-800 mb-1.5"><InterfaceText source="Title " /><span className="text-red-600">*</span>
         </label>
-        <input
+        <InterfaceInput
           id="contribution-title"
           type="text"
           value={title}
@@ -283,8 +287,8 @@ export function ContentFormCore({
 
       {!fieldDefs.some((field) => field.fieldCode === "description") && (
         <div className="mb-6">
-          <label className="mb-1.5 block text-sm font-semibold text-stone-800">Description</label>
-          <textarea
+          <label className="mb-1.5 block text-sm font-semibold text-stone-800"><InterfaceText source="Description" /></label>
+          <InterfaceTextarea
             value={values.description ?? ""}
             onChange={(event) => update("description", event.target.value)}
             rows={4}
@@ -320,10 +324,10 @@ export function ContentFormCore({
       ))}
 
       <section className="my-7 rounded-xl border border-stone-900/10 bg-white/60 p-4">
-        <h3 className="font-semibold text-stone-800">Media and transcripts</h3>
-        <p className="mb-4 mt-1 text-xs text-stone-600">Attached files stay with this item when you edit it. Choose a file only if you want to add another one.</p>
+        <h3 className="font-semibold text-stone-800"><InterfaceText source="Media and transcripts" /></h3>
+        <p className="mb-4 mt-1 text-xs text-stone-600"><InterfaceText source="Attached files stay with this item when you edit it. Choose a file only if you want to add another one." /></p>
         {existingMedia.length > 0 && <div className="mb-4 rounded-lg border border-stone-200 bg-white p-3">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500">Already attached ({existingMedia.length})</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500"><InterfaceText source="Already attached (" />{existingMedia.length})</p>
           <ul className="space-y-2">
             {existingMedia.map((asset) => <li key={asset.id} className="flex items-center justify-between gap-3 text-sm">
               <span className="min-w-0 truncate text-stone-700">{asset.caption || asset.type} · {asset.format}</span>
@@ -343,87 +347,72 @@ export function ContentFormCore({
         </div>
         {moduleCode === "oral_histories" && (
           <div className="mt-5 rounded-lg border border-stone-900/10 bg-white p-4">
-            <p className="text-sm font-semibold text-stone-900">Record an oral-history audio narration</p>
-            <p className="mt-1 text-xs leading-5 text-stone-700">Confirm permission first. The recording stays private until a reviewer checks the contribution and its access settings.</p>
+            <p className="text-sm font-semibold text-stone-900"><InterfaceText source="Record an oral-history audio narration" /></p>
+            <p className="mt-1 text-xs leading-5 text-stone-700"><InterfaceText source="Confirm permission first. The recording stays private until a reviewer checks the contribution and its access settings." /></p>
             <button type="button" onClick={isRecording ? stopAudioRecording : startAudioRecording} disabled={loading} className="mt-3 min-h-11 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">
-              {isRecording ? "Stop recording" : "Start recording"}
+              <InterfaceText source={isRecording ? "Stop recording" : "Start recording"} />
             </button>
-            {files.audio && <p className="mt-2 text-xs text-stone-700" role="status">Audio attached: {files.audio.name}</p>}
+            {files.audio && <p className="mt-2 text-xs text-stone-700" role="status"><InterfaceText source="Audio attached: " />{files.audio.name}</p>}
           </div>
         )}
       </section>
 
       {!isTranslation && <section className="my-7 rounded-xl border border-stone-900/10 bg-white/60 p-4">
-        <h3 className="font-semibold text-stone-800">Source and access</h3>
-        <p className="mb-4 mt-1 text-xs text-stone-600">{isElderContributor ? "If you are unsure, leave permission for a reviewer to check." : "Set the source permission and access here. If unsure, leave it for review."} Public release needs confirmed permission.</p>
+        <h3 className="font-semibold text-stone-800"><InterfaceText source="Source and access" /></h3>
+        <p className="mb-4 mt-1 text-xs text-stone-600"><InterfaceText source={isElderContributor ? "If you are unsure, leave permission for a reviewer to check." : "Set the source permission and access here. If unsure, leave it for review."} /><InterfaceText source=" Public release needs confirmed permission." /></p>
         <div className="grid gap-4 sm:grid-cols-2">
-          {requiresSourcePermission && <label className="text-sm font-medium text-stone-800">Source permission
-            <select value={sourcePermission} onChange={(event) => setSourcePermission(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
-              <option value="needs_review">Not sure yet / ask a reviewer</option>
-              <option value="confirmed">Permission confirmed</option>
-              <option value="not_granted">Permission not granted</option>
+          {requiresSourcePermission && <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source permission" /><select value={sourcePermission} onChange={(event) => setSourcePermission(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
+              <InterfaceOption value="needs_review">Not sure yet / ask a reviewer</InterfaceOption>
+              <InterfaceOption value="confirmed">Permission confirmed</InterfaceOption>
+              <InterfaceOption value="not_granted">Permission not granted</InterfaceOption>
             </select>
           </label>}
-          {requiresSourcePermission && <label className="text-sm font-medium text-stone-800">Source credit
-            <select value={attributionPreference} onChange={(event) => setAttributionPreference(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
-              <option value="ask_later">Decide with a reviewer</option>
-              <option value="name">Use the source&rsquo;s name (with permission)</option>
-              <option value="anonymous">Keep the source anonymous</option>
-              <option value="community">Credit the community</option>
+          {requiresSourcePermission && <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source credit" /><select value={attributionPreference} onChange={(event) => setAttributionPreference(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
+              <InterfaceOption value="ask_later">Decide with a reviewer</InterfaceOption>
+              <InterfaceOption value="name">Use the source&rsquo;s name (with permission)</InterfaceOption>
+              <InterfaceOption value="anonymous">Keep the source anonymous</InterfaceOption>
+              <InterfaceOption value="community">Credit the community</InterfaceOption>
             </select>
           </label>}
-          <label className="text-sm font-medium text-stone-800">Consent scope
-            <select value={governance.consentScope} onChange={(e) => setGovernance((v) => ({ ...v, consentScope: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
-              {CONSENT_CHOICES.map((choice) => <option key={choice} value={choice}>{choice.replaceAll("_", " ")}</option>)}
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="Consent scope" /><select value={governance.consentScope} onChange={(e) => setGovernance((v) => ({ ...v, consentScope: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
+              {CONSENT_CHOICES.map((choice) => <InterfaceOption key={choice} value={choice}>{choice.replaceAll("_", " ")}</InterfaceOption>)}
             </select>
           </label>
-          <label className="text-sm font-medium text-stone-800">Restriction level
-            <select value={governance.restrictionLevel} onChange={(e) => setGovernance((v) => ({ ...v, restrictionLevel: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
-              {RESTRICTION_CHOICES.map((choice) => <option key={choice} value={choice}>{choice}</option>)}
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="Restriction level" /><select value={governance.restrictionLevel} onChange={(e) => setGovernance((v) => ({ ...v, restrictionLevel: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2">
+              {RESTRICTION_CHOICES.map((choice) => <InterfaceOption key={choice} value={choice}>{choice}</InterfaceOption>)}
             </select>
           </label>
-          {governance.consentScope === "embargoed" && <label className="text-sm font-medium text-stone-800">Embargo ends
-            <input type="date" value={governance.embargoUntil} onChange={(e) => setGovernance((v) => ({ ...v, embargoUntil: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+          {governance.consentScope === "embargoed" && <label className="text-sm font-medium text-stone-800"><InterfaceText source="Embargo ends" /><input type="date" value={governance.embargoUntil} onChange={(e) => setGovernance((v) => ({ ...v, embargoUntil: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
           </label>}
         </div>
-        {sourcePermission === "not_granted" && <p className="mt-3 rounded-lg bg-amber-100 p-3 text-sm text-stone-900" role="status">Keep this as a draft. Do not submit or publish this material without permission. Ask a reviewer for guidance.</p>}
+        {sourcePermission === "not_granted" && <p className="mt-3 rounded-lg bg-amber-100 p-3 text-sm text-stone-900" role="status"><InterfaceText source="Keep this as a draft. Do not submit or publish this material without permission. Ask a reviewer for guidance." /></p>}
         <details className="mt-4 rounded-lg border border-stone-200 bg-white px-4 py-3">
-          <summary className="cursor-pointer text-sm font-medium text-stone-700">More collection details (optional)</summary>
+          <summary className="cursor-pointer text-sm font-medium text-stone-700"><InterfaceText source="More collection details (optional)" /></summary>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium text-stone-800">County code
-            <input value={governance.countyCode} onChange={(e) => setGovernance((v) => ({ ...v, countyCode: e.target.value }))} placeholder="HBY, KSM, SYA" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="County code" /><InterfaceInput value={governance.countyCode} onChange={(e) => setGovernance((v) => ({ ...v, countyCode: e.target.value }))} placeholder="HBY, KSM, SYA" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
           </label>
-          <label className="text-sm font-medium text-stone-800">Site
-            <input value={governance.siteName} onChange={(e) => setGovernance((v) => ({ ...v, siteName: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="Site" /><input value={governance.siteName} onChange={(e) => setGovernance((v) => ({ ...v, siteName: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
           </label>
-          <label className="text-sm font-medium text-stone-800">Source reference
-            <input value={governance.sourceReference} onChange={(e) => { const value = e.target.value; setGovernance((v) => ({ ...v, sourceReference: value })); setProvenance((v) => ({ ...v, sourceName: v.sourceName || value })); }} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source reference" /><input value={governance.sourceReference} onChange={(e) => { const value = e.target.value; setGovernance((v) => ({ ...v, sourceReference: value })); setProvenance((v) => ({ ...v, sourceName: v.sourceName || value })); }} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
           </label>
-          <label className="text-sm font-medium text-stone-800">Collection session ID
-            <input value={governance.sessionId} onChange={(e) => setGovernance((v) => ({ ...v, sessionId: e.target.value }))} placeholder="County-YYYYMMDD-SITE-001" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+          <label className="text-sm font-medium text-stone-800"><InterfaceText source="Collection session ID" /><InterfaceInput value={governance.sessionId} onChange={(e) => setGovernance((v) => ({ ...v, sessionId: e.target.value }))} placeholder="County-YYYYMMDD-SITE-001" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
           </label>
         </div>
         <div className="mt-5 border-t border-stone-900/10 pt-4">
-          <h4 className="text-sm font-semibold text-stone-800">Collection provenance</h4>
-          <p className="mb-3 mt-1 text-xs text-stone-600">Record the source and collection context when known. These details stay with the curated record.</p>
+          <h4 className="text-sm font-semibold text-stone-800"><InterfaceText source="Collection provenance" /></h4>
+          <p className="mb-3 mt-1 text-xs text-stone-600"><InterfaceText source="Record the source and collection context when known. These details stay with the curated record." /></p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-sm font-medium text-stone-800">Source type
-              <input value={provenance.sourceType} onChange={(e) => setProvenance((v) => ({ ...v, sourceType: e.target.value }))} placeholder="Interview, archive, field notes" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source type" /><InterfaceInput value={provenance.sourceType} onChange={(e) => setProvenance((v) => ({ ...v, sourceType: e.target.value }))} placeholder="Interview, archive, field notes" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
-            <label className="text-sm font-medium text-stone-800">Source name or identifier
-              <input value={provenance.sourceName} onChange={(e) => setProvenance((v) => ({ ...v, sourceName: e.target.value }))} placeholder="Collection or source reference" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source name or identifier" /><InterfaceInput value={provenance.sourceName} onChange={(e) => setProvenance((v) => ({ ...v, sourceName: e.target.value }))} placeholder="Collection or source reference" className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
-            <label className="text-sm font-medium text-stone-800">Collection date
-              <input type="date" value={provenance.sourceDate} onChange={(e) => setProvenance((v) => ({ ...v, sourceDate: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800"><InterfaceText source="Collection date" /><input type="date" value={provenance.sourceDate} onChange={(e) => setProvenance((v) => ({ ...v, sourceDate: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
-            <label className="text-sm font-medium text-stone-800">Collector
-              <input value={provenance.collector} onChange={(e) => setProvenance((v) => ({ ...v, collector: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800"><InterfaceText source="Collector" /><input value={provenance.collector} onChange={(e) => setProvenance((v) => ({ ...v, collector: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
-            <label className="text-sm font-medium text-stone-800">Source location
-              <input value={provenance.sourceLocation} onChange={(e) => setProvenance((v) => ({ ...v, sourceLocation: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800"><InterfaceText source="Source location" /><input value={provenance.sourceLocation} onChange={(e) => setProvenance((v) => ({ ...v, sourceLocation: e.target.value }))} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
-            <label className="text-sm font-medium text-stone-800 sm:col-span-2">Provenance notes
-              <textarea value={provenance.notes} onChange={(e) => setProvenance((v) => ({ ...v, notes: e.target.value }))} rows={3} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
+            <label className="text-sm font-medium text-stone-800 sm:col-span-2"><InterfaceText source="Provenance notes" /><textarea value={provenance.notes} onChange={(e) => setProvenance((v) => ({ ...v, notes: e.target.value }))} rows={3} className="mt-1 block w-full rounded-lg border border-stone-900/20 bg-white px-3 py-2" />
             </label>
           </div>
         </div>
@@ -431,11 +420,11 @@ export function ContentFormCore({
       </section>}
 
       {deviceDraft && <section className="my-5 rounded-xl border border-stone-300 bg-white p-4">
-        <h3 className="font-semibold">Work on this device</h3>
-        <p className="mt-2 text-sm">Save text and selected files before closing the app or going offline. Device copies use this browser or app profile; use a trusted device and remove copies when finished. Clearing app data removes them. Changes after a device save need another save.</p>
-        <button type="button" disabled={loading || deviceSaving || isRecording} onClick={() => void saveOnDevice()} className="mt-3 min-h-11 rounded-full border border-stone-400 px-5 py-2 disabled:opacity-50">{deviceSaving ? "Saving on device..." : "Save on this device"}</button>
-        {deviceSavedAt && <p role="status" className="mt-2 text-sm">Device copy saved {new Date(deviceSavedAt).toLocaleString()}.</p>}
-        {Object.entries(files).filter(([, file]) => file).map(([type, file]) => <p key={type} className="mt-2 text-sm">Selected {type}: {file!.name} ({Math.ceil(file!.size / 1024)} KB) <button type="button" className="min-h-11 px-3 underline" disabled={loading || deviceSaving} onClick={() => setFiles(current => ({ ...current, [type]: null }))}>Remove {type}</button></p>)}
+        <h3 className="font-semibold"><InterfaceText source="Work on this device" /></h3>
+        <p className="mt-2 text-sm"><InterfaceText source="Save text and selected files before closing the app or going offline. Device copies use this browser or app profile; use a trusted device and remove copies when finished. Clearing app data removes them. Changes after a device save need another save." /></p>
+        <button type="button" disabled={loading || deviceSaving || isRecording} onClick={() => void saveOnDevice()} className="mt-3 min-h-11 rounded-full border border-stone-400 px-5 py-2 disabled:opacity-50"><InterfaceText source={deviceSaving ? "Saving on device..." : "Save on this device"} /></button>
+        {deviceSavedAt && <p role="status" className="mt-2 text-sm"><InterfaceText source="Device copy saved " />{new Date(deviceSavedAt).toLocaleString()}.</p>}
+        {Object.entries(files).filter(([, file]) => file).map(([type, file]) => <p key={type} className="mt-2 text-sm"><InterfaceText source="Selected " />{type}: {file!.name} ({Math.ceil(file!.size / 1024)}<InterfaceText source=" KB) " /><button type="button" className="min-h-11 px-3 underline" disabled={loading || deviceSaving} onClick={() => setFiles(current => ({ ...current, [type]: null }))}><InterfaceText source="Remove " />{type}</button></p>)}
       </section>}
       <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-stone-900/10">
         {!isTranslation && !isAdmin && <button
@@ -444,7 +433,7 @@ export function ContentFormCore({
           disabled={loading || deviceSaving || isRecording}
           className="min-h-11 rounded-full border border-stone-900/25 bg-white/70 px-5 py-3 font-semibold text-stone-900 hover:bg-white disabled:opacity-50"
         >
-          {loading ? "Saving..." : "Save private draft"}
+          <InterfaceText source={loading ? "Saving..." : "Save private draft"} />
         </button>}
         <button
           type="submit"
@@ -456,7 +445,7 @@ export function ContentFormCore({
       </div>
 
       <p className="text-xs text-stone-800/60 mt-4 leading-relaxed">
-        {!isTranslation && <>Submitted work goes to cultural review. Requested corrections return to an editor. A publisher checks the reviewed item before any permitted public release.</>}
+        {!isTranslation && <><InterfaceText source="Submitted work goes to cultural review. Requested corrections return to an editor. A publisher checks the reviewed item before any permitted public release." /></>}
       </p>
     </form>
   );

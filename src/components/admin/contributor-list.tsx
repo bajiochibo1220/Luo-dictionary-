@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 export function ContributorList({
   contributors,
 }: {
@@ -5,14 +6,10 @@ export function ContributorList({
 }) {
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Recent Contributors
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Recent Contributors" /></h3>
 
       {contributors.length === 0 ? (
-        <p className="text-sm text-stone-400 py-4">
-          No contributions yet
-        </p>
+        <p className="text-sm text-stone-400 py-4"><InterfaceText source="No contributions yet" /></p>
       ) : (
         <ul className="space-y-3">
           {contributors.map((c, i) => (

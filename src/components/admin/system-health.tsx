@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 export function SystemHealth({
   database,
   storage,
@@ -25,9 +26,7 @@ export function SystemHealth({
 
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        System Health
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="System Health" /></h3>
       <ul className="space-y-3">
         {items.map((it) => (
           <li key={it.label} className="flex items-center justify-between text-sm">

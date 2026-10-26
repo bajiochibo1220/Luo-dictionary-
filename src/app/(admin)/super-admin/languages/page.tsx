@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
@@ -20,40 +21,25 @@ export default async function LanguagesPage() {
     <div>
       <header className="workspace-heading mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-serif text-stone-800 mb-1">
-            Languages
-          </h1>
+          <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Languages" /></h1>
           <p className="text-sm text-stone-500">
-            {languages.length} {languages.length === 1 ? "language" : "languages"} · {stats.filter((l) => l.isActive).length} active
-          </p>
+            {languages.length} <InterfaceText source={languages.length === 1 ? "language" : "languages"} /> · {stats.filter((l) => l.isActive).length}<InterfaceText source=" active" /></p>
         </div>
         <Link
           href="/super-admin/languages/new"
           className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium"
-        >
-          + Add Language
-        </Link>
+        ><InterfaceText source="+ Add Language" /></Link>
       </header>
 
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-200">
             <tr>
-              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                Language
-              </th>
-              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                Records
-              </th>
-              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                Users
-              </th>
-              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                Status
-              </th>
-              <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                Actions
-              </th>
+              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Language" /></th>
+              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Records" /></th>
+              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Users" /></th>
+              <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Status" /></th>
+              <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Actions" /></th>
             </tr>
           </thead>
           <tbody>
@@ -86,22 +72,16 @@ export default async function LanguagesPage() {
                 </td>
                 <td className="px-4 py-3">
                   {l.isActive ? (
-                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                      Active
-                    </span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700"><InterfaceText source="Active" /></span>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-stone-100 text-stone-500">
-                      Inactive
-                    </span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-stone-100 text-stone-500"><InterfaceText source="Inactive" /></span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <Link
                     href={`/super-admin/languages/${l.id}`}
                     className="text-xs text-amber-600 hover:underline"
-                  >
-                    Manage →
-                  </Link>
+                  ><InterfaceText source="Manage →" /></Link>
                 </td>
               </tr>
             ))}

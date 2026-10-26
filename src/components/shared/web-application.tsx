@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 import { useEffect, useMemo, useState } from "react";
 import { signOut } from "next-auth/react";
 import { SharedApplication } from "./application";
@@ -69,5 +70,5 @@ export function WebApplication() {
     setOrigin(location.origin);
     if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") void navigator.serviceWorker.register(`/application-sw.js?v=${encodeURIComponent(process.env.NEXT_PUBLIC_APP_VERSION || "1")}`, { scope: "/application" }).catch(() => {});
   }, []);
-  return origin ? <ReadyApplication origin={origin} /> : <p role="status" className="p-8">Opening Luo Heritage…</p>;
+  return origin ? <ReadyApplication origin={origin} /> : <p role="status" className="p-8"><InterfaceText source="Opening Luo Heritage…" /></p>;
 }

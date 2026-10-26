@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -66,7 +67,7 @@ export default async function DictionaryPage({
           {pageTitle}
         </h1>
         <p className="text-stone-500">
-          {publicEntries.length} {publicEntries.length === 1 ? "entry" : "entries"}
+          {publicEntries.length} <InterfaceText source={publicEntries.length === 1 ? "entry" : "entries"} />
         </p>
       </header>
 

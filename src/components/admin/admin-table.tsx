@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -37,10 +38,10 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed");
-      toast.success("Admin roles revoked");
+      toast.success(<InterfaceText source={"Admin roles revoked"} />);
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Failed");
+      toast.error(<InterfaceText source={e.message || "Failed"} />);
     } finally {
       setBusy(null);
     }
@@ -57,10 +58,10 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed");
-      toast.success(nextStatus === "active" ? "Account activated" : "Account deactivated");
+      toast.success(<InterfaceText source={nextStatus === "active" ? "Account activated" : "Account deactivated"} />);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "Failed");
+      toast.error(<InterfaceText source={error.message || "Failed"} />);
     } finally {
       setBusy(null);
     }
@@ -68,9 +69,7 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
 
   if (admins.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
-        No administrators yet
-      </div>
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400"><InterfaceText source="No administrators yet" /></div>
     );
   }
 
@@ -79,18 +78,10 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
       <table className="w-full text-sm">
         <thead className="bg-stone-50 border-b border-stone-200">
           <tr>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              User
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Roles
-            </th>
-            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Status
-            </th>
-            <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium">
-              Actions
-            </th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="User" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Roles" /></th>
+            <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Status" /></th>
+            <th className="text-right px-4 py-3 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Actions" /></th>
           </tr>
         </thead>
         <tbody>
@@ -102,11 +93,9 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
               </td>
               <td className="px-4 py-3">
                 {a.isSuperAdmin && (
-                  <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 mr-1 mb-1">
-                    Super Admin
-                  </span>
+                  <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 mr-1 mb-1"><InterfaceText source="Super Admin" /></span>
                 )}
-                {a.isMasterSuperAdmin && <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 mr-1 mb-1">Master</span>}
+                {a.isMasterSuperAdmin && <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 mr-1 mb-1"><InterfaceText source="Master" /></span>}
                 {a.languageRoles.map((r) => (
                   <span
                     key={r.id}
@@ -133,14 +122,14 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
               <td className="px-4 py-3 text-right">
                 {isMasterSuperAdmin && !a.isMasterSuperAdmin && <div className="flex justify-end gap-3">
                 <button onClick={() => setStatus(a)} disabled={busy === a.id} className="text-xs text-amber-700 hover:underline disabled:opacity-50">
-                  {a.status === "suspended" ? "Activate" : "Deactivate"}
+                  <InterfaceText source={a.status === "suspended" ? "Activate" : "Deactivate"} />
                 </button>
                 <button
                   onClick={() => revoke(a.id, a.email)}
                   disabled={busy === a.id}
                   className="text-xs text-red-600 hover:underline disabled:opacity-50"
                 >
-                  {busy === a.id ? "..." : "Revoke"}
+                  <InterfaceText source={busy === a.id ? "..." : "Revoke"} />
                 </button></div>}
               </td>
             </tr>

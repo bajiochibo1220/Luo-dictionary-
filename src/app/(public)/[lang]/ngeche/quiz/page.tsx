@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -33,10 +34,8 @@ export default async function RiddleQuizPage({
   return (
     <div>
       <header className="mb-8 text-center">
-        <h1 className="text-3xl font-serif text-stone-800 mb-2">
-          Riddle Quiz
-        </h1>
-        <p className="text-stone-500">Test your knowledge</p>
+        <h1 className="text-3xl font-serif text-stone-800 mb-2"><InterfaceText source="Riddle Quiz" /></h1>
+        <p className="text-stone-500"><InterfaceText source="Test your knowledge" /></p>
       </header>
 
       <RiddleQuiz riddles={shuffled as any} langCode={language.code} />

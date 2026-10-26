@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -39,9 +40,7 @@ export function RiddleCard({
         ) : item.type === "audio" ? (
           <audio key={item.id} src={item.url} controls className="my-3 w-full" />
         ) : null)}
-        <p className="text-xs uppercase tracking-wider text-amber-600 mb-3">
-          Riddle
-        </p>
+        <p className="text-xs uppercase tracking-wider text-amber-600 mb-3"><InterfaceText source="Riddle" /></p>
         <p className="text-xl md:text-2xl font-serif text-stone-800 mb-2 leading-snug">
           {d.question}
         </p>
@@ -53,14 +52,12 @@ export function RiddleCard({
           onClick={() => setRevealed(!revealed)}
           className="mt-4 w-full py-3 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-sm uppercase tracking-wider font-medium transition"
         >
-          {revealed ? "Hide Answer" : "Reveal Answer"}
+          <InterfaceText source={revealed ? "Hide Answer" : "Reveal Answer"} />
         </button>
 
         {revealed && (
           <div className="mt-4 p-4 bg-linear-to-br from-amber-50 to-stone-50 rounded-lg border border-amber-100 animate-in fade-in slide-in-from-top-2">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-              Answer
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Answer" /></p>
             <p className="text-2xl font-serif text-amber-700 mb-1">
               {d.answer}
             </p>
@@ -75,9 +72,7 @@ export function RiddleCard({
       <Link
         href={`/${langCode}/ngeche/${riddle.id}`}
         className="block px-6 py-3 bg-stone-50 text-xs uppercase tracking-wider text-stone-500 hover:bg-amber-50 hover:text-amber-700 transition border-t border-stone-100"
-      >
-        Full details →
-      </Link>
+      ><InterfaceText source="Full details →" /></Link>
     </div>
   );
 }

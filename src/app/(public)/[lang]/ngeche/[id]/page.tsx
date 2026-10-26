@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -25,16 +26,12 @@ export default async function RiddleDetailPage({
       <Link
         href={`/${language.code}/ngeche`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Riddles
-      </Link>
+      ><InterfaceText source="← Back to Riddles" /></Link>
 
       <div className="bg-white rounded-2xl shadow-xs border border-stone-100 p-8 md:p-12">
         <EnglishVersionLink langCode={language.code} href={`/${language.code}/ngeche/${record.id}`} />
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-            Riddle
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Riddle" /></p>
           <p className="text-3xl font-serif text-stone-800 leading-snug mb-3">
             {d.question}
           </p>
@@ -44,9 +41,7 @@ export default async function RiddleDetailPage({
         </div>
 
         <div className="mb-8 pb-8 border-b border-stone-100">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            Answer
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Answer" /></p>
           <p className="text-3xl font-serif text-amber-700 mb-1">
             {d.answer}
           </p>
@@ -57,25 +52,21 @@ export default async function RiddleDetailPage({
 
         {d.context && (
           <div>
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-              Context
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Context" /></p>
             <p className="text-stone-700">{d.context}</p>
           </div>
         )}
 
         {d.explanation && (
           <div className="mt-6">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">Explanation</p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Explanation" /></p>
             <p className="text-stone-700">{d.explanation}</p>
           </div>
         )}
 
         {record.tags.length > 0 && (
           <div className="mt-6">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-              Themes
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Themes" /></p>
             <div className="flex flex-wrap gap-2">
               {record.tags.map((t) => (
                 <span
@@ -94,9 +85,7 @@ export default async function RiddleDetailPage({
         <Link
           href={`/${language.code}/ngeche/quiz`}
           className="inline-block px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm uppercase tracking-wider font-medium"
-        >
-          Play Quiz
-        </Link>
+        ><InterfaceText source="Play Quiz" /></Link>
       </div>
     </div>
   );

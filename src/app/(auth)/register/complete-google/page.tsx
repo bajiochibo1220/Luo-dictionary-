@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { GoogleProfileForm } from "@/components/forms/google-profile-form";
@@ -11,8 +12,8 @@ export default async function CompleteGoogleRegistrationPage() {
 
   return (
     <div>
-      <h1 className="mb-2 font-serif text-3xl text-stone-900">Finish creating your account</h1>
-      <p className="mb-6 text-sm text-stone-600">Add a few details to complete your sign-up.</p>
+      <h1 className="mb-2 font-serif text-3xl text-stone-900"><InterfaceText source="Finish creating your account" /></h1>
+      <p className="mb-6 text-sm text-stone-600"><InterfaceText source="Add a few details to complete your sign-up." /></p>
       <GoogleProfileForm initialName={session.user.name ?? ""} nativeReturn={nativeReturn} />
     </div>
   );

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useMemo, useState, useEffect } from "react";
 
@@ -62,7 +63,7 @@ export function DateOfBirthPicker({
   return (
     <div>
       <label className="block text-sm font-medium text-stone-700 mb-2">
-        {label}
+        <InterfaceText source={label} />
       </label>
       <div className="grid grid-cols-3 gap-2">
         {/* Day */}
@@ -73,11 +74,11 @@ export function DateOfBirthPicker({
           }
           className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
-          <option value="">Day</option>
+          <InterfaceOption value="">Day</InterfaceOption>
           {days.map((d) => (
-            <option key={d} value={d}>
+            <InterfaceOption key={d} value={d}>
               {d}
-            </option>
+            </InterfaceOption>
           ))}
         </select>
 
@@ -92,11 +93,11 @@ export function DateOfBirthPicker({
           }
           className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
-          <option value="">Month</option>
+          <InterfaceOption value="">Month</InterfaceOption>
           {MONTHS.map((m, i) => (
-            <option key={m} value={i + 1}>
+            <InterfaceOption key={m} value={i + 1}>
               {m}
-            </option>
+            </InterfaceOption>
           ))}
         </select>
 
@@ -111,17 +112,17 @@ export function DateOfBirthPicker({
           }
           className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
-          <option value="">Year</option>
+          <InterfaceOption value="">Year</InterfaceOption>
           {years.map((y) => (
-            <option key={y} value={y}>
+            <InterfaceOption key={y} value={y}>
               {y}
-            </option>
+            </InterfaceOption>
           ))}
         </select>
       </div>
 
       {helpText && (
-        <p className="text-xs text-stone-500 mt-2 leading-relaxed">{helpText}</p>
+        <p className="text-xs text-stone-500 mt-2 leading-relaxed"><InterfaceText source={helpText} /></p>
       )}
     </div>
   );

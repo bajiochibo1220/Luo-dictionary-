@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -42,7 +43,7 @@ export function RiddleGrid({
   return (
     <div>
       <div className="mb-8 flex flex-col md:flex-row gap-4">
-        <input
+        <InterfaceInput
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -52,18 +53,16 @@ export function RiddleGrid({
         <Link
           href={`/${langCode}/ngeche/quiz`}
           className="inline-flex items-center justify-center px-6 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm uppercase tracking-wider font-medium transition"
-        >
-          Play Quiz
-        </Link>
+        ><InterfaceText source="Play Quiz" /></Link>
       </div>
 
       {loading && (
-        <p className="text-sm text-amber-600 mb-4 text-center">Loading...</p>
+        <p className="text-sm text-amber-600 mb-4 text-center"><InterfaceText source="Loading..." /></p>
       )}
 
       {riddles.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg">No riddles found</p>
+          <p className="text-lg"><InterfaceText source="No riddles found" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

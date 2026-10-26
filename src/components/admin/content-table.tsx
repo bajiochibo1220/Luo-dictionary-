@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -74,10 +75,10 @@ export function ContentTable({
       const response = await fetch(`/api/content/${id}/${endpoint}`, { method: "POST" });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "The action failed.");
-      toast.success(endpoint === "send-to-final-review" ? "Sent back to cultural review" : successMessage);
+      toast.success(<InterfaceText source={endpoint === "send-to-final-review" ? "Sent back to cultural review" : successMessage} />);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "The action failed.");
+      toast.error(<InterfaceText source={error.message || "The action failed."} />);
     } finally {
       setBusy(null);
     }
@@ -85,7 +86,7 @@ export function ContentTable({
 
   async function deleteSelected() {
     if (!selected.length || !selectedRecords.every((record) => record.canDelete)) return;
-    if (!confirm(`Delete ${selected.length} selected items permanently?`)) return;
+    if (!confirm(`Delete ${selected.length} selected uploads? Their content and history will be preserved in the audit log.`)) return;
     setBulkBusy(true);
     try {
       const response = await fetch("/api/content/bulk-delete", {
@@ -95,11 +96,11 @@ export function ContentTable({
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "Could not delete the selected items.");
-      toast.success(`Deleted ${selected.length} items`);
+      toast.success(<InterfaceText source={`Deleted ${selected.length} items`} />);
       setSelected([]);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "Could not delete the selected items.");
+      toast.error(<InterfaceText source={error.message || "Could not delete the selected items."} />);
     } finally {
       setBulkBusy(false);
     }
@@ -117,7 +118,7 @@ export function ContentTable({
         });
         const result = await response.json();
         if (!response.ok || !result.success) throw new Error(result.error || "Could not approve these items.");
-        toast.success(`Culturally approved ${result.count} items`);
+        toast.success(<InterfaceText source={`Culturally approved ${result.count} items`} />);
       } else if (["draft", "rejected", "curated"].includes(selectedStage)) {
         const response = await fetch("/api/content/bulk-submit", {
           method: "POST",
@@ -126,7 +127,7 @@ export function ContentTable({
         });
         const result = await readApiResponse(response);
         if (!response.ok || !result.success) throw new Error(result.error || "Could not send these items to cultural review.");
-        toast.success(`Sent ${result.count} items to cultural review`);
+        toast.success(<InterfaceText source={`Sent ${result.count} items to cultural review`} />);
       } else if (selectedStage === "under_review") {
         const response = await fetch("/api/content/bulk-publish", {
           method: "POST",
@@ -135,7 +136,7 @@ export function ContentTable({
         });
         const result = await response.json();
         if (!response.ok || !result.success) throw new Error(result.error || "Could not publish these items.");
-        toast.success(`Published ${result.count} items`);
+        toast.success(<InterfaceText source={`Published ${result.count} items`} />);
       } else if (selectedStage === "needs_edit") {
         let completed = 0;
         for (const id of selected) {
@@ -144,14 +145,14 @@ export function ContentTable({
           if (!response.ok || !result.success) throw new Error(`${completed} sent; ${result.error || "one item could not be sent"}`);
           completed += 1;
         }
-        toast.success(`Sent ${completed} items back to cultural review`);
+        toast.success(<InterfaceText source={`Sent ${completed} items back to cultural review`} />);
       } else {
         throw new Error("Select items at the same workflow stage.");
       }
       setSelected([]);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "Could not move the selected items.");
+      toast.error(<InterfaceText source={error.message || "Could not move the selected items."} />);
       router.refresh();
     } finally {
       setBulkBusy(false);
@@ -159,7 +160,7 @@ export function ContentTable({
   }
 
   if (records.length === 0) {
-    return <div className="rounded-xl border border-stone-100 bg-white p-12 text-center text-stone-500">No content found in this selection.</div>;
+    return <div className="rounded-xl border border-stone-100 bg-white p-12 text-center text-stone-500"><InterfaceText source="No content found in this selection." /></div>;
   }
 
   const canSelect = canDelete || canBulkWorkflow;
@@ -167,14 +168,15 @@ export function ContentTable({
     <div className="overflow-hidden rounded-xl border border-stone-100 bg-white shadow-xs">
       {canSelect && <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-4 py-3">
         <label className="flex items-center gap-2 text-sm text-stone-600">
-          <input type="checkbox" checked={selected.length === records.length} onChange={(event) => setSelected(event.target.checked ? records.map((record) => record.id) : [])} aria-label="Select all visible content" />
-          {selected.length ? `${selected.length} selected` : "Select items"}
+          <InterfaceInput type="checkbox" disabled={bulkBusy} checked={selected.length > 0 && records.slice(0, 100).every(record => selected.includes(record.id))} onChange={(event) => setSelected(event.target.checked ? records.slice(0, 100).map((record) => record.id) : [])} aria-label="Select all visible content" />
+          {selected.length ? `${selected.length} selected` : "Select up to 100 items"}
         </label>
+        {canDelete && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canDelete).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border px-3 text-sm disabled:opacity-50"><InterfaceText source="Select deletable uploads" /></button>}
         {selected.length > 0 && <div className="flex flex-wrap gap-2">
           {canBulkWorkflow && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
           {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve editor review" : "Send selected to cultural review"}
           </button>}
-          {canDelete && selectedRecords.every((record) => record.canDelete) && <button type="button" onClick={() => void deleteSelected()} disabled={bulkBusy} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50">Delete selected</button>}
+          {canDelete && selectedRecords.every((record) => record.canDelete) && <button type="button" onClick={() => void deleteSelected()} disabled={bulkBusy} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50"><InterfaceText source="Delete selected" /></button>}
         </div>}
       </div>}
       <div className="w-full overflow-x-auto overscroll-x-contain">
@@ -182,38 +184,38 @@ export function ContentTable({
           <thead className="border-b border-stone-200 bg-stone-50">
             <tr>
               {canSelect && <th className="w-10 px-3 py-3" aria-label="Select" />}
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500">Title</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500">Module</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500">Language</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500">Status</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-stone-500">Next step</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500"><InterfaceText source="Title" /></th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500"><InterfaceText source="Module" /></th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500"><InterfaceText source="Language" /></th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-stone-500"><InterfaceText source="Status" /></th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-stone-500"><InterfaceText source="Next step" /></th>
             </tr>
           </thead>
           <tbody>
             {records.map((record) => (
               <tr key={record.id} className="border-b border-stone-100 transition hover:bg-stone-50">
-                {canSelect && <td className="px-3 py-3"><input type="checkbox" checked={selected.includes(record.id)} onChange={(event) => setSelected((current) => event.target.checked ? [...current, record.id] : current.filter((id) => id !== record.id))} aria-label={`Select ${record.title}`} /></td>}
+                {canSelect && <td className="px-3 py-3"><input type="checkbox" disabled={bulkBusy || selected.length >= 100 && !selected.includes(record.id)} checked={selected.includes(record.id)} onChange={(event) => setSelected((current) => event.target.checked ? [...current, record.id] : current.filter((id) => id !== record.id))} aria-label={`Select ${record.title}`} /></td>}
                 <td className="px-4 py-3">{record.canEdit ? <Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="font-medium text-stone-800 hover:text-amber-700">{record.title}</Link> : <span className="font-medium text-stone-800">{record.title}</span>}</td>
                 <td className="px-4 py-3 text-stone-600">{record.module.baseName}</td>
                 <td className="px-4 py-3 text-stone-600">{record.language.nativeName}</td>
                 <td className="px-4 py-3"><span className={`inline-block rounded-full px-2 py-1 text-xs ${STATUS_STYLES[record.status] || STATUS_STYLES.draft}`}>{record.status.replaceAll("_", " ")}</span></td>
                 <td className="space-x-3 px-4 py-3 text-right">
-                  {(record.status === "submitted" || (record.status === "under_review" && !record.validatorId)) && record.canCultureReview && <Link href={`/admin/validation-queue/${record.id}`} className="text-xs font-medium text-amber-700 hover:underline">Assess authenticity</Link>}
-                  {record.status === "needs_edit" && record.canEdit && <><Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="text-xs text-stone-600 hover:underline">Edit</Link>{record.canForward && <button type="button" onClick={() => void action(record.id, "send-to-final-review", "Sent back to cultural review")} disabled={busy === record.id} className="text-xs font-medium text-amber-700 hover:underline disabled:opacity-50">Send to cultural review</button>}</>}
-                  {record.englishLanguageId && record.englishLanguageId !== record.editLanguageId && (record.canModerate || record.canEdit) && ["draft", "needs_edit", "rejected", "curated"].includes(record.status) && <Link href={`/admin/content/${record.id}/edit?languageId=${record.englishLanguageId}`} className="text-xs text-blue-700 hover:underline">English version</Link>}
-                  {record.status === "under_review" && record.canFinalReview && <Link href={`/admin/review-queue/${record.id}`} className="text-xs font-medium text-green-700 hover:underline">Final review</Link>}
-                  {record.canModerate && ["draft", "rejected", "curated"].includes(record.status) && <button type="button" onClick={() => void action(record.id, "submit", "Sent to cultural review")} disabled={busy === record.id} className="text-xs font-medium text-amber-700 hover:underline disabled:opacity-50">Send to cultural review</button>}
+                  {(record.status === "submitted" || (record.status === "under_review" && !record.validatorId)) && record.canCultureReview && <Link href={`/admin/validation-queue/${record.id}`} className="text-xs font-medium text-amber-700 hover:underline"><InterfaceText source="Assess authenticity" /></Link>}
+                  {record.status === "needs_edit" && record.canEdit && <><Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="text-xs text-stone-600 hover:underline"><InterfaceText source="Edit" /></Link>{record.canForward && <button type="button" onClick={() => void action(record.id, "send-to-final-review", "Sent back to cultural review")} disabled={busy === record.id} className="text-xs font-medium text-amber-700 hover:underline disabled:opacity-50"><InterfaceText source="Send to cultural review" /></button>}</>}
+                  {record.englishLanguageId && record.englishLanguageId !== record.editLanguageId && (record.canModerate || record.canEdit) && ["draft", "needs_edit", "rejected", "curated"].includes(record.status) && <Link href={`/admin/content/${record.id}/edit?languageId=${record.englishLanguageId}`} className="text-xs text-blue-700 hover:underline"><InterfaceText source="English version" /></Link>}
+                  {record.status === "under_review" && record.canFinalReview && <Link href={`/admin/review-queue/${record.id}`} className="text-xs font-medium text-green-700 hover:underline"><InterfaceText source="Final review" /></Link>}
+                  {record.canModerate && ["draft", "rejected", "curated"].includes(record.status) && <button type="button" onClick={() => void action(record.id, "submit", "Sent to cultural review")} disabled={busy === record.id} className="text-xs font-medium text-amber-700 hover:underline disabled:opacity-50"><InterfaceText source="Send to cultural review" /></button>}
                   {record.canDelete && <button type="button" onClick={async () => {
                     if (!confirm("Delete this item permanently?")) return;
                     setBusy(record.id);
                     try {
                       const response = await fetch(`/api/content/${record.id}`, { method: "DELETE" });
                       if (!response.ok) throw new Error("Could not delete this item.");
-                      toast.success("Deleted");
+                      toast.success(<InterfaceText source={"Deleted"} />);
                       router.refresh();
-                    } catch (error: any) { toast.error(error.message || "Could not delete this item."); }
+                    } catch (error: any) { toast.error(<InterfaceText source={error.message || "Could not delete this item."} />); }
                     finally { setBusy(null); }
-                  }} disabled={busy === record.id} className="text-xs text-stone-400 hover:text-red-600">Delete</button>}
+                  }} disabled={busy === record.id} className="text-xs text-stone-400 hover:text-red-600"><InterfaceText source="Delete" /></button>}
                 </td>
               </tr>
             ))}

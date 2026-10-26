@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceInput, InterfaceText, InterfaceTextarea } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,12 +40,12 @@ export function ContributeModal({
 
   async function handleSubmit(status: "draft" | "submitted") {
     if (!title.trim()) {
-      toast.error("Please add a title");
+      toast.error(<InterfaceText source={"Please add a title"} />);
       return;
     }
 
     if (status === "submitted" && !file && !transcript.trim() && !description.trim()) {
-      toast.error("Add a file, transcript, or description before submitting");
+      toast.error(<InterfaceText source={"Add a file, transcript, or description before submitting"} />);
       return;
     }
 
@@ -89,15 +90,15 @@ export function ContributeModal({
       }
 
       toast.success(
-        status === "submitted"
+        <InterfaceText source={status === "submitted"
           ? "Submitted for cultural review"
-          : "Saved as draft"
+          : "Saved as draft"} />
       );
 
       router.refresh();
       onClose();
     } catch (err: any) {
-      toast.error(err.message || "Failed to save");
+      toast.error(<InterfaceText source={err.message || "Failed to save"} />);
     } finally {
       setUploading(false);
     }
@@ -107,19 +108,15 @@ export function ContributeModal({
     return (
       <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div className="bg-amber-50 rounded-2xl shadow-2xl max-w-lg w-full p-6">
-          <p className="text-xs uppercase tracking-widest text-stone-600 font-semibold mb-2">Structured contribution</p>
-          <h2 className="font-serif text-2xl text-stone-900 mb-3">Add to {moduleName}</h2>
-          <p className="text-sm text-stone-700 leading-relaxed mb-6">
-            This collection needs specific language and cultural details. The contribution form will guide you through the required fields and consent choices.
-          </p>
+          <p className="text-xs uppercase tracking-widest text-stone-600 font-semibold mb-2"><InterfaceText source="Structured contribution" /></p>
+          <h2 className="font-serif text-2xl text-stone-900 mb-3"><InterfaceText source="Add to " />{moduleName}</h2>
+          <p className="text-sm text-stone-700 leading-relaxed mb-6"><InterfaceText source="This collection needs specific language and cultural details. The contribution form will guide you through the required fields and consent choices." /></p>
           <div className="flex justify-end gap-3">
-            <button onClick={onClose} className="px-4 py-2 rounded-full border border-stone-900/20 text-stone-800">Cancel</button>
+            <button onClick={onClose} className="px-4 py-2 rounded-full border border-stone-900/20 text-stone-800"><InterfaceText source="Cancel" /></button>
             <button
               onClick={() => { onClose(); router.push(`/contribute/${moduleCode}`); }}
               className="px-5 py-2 rounded-full bg-stone-900 text-amber-50 font-semibold"
-            >
-              Open contribution form
-            </button>
+            ><InterfaceText source="Open contribution form" /></button>
           </div>
         </div>
       </div>
@@ -132,12 +129,9 @@ export function ContributeModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-900/15 bg-[#a9895a]">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-stone-800/60">
-              Contribute to {moduleName}
+            <p className="text-[10px] uppercase tracking-widest text-stone-800/60"><InterfaceText source="Contribute to " />{moduleName}
             </p>
-            <h2 className="font-serif text-xl text-stone-900">
-              Share your knowledge
-            </h2>
+            <h2 className="font-serif text-xl text-stone-900"><InterfaceText source="Share your knowledge" /></h2>
           </div>
           <button
             onClick={onClose}
@@ -151,9 +145,7 @@ export function ContributeModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Media type picker */}
           <div>
-            <label className="block text-sm font-semibold text-stone-800 mb-2">
-              What are you contributing?
-            </label>
+            <label className="block text-sm font-semibold text-stone-800 mb-2"><InterfaceText source="What are you contributing?" /></label>
             <div className="grid grid-cols-5 gap-2">
               {MEDIA_TYPES.map((m) => (
                 <button
@@ -177,10 +169,9 @@ export function ContributeModal({
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-semibold text-stone-800 mb-1.5">
-              Title <span className="text-red-600">*</span>
+            <label className="block text-sm font-semibold text-stone-800 mb-1.5"><InterfaceText source="Title " /><span className="text-red-600">*</span>
             </label>
-            <input
+            <InterfaceInput
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -195,8 +186,7 @@ export function ContributeModal({
             mediaType === "video") && (
             <div>
               <label className="block text-sm font-semibold text-stone-800 mb-1.5">
-                {MEDIA_TYPES.find((m) => m.key === mediaType)?.label} file
-              </label>
+                {MEDIA_TYPES.find((m) => m.key === mediaType)?.label}<InterfaceText source=" file" /></label>
               <input
                 type="file"
                 accept={MEDIA_TYPES.find((m) => m.key === mediaType)?.accept}
@@ -205,8 +195,7 @@ export function ContributeModal({
               />
               {file && (
                 <p className="text-xs text-stone-800/70 mt-2">
-                  {file.name} · {(file.size / 1024).toFixed(1)} KB
-                </p>
+                  {file.name} · {(file.size / 1024).toFixed(1)}<InterfaceText source=" KB" /></p>
               )}
             </div>
           )}
@@ -215,9 +204,9 @@ export function ContributeModal({
           {(mediaType === "transcript" || mediaType === "text") && (
             <div>
               <label className="block text-sm font-semibold text-stone-800 mb-1.5">
-                {mediaType === "transcript" ? "Transcript text" : "Text"}
+                <InterfaceText source={mediaType === "transcript" ? "Transcript text" : "Text"} />
               </label>
-              <textarea
+              <InterfaceTextarea
                 value={transcript}
                 onChange={(e) => setTranscript(e.target.value)}
                 rows={8}
@@ -229,10 +218,8 @@ export function ContributeModal({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-stone-800 mb-1.5">
-              Description / context
-            </label>
-            <textarea
+            <label className="block text-sm font-semibold text-stone-800 mb-1.5"><InterfaceText source="Description / context" /></label>
+            <InterfaceTextarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -241,11 +228,7 @@ export function ContributeModal({
             />
           </div>
 
-          <p className="text-xs text-stone-800/70 leading-relaxed">
-            Your name, age, and account details are recorded with this
-            submission. Moderators use your age to help judge the
-            authenticity of cultural content.
-          </p>
+          <p className="text-xs text-stone-800/70 leading-relaxed"><InterfaceText source="Your name, age, and account details are recorded with this submission. Moderators use your age to help judge the authenticity of cultural content." /></p>
         </div>
 
         {/* Footer */}
@@ -254,15 +237,13 @@ export function ContributeModal({
             onClick={() => handleSubmit("draft")}
             disabled={uploading}
             className="px-5 py-2.5 bg-white/70 text-stone-900 rounded-full font-semibold hover:bg-white disabled:opacity-50 transition text-sm"
-          >
-            Save draft
-          </button>
+          ><InterfaceText source="Save draft" /></button>
           <button
             onClick={() => handleSubmit("submitted")}
             disabled={uploading}
             className="px-6 py-2.5 bg-stone-900 text-amber-50 rounded-full font-semibold hover:bg-amber-900 disabled:opacity-50 transition text-sm shadow-lg"
           >
-            {uploading ? "Submitting..." : "Submit for review"}
+            <InterfaceText source={uploading ? "Submitting..." : "Submit for review"} />
           </button>
         </div>
       </div>

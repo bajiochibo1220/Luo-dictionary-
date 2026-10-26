@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { maintenanceMessage } from "@/lib/maintenance";
 import { MaintenanceNotice } from "@/components/layout/maintenance-notice";
 import { redirect } from "next/navigation";
@@ -80,9 +81,7 @@ export default async function DashboardLayout({
       />
       <Suspense
         fallback={
-          <div className="flex-1 flex items-center justify-center text-stone-900">
-            Loading...
-          </div>
+          <div className="flex-1 flex items-center justify-center text-stone-900"><InterfaceText source="Loading..." /></div>
         }
       >
         <AppShell sidebar={<AppSidebar modules={formattedModules} isStaff={isAdmin} />}>

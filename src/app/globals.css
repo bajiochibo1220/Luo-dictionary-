@@ -100,7 +100,7 @@
 }
 
 /* App mastheads are outside the content scroller. Page controls stick below them. */
-.workspace-heading { position: sticky; top: 0; z-index: 20; background: #b89a68; padding-top: .5rem; padding-bottom: .75rem; isolation: isolate; }
+.workspace-heading { position: relative; padding-top: .5rem; padding-bottom: .75rem; }
 .workspace-heading button, .workspace-heading a { flex-shrink: 0; }
 @media (max-width: 639px) { .workspace-heading h1 { font-size: 1.5rem; } }
 
@@ -132,3 +132,7 @@
 body:has(.library-media-dock) .floating-chatbot { bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px)); }
 
 .media-dock-five { grid-template-columns: minmax(0, 1fr); }
+
+.auth-page { background: #e9e3d6; }
+.auth-logo-background { position: fixed; inset: 0; z-index: -1; background-position: center; background-size: cover; background-repeat: no-repeat; pointer-events: none; }
+.auth-logo-background::after { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, #fffdf7b8, #eee4ce94); }

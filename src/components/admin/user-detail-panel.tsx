@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -62,10 +63,10 @@ export function UserDetailPanel({
         const err = await res.json();
         throw new Error(err.error || "Failed");
       }
-      toast.success("Profile updated");
+      toast.success(<InterfaceText source={"Profile updated"} />);
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Update failed");
+      toast.error(<InterfaceText source={e.message || "Update failed"} />);
     } finally {
       setBusy(false);
     }
@@ -80,10 +81,10 @@ export function UserDetailPanel({
         body: JSON.stringify({ languageId: newLang, role: newRole }),
       });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Role added");
+      toast.success(<InterfaceText source={"Role added"} />);
       router.refresh();
     } catch {
-      toast.error("Failed to add role");
+      toast.error(<InterfaceText source={"Failed to add role"} />);
     } finally {
       setBusy(false);
     }
@@ -97,10 +98,10 @@ export function UserDetailPanel({
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Role removed");
+      toast.success(<InterfaceText source={"Role removed"} />);
       router.refresh();
     } catch {
-      toast.error("Failed to remove role");
+      toast.error(<InterfaceText source={"Failed to remove role"} />);
     } finally {
       setBusy(false);
     }
@@ -115,11 +116,11 @@ export function UserDetailPanel({
         const err = await res.json();
         throw new Error(err.error || "Failed");
       }
-      toast.success("User deleted");
+      toast.success(<InterfaceText source={"User deleted"} />);
       router.push("/admin/users");
       router.refresh();
     } catch (e: any) {
-      toast.error(e.message || "Delete failed");
+      toast.error(<InterfaceText source={e.message || "Delete failed"} />);
     } finally {
       setBusy(false);
     }
@@ -129,15 +130,11 @@ export function UserDetailPanel({
     <div className="space-y-6">
       {/* Profile */}
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-          Profile
-        </h2>
+        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Profile" /></h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1">
-              Name
-            </label>
+            <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Name" /></label>
             <input
               type="text"
               value={name}
@@ -146,17 +143,15 @@ export function UserDetailPanel({
             />
           </div>
           {isMasterSuperAdmin && <div>
-            <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1">
-              Status
-            </label>
+            <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Status" /></label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             >
-              <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
-              <option value="pending">Pending</option>
+              <InterfaceOption value="active">Active</InterfaceOption>
+              <InterfaceOption value="suspended">Suspended</InterfaceOption>
+              <InterfaceOption value="pending">Pending</InterfaceOption>
             </select>
           </div>}
         </div>
@@ -166,22 +161,21 @@ export function UserDetailPanel({
           disabled={busy}
           className="mt-4 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
         >
-          {busy ? "Saving..." : "Save Profile"}
+          <InterfaceText source={busy ? "Saving..." : "Save Profile"} />
         </button>}
       </div>
 
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2">Public profile</h2>
+        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Public profile" /></h2>
         <p className="text-sm text-stone-700">{user.profileTypes.length ? user.profileTypes.map((type) => type.replaceAll("_", " ")).join(", ") : "No interests selected"}</p>
       </div>
 
       {(isMasterSuperAdmin || user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles.length > 0) && <div className="bg-white rounded-xl border border-stone-100 p-6 shadow-xs">
-        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-          Assigned duties ({user.languageRoles.length})
+        <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Assigned duties (" />{user.languageRoles.length})
         </h2>
 
         {user.languageRoles.length === 0 ? (
-          <p className="text-sm text-stone-400 py-2">No roles assigned</p>
+          <p className="text-sm text-stone-400 py-2"><InterfaceText source="No roles assigned" /></p>
         ) : (
           <ul className="space-y-2 mb-4">
             {user.languageRoles.map((r) => (
@@ -199,18 +193,14 @@ export function UserDetailPanel({
                   onClick={() => removeRole(r.id)}
                   disabled={busy}
                   className="text-xs text-red-600 hover:underline disabled:opacity-50"
-                >
-                  Remove
-                </button>}
+                ><InterfaceText source="Remove" /></button>}
               </li>
             ))}
           </ul>
         )}
 
         {(isMasterSuperAdmin || !user.isSuperAdmin) && <div className="pt-4 border-t border-stone-100">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2">
-            Add Role
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Add Role" /></p>
           <div className="flex flex-wrap gap-2">
             <select
               value={newLang}
@@ -218,9 +208,9 @@ export function UserDetailPanel({
               className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
               {languages.map((l) => (
-                <option key={l.id} value={l.id}>
+                <InterfaceOption key={l.id} value={l.id}>
                   {l.nativeName}
-                </option>
+                </InterfaceOption>
               ))}
             </select>
             <select
@@ -229,37 +219,29 @@ export function UserDetailPanel({
               className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
               {(user.isSuperAdmin || user.languageRoles.some(role => ["uploader", "publisher", "content_editor", "language_admin"].includes(role.role)) ? ROLES : ["teacher", "researcher"]).map((r) => (
-                <option key={r} value={r}>
+                <InterfaceOption key={r} value={r}>
                   {r.replace("_", " ")}
-                </option>
+                </InterfaceOption>
               ))}
             </select>
             <button
               onClick={addRole}
               disabled={busy}
               className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
-            >
-              Add
-            </button>
+            ><InterfaceText source="Add" /></button>
           </div>
         </div>}
       </div>}
 
       {/* Danger zone */}
       {isMasterSuperAdmin && !user.isMasterSuperAdmin && <div className="bg-red-50 rounded-xl border border-red-100 p-6">
-        <h2 className="text-xs uppercase tracking-wider text-red-700 mb-2">
-          Danger Zone
-        </h2>
-        <p className="text-sm text-stone-600 mb-4">
-          Permanently delete this user and all associated roles.
-        </p>
+        <h2 className="text-xs uppercase tracking-wider text-red-700 mb-2"><InterfaceText source="Danger Zone" /></h2>
+        <p className="text-sm text-stone-600 mb-4"><InterfaceText source="Permanently delete this user and all associated roles." /></p>
         <button
           onClick={deleteUser}
           disabled={busy}
           className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-        >
-          Delete User
-        </button>
+        ><InterfaceText source="Delete User" /></button>
       </div>}
     </div>
   );

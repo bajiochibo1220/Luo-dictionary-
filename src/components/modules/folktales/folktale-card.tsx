@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
@@ -35,9 +36,7 @@ export function FolktaleCard({
       ) : null)}
       <Link href={`/${langCode}/sigana/folktales/${tale.id}`} className="block">
       <div className="p-6">
-        <span className="text-xs uppercase tracking-wider text-amber-600">
-          Folktale
-        </span>
+        <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Folktale" /></span>
 
         <h3 className="text-xl font-serif text-stone-800 mt-2 mb-3 group-hover:text-amber-700 transition leading-snug">
           {tale.title}
@@ -51,9 +50,7 @@ export function FolktaleCard({
 
         {d.moral && (
           <div className="mt-3 p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
-            <p className="text-xs uppercase tracking-wider text-amber-700 mb-1">
-              Moral
-            </p>
+            <p className="text-xs uppercase tracking-wider text-amber-700 mb-1"><InterfaceText source="Moral" /></p>
             <p className="text-sm text-stone-700 italic line-clamp-2">
               {d.moral}
             </p>

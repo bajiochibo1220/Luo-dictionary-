@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -61,10 +62,9 @@ export default async function NewContentPage({
   return (
     <div>
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          New {mod.baseName}
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="New " />{mod.baseName}
         </h1>
-        <p className="text-sm text-stone-500">Adding content in {selectedLanguage.nativeName}</p>
+        <p className="text-sm text-stone-500"><InterfaceText source="Adding content in " />{selectedLanguage.nativeName}</p>
       </header>
 
       {languages.length > 1 && <nav aria-label="Content language" className="mb-6 flex flex-wrap gap-2">

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -74,25 +75,16 @@ export default async function ContributePage({
 
       <header className="mb-6">
         <p className="text-[10px] uppercase tracking-[0.3em] text-stone-800/60 font-semibold mb-1">
-          {languageName} · Contribute
-        </p>
-        <h1 className="font-serif text-3xl md:text-4xl text-stone-900 mb-2 leading-tight">
-          Add to {translatedTitle}
+          {languageName}<InterfaceText source=" · Contribute" /></p>
+        <h1 className="font-serif text-3xl md:text-4xl text-stone-900 mb-2 leading-tight"><InterfaceText source="Add to " />{translatedTitle}
         </h1>
-        <p className="text-sm text-stone-800/70 leading-relaxed max-w-2xl">
-          Fill in what you know. Required fields are marked with *. You can
-          save as draft and come back later, or submit for review when ready.
-        </p>
+        <p className="text-sm text-stone-800/70 leading-relaxed max-w-2xl"><InterfaceText source="Fill in what you know. Required fields are marked with *. You can save as draft and come back later, or submit for review when ready." /></p>
       </header>
 
       {formatted.length === 0 ? (
         <div className="py-16 text-center max-w-xl mx-auto">
-          <p className="font-serif text-2xl text-stone-900 mb-2">
-            This module has no fields yet
-          </p>
-          <p className="text-sm text-stone-800/70">
-            Contact an administrator.
-          </p>
+          <p className="font-serif text-2xl text-stone-900 mb-2"><InterfaceText source="This module has no fields yet" /></p>
+          <p className="text-sm text-stone-800/70"><InterfaceText source="Contact an administrator." /></p>
         </div>
       ) : (
         <DynamicContentForm

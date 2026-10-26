@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useEffect, useState } from "react";
 import { useAppUpdates } from "./app-updates";
@@ -46,8 +47,6 @@ export function InstallAppPrompt() {
       type="button"
       onClick={() => void install()}
       className="fixed bottom-4 left-1/2 z-[100] -translate-x-1/2 rounded-full bg-amber-800 px-5 py-3 text-sm font-semibold text-white shadow-xl ring-1 ring-amber-200/50 hover:bg-amber-900"
-    >
-      Install Luo Heritage app
-    </button>
+    ><InterfaceText source="Install Luo Heritage app" /></button>
   );
 }

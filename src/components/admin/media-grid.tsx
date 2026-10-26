@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -72,11 +73,11 @@ export function MediaGrid({
     try {
       const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Deleted");
+      toast.success(<InterfaceText source={"Deleted"} />);
       setSelected(null);
       router.refresh();
     } catch {
-      toast.error("Delete failed");
+      toast.error(<InterfaceText source={"Delete failed"} />);
     } finally {
       setBusy(false);
     }
@@ -99,7 +100,7 @@ export function MediaGrid({
       const result = await response.json();
       if (response.ok && result.success) setRecords(result.data);
     } catch {
-      toast.error("Could not load published content");
+      toast.error(<InterfaceText source={"Could not load published content"} />);
     }
   }
 
@@ -114,11 +115,11 @@ export function MediaGrid({
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "Could not attach media");
-      toast.success("Media attached. It is available on the public content page.");
+      toast.success(<InterfaceText source={"Media attached. It is available on the public content page."} />);
       setSelected(null);
       router.refresh();
     } catch (error: any) {
-      toast.error(error.message || "Could not attach media");
+      toast.error(<InterfaceText source={error.message || "Could not attach media"} />);
     } finally {
       setBusy(false);
     }
@@ -126,9 +127,7 @@ export function MediaGrid({
 
   if (assets.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400">
-        No media files yet
-      </div>
+      <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400"><InterfaceText source="No media files yet" /></div>
     );
   }
 
@@ -184,7 +183,7 @@ export function MediaGrid({
           />
           <aside className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 overflow-y-auto shadow-2xl">
             <div className="p-6 border-b border-stone-200 flex items-center justify-between sticky top-0 bg-white z-10">
-              <h2 className="text-lg font-serif text-stone-800">Media Detail</h2>
+              <h2 className="text-lg font-serif text-stone-800"><InterfaceText source="Media Detail" /></h2>
               <button
                 onClick={() => setSelected(null)}
                 className="text-stone-400 hover:text-stone-700 text-2xl"
@@ -216,18 +215,14 @@ export function MediaGrid({
               {/* Metadata */}
               <dl className="space-y-3 text-sm">
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Type
-                  </dt>
+                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Type" /></dt>
                   <dd className="text-stone-700">
                     {selected.type} · {selected.format}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Size
-                  </dt>
+                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Size" /></dt>
                   <dd className="text-stone-700">
                     {formatBytes(selected.sizeBytes)}
                   </dd>
@@ -235,9 +230,7 @@ export function MediaGrid({
 
                 {selected.width && selected.height && (
                   <div>
-                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                      Dimensions
-                    </dt>
+                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Dimensions" /></dt>
                     <dd className="text-stone-700">
                       {selected.width} × {selected.height}
                     </dd>
@@ -246,9 +239,7 @@ export function MediaGrid({
 
                 {selected.durationSecs && (
                   <div>
-                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                      Duration
-                    </dt>
+                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Duration" /></dt>
                     <dd className="text-stone-700">
                       {formatDuration(selected.durationSecs)}
                     </dd>
@@ -256,9 +247,7 @@ export function MediaGrid({
                 )}
 
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Language
-                  </dt>
+                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Language" /></dt>
                   <dd className="text-stone-700">
                     {selected.language.nativeName}
                   </dd>
@@ -266,9 +255,7 @@ export function MediaGrid({
 
                 {selected.record && (
                   <div>
-                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                      Used in
-                    </dt>
+                    <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Used in" /></dt>
                     <dd>
                       <a
                         href={`/admin/content/${selected.record.id}/edit`}
@@ -282,43 +269,37 @@ export function MediaGrid({
 
                 {!selected.record && (
                   <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-                    <p className="text-sm font-medium text-amber-900">Not attached to published content</p>
-                    <p className="mt-1 text-xs text-amber-800">
-                      Uploading a file to the library does not publish it. Attach it to a published {getGenre(selected) || "content"} entry to show it publicly.
-                    </p>
+                    <p className="text-sm font-medium text-amber-900"><InterfaceText source="Not attached to published content" /></p>
+                    <p className="mt-1 text-xs text-amber-800"><InterfaceText source="Uploading a file to the library does not publish it. Attach it to a published " />{getGenre(selected) || "content"}<InterfaceText source=" entry to show it publicly." /></p>
                     {getGenre(selected) ? (
                       records.length > 0 ? (
                         <div className="mt-3 space-y-2">
                           <select value={recordId} onChange={(event) => setRecordId(event.target.value)} className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm">
-                            <option value="">Choose published {getGenre(selected)}</option>
-                            {records.map((record) => <option key={record.id} value={record.id}>{record.title}</option>)}
+                            <InterfaceOption value="">Choose published {getGenre(selected)}</InterfaceOption>
+                            {records.map((record) => <InterfaceOption key={record.id} value={record.id}>{record.title}</InterfaceOption>)}
                           </select>
                           <button onClick={() => void attachToRecord()} disabled={!recordId || busy} className="w-full rounded-lg bg-amber-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-50">
-                            {busy ? "Attaching..." : "Attach to content"}
+                            <InterfaceText source={busy ? "Attaching..." : "Attach to content"} />
                           </button>
                         </div>
                       ) : (
-                        <p className="mt-2 text-xs text-amber-800">No published entry is available in this language and area. <a className="font-semibold underline" href={`/admin/content/new/${getGenre(selected)}?languageId=${selected.languageId}`}>Create and publish one</a>, then return here to attach this file.</p>
+                        <p className="mt-2 text-xs text-amber-800"><InterfaceText source="No published entry is available in this language and area. " /><a className="font-semibold underline" href={`/admin/content/new/${getGenre(selected)}?languageId=${selected.languageId}`}><InterfaceText source="Create and publish one" /></a><InterfaceText source=", then return here to attach this file." /></p>
                       )
                     ) : (
-                      <p className="mt-2 text-xs text-amber-800">This file has no content area assigned. Upload it again from the correct content entry.</p>
+                      <p className="mt-2 text-xs text-amber-800"><InterfaceText source="This file has no content area assigned. Upload it again from the correct content entry." /></p>
                     )}
                   </div>
                 )}
 
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Cloudinary ID
-                  </dt>
+                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Cloudinary ID" /></dt>
                   <dd className="text-stone-500 text-xs break-all">
                     {selected.publicId}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Uploaded
-                  </dt>
+                  <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Uploaded" /></dt>
                   <dd className="text-stone-700">
                     {new Date(selected.createdAt).toLocaleString("en-KE")}
                   </dd>
@@ -330,21 +311,17 @@ export function MediaGrid({
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(selected.url);
-                    toast.success("URL copied");
+                    toast.success(<InterfaceText source={"URL copied"} />);
                   }}
                   className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-sm font-medium"
-                >
-                  Copy URL
-                </button>
+                ><InterfaceText source="Copy URL" /></button>
 
                 <a
                   href={selected.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full py-2.5 text-center bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-sm font-medium"
-                >
-                  Open in new tab
-                </a>
+                ><InterfaceText source="Open in new tab" /></a>
 
                 {canDelete && (
                   <button
@@ -352,7 +329,7 @@ export function MediaGrid({
                     disabled={busy}
                     className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium disabled:opacity-50"
                   >
-                    {busy ? "Deleting..." : "Delete from Cloudinary"}
+                    <InterfaceText source={busy ? "Deleting..." : "Delete from Cloudinary"} />
                   </button>
                 )}
               </div>

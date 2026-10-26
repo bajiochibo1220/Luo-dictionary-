@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -36,24 +37,18 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       <Link
         href={`/${langCode}/sigana/folktales`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Folktales
-      </Link>
+      ><InterfaceText source="← Back to Folktales" /></Link>
 
       <header className="mb-8">
         <EnglishVersionLink langCode={langCode} href={`/${langCode}/sigana/folktales/${tale.id}`} />
-        <span className="text-xs uppercase tracking-wider text-amber-600">
-          Folktale
-        </span>
+        <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Folktale" /></span>
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-4">
           {tale.title}
         </h1>
 
         {d.characters && d.characters.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className="text-xs uppercase tracking-wider text-stone-400">
-              Characters:
-            </span>
+            <span className="text-xs uppercase tracking-wider text-stone-400"><InterfaceText source="Characters:" /></span>
             {d.characters.map((c, i) => (
               <span
                 key={i}
@@ -74,19 +69,15 @@ export function FolktaleDetail({ tale, langCode }: Props) {
                 : "bg-white text-stone-600 border-stone-200 hover:border-amber-400"
             }`}
           >
-            {showChildren ? "Children's Version ✓" : "Children's Version"}
+            <InterfaceText source={showChildren ? "Children's Version ✓" : "Children's Version"} />
           </button>
         )}
       </header>
 
       {audio && (
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-8">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-            Listen
-          </p>
-          <audio controls className="w-full" src={audio.url}>
-            Your browser does not support audio.
-          </audio>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Listen" /></p>
+          <audio controls className="w-full" src={audio.url}><InterfaceText source="Your browser does not support audio." /></audio>
         </div>
       )}
 
@@ -94,7 +85,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
         <div key={item.id ?? index} className="mb-5 bg-white rounded-xl border border-stone-100 p-5">
           {item.type === "image" ? <img src={item.url} alt={tale.title} className="w-full max-h-[32rem] object-contain rounded-lg" /> :
             item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
-            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline">Open transcript or document</a>}
+            <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
         </div>
       ))}
 
@@ -109,9 +100,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
 
         {secondaryText && (
           <div className="mt-10 pt-8 border-t border-stone-100">
-            <p className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              Translation
-            </p>
+            <p className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Translation" /></p>
             <div className="prose prose-stone max-w-none">
               {secondaryText.split("\n").filter((p) => p.trim()).map((p, i) => (
                 <p key={i} className="leading-relaxed text-stone-600 mb-3">
@@ -125,9 +114,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
 
       {d.moral && (
         <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-2xl border border-amber-100 p-8 mb-8">
-          <p className="text-xs uppercase tracking-wider text-amber-700 mb-2">
-            Moral Lesson
-          </p>
+          <p className="text-xs uppercase tracking-wider text-amber-700 mb-2"><InterfaceText source="Moral Lesson" /></p>
           <p className="text-lg text-stone-800 italic leading-relaxed">
             &ldquo;{d.moral}&rdquo;
           </p>
@@ -140,10 +127,8 @@ export function FolktaleDetail({ tale, langCode }: Props) {
             onClick={() => setShowTeacherNotes(!showTeacherNotes)}
             className="w-full p-6 text-left flex items-center justify-between"
           >
-            <span className="text-xs uppercase tracking-wider text-stone-500">
-              Teacher Notes
-            </span>
-            <span className="text-stone-400">{showTeacherNotes ? "−" : "+"}</span>
+            <span className="text-xs uppercase tracking-wider text-stone-500"><InterfaceText source="Teacher Notes" /></span>
+            <span className="text-stone-400"><InterfaceText source={showTeacherNotes ? "−" : "+"} /></span>
           </button>
           {showTeacherNotes && (
             <div className="px-6 pb-6 pt-2 border-t border-stone-100">

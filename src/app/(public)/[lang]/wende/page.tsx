@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
@@ -40,17 +41,13 @@ export default async function SongsPage({
           {pageTitle}
         </h1>
         <p className="text-stone-500">
-          {records.length} {records.length === 1 ? "song" : "songs"} ·{" "}
-          Traditional Luo music
-        </p>
+          {records.length} <InterfaceText source={records.length === 1 ? "song" : "songs"} /> ·{" "}<InterfaceText source="Traditional Luo music" /></p>
       </header>
 
       {localizedRecords.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg">No songs published yet</p>
-          <p className="text-sm mt-2">
-            Traditional songs are being recorded and added
-          </p>
+          <p className="text-lg"><InterfaceText source="No songs published yet" /></p>
+          <p className="text-sm mt-2"><InterfaceText source="Traditional songs are being recorded and added" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

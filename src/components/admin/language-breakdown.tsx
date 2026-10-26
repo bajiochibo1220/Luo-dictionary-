@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 export function LanguageBreakdown({
   languages,
 }: {
@@ -14,9 +15,7 @@ export function LanguageBreakdown({
 
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Languages
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Languages" /></h3>
       <div className="space-y-4">
         {languages.map((l) => (
           <div key={l.code}>
@@ -27,18 +26,13 @@ export function LanguageBreakdown({
                 </span>
                 <span className="text-xs text-stone-400">({l.name})</span>
                 {l.isActive ? (
-                  <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded-sm">
-                    Active
-                  </span>
+                  <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded-sm"><InterfaceText source="Active" /></span>
                 ) : (
-                  <span className="text-xs px-1.5 py-0.5 bg-stone-100 text-stone-500 rounded-sm">
-                    Inactive
-                  </span>
+                  <span className="text-xs px-1.5 py-0.5 bg-stone-100 text-stone-500 rounded-sm"><InterfaceText source="Inactive" /></span>
                 )}
               </span>
               <span className="text-stone-500 tabular-nums text-xs">
-                {l.recordCount} records · {l.userCount} users
-              </span>
+                {l.recordCount}<InterfaceText source=" records · " />{l.userCount}<InterfaceText source=" users" /></span>
             </div>
             <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
               <div

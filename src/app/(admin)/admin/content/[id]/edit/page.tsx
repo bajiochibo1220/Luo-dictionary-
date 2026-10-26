@@ -1,9 +1,11 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DynamicContentForm } from "@/components/admin/dynamic-content-form";
 import { canEditContent, canUploadContent } from "@/lib/permissions";
 import { canReviewGovernedItem } from "@/lib/governance";
+import Link from "next/link";
 
 export default async function EditContentPage({
   params: promisedParams,
@@ -35,6 +37,9 @@ export default async function EditContentPage({
     editingTranslation ? prisma.culturalRecordTranslation.findUnique({ where: { recordId_languageId: { recordId: record.id, languageId } } }) : Promise.resolve(null),
   ]);
   if (!language || (editingTranslation && (!canEditContent(session, record.languageId) && !canUploadContent(session, record.languageId)))) notFound();
+  const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" } });
+  const pairedTranslation = englishLanguage ? await prisma.culturalRecordTranslation.findUnique({ where: { recordId_languageId: { recordId: record.id, languageId: englishLanguage.id } } }) : null;
+  const pairedEditing = !editingTranslation && record.language.code !== "eng" && !!englishLanguage && canEditContent(session, record.languageId);
 
   const fieldDefs = await prisma.fieldDefinition.findMany({
     where: { moduleId: record.moduleId },
@@ -74,15 +79,17 @@ export default async function EditContentPage({
   return (
     <div>
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          Edit {record.module.baseName}
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Edit " />{record.module.baseName}
         </h1>
         <p className="text-sm text-stone-500">
-          {language.nativeName}{editingTranslation ? " translation" : ""} · Status: {record.status}
+          {language.nativeName}<InterfaceText source={editingTranslation ? " translation" : ""} /><InterfaceText source=" · Status: " />{record.status}
         </p>
       </header>
 
-      <DynamicContentForm
+      {pairedEditing && <p className="mb-4 rounded-lg bg-blue-50 p-3 text-sm"><InterfaceText source="Edit and save both versions below, then return to review to send for publishing." /></p>}
+      <div className={pairedEditing ? "grid items-start gap-5 xl:grid-cols-2" : ""}>
+      <section><h2 className="mb-3 font-semibold">{language.nativeName}</h2><DynamicContentForm
+        stayOnPage={pairedEditing}
         moduleCode={record.module.code}
         languageId={languageId}
         languageName={language.nativeName}
@@ -98,7 +105,22 @@ export default async function EditContentPage({
           asset,
           asset.languageId
         ))}
-      />
+      /></section>
+      {pairedEditing && englishLanguage && <section><h2 className="mb-3 font-semibold"><InterfaceText source="English version" /></h2><DynamicContentForm
+        stayOnPage
+        moduleCode={record.module.code}
+        languageId={englishLanguage.id}
+        languageName={englishLanguage.nativeName}
+        languageCode={englishLanguage.code}
+        isAdmin
+        isTranslation
+        fieldDefs={formatted.map(field => ({ ...field, label: field.baseLabel }))}
+        initialData={{ ...((pairedTranslation?.data as any) ?? {}), __title: pairedTranslation?.title ?? "" }}
+        recordId={record.id}
+        redirectTo={`/admin/validation-queue/${record.id}`}
+      /></section>}
+      </div>
+      {pairedEditing && <Link href={`/admin/validation-queue/${record.id}`} className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-amber-900 px-5 text-white"><InterfaceText source="Continue to review & publishing" /></Link>}
     </div>
   );
 }

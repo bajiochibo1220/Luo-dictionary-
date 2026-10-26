@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState, useRef, useEffect, useCallback, useMemo, type ComponentType, type ReactNode } from "react";
 import { publicSourceHref } from "@/lib/app-navigation";
@@ -64,7 +65,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   const [mediaPanel, setMediaPanel] = useState<MediaItem[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [notice, setNotice] = useState<{ text: string; error: boolean } | null>(null);
+  const [notice, setNotice] = useState<{ text: ReactNode; error: boolean } | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [conversationLoading, setConversationLoading] = useState(false);
   const [historyFailed, setHistoryFailed] = useState(false);
@@ -74,14 +75,14 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   const historySequence = useRef(0);
   const disposed = useRef(false);
   const toast = useMemo(() => ({
-    error: (text: string) => setNotice({ text, error: true }),
-    success: (text: string) => setNotice({ text, error: false }),
+    error: (text: ReactNode) => setNotice({ text, error: true }),
+    success: (text: ReactNode) => setNotice({ text, error: false }),
   }), []);
   useEffect(() => { disposed.current = false; ++loadSequence.current; return () => { disposed.current = true; }; }, []);
 
   // If session is stale, force sign out
   const handleStale = useCallback(async () => {
-    toast.error("Your session expired. Please sign in again.");
+    toast.error(<InterfaceText source={"Your session expired. Please sign in again."} />);
     onSessionExpired();
   }, [onSessionExpired, toast]);
 
@@ -150,7 +151,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       setSidebarOpen(false);
       setOpenMenuId(null);
     } catch (error) {
-      if (!disposed.current && sequence === loadSequence.current) toast.error(error instanceof Error ? error.message : "Failed to load conversation");
+      if (!disposed.current && sequence === loadSequence.current) toast.error(<InterfaceText source={error instanceof Error ? error.message : "Failed to load conversation"} />);
     } finally { if (!disposed.current && sequence === loadSequence.current) setConversationLoading(false); }
   }, [request, handleStale, toast]);
   useEffect(() => { if (initialConversationId && !guest) void loadConversation(initialConversationId); }, [initialConversationId, guest, loadConversation]);
@@ -166,7 +167,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       if (!res.ok) throw new Error();
       return true;
     } catch {
-      toast.error("Failed");
+      toast.error(<InterfaceText source={"Failed"} />);
       return false;
     }
   }
@@ -178,14 +179,14 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       setConversations((c) =>
         c.map((x) => (x.id === id ? { ...x, title: newTitle } : x))
       );
-      toast.success("Renamed");
+      toast.success(<InterfaceText source={"Renamed"} />);
     }
     setOpenMenuId(null);
   }
 
   async function handlePin(id: string, pinned: boolean) {
     if (await patchConversation(id, { pinned: !pinned })) {
-      toast.success(pinned ? "Unpinned" : "Pinned");
+      toast.success(<InterfaceText source={pinned ? "Unpinned" : "Pinned"} />);
       loadConversations();
     }
     setOpenMenuId(null);
@@ -193,7 +194,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
 
   async function handleArchive(id: string, archived: boolean) {
     if (await patchConversation(id, { archived: !archived })) {
-      toast.success(archived ? "Unarchived" : "Archived");
+      toast.success(<InterfaceText source={archived ? "Unarchived" : "Archived"} />);
       if (conversationId === id) {
         setConversationId(null);
         setMessages([]);
@@ -215,9 +216,9 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
         setMessages([]);
         setMediaPanel([]);
       }
-      toast.success("Deleted");
+      toast.success(<InterfaceText source={"Deleted"} />);
     } catch {
-      toast.error("Failed to delete");
+      toast.error(<InterfaceText source={"Failed to delete"} />);
     }
     setOpenMenuId(null);
   }
@@ -235,8 +236,8 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
 
   async function send(question: string) {
     if (!question.trim() || busy || conversationLoading) return;
-    if (!allowExternalAi) { toast.error("Please allow AI processing before sending a question."); return; }
-    if (question.trim().length < 2 || question.trim().length > 2000) { toast.error("Enter a question between 2 and 2000 characters."); return; }
+    if (!allowExternalAi) { toast.error(<InterfaceText source={"Please allow AI processing before sending a question."} />); return; }
+    if (question.trim().length < 2 || question.trim().length > 2000) { toast.error(<InterfaceText source={"Enter a question between 2 and 2000 characters."} />); return; }
     ++loadSequence.current;
 
     const userMessage: Message = { role: "user", content: question };
@@ -284,7 +285,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       loadConversations();
     } catch (err: any) {
       if (disposed.current) return;
-      toast.error(err.message || "Chat failed");
+      toast.error(<InterfaceText source={err.message || "Chat failed"} />);
       setMessages(m => m.slice(0, -1));
       setInput(question);
     } finally {
@@ -308,20 +309,19 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
             disabled={busy}
             className="w-full flex items-center justify-center gap-2 bg-amber-400 text-stone-900 py-2.5 rounded-full font-semibold text-sm hover:bg-amber-300 transition shadow-sm"
           >
-            <span className="text-base">+</span> New chat
-          </button>
+            <span className="text-base">+</span><InterfaceText source=" New chat" /></button>
           <button
             onClick={() => setShowArchived(!showArchived)}
             className="w-full text-[11px] uppercase tracking-wider text-amber-100/60 hover:text-amber-50 py-1 transition"
           >
-            {showArchived ? "← Back to chats" : "View archived"}
+            <InterfaceText source={showArchived ? "← Back to chats" : "View archived"} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-2">
-          {historyLoading ? <p role="status" className="px-4 py-3 text-sm text-amber-50">Loading saved chats…</p> : historyFailed ? <div role="alert" className="px-4 py-3 text-sm text-amber-50"><p>Unable to load saved chats.</p><button type="button" onClick={loadConversations} className="mt-2 underline">Try again</button></div> : conversations.length === 0 ? (
+          {historyLoading ? <p role="status" className="px-4 py-3 text-sm text-amber-50"><InterfaceText source="Loading saved chats…" /></p> : historyFailed ? <div role="alert" className="px-4 py-3 text-sm text-amber-50"><p><InterfaceText source="Unable to load saved chats." /></p><button type="button" onClick={loadConversations} className="mt-2 underline"><InterfaceText source="Try again" /></button></div> : conversations.length === 0 ? (
             <p className="text-xs text-amber-100/50 px-4 py-3">
-              {showArchived ? "No archived chats" : "No chats yet"}
+              <InterfaceText source={showArchived ? "No archived chats" : "No chats yet"} />
             </p>
           ) : (
             conversations.map((c) => (
@@ -339,11 +339,11 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
                     {c.title}
                   </p>
                   <p className="text-[10px] text-amber-200/50 mt-0.5">
-                    {c.messageCount} message{c.messageCount === 1 ? "" : "s"}
+                    {c.messageCount}<InterfaceText source=" message" /><InterfaceText source={c.messageCount === 1 ? "" : "s"} />
                   </p>
                 </button>
 
-                <button
+                <InterfaceButton
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenMenuId(openMenuId === c.id ? null : c.id);
@@ -354,7 +354,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
                   title="Options"
                 >
                   ⋯
-                </button>
+                </InterfaceButton>
 
                 {openMenuId === c.id && (
                   <div
@@ -389,9 +389,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
           )}
         </div>
 
-        <div className="p-3 border-t border-amber-100/15 text-[10px] text-amber-100/40 text-center tracking-widest">
-          JOOUST · NRF
-        </div>
+        <div className="p-3 border-t border-amber-100/15 text-[10px] text-amber-100/40 text-center tracking-widest"><InterfaceText source="JOOUST · NRF" /></div>
       </aside>
 
       {sidebarOpen && (
@@ -402,35 +400,31 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       )}
 
       <div className="flex-1 min-w-0 flex flex-col">
-        {conversationLoading && <p role="status" className="bg-amber-100 px-4 py-2 text-sm">Loading chat…</p>}
-        {notice && <div role={notice.error ? "alert" : "status"} className={`flex items-center justify-between gap-3 px-4 py-3 text-sm ${notice.error ? "bg-red-50 text-red-900" : "bg-green-50 text-green-900"}`}><p>{notice.text}</p><button type="button" aria-label="Dismiss message" onClick={() => setNotice(null)}>×</button></div>}
+        {conversationLoading && <p role="status" className="bg-amber-100 px-4 py-2 text-sm"><InterfaceText source="Loading chat…" /></p>}
+        {notice && <div role={notice.error ? "alert" : "status"} className={`flex items-center justify-between gap-3 px-4 py-3 text-sm ${notice.error ? "bg-red-50 text-red-900" : "bg-green-50 text-green-900"}`}><p>{notice.text}</p><InterfaceButton type="button" aria-label="Dismiss message" onClick={() => setNotice(null)}>×</InterfaceButton></div>}
         <header className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-stone-900/15 bg-[#a9895a]">
           <div className="flex items-center gap-2 md:gap-3">
             <div className="hidden md:block">
               <BackLink href={`/${cultureCode}`} label="Back to language home" variant="on-sand" />
             </div>
-            <button
+            <InterfaceButton
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className={`${guest ? "hidden" : ""} md:hidden text-stone-900 text-2xl leading-none`}
               aria-label="Menu"
             >
               ☰
-            </button>
+            </InterfaceButton>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center">
                 <span className="text-white text-sm">💬</span>
               </div>
             <div>
-                <h1 className="font-serif text-base md:text-lg text-stone-900 leading-tight">
-                  Chat with Luo Lingua
-                </h1>
-                <p className="text-[10px] uppercase tracking-widest text-stone-800/60 hidden sm:block">
-                  AI Cultural Assistant
-                </p>
+                <h1 className="font-serif text-base md:text-lg text-stone-900 leading-tight"><InterfaceText source="Chat with Luo Lingua" /></h1>
+                <p className="text-[10px] uppercase tracking-widest text-stone-800/60 hidden sm:block"><InterfaceText source="AI Cultural Assistant" /></p>
               </div>
             </div>
             </div>
-            {cultureCode !== "eng" && <label className="text-xs font-semibold text-stone-800">Answer language <select value={answerLanguageCode} onChange={(event) => setAnswerLanguageCode(event.target.value)} className="ml-2 rounded-md border border-stone-800/20 bg-white/70 px-2 py-1"><option value={cultureCode}>Original language</option><option value="eng">English — {cultureCode} culture</option></select></label>}
+            {cultureCode !== "eng" && <label className="text-xs font-semibold text-stone-800"><InterfaceText source="Answer language " /><select value={answerLanguageCode} onChange={(event) => setAnswerLanguageCode(event.target.value)} className="ml-2 rounded-md border border-stone-800/20 bg-white/70 px-2 py-1"><InterfaceOption value={cultureCode}>Original language</InterfaceOption><InterfaceOption value="eng">English — {cultureCode} culture</InterfaceOption></select></label>}
         </header>
 
         <div className="flex-1 flex min-h-0 flex-col lg:flex-row">
@@ -438,17 +432,12 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
             ref={scrollRef}
             className="flex-1 overflow-y-auto overscroll-contain px-4 md:px-8 py-6"
           >
-            {beforeId && conversationId && <button type="button" disabled={busy} onClick={() => loadConversation(conversationId, beforeId)} className="mx-auto mb-4 block rounded-full bg-white/70 px-4 py-2 text-sm">Load earlier messages</button>}
+            {beforeId && conversationId && <button type="button" disabled={busy} onClick={() => loadConversation(conversationId, beforeId)} className="mx-auto mb-4 block rounded-full bg-white/70 px-4 py-2 text-sm"><InterfaceText source="Load earlier messages" /></button>}
             {messages.length === 0 ? (
               <div className="max-w-2xl mx-auto text-center pt-8">
                 <div className="text-5xl mb-4">💬</div>
-                <h2 className="text-2xl font-serif text-stone-900 mb-2">
-                  Ask about Luo Culture
-                </h2>
-                <p className="text-sm text-stone-800/70 mb-8">
-                  I answer questions using our curated cultural knowledge base.
-                  Ask for videos, images, audio, or specific topics.
-                </p>
+                <h2 className="text-2xl font-serif text-stone-900 mb-2"><InterfaceText source="Ask about Luo Culture" /></h2>
+                <p className="text-sm text-stone-800/70 mb-8"><InterfaceText source="I answer questions using our curated cultural knowledge base. Ask for videos, images, audio, or specific topics." /></p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {SUGGESTED.map((q) => (
@@ -523,11 +512,9 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
             <div className="flex w-full max-h-56 lg:max-h-none lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-stone-900/15 bg-[#a9895a] flex-col">
               <div className="px-4 py-3 border-b border-stone-900/15 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-stone-800/60">
-                    Results
-                  </p>
+                  <p className="text-[10px] uppercase tracking-widest text-stone-800/60"><InterfaceText source="Results" /></p>
                   <p className="font-serif text-base text-stone-900">
-                    {mediaPanel.length} item{mediaPanel.length === 1 ? "" : "s"}
+                    {mediaPanel.length}<InterfaceText source=" item" /><InterfaceText source={mediaPanel.length === 1 ? "" : "s"} />
                   </p>
                 </div>
                 <button
@@ -547,7 +534,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
         </div>
 
         <div className="border-t border-stone-900/15 bg-[#a9895a] p-3 md:p-4">
-          <label className="mx-auto mb-3 flex max-w-2xl items-start gap-2 text-xs text-stone-900"><input type="checkbox" checked={allowExternalAi} onChange={event => setAllowExternalAi(event.target.checked)} disabled={busy} className="mt-0.5" /><span>Allow Google AI to process my question and recent chat messages to produce an answer. Avoid sending private or sensitive information.</span></label>
+          <label className="mx-auto mb-3 flex max-w-2xl items-start gap-2 text-xs text-stone-900"><input type="checkbox" checked={allowExternalAi} onChange={event => setAllowExternalAi(event.target.checked)} disabled={busy} className="mt-0.5" /><span><InterfaceText source="Allow Google AI to process my question and recent chat messages to produce an answer. Avoid sending private or sensitive information." /></span></label>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -555,7 +542,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
             }}
             className="max-w-2xl mx-auto flex gap-2"
           >
-            <input
+            <InterfaceInput
               type="text"
               value={input}
               aria-label="Your question"
@@ -569,9 +556,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
               type="submit"
               disabled={busy || conversationLoading || !allowExternalAi || input.trim().length < 2}
               className="px-6 py-3 bg-stone-900 text-amber-50 rounded-full text-sm font-semibold hover:bg-amber-900 disabled:opacity-40 transition shadow-sm"
-            >
-              Send
-            </button>
+            ><InterfaceText source="Send" /></button>
           </form>
         </div>
       </div>
@@ -626,7 +611,7 @@ function MediaCard({ media }: { media: MediaItem }) {
         )}
         {media.mediaType === "audio" && (
           <div className="p-4">
-            <p className="text-xs text-amber-100/70 mb-2">🎵 Audio</p>
+            <p className="text-xs text-amber-100/70 mb-2"><InterfaceText source="🎵 Audio" /></p>
             <audio src={media.url} controls className="w-full" />
           </div>
         )}

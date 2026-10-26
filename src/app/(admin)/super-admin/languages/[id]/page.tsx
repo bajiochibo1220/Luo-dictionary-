@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -34,9 +35,7 @@ export default async function LanguageDetailPage({
         <Link
           href="/super-admin/languages"
           className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-3"
-        >
-          ← Back to languages
-        </Link>
+        ><InterfaceText source="← Back to languages" /></Link>
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <span className="text-5xl">{language.flagIcon || "🌍"}</span>
@@ -45,16 +44,12 @@ export default async function LanguageDetailPage({
                 {language.nativeName}
               </h1>
               <p className="text-sm text-stone-500">
-                {language.name} · code: {language.code}
+                {language.name}<InterfaceText source=" · code: " />{language.code}
               </p>
               {language.isActive ? (
-                <span className="inline-block text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full mt-2">
-                  Active
-                </span>
+                <span className="inline-block text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full mt-2"><InterfaceText source="Active" /></span>
               ) : (
-                <span className="inline-block text-xs px-2 py-0.5 bg-stone-100 text-stone-500 rounded-full mt-2">
-                  Inactive
-                </span>
+                <span className="inline-block text-xs px-2 py-0.5 bg-stone-100 text-stone-500 rounded-full mt-2"><InterfaceText source="Inactive" /></span>
               )}
             </div>
           </div>
@@ -63,29 +58,21 @@ export default async function LanguageDetailPage({
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Records
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Records" /></p>
           <p className="text-2xl font-serif text-stone-800">{recordCount}</p>
         </div>
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Media Files
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Media Files" /></p>
           <p className="text-2xl font-serif text-stone-800">{mediaCount}</p>
         </div>
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Module Titles
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Module Titles" /></p>
           <p className="text-2xl font-serif text-stone-800">
             {translationCount}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-5">
-          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-            Admins
-          </p>
+          <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Admins" /></p>
           <p className="text-2xl font-serif text-stone-800">
             {language.userRoles.length}
           </p>
@@ -105,9 +92,7 @@ export default async function LanguageDetailPage({
 
       {language.userRoles.length > 0 && (
         <div className="mt-6 bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-            Assigned Admins
-          </h2>
+          <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Assigned Admins" /></h2>
           <ul className="space-y-2">
             {language.userRoles.map((r) => (
               <li key={r.id} className="text-sm flex items-center gap-3">

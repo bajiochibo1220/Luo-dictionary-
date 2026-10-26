@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { notFound } from "next/navigation";
@@ -34,26 +35,19 @@ export default async function FolktalesPage({
       <Link
         href={`/${language.code}/sigana`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"
-      >
-        ← Back to Sigana
-      </Link>
+      ><InterfaceText source="← Back to Sigana" /></Link>
 
       <header className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2">
-          Folktales
-        </h1>
-        <p className="text-stone-500">
-          Traditional Luo stories · {records.length}{" "}
-          {records.length === 1 ? "tale" : "tales"}
+        <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2"><InterfaceText source="Folktales" /></h1>
+        <p className="text-stone-500"><InterfaceText source="Traditional Luo stories · " />{records.length}{" "}
+          <InterfaceText source={records.length === 1 ? "tale" : "tales"} />
         </p>
       </header>
 
       {localizedRecords.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg">No folktales published yet</p>
-          <p className="text-sm mt-2">
-            Check back soon — more stories are being added
-          </p>
+          <p className="text-lg"><InterfaceText source="No folktales published yet" /></p>
+          <p className="text-sm mt-2"><InterfaceText source="Check back soon — more stories are being added" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

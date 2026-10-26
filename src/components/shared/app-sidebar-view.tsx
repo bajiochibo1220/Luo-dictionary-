@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import type { ComponentType, ReactNode } from "react";
 import { moduleHref } from "@/lib/app-navigation";
@@ -18,7 +19,6 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
   onNavigate?: () => void;
   Link: ComponentType<{ href: string; className?: string; onClick?: () => void; children: ReactNode }>;
 }) {
-
   const items = [
     { code: "", title: "Explore heritage", baseName: "Public library" },
     ...modules,
@@ -28,20 +28,18 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
     <div className="flex flex-col h-full">
       {/* Header — taller on mobile to avoid close button overlap */}
       <div className="px-5 pt-5 md:pt-5 pb-3 border-b border-amber-100/15 min-h-[68px] flex items-end">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/70 font-medium">
-          Modules
-        </p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/70 font-medium"><InterfaceText source="Modules" /></p>
       </div>
 
       {communityControls}
       {/* Module list */}
       <nav className="flex-1 overflow-y-auto py-2">
-        {staffHref && <Link href={staffHref} onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Staff content workspace</Link>}
-        <Link href="/learn" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Lessons, games &amp; calendar</Link>
-        <Link href="/courses" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Explore at your own pace</Link>
-        <Link href="/settings" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Settings</Link>
-        <Link href="/contribute" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Contribute &amp; submissions</Link>
-        <Link href="/saved" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Saved words &amp; items</Link>
+        {staffHref && <Link href={staffHref} onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Staff content workspace" /></Link>}
+        <Link href="/learn" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Lessons, games & calendar" /></Link>
+        <Link href="/courses" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Explore at your own pace" /></Link>
+        <Link href="/settings" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Settings" /></Link>
+        <Link href="/contribute" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Contribute & submissions" /></Link>
+        <Link href="/saved" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Saved words & items" /></Link>
         {items.map((item) => {
           const isActive = item.code === "chatbot" ? pathname === "/chatbot" :
             (pathname === "/dashboard" && item.code === "" && !activeModule) ||
@@ -67,14 +65,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
                       : "text-amber-50/90 text-[16px]"
                   }`}
                 >
-                  {item.title}
-                </p>
-                <p
-                  className={`text-[10px] uppercase tracking-[0.15em] truncate mt-0.5 ${
-                    isActive ? "text-amber-300/90" : "text-amber-100/50"
-                  }`}
-                >
-                  {item.baseName}
+                  <InterfaceText source={item.baseName} />
                 </p>
               </div>
               {isActive && (
@@ -85,9 +76,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
         })}
       </nav>
 
-      <div className="p-3 border-t border-amber-100/15 text-[10px] tracking-widest text-amber-100/40 text-center">
-        JOOUST · NRF
-      </div>
+      <div className="p-3 border-t border-amber-100/15 text-[10px] tracking-widest text-amber-100/40 text-center"><InterfaceText source="JOOUST · NRF" /></div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 import { applicationReturnTarget } from "@/lib/application-return";
 
 import Link from "next/link";
@@ -41,7 +42,7 @@ export function RegisterForm() {
     e.preventDefault();
 
     if (!dob.day || !dob.month || !dob.year) {
-      toast.error("Please enter your full date of birth");
+      toast.error(<InterfaceText source={"Please enter your full date of birth"} />);
       return;
     }
 
@@ -68,32 +69,32 @@ export function RegisterForm() {
       data = await res.json();
     } catch {
       setLoading(false);
-      toast.error("Unable to create your account right now. Please try again.");
+      toast.error(<InterfaceText source={"Unable to create your account right now. Please try again."} />);
       return;
     }
     setLoading(false);
 
     if (!data.success) {
-      toast.error(data.error || "Registration failed");
+      toast.error(<InterfaceText source={data.error || "Registration failed"} />);
       return;
     }
 
     if (data.data?.status === "pending") {
-      toast.success("Account created. It is awaiting approval before you can continue.");
+      toast.success(<InterfaceText source={"Account created. It is awaiting approval before you can continue."} />);
       router.push(nativeAuthHref("login", nativeReturn, { registered: "pending" }));
       return;
     }
 
-    toast.success("Account created. Signing in...");
+    toast.success(<InterfaceText source={"Account created. Signing in..."} />);
     let signInResult;
     try {
       signInResult = await signIn("credentials", { email: body.email, password: body.password, redirect: false });
     } catch {
-      toast.error("Account created, but sign in could not connect. Please log in with your email and password.");
+      toast.error(<InterfaceText source={"Account created, but sign in could not connect. Please log in with your email and password."} />);
       router.push(loginHref); router.refresh(); return;
     }
     if (signInResult?.error) {
-      toast.error("Account created, but sign in failed. Please log in with your email and password.");
+      toast.error(<InterfaceText source={"Account created, but sign in failed. Please log in with your email and password."} />);
       router.push(loginHref);
       router.refresh();
       return;
@@ -111,7 +112,7 @@ export function RegisterForm() {
   return (
     <div className="space-y-4">
       <form onSubmit={onSubmit} className="space-y-3">
-        <input
+        <InterfaceInput
           name="name"
           required
           minLength={2}
@@ -120,7 +121,7 @@ export function RegisterForm() {
           className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
         />
 
-        <input
+        <InterfaceInput
           name="email"
           type="email"
           required
@@ -137,7 +138,7 @@ export function RegisterForm() {
         />
 
         <div className="relative">
-          <input
+          <InterfaceInput
             name="password"
             type={showPassword ? "text" : "password"}
             required
@@ -151,7 +152,7 @@ export function RegisterForm() {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-stone-500 hover:text-amber-700"
           >
-            {showPassword ? "Hide" : "Show"}
+            <InterfaceText source={showPassword ? "Hide" : "Show"} />
           </button>
         </div>
 
@@ -161,21 +162,21 @@ export function RegisterForm() {
           defaultValue=""
           className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] text-stone-700"
         >
-          <option value="" disabled>
+          <InterfaceOption value="" disabled>
             Select your language
-          </option>
+          </InterfaceOption>
           {languages.map((l) => (
-            <option key={l.id} value={l.id}>
+            <InterfaceOption key={l.id} value={l.id}>
               {l.nativeName} ({l.name})
-            </option>
+            </InterfaceOption>
           ))}
         </select>
 
         <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
-          <legend className="px-1 text-sm font-medium text-stone-700">How do you plan to use Luo Heritage? (Choose any)</legend>
+          <legend className="px-1 text-sm font-medium text-stone-700"><InterfaceText source="How do you plan to use Luo Heritage? (Choose any)" /></legend>
           <div className="mt-2 grid grid-cols-1 gap-2 text-sm text-stone-700">
             {["Student", "Researcher", "Contributor", "Teacher", "Community member"].map((interest) => (
-              <label key={interest} className="flex items-center gap-2"><input type="checkbox" name="interests" value={interest.toLowerCase().replaceAll(" ", "_")} />{interest}</label>
+              <label key={interest} className="flex items-center gap-2"><input type="checkbox" name="interests" value={interest.toLowerCase().replaceAll(" ", "_")} /><InterfaceText source={interest} /></label>
             ))}
           </div>
         </fieldset>
@@ -185,12 +186,12 @@ export function RegisterForm() {
           disabled={loading}
           className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded-full font-semibold disabled:opacity-50 transition shadow-lg text-[15px]"
         >
-          {loading ? "Creating account..." : "Create account"}
+          <InterfaceText source={loading ? "Creating account..." : "Create account"} />
         </button>
 
         <label className="flex items-start gap-2 text-xs text-stone-700 leading-relaxed pt-2">
           <input type="checkbox" name="acceptedTerms" required checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-0.5 accent-amber-700" />
-          <span>I accept the <a className="font-semibold underline" href="/terms" target="_blank">Terms of Service</a> and <a className="font-semibold underline" href="/privacy" target="_blank">Privacy Policy</a>, and agree to contribute respectfully.</span>
+          <span><InterfaceText source="I accept the " /><a className="font-semibold underline" href="/terms" target="_blank"><InterfaceText source="Terms of Service" /></a><InterfaceText source=" and " /><a className="font-semibold underline" href="/privacy" target="_blank"><InterfaceText source="Privacy Policy" /></a><InterfaceText source=", and agree to contribute respectfully." /></span>
         </label>
       </form>
 
@@ -199,14 +200,12 @@ export function RegisterForm() {
           <div className="w-full border-t border-stone-300/60" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-[#cfc09a] px-3 text-xs uppercase tracking-wider text-stone-500">
-            or
-          </span>
+          <span className="bg-[#cfc09a] px-3 text-xs uppercase tracking-wider text-stone-500"><InterfaceText source="or" /></span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-2">
-        <button
+        <InterfaceButton
           type="button"
           onClick={startGoogleSignup}
           aria-label="Continue with Google"
@@ -219,14 +218,14 @@ export function RegisterForm() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
           </svg>
-          <span className="ml-2">Continue with Google</span>
-        </button>
+          <span className="ml-2"><InterfaceText source="Continue with Google" /></span>
+        </InterfaceButton>
       </div>
 
       <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
-        <a href="/terms" className="hover:underline">Terms</a><a href="/privacy" className="hover:underline">Privacy</a><a href="/about" className="hover:underline">About</a><Link href="/" className="hover:underline">Home</Link>
+        <a href="/terms" className="hover:underline"><InterfaceText source="Terms" /></a><a href="/privacy" className="hover:underline"><InterfaceText source="Privacy" /></a><a href="/about" className="hover:underline"><InterfaceText source="About" /></a><Link href="/" className="hover:underline"><InterfaceText source="Home" /></Link>
       </nav>
-      <p className="text-center text-sm text-stone-700">Already have an account? <Link href={loginHref} className="font-semibold text-amber-800 underline">Sign in</Link></p>
+      <p className="text-center text-sm text-stone-700"><InterfaceText source="Already have an account? " /><Link href={loginHref} className="font-semibold text-amber-800 underline"><InterfaceText source="Sign in" /></Link></p>
     </div>
   );
 }

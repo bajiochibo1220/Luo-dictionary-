@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 export function RecentActivity({
   entries,
 }: {
@@ -11,14 +12,10 @@ export function RecentActivity({
 }) {
   return (
     <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-        Recent Activity
-      </h3>
+      <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Recent Activity" /></h3>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-stone-400 py-4">
-          No activity recorded yet
-        </p>
+        <p className="text-sm text-stone-400 py-4"><InterfaceText source="No activity recorded yet" /></p>
       ) : (
         <ul className="space-y-3">
           {entries.map((e) => (

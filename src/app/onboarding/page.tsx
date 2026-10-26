@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -36,11 +37,11 @@ export default function OnboardingPage() {
     e.preventDefault();
 
     if (!languageId) {
-      toast.error("Please select a language");
+      toast.error(<InterfaceText source={"Please select a language"} />);
       return;
     }
     if (!dob.day || !dob.month || !dob.year) {
-      toast.error("Please enter your full date of birth");
+      toast.error(<InterfaceText source={"Please enter your full date of birth"} />);
       return;
     }
 
@@ -58,10 +59,10 @@ export default function OnboardingPage() {
       await fetch("/api/auth/session", { cache: "no-store" });
       await update();
 
-      toast.success("Welcome to Luo Heritage");
+      toast.success(<InterfaceText source={"Welcome to Luo Heritage"} />);
       window.location.href = "/dashboard";
     } catch (err: any) {
-      toast.error(err.message || "Onboarding failed");
+      toast.error(<InterfaceText source={err.message || "Onboarding failed"} />);
       setLoading(false);
     }
   }
@@ -81,52 +82,44 @@ export default function OnboardingPage() {
           <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-serif text-2xl font-bold">L</span>
           </div>
-          <h1 className="font-serif text-2xl text-stone-900 mb-2">
-            Welcome to Luo Heritage
-          </h1>
-          <p className="text-sm text-stone-600">
-            Just a few details before we continue
-          </p>
+          <h1 className="font-serif text-2xl text-stone-900 mb-2"><InterfaceText source="Welcome to Luo Heritage" /></h1>
+          <p className="text-sm text-stone-600"><InterfaceText source="Just a few details before we continue" /></p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Which language would you like to explore?
-            </label>
+            <label className="block text-sm font-medium text-stone-700 mb-2"><InterfaceText source="Which language would you like to explore?" /></label>
             <select
               value={languageId ?? ""}
               onChange={(e) => setLanguageId(Number(e.target.value))}
               required
               className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
             >
-              <option value="" disabled>
+              <InterfaceOption value="" disabled>
                 Select your language
-              </option>
+              </InterfaceOption>
               {languages.map((l) => (
-                <option key={l.id} value={l.id}>
+                <InterfaceOption key={l.id} value={l.id}>
                   {l.nativeName} ({l.name})
-                </option>
+                </InterfaceOption>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              How would you describe yourself?
-            </label>
+            <label className="block text-sm font-medium text-stone-700 mb-2"><InterfaceText source="How would you describe yourself?" /></label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
               required
               className="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white transition text-[15px]"
             >
-              <option value="registered">Community member</option>
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-              <option value="researcher">Researcher</option>
-              <option value="contributor">Contributor</option>
-              <option value="elder">Elder</option>
+              <InterfaceOption value="registered">Community member</InterfaceOption>
+              <InterfaceOption value="student">Student</InterfaceOption>
+              <InterfaceOption value="teacher">Teacher</InterfaceOption>
+              <InterfaceOption value="researcher">Researcher</InterfaceOption>
+              <InterfaceOption value="contributor">Contributor</InterfaceOption>
+              <InterfaceOption value="elder">Elder</InterfaceOption>
             </select>
           </div>
 
@@ -142,13 +135,11 @@ export default function OnboardingPage() {
             disabled={loading || !languageId}
             className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3 rounded-full font-semibold disabled:opacity-50 transition shadow-lg shadow-amber-700/20 mt-4"
           >
-            {loading ? "Setting up..." : "Continue to dashboard"}
+            <InterfaceText source={loading ? "Setting up..." : "Continue to dashboard"} />
           </button>
         </form>
 
-        <p className="text-xs text-stone-500 text-center mt-6">
-          You can change this later in your profile settings.
-        </p>
+        <p className="text-xs text-stone-500 text-center mt-6"><InterfaceText source="You can change this later in your profile settings." /></p>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import { publicRecordWhere } from "@/lib/governance";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
@@ -71,12 +72,8 @@ export default async function AiMonitoringPage({
   return (
     <div>
       <header className="workspace-heading mb-6">
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">
-          AI Monitoring
-        </h1>
-        <p className="text-sm text-stone-500">
-          Chatbot usage, embedding coverage, and flagged responses
-        </p>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="AI Monitoring" /></h1>
+        <p className="text-sm text-stone-500"><InterfaceText source="Chatbot usage, embedding coverage, and flagged responses" /></p>
       </header>
 
       {/* Language filter */}
@@ -89,7 +86,7 @@ export default async function AiMonitoringPage({
               : "bg-white border border-stone-200 text-stone-600 hover:border-amber-400"
           }`}
         >
-          {isSuperAdmin ? "All languages" : "All assigned languages"}
+          <InterfaceText source={isSuperAdmin ? "All languages" : "All assigned languages"} />
         </a>
         {languages.map((l) => (
           <a
@@ -133,30 +130,18 @@ export default async function AiMonitoringPage({
 
           <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
             <div className="px-6 py-4 border-b border-stone-100">
-              <h2 className="text-xs uppercase tracking-wider text-stone-400">
-                Recent Queries
-              </h2>
+              <h2 className="text-xs uppercase tracking-wider text-stone-400"><InterfaceText source="Recent Queries" /></h2>
             </div>
             {recentQueries.length === 0 ? (
-              <div className="p-12 text-center text-stone-400 text-sm">
-                No chatbot questions have been recorded for your permitted languages.
-              </div>
+              <div className="p-12 text-center text-stone-400 text-sm"><InterfaceText source="No chatbot questions have been recorded for your permitted languages." /></div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-stone-50">
                   <tr>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                      Query
-                    </th>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                      Response
-                    </th>
-                    <th className="text-right px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                      Rating
-                    </th>
-                    <th className="text-right px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium">
-                      Actions
-                    </th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Query" /></th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Response" /></th>
+                    <th className="text-right px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Rating" /></th>
+                    <th className="text-right px-4 py-2 text-xs uppercase tracking-wider text-stone-500 font-medium"><InterfaceText source="Actions" /></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -201,9 +186,7 @@ export default async function AiMonitoringPage({
           </div>
 
           <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
-              Embedding Coverage
-            </h2>
+            <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Embedding Coverage" /></h2>
             <div className="h-3 bg-stone-100 rounded-full overflow-hidden mb-3">
               <div
                 className="h-full bg-linear-to-r from-amber-400 to-amber-600 rounded-full transition-all"
@@ -211,13 +194,8 @@ export default async function AiMonitoringPage({
               />
             </div>
             <p className="text-sm text-stone-500">
-              {totalEmbeddings} of {totalRecords} published records have been
-              embedded for AI search
-            </p>
-            <p className="text-xs text-stone-400 mt-4">
-              Batch embedding will be available in Prompt 36 (Embeddings
-              Pipeline)
-            </p>
+              {totalEmbeddings}<InterfaceText source=" of " />{totalRecords}<InterfaceText source=" published records have been embedded for AI search" /></p>
+            <p className="text-xs text-stone-400 mt-4"><InterfaceText source="Batch embedding will be available in Prompt 36 (Embeddings Pipeline)" /></p>
           </div>
         </>
       )}
@@ -225,25 +203,18 @@ export default async function AiMonitoringPage({
       {tab === "flagged" && (
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-100">
-            <h2 className="text-xs uppercase tracking-wider text-stone-400">
-              Flagged Responses ({flagged.length})
+            <h2 className="text-xs uppercase tracking-wider text-stone-400"><InterfaceText source="Flagged Responses (" />{flagged.length})
             </h2>
           </div>
           {flagged.length === 0 ? (
-            <div className="p-12 text-center text-stone-400 text-sm">
-              No responses flagged for review
-            </div>
+            <div className="p-12 text-center text-stone-400 text-sm"><InterfaceText source="No responses flagged for review" /></div>
           ) : (
             <ul className="divide-y divide-stone-100">
               {flagged.map((f) => (
                 <li key={f.id} className="p-6">
-                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Query
-                  </p>
+                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Query" /></p>
                   <p className="text-stone-700 mb-3">{f.query}</p>
-                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1">
-                    Response
-                  </p>
+                  <p className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Response" /></p>
                   <p className="text-sm text-stone-600 mb-3 whitespace-pre-line">
                     {f.response}
                   </p>

@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 
 function slug(value: string) {
@@ -59,11 +60,11 @@ export function LegalDocument({ content }: { content: string }) {
   return (
     <div className="mt-8 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="Document contents" className="h-fit rounded-xl border border-stone-200 bg-white/70 p-4 lg:sticky lg:top-6">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-500">On this page</h2>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-500"><InterfaceText source="On this page" /></h2>
         <ol className="max-h-[45vh] space-y-2 overflow-y-auto text-xs leading-5 lg:max-h-[75vh]">
           {sections.map((section) => <li key={section.id}><a className="text-stone-700 hover:text-amber-800 hover:underline" href={`#${section.id}`}>{section.title}</a></li>)}
         </ol>
-        <div className="mt-4 border-t border-stone-200 pt-3 text-xs leading-5"><Link href="/terms" className="block text-amber-800 underline">Terms and Conditions</Link><Link href="/privacy" className="block text-amber-800 underline">Privacy Policy</Link></div>
+        <div className="mt-4 border-t border-stone-200 pt-3 text-xs leading-5"><Link href="/terms" className="block text-amber-800 underline"><InterfaceText source="Terms and Conditions" /></Link><Link href="/privacy" className="block text-amber-800 underline"><InterfaceText source="Privacy Policy" /></Link></div>
       </nav>
       <div className="min-w-0 space-y-5 text-sm leading-7">
         {blocks.map((block, blockIndex) => block.type === "heading" ? (

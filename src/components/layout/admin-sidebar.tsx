@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { NavigationLink as Link } from "./navigation-link";
 import { usePathname } from "next/navigation";
@@ -12,9 +13,8 @@ const ROLE_ITEMS: Record<string, NavItem[]> = {
   uploader: [{ label: "Upload Content", href: "/admin/content", icon: "↑" }],
   content_editor: [
     { label: "Review & edit", href: "/admin/validation-queue", icon: "E" },
-    { label: "Edits in progress", href: "/admin/editor-queue", icon: "E" },
     { label: "Review history", href: "/admin/review-history", icon: "H" },
-    { label: "Content & files", href: "/admin/content", icon: "C" },
+    { label: "Edit system text", href: "/admin/interface", icon: "T" },
   ],
   publisher: [
     { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" },
@@ -24,21 +24,21 @@ const ROLE_ITEMS: Record<string, NavItem[]> = {
     { label: "Content", href: "/admin/content", icon: "C" },
     { label: "Review & edit", href: "/admin/validation-queue", icon: "R" },
     { label: "Review History", href: "/admin/review-history", icon: "H" },
-    { label: "Editor Queue", href: "/admin/editor-queue", icon: "E" },
     { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" },
     { label: "Published History", href: "/admin/published-history", icon: "H" },
     { label: "Media", href: "/admin/media", icon: "M" },
     { label: "Users", href: "/admin/users", icon: "U" },
     { label: "Transcripts", href: "/admin/transcripts", icon: "T" },
     { label: "Translations", href: "/admin/translations", icon: "T" },
+    { label: "Edit system text", href: "/admin/interface", icon: "T" },
     { label: "Analytics", href: "/admin/analytics", icon: "A" },
     { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "AI" },
   ],
 };
 
 const SUPER_ADMIN_SECTIONS: NavSection[] = [
-  { title: "Workflow", items: [DASHBOARD, { label: "Content", href: "/admin/content", icon: "▤" }, { label: "Review & edit", href: "/admin/validation-queue", icon: "C" }, { label: "Review History", href: "/admin/review-history", icon: "H" }, { label: "Editor Queue", href: "/admin/editor-queue", icon: "E" }, { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" }, { label: "Published History", href: "/admin/published-history", icon: "H" }] },
-  { title: "Library", items: [{ label: "Media", href: "/admin/media", icon: "◉" }, { label: "Transcripts", href: "/admin/transcripts", icon: "T" }, { label: "Users", href: "/admin/users", icon: "●" }, { label: "Translations", href: "/admin/translations", icon: "⌘" }] },
+  { title: "Workflow", items: [DASHBOARD, { label: "Content", href: "/admin/content", icon: "▤" }, { label: "Review & edit", href: "/admin/validation-queue", icon: "C" }, { label: "Review History", href: "/admin/review-history", icon: "H" }, { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" }, { label: "Published History", href: "/admin/published-history", icon: "H" }] },
+  { title: "Library", items: [{ label: "Edit system text", href: "/admin/interface", icon: "T" }, { label: "Media", href: "/admin/media", icon: "◉" }, { label: "Transcripts", href: "/admin/transcripts", icon: "T" }, { label: "Users", href: "/admin/users", icon: "●" }, { label: "Translations", href: "/admin/translations", icon: "⌘" }] },
   { title: "Insights", items: [{ label: "Analytics", href: "/admin/analytics", icon: "▲" }, { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "✦" }, { label: "Audit Logs", href: "/admin/audit-logs", icon: "◈" }] },
 ];
 
@@ -52,10 +52,10 @@ const SUPER_ADMIN_SECTION: NavSection = {
   ],
 };
 
-export function AdminSidebar({ isSuperAdmin, roles, onNavigate }: { isSuperAdmin: boolean; roles: Role[]; onNavigate?: () => void }) {
+export function AdminSidebar({ isSuperAdmin, isMasterSuperAdmin = false, roles, onNavigate }: { isSuperAdmin: boolean; isMasterSuperAdmin?: boolean; roles: Role[]; onNavigate?: () => void }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const roleSet = new Set(roles.map(({ role }) => role));
+  const roleSet = new Set(roles.map(({ role }) => role === "cultural_expert" ? "content_editor" : role));
   const uniqueRoleItems = [...new Map([...roleSet].flatMap((role) => ROLE_ITEMS[role] ?? []).map((item) => [item.href, item])).values()];
   const sections: NavSection[] = isSuperAdmin
     ? SUPER_ADMIN_SECTIONS
@@ -65,10 +65,10 @@ export function AdminSidebar({ isSuperAdmin, roles, onNavigate }: { isSuperAdmin
 
   const renderSection = (section: NavSection, idx: number) => (
     <div key={`${section.title ?? "section"}-${idx}`} className="mb-6">
-      {section.title && <p className="mb-2 px-4 text-xs uppercase tracking-wider text-amber-200/70">{section.title}</p>}
+      {section.title && <p className="mb-2 px-4 text-xs uppercase tracking-wider text-amber-200/70"><InterfaceText source={section.title} /></p>}
       <nav className="space-y-0.5">
-        {section.items.map((item) => <Link key={item.href} href={item.href} onClick={onNavigate} className={`mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${isActive(item.href) ? "border-l-2 border-amber-400 bg-black/25 text-amber-100" : "text-amber-50/80 hover:bg-black/15 hover:text-amber-50"}`}>
-          <span className="w-5 text-center text-base">{item.icon}</span><span>{item.label}</span>
+        {section.items.filter(item => item.href !== "/admin/interface" || isMasterSuperAdmin || roleSet.has("content_editor") || roleSet.has("language_admin")).map((item) => <Link key={item.href} href={item.href} onClick={onNavigate} className={`mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${isActive(item.href) ? "border-l-2 border-amber-400 bg-black/25 text-amber-100" : "text-amber-50/80 hover:bg-black/15 hover:text-amber-50"}`}>
+          <span className="w-5 text-center text-base">{item.icon}</span><span><InterfaceText source={item.label} /></span>
         </Link>)}
       </nav>
     </div>

@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 
@@ -29,9 +30,7 @@ export function TranscriptSegments({ segments }: { segments: TranscriptSegmentIt
 
   if (segments.length === 0) {
     return (
-      <p className="rounded-xl border border-stone-900/10 bg-white/90 p-5 text-sm text-stone-600">
-        No transcript text is available in this session.
-      </p>
+      <p className="rounded-xl border border-stone-900/10 bg-white/90 p-5 text-sm text-stone-600"><InterfaceText source="No transcript text is available in this session." /></p>
     );
   }
 
@@ -43,7 +42,7 @@ export function TranscriptSegments({ segments }: { segments: TranscriptSegmentIt
           onClick={toggleAll}
           className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-800 hover:bg-amber-50"
         >
-          {allExpanded ? "Collapse all segments" : "Expand all segments"}
+          <InterfaceText source={allExpanded ? "Collapse all segments" : "Expand all segments"} />
         </button>
       </div>
       <div className="space-y-3">
@@ -66,14 +65,14 @@ export function TranscriptSegments({ segments }: { segments: TranscriptSegmentIt
                   className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium text-stone-800 hover:bg-amber-50"
                 >
                   <span>{label}</span>
-                  <span aria-hidden="true" className="shrink-0 text-lg">{isExpanded ? "−" : "+"}</span>
+                  <span aria-hidden="true" className="shrink-0 text-lg"><InterfaceText source={isExpanded ? "−" : "+"} /></span>
                 </button>
               </h2>
               {isExpanded && (
                 <div id={`transcript-${segment.id}`} className="border-t border-stone-200 px-4 py-4">
                   <p className="whitespace-pre-wrap break-words text-sm leading-7 text-stone-800">{segment.text}</p>
                   {segment.sourceUri && (
-                    <p className="mt-4 break-all text-xs text-stone-500">Source: {segment.sourceUri}</p>
+                    <p className="mt-4 break-all text-xs text-stone-500"><InterfaceText source="Source: " />{segment.sourceUri}</p>
                   )}
                 </div>
               )}

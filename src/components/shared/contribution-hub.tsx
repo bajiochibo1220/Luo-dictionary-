@@ -1,4 +1,5 @@
-﻿"use client";
+"use client";
+import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ContentFormCore } from "./content-form";
 import type { FeatureRequest } from "./learning-hub";
@@ -58,24 +59,24 @@ export function ContributionHub({ request, transport, languageId, initialModule 
     } catch { setDeviceError("Could not remove the device copy. Try again."); }
   }
   return <section className="mx-auto max-w-4xl space-y-4 p-5 text-stone-900">
-    <h1 className="workspace-heading font-serif text-3xl">Contributions &amp; submissions</h1>
-    {!userId && <p>Sign in to create private drafts and submit cultural knowledge for review.</p>}
+    <h1 className="workspace-heading font-serif text-3xl"><InterfaceText source="Contributions & submissions" /></h1>
+    {!userId && <p><InterfaceText source="Sign in to create private drafts and submit cultural knowledge for review." /></p>}
     {error && <p role="alert">{error}</p>}
     {deviceError && <p role="alert">{deviceError}</p>}
-    {userId && <button className="min-h-11 underline" onClick={() => { void reload(); void refreshDeviceDrafts(); }}>Refresh</button>}
+    {userId && <button className="min-h-11 underline" onClick={() => { void reload(); void refreshDeviceDrafts(); }}><InterfaceText source="Refresh" /></button>}
     {userId && deviceDrafts.length > 0 && <section className="space-y-3 rounded-xl border border-stone-300 p-4">
-      <h2 className="font-serif text-2xl">Drafts on this device</h2>
-      <p className="text-sm">Only this account and backend use these copies in the app. They are not submitted automatically.</p>
+      <h2 className="font-serif text-2xl"><InterfaceText source="Drafts on this device" /></h2>
+      <p className="text-sm"><InterfaceText source="Only this account and backend use these copies in the app. They are not submitted automatically." /></p>
       {deviceDrafts.map(draft => <article key={draft.id} className="rounded-lg bg-white p-3">
         <h3 className="font-semibold">{draft.title || "Untitled device draft"}</h3>
-        <p className="text-sm">{Object.values(draft.files).filter(Boolean).length} selected files · {new Date(draft.updatedAt).toLocaleString()}</p>
-        <button disabled={!data?.modules.some((item: any) => item.code === draft.moduleCode)} className="min-h-11 px-3 underline disabled:opacity-50" onClick={() => openForm(draft.moduleCode, data?.submissions.find((item: any) => item.id === draft.recordId), draft)}>Resume device draft</button>
-        <button className="min-h-11 px-3 underline" onClick={() => void deleteDeviceCopy(draft)}>Delete device copy</button>
+        <p className="text-sm">{Object.values(draft.files).filter(Boolean).length}<InterfaceText source=" selected files · " />{new Date(draft.updatedAt).toLocaleString()}</p>
+        <button disabled={!data?.modules.some((item: any) => item.code === draft.moduleCode)} className="min-h-11 px-3 underline disabled:opacity-50" onClick={() => openForm(draft.moduleCode, data?.submissions.find((item: any) => item.id === draft.recordId), draft)}><InterfaceText source="Resume device draft" /></button>
+        <button className="min-h-11 px-3 underline" onClick={() => void deleteDeviceCopy(draft)}><InterfaceText source="Delete device copy" /></button>
       </article>)}
     </section>}
     {data && <>
-      <label className="block">Choose collection<select className="block w-full rounded-lg border bg-white p-3" value={module} onChange={event => { setModule(event.target.value); setEditing(null); setResuming(undefined); setForm(false); }}><option value="">Select a collection</option>{data.modules.map((item: any) => <option key={item.code} value={item.code}>{item.title}</option>)}</select></label>
-      <button disabled={!selected} className="min-h-11 rounded-full bg-amber-900 px-5 py-3 text-white disabled:opacity-50" onClick={() => openForm(selected.code)}>New private draft</button>
+      <label className="block"><InterfaceText source="Choose collection" /><select className="block w-full rounded-lg border bg-white p-3" value={module} onChange={event => { setModule(event.target.value); setEditing(null); setResuming(undefined); setForm(false); }}><InterfaceOption value="">Select a collection</InterfaceOption>{data.modules.map((item: any) => <InterfaceOption key={item.code} value={item.code}>{item.title}</InterfaceOption>)}</select></label>
+      <button disabled={!selected} className="min-h-11 rounded-full bg-amber-900 px-5 py-3 text-white disabled:opacity-50" onClick={() => openForm(selected.code)}><InterfaceText source="New private draft" /></button>
       {form && selected && <ContentFormCore
         key={`${selected.code}:${editing?.id || "new"}:${userId}:${formVersion}`}
         transport={transport} moduleCode={selected.code} languageId={languageId}
@@ -86,12 +87,12 @@ export function ContributionHub({ request, transport, languageId, initialModule 
         deviceDraft={scope ? { scope, initial: resuming, onChange: () => { void refreshDeviceDrafts(); } } : undefined}
         navigate={() => { setForm(false); setEditing(null); setResuming(undefined); void reload(); }}
       />}
-      {data.deletionHistory?.length > 0 && <section className="space-y-3 rounded-xl bg-white/80 p-4"><h2 className="font-serif text-xl">Removed uploads ? retained history</h2>{data.deletionHistory.map((item: any) => <p key={item.id}>{item.newValue?.title || item.entityId} ? Deleted by {item.user?.name || "Staff"} ? {new Date(item.createdAt).toLocaleString()}</p>)}</section>}
-      <h2 className="font-serif text-2xl">My online submissions</h2>
-      {!data.submissions.length && <p>No submissions loaded.</p>}
+      {data.deletionHistory?.length > 0 && <section className="space-y-3 rounded-xl bg-white/80 p-4"><h2 className="font-serif text-xl"><InterfaceText source="Removed uploads ? retained history" /></h2>{data.deletionHistory.map((item: any) => <p key={item.id}>{item.newValue?.title || item.entityId}<InterfaceText source=" ? Deleted by " />{item.user?.name || "Staff"} ? {new Date(item.createdAt).toLocaleString()}</p>)}</section>}
+      <h2 className="font-serif text-2xl"><InterfaceText source="My online submissions" /></h2>
+      {!data.submissions.length && <p><InterfaceText source="No submissions loaded." /></p>}
       {data.submissions.filter((item: any) => !selected || item.moduleId === selected.id).map((item: any) => <article key={item.id} className="space-y-2 rounded-xl bg-white/80 p-4">
         <h3 className="font-semibold">{item.title}</h3><p>{item.status.replaceAll("_", " ")}</p>
-        {["draft", "needs_edit", "rejected", "curated"].includes(item.status) && <button className="min-h-11 underline" onClick={() => openForm(data.modules.find((m: any) => m.id === item.moduleId)?.code || "", item)}>Edit draft or requested revision</button>}
+        {["draft", "needs_edit", "rejected", "curated"].includes(item.status) && <button className="min-h-11 underline" onClick={() => openForm(data.modules.find((m: any) => m.id === item.moduleId)?.code || "", item)}><InterfaceText source="Edit draft or requested revision" /></button>}
       </article>)}
     </>}
   </section>;

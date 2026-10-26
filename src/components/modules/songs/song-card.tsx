@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
@@ -58,9 +59,7 @@ export function SongCard({
         ) : item.type === "audio" ? (
           <audio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}
-        <span className="text-xs uppercase tracking-wider text-amber-600">
-          Song
-        </span>
+        <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Song" /></span>
 
         <h3 className="text-xl font-serif text-stone-800 mt-2 mb-3 group-hover:text-amber-700 transition leading-snug">
           {song.title}

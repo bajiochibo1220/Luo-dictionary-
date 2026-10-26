@@ -1,4 +1,5 @@
 "use client";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -27,10 +28,10 @@ export function ProfilePreferencesForm({ initialTypes }: { initialTypes: string[
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "Could not save your profile options.");
-      toast.success("Profile options saved");
+      toast.success(<InterfaceText source={"Profile options saved"} />);
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save your profile options.");
+      toast.error(<InterfaceText source={error instanceof Error ? error.message : "Could not save your profile options."} />);
     } finally {
       setSaving(false);
     }
@@ -38,8 +39,8 @@ export function ProfilePreferencesForm({ initialTypes }: { initialTypes: string[
 
   return (
     <section className="max-w-2xl rounded-xl border border-stone-200 bg-white p-6 shadow-xs">
-      <h1 className="font-serif text-2xl text-stone-800">Profile options</h1>
-      <p className="mt-2 text-sm text-stone-600">Choose every option that describes how you use Luo Heritage. You can change these selections whenever you like.</p>
+      <h1 className="font-serif text-2xl text-stone-800"><InterfaceText source="Profile options" /></h1>
+      <p className="mt-2 text-sm text-stone-600"><InterfaceText source="Choose every option that describes how you use Luo Heritage. You can change these selections whenever you like." /></p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {OPTIONS.map(([value, label]) => (
           <label key={value} className="flex items-center gap-3 rounded-lg border border-stone-200 p-3 text-sm text-stone-700">
@@ -49,7 +50,7 @@ export function ProfilePreferencesForm({ initialTypes }: { initialTypes: string[
         ))}
       </div>
       <button type="button" onClick={() => void save()} disabled={saving} className="mt-5 rounded-lg bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
-        {saving ? "Saving…" : "Save profile options"}
+        <InterfaceText source={saving ? "Saving…" : "Save profile options"} />
       </button>
     </section>
   );

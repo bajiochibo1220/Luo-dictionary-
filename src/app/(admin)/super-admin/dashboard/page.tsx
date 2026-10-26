@@ -1,3 +1,4 @@
+import { InterfaceText } from "@/components/shared/interface-language";
 import fs from "fs";
 import { getSystemSettings } from "@/lib/settings";
 import { hasGemini } from "@/lib/ai/gemini";
@@ -71,12 +72,9 @@ export default async function SuperAdminDashboardPage() {
     <div>
       <header className="workspace-heading mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-serif text-stone-800 mb-1">
-            Super Admin Dashboard
-          </h1>
-          <p className="text-sm text-stone-500">
-            Platform-wide overview · {languages.length}{" "}
-            {languages.length === 1 ? "language" : "languages"}
+          <h1 className="text-3xl font-serif text-stone-800 mb-1"><InterfaceText source="Super Admin Dashboard" /></h1>
+          <p className="text-sm text-stone-500"><InterfaceText source="Platform-wide overview · " />{languages.length}{" "}
+            <InterfaceText source={languages.length === 1 ? "language" : "languages"} />
           </p>
         </div>
       </header>
