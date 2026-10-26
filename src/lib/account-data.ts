@@ -24,7 +24,7 @@ export async function getCurrentAccount(request?: Request) {
     profileTypes: user.profileTypes,
     isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin,
     isMasterSuperAdmin: user.isMasterSuperAdmin,
-    languageRoles: user.languageRoles.map(item => ({ languageId: item.languageId, role: item.role, languageCode: item.language.code, languageName: item.language.name })),
+    languageRoles: user.languageRoles.map(item => ({ languageId: item.languageId, role: item.role === "cultural_expert" ? "content_editor" : item.role, languageCode: item.language.code, languageName: item.language.name })),
   });
 }
 

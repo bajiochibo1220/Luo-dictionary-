@@ -22,7 +22,7 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
     return NextResponse.json({ success: false, error: "Only the assigned content editor can send this item back to cultural review." }, { status: 403 });
   }
   if (record.status !== "needs_edit" || !record.validatorId) {
-    return NextResponse.json({ success: false, error: "This item must be returned by a cultural expert before an editor can resubmit it for cultural review." }, { status: 409 });
+    return NextResponse.json({ success: false, error: "This item must be returned by an editor before an editor can resubmit it for cultural review." }, { status: 409 });
   }
 
   const hasLinkedTranscript = record.transcripts.some((item) => item.text.trim().length > 0);
@@ -49,7 +49,7 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
   });
 
   const reviewers = await prisma.userLanguageRole.findMany({
-    where: { languageId: record.languageId, role: "cultural_expert" },
+    where: { languageId: record.languageId, role: "content_editor" },
     select: { userId: true },
   });
   if (reviewers.length) {

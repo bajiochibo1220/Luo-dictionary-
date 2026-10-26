@@ -122,18 +122,18 @@ export function canAccessGovernedItem(
   if (item.embargoUntil && item.embargoUntil > now) return false;
   if (item.consentScope === "pending" || item.consentScope === "embargoed") return false;
   if (item.restrictionLevel === "sacred" || item.consentScope === "community_only") {
-    return roles.has("elder") || roles.has("cultural_expert");
+    return roles.has("elder") || roles.has("content_editor");
   }
   if (item.restrictionLevel === "restricted") {
-    return roles.has("cultural_expert") || roles.has("language_admin");
+    return roles.has("content_editor") || roles.has("language_admin");
   }
   if (item.consentScope === "research_only") {
-    return roles.has("researcher") || roles.has("language_admin") || roles.has("cultural_expert");
+    return roles.has("researcher") || roles.has("language_admin") || roles.has("content_editor");
   }
   if (item.consentScope === "teaching") {
-    return roles.has("teacher") || roles.has("researcher") || roles.has("language_admin") || roles.has("cultural_expert");
+    return roles.has("teacher") || roles.has("researcher") || roles.has("language_admin") || roles.has("content_editor");
   }
-  return roles.has("language_admin") || roles.has("content_editor") || roles.has("cultural_expert") || roles.has("uploader") || roles.has("publisher");
+  return roles.has("language_admin") || roles.has("content_editor") || roles.has("uploader") || roles.has("publisher");
 }
 
 /** Allow curators to review ordinary pending/internal items without bypassing
@@ -152,7 +152,7 @@ export function canReviewGovernedItem(
   if (user.isSuperAdmin) return true;
   return (user.languageRoles ?? []).some((role) =>
     (languageId === undefined || role.languageId === languageId) &&
-    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role)
+    ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role)
   );
 }
 
@@ -187,7 +187,7 @@ export function canReadRecord(user: GovernanceUser, record: GovernedParent): boo
   if (record.contributorId === user.id) return true;
   const actor = { ...user, isSuperAdmin: !!(user.isSuperAdmin || user.isMasterSuperAdmin) };
   const staff = actor.isSuperAdmin || actor.languageRoles?.some((role) => role.languageId === record.languageId &&
-    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role));
+    ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role));
   return staff ? canReviewGovernedItem(actor, record, record.languageId)
     : ["curated", "published"].includes(record.status) && !!actor.languageRoles?.some(role => role.languageId === record.languageId && ["researcher", "teacher", "elder"].includes(role.role)) && canAccessGovernedItem(actor, record, record.languageId);
 }
@@ -200,7 +200,7 @@ export function canReadMedia(user: GovernanceUser, asset: GovernanceAccessFields
     if (!canReadRecord(actor, parent)) return false;
     if (parent.contributorId === actor.id) return true;
   } else if (!actor.isSuperAdmin && !actor.languageRoles?.some((role) => role.languageId === asset.languageId &&
-    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role))) return false;
+    ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role))) return false;
   return canReviewGovernedItem(actor, asset, asset.languageId);
 }
 

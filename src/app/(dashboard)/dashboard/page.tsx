@@ -10,7 +10,7 @@ export default async function UserDashboardPage({ searchParams }: { searchParams
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (moduleCode === "chatbot") redirect("/chatbot");
-  const primaryRole = session.user.languageRoles?.[0];
+  const primaryRole = session.user.languageRoles?.find(role => role.languageCode !== "eng");
   const fallback = primaryRole ? null : await getDefaultPublicLanguage();
   const languageId = primaryRole?.languageId ?? fallback?.id;
   const languageCode = primaryRole?.languageCode ?? fallback?.code ?? "luo";

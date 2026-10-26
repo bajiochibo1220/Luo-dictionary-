@@ -32,16 +32,16 @@ export default async function ValidationDetailPage({
   record.media = record.media.filter((asset) => canReadMedia(session.user, asset, record));
   const user = session.user as any;
   const canSee = user.isSuperAdmin || user.isMasterSuperAdmin || (user.languageRoles ?? []).some((role: any) =>
-    role.languageId === record.languageId && ["cultural_expert", "language_admin"].includes(role.role)
+    role.languageId === record.languageId && ["content_editor", "language_admin"].includes(role.role)
   );
-  const waitingForCulture = record.status === "submitted" || record.status === "rejection_review" || (record.status === "under_review" && !record.validatorId);
+  const waitingForCulture = record.status === "submitted" || record.status === "needs_edit" || record.status === "rejection_review" || (record.status === "under_review" && !record.validatorId);
   if (!canSee || !waitingForCulture) notFound();
   const canAct = canValidateCulture(session, record.languageId);
   const proposal = [...record.reviews].reverse().find((review) => review.stage.startsWith("cultural_rejection_vote:") && review.action === "rejection_proposed");
   let rejectionProposal = null;
   if (record.status === "rejection_review" && proposal) {
     const reviewerIds = await prisma.userLanguageRole.findMany({
-      where: { languageId: record.languageId, role: "cultural_expert", userId: { notIn: [proposal.reviewerId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
+      where: { languageId: record.languageId, role: "content_editor", userId: { notIn: [proposal.reviewerId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
       select: { userId: true },
       distinct: ["userId"],
     });
@@ -124,7 +124,7 @@ export default async function ValidationDetailPage({
           </dl>
         </> : <p className="mt-3 text-sm text-red-800">English version is incomplete. Return it for translation before approving.</p>}
         {missingEnglishFields.length > 0 && <p className="mt-3 text-sm font-medium text-red-800">Missing English fields: {missingEnglishFields.join(", ")}</p>}
-        {(user.languageRoles ?? []).some((role: any) => role.languageId === record.languageId && ["uploader", "content_editor"].includes(role.role)) && englishLanguage && <Link href={`/admin/content/${record.id}/edit?languageId=${englishLanguage.id}`} className="mt-4 inline-flex text-sm font-semibold text-blue-800 underline">Open English version</Link>}
+        {canAct && englishLanguage && <Link href={`/admin/content/${record.id}/edit?languageId=${englishLanguage.id}`} className="mt-4 inline-flex text-sm font-semibold text-blue-800 underline">Open English version</Link>}
       </section>}
 
       <section className="bg-white rounded-xl shadow-xs border border-stone-100 p-8 mb-6">
@@ -165,7 +165,8 @@ export default async function ValidationDetailPage({
         </div>
       </section>}
 
-      <ValidationActions recordId={record.id} canAct={canAct} rejectionProposal={rejectionProposal} />
+      {record.status === "needs_edit" && canAct && <Link href={`/admin/content/${record.id}/edit`} className="mb-4 inline-flex min-h-11 items-center rounded-lg bg-stone-800 px-4 text-white">Edit community-language version</Link>}
+      <ValidationActions canStartEdit={record.status === "submitted" || record.status === "under_review" && !record.validatorId} recordId={record.id} canAct={canAct} rejectionProposal={rejectionProposal} />
     </div>
   );
 }

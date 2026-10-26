@@ -172,7 +172,7 @@ export function ContentTable({
         </label>
         {selected.length > 0 && <div className="flex flex-wrap gap-2">
           {canBulkWorkflow && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
-          {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve cultural review" : "Send selected to cultural review"}
+          {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve editor review" : "Send selected to cultural review"}
           </button>}
           {canDelete && selectedRecords.every((record) => record.canDelete) && <button type="button" onClick={() => void deleteSelected()} disabled={bulkBusy} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50">Delete selected</button>}
         </div>}

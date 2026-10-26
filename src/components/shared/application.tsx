@@ -17,6 +17,7 @@ import { SidebarPanel, SidebarProvider, SidebarToggle, useSidebar } from "@/comp
 import type { AppBootstrap, AppLibrary } from "@/lib/app-contract";
 import type { AppAccount, ConversationHistory } from "@/lib/account-contract";
 import type { ApplicationAdapters, ApplicationSession } from "@/lib/application-adapters";
+import { PartnerBranding } from "./partner-branding";
 import { APP_NAME } from "@/lib/brand";
 const ApplicationContext = createContext<ApplicationAdapters | null>(null);
 function useAdapters() { const value = useContext(ApplicationContext); if (!value) throw new Error("Application adapters are missing."); return value; }
@@ -58,7 +59,7 @@ function App() {
   const identityEpoch = useRef(0);
   const sidebar = useSidebar();
   const closeMobile = sidebar?.closeMobile;
-  const isStaff = !!profile && (profile.isSuperAdmin || profile.languageRoles.some(role => ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role)));
+  const isStaff = !!profile && (profile.isSuperAdmin || profile.languageRoles.some(role => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role)));
   const activeModule = new URL(route, "https://client.local").searchParams.get("module");
   const isAccount = route === "/account";
   const routeUrl = new URL(route, "https://client.local");
@@ -129,7 +130,7 @@ function App() {
   }
 
   useEffect(() => {
-    const update = () => setRoute(location.hash.slice(1) || "/dashboard");
+    const update = () => { const target = location.hash.slice(1) || "/dashboard"; setRoute(target === "/classrooms" ? "/learn" : target); };
     update();
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
@@ -147,24 +148,24 @@ function App() {
   }, [language, activeModule, retry, bootstrap, library]);
   useEffect(() => { closeMobile?.(); }, [route, closeMobile]);
 
-  return <div className="flex h-dvh flex-col bg-[#b89a68]">
+  return <div className="flex h-dvh overflow-hidden flex-col bg-[#b89a68]">
     {nativeSession.isNative && <Toaster richColors />}
-    <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-amber-100/15 bg-[#5c3a1c] px-4 py-3 text-amber-50 pt-safe sm:flex-nowrap">
+    <header className="institution-masthead flex shrink-0 flex-wrap items-center gap-3 border-b border-amber-100/15 bg-[#5c3a1c] px-4 py-3 text-amber-50 pt-safe sm:flex-nowrap">
       <SidebarToggle />
       <img src={artwork} width="48" height="48" alt="" className="h-12 w-12 shrink-0 rounded-xl" />
-      <span title={APP_NAME} className="min-w-0 flex-1 truncate font-serif text-lg sm:text-2xl">{APP_NAME}</span>
+      <div className="min-w-0 flex-1"><span title={APP_NAME} className="block truncate font-serif text-lg sm:text-2xl">{APP_NAME}</span><PartnerBranding request={featureRequest} /></div>
       <div className="order-last flex w-full items-center justify-end gap-3 sm:order-none sm:w-auto">
         <Link href="/chatbot" className="rounded-lg px-2 py-2 text-sm font-semibold">Chat</Link>
         <label className="sr-only" htmlFor="language">Language</label>
         <select id="language" value={language} onChange={event => setLanguage(event.target.value)} className="max-w-24 rounded-lg border border-amber-100/20 bg-[#6b4724] p-2 text-sm">
-          {(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).map(item => <option key={item.code} value={item.code}>{item.nativeName}</option>)}
+          {(configuration?.languages.filter(item => item.code !== "eng") ?? [{ code: "luo", nativeName: "Dholuo" }]).map(item => <option key={item.code} value={item.code}>{item.nativeName}</option>)}
         </select>
         {!session && (nativeSession.isNative
           ? <button type="button" aria-label="Create account" onClick={() => signIn("register")} disabled={signingIn} className="whitespace-nowrap rounded-full border border-amber-100/30 px-3 py-2 text-sm font-semibold disabled:opacity-50">Create account</button>
           : <Link href="/register" className="whitespace-nowrap rounded-full border border-amber-100/30 px-3 py-2 text-sm font-semibold">Create account</Link>)}
       </div>
       {session ? <div className="relative shrink-0"><button type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</button>
-        {accountMenuOpen && <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">My account &amp; saved chats</Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700">Sign out</button></div>}
+        {accountMenuOpen && <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Saved conversations</Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm">Settings &amp; profile</Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700">Sign out</button></div>}
       </div>
         : nativeSession.isNative ? <button type="button" aria-label="Sign in" onClick={() => signIn()} disabled={signingIn} className="shrink-0 whitespace-nowrap text-sm font-semibold disabled:opacity-50">{signingIn ? "Connecting…" : "Sign in"}</button>
         : <Link href="/login" className="shrink-0 whitespace-nowrap text-sm font-semibold">Sign in</Link>}

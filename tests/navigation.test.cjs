@@ -16,11 +16,11 @@ test('plain React runtimes keep session reads fresh instead of caching across ca
   assert.equal(await readSession(), 'second');
 });
 
-test('both contribution controls link directly to the structured form for every public module', () => {
+test('the compact contribution control links directly to the structured form for every public module', () => {
   const { ModuleContent } = loader({ './navigation-link': link })('src/components/layout/module-content.tsx');
   for (const moduleCode of modules) {
     const html = renderToStaticMarkup(React.createElement(ModuleContent, { title: moduleCode, baseName: moduleCode, languageName: 'Dholuo', languageCode: 'luo', languageId: 1, moduleCode, items: [] }));
-    assert.equal(html.split(`href="/contribute/${moduleCode}"`).length - 1, 2);
+    assert.equal(html.split(`href="/contribute/${moduleCode}"`).length - 1, 1);
     assert.equal(html.includes('Open contribution form'), false);
   }
 });

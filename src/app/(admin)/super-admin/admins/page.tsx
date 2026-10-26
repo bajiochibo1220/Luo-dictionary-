@@ -22,7 +22,7 @@ export default async function AdminsPage() {
                     "uploader",
                     "publisher",
                     "content_editor",
-                    "cultural_expert",
+                    "content_editor",
                   ],
                 },
               },

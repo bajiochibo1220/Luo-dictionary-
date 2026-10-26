@@ -10,18 +10,19 @@ type Role = { role: string };
 const DASHBOARD: NavItem = { label: "Dashboard", href: "/admin/dashboard", icon: "▦" };
 const ROLE_ITEMS: Record<string, NavItem[]> = {
   uploader: [{ label: "Upload Content", href: "/admin/content", icon: "↑" }],
-  cultural_expert: [
-    { label: "Cultural Review", href: "/admin/validation-queue", icon: "C" },
-    { label: "Review History", href: "/admin/review-history", icon: "H" },
+  content_editor: [
+    { label: "Review & edit", href: "/admin/validation-queue", icon: "E" },
+    { label: "Edits in progress", href: "/admin/editor-queue", icon: "E" },
+    { label: "Review history", href: "/admin/review-history", icon: "H" },
+    { label: "Content & files", href: "/admin/content", icon: "C" },
   ],
-  content_editor: [{ label: "Editor Queue", href: "/admin/editor-queue", icon: "E" }],
   publisher: [
     { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" },
     { label: "Published History", href: "/admin/published-history", icon: "H" },
   ],
   language_admin: [
     { label: "Content", href: "/admin/content", icon: "C" },
-    { label: "Cultural Review", href: "/admin/validation-queue", icon: "R" },
+    { label: "Review & edit", href: "/admin/validation-queue", icon: "R" },
     { label: "Review History", href: "/admin/review-history", icon: "H" },
     { label: "Editor Queue", href: "/admin/editor-queue", icon: "E" },
     { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" },
@@ -36,7 +37,7 @@ const ROLE_ITEMS: Record<string, NavItem[]> = {
 };
 
 const SUPER_ADMIN_SECTIONS: NavSection[] = [
-  { title: "Workflow", items: [DASHBOARD, { label: "Content", href: "/admin/content", icon: "▤" }, { label: "Cultural Review", href: "/admin/validation-queue", icon: "C" }, { label: "Review History", href: "/admin/review-history", icon: "H" }, { label: "Editor Queue", href: "/admin/editor-queue", icon: "E" }, { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" }, { label: "Published History", href: "/admin/published-history", icon: "H" }] },
+  { title: "Workflow", items: [DASHBOARD, { label: "Content", href: "/admin/content", icon: "▤" }, { label: "Review & edit", href: "/admin/validation-queue", icon: "C" }, { label: "Review History", href: "/admin/review-history", icon: "H" }, { label: "Editor Queue", href: "/admin/editor-queue", icon: "E" }, { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" }, { label: "Published History", href: "/admin/published-history", icon: "H" }] },
   { title: "Library", items: [{ label: "Media", href: "/admin/media", icon: "◉" }, { label: "Transcripts", href: "/admin/transcripts", icon: "T" }, { label: "Users", href: "/admin/users", icon: "●" }, { label: "Translations", href: "/admin/translations", icon: "⌘" }] },
   { title: "Insights", items: [{ label: "Analytics", href: "/admin/analytics", icon: "▲" }, { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "✦" }, { label: "Audit Logs", href: "/admin/audit-logs", icon: "◈" }] },
 ];

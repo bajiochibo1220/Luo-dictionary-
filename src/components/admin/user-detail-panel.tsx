@@ -29,7 +29,7 @@ const ROLES = [
   "researcher",
   "uploader",
   "content_editor",
-  "cultural_expert",
+  "content_editor",
   "publisher",
   "language_admin",
 ];
@@ -228,7 +228,7 @@ export function UserDetailPanel({
               onChange={(e) => setNewRole(e.target.value)}
               className="px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             >
-              {(user.isSuperAdmin || user.languageRoles.some(role => ["uploader", "publisher", "content_editor", "cultural_expert", "language_admin"].includes(role.role)) ? ROLES : ["teacher", "researcher"]).map((r) => (
+              {(user.isSuperAdmin || user.languageRoles.some(role => ["uploader", "publisher", "content_editor", "language_admin"].includes(role.role)) ? ROLES : ["teacher", "researcher"]).map((r) => (
                 <option key={r} value={r}>
                   {r.replace("_", " ")}
                 </option>

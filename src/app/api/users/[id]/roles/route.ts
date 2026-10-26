@@ -19,7 +19,7 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const parsed = z.object({languageId: z.number().int().positive(), role: z.enum(["language_admin", "uploader", "publisher", "content_editor", "cultural_expert", "teacher", "researcher"])}).strict().safeParse(await req.json().catch(() => null));
+  const parsed = z.object({languageId: z.number().int().positive(), role: z.enum(["language_admin", "uploader", "publisher", "content_editor", "teacher", "researcher"])}).strict().safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({error: "Choose a valid language and duty."},{status: 400});
   const { languageId, role } = parsed.data;
 
@@ -31,7 +31,7 @@ export async function POST(
   }
 
   const master = admin.isMasterSuperAdmin === true;
-  if (!["language_admin", "uploader", "publisher", "content_editor", "cultural_expert", "teacher", "researcher"].includes(role)) {
+  if (!["language_admin", "uploader", "publisher", "content_editor", "teacher", "researcher"].includes(role)) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
   if (!master && !(admin.languageRoles ?? []).some((item: any) => item.languageId === Number(languageId))) {
@@ -43,7 +43,7 @@ export async function POST(
     return NextResponse.json({ error: "You cannot change roles for this account" }, { status: 403 });
   }
   const administrative = !["teacher", "researcher"].includes(role);
-  const existingStaff = targetUser.isSuperAdmin || targetUser.languageRoles.some(item => ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(item.role));
+  const existingStaff = targetUser.isSuperAdmin || targetUser.languageRoles.some(item => ["language_admin", "uploader", "publisher", "content_editor"].includes(item.role));
   if (administrative && !existingStaff) {
     return NextResponse.json({ error: "Public profiles cannot be assigned admin roles. Create a staff account from Admin Management instead." }, { status: 403 });
   }

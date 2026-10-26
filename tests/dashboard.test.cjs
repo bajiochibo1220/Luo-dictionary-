@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { loader } = require('./load-ts.cjs');
 
-for (const page of ['src/app/page.tsx', 'src/app/(public)/[lang]/page.tsx']) {
+for (const page of ['src/app/(public)/[lang]/page.tsx']) {
   test(`${page}: new visitors open login and signed-in accounts open the current dashboard`, async () => {
     for (const [session, destination] of [[null, '/login'], [{ user: {} }, '/login'], [{ user: { id: 'reader' } }, '/dashboard'], [{ user: { id: 'administrator', isSuperAdmin: true } }, '/dashboard']]) {
       const load = loader({
@@ -15,11 +15,12 @@ for (const page of ['src/app/page.tsx', 'src/app/(public)/[lang]/page.tsx']) {
   });
 }
 
-test('English public dashboard includes translated published cultural records from other languages', async () => {
+test('English staff assignments do not turn English into a public cultural collection', async () => {
   let query;
   const load = loader({
     'next/navigation': { redirect: () => assert.fail('active account should not redirect') },
     '@/components/layout/module-content': { ModuleContent: () => null },
+    '@/lib/public-navigation': { getDefaultPublicLanguage: async () => ({ id: 1, code: 'luo', nativeName: 'Dholuo' }), getPublicModules: async () => [{ id: 3, code: 'songs', baseName: 'Songs', translations: [], _count: { fieldDefinitions: 4 } }] },
     '@/lib/auth': { auth: async () => ({ user: { id: 'administrator', languageRoles: [{ languageId: 2, languageCode: 'eng', languageName: 'English' }] } }) },
     '@/lib/db': { prisma: {
       language: { findUnique: async () => ({ id: 2 }) },
@@ -31,11 +32,12 @@ test('English public dashboard includes translated published cultural records fr
     } },
   });
   const element = await load('src/app/(dashboard)/dashboard/page.tsx').default({ searchParams: Promise.resolve({ module: 'songs' }) });
-  assert.equal(query.where.languageId, undefined);
+  assert.equal(query.where.languageId, 1);
   assert.equal(query.where.status, 'published');
   assert.match(JSON.stringify(query.select.media.where), /"consentScope":"public_excerpt"/);
-  assert.equal(element.props.items[0].title, 'English title');
-  assert.equal(element.props.items[0].summary, 'English summary');
+  assert.equal(element.props.items[0].title, 'Source title');
+  assert.equal(element.props.items[0].englishTitle, 'English title');
+  assert.equal(element.props.items[0].summary, 'Source summary');
 });
 
 test('audio-visual library includes eligible media across modules without relaxing public access', async () => {
@@ -59,4 +61,9 @@ test('audio-visual library includes eligible media across modules without relaxi
   assert.match(JSON.stringify(query.select.media.where), /public_excerpt/);
   assert.equal(element.props.items[0].moduleCode, 'oral_histories');
   assert.equal(element.props.canContribute, false);
+});
+
+test('the public entry opens the cultural library without requiring an account', () => {
+  const load = loader({ 'next/navigation': { redirect: destination => { throw Object.assign(new Error('redirect'), { destination }); } } });
+  assert.throws(() => load('src/app/page.tsx').default(), error => error.destination === '/application');
 });

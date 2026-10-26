@@ -1,0 +1,430 @@
+{
+  "fixture": true,
+  "results": [
+    {
+      "workspace": "web-application",
+      "before": 132,
+      "width": 320,
+      "top": 132,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        263,
+        263,
+        263,
+        263,
+        263
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "web-application",
+      "before": 132,
+      "width": 360,
+      "top": 132,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        263,
+        263,
+        263,
+        263,
+        263
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "web-application",
+      "before": 132,
+      "width": 390,
+      "top": 132,
+      "height": 181,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        248,
+        248,
+        248,
+        248,
+        248
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "web-application",
+      "before": 85,
+      "width": 768,
+      "top": 85,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        213.5,
+        213.5,
+        213.5,
+        213.5,
+        213.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "web-application",
+      "before": 85,
+      "width": 1440,
+      "top": 85,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        213.5,
+        213.5,
+        213.5,
+        213.5,
+        213.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "packaged-application",
+      "before": 132,
+      "width": 320,
+      "top": 132,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        263,
+        263,
+        263,
+        263,
+        263
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "packaged-application",
+      "before": 132,
+      "width": 360,
+      "top": 132,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        263,
+        263,
+        263,
+        263,
+        263
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "packaged-application",
+      "before": 132,
+      "width": 390,
+      "top": 132,
+      "height": 181,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        248,
+        248,
+        248,
+        248,
+        248
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "packaged-application",
+      "before": 85,
+      "width": 768,
+      "top": 85,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        213.5,
+        213.5,
+        213.5,
+        213.5,
+        213.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "packaged-application",
+      "before": 85,
+      "width": 1440,
+      "top": 85,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        213.5,
+        213.5,
+        213.5,
+        213.5,
+        213.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "public",
+      "before": 75.5,
+      "width": 320,
+      "top": 75.5,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        206.5,
+        206.5,
+        206.5,
+        206.5,
+        206.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "public",
+      "before": 75.5,
+      "width": 360,
+      "top": 75.5,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        206.5,
+        206.5,
+        206.5,
+        206.5,
+        206.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "public",
+      "before": 75.5,
+      "width": 390,
+      "top": 75.5,
+      "height": 181,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        191.5,
+        191.5,
+        191.5,
+        191.5,
+        191.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "public",
+      "before": 81,
+      "width": 768,
+      "top": 81,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        209.5,
+        209.5,
+        209.5,
+        209.5,
+        209.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "public",
+      "before": 81,
+      "width": 1440,
+      "top": 81,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        209.5,
+        209.5,
+        209.5,
+        209.5,
+        209.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "language-admin",
+      "before": 80,
+      "width": 320,
+      "top": 80,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        211,
+        211,
+        211,
+        211,
+        211
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "language-admin",
+      "before": 80,
+      "width": 360,
+      "top": 80,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        211,
+        211,
+        211,
+        211,
+        211
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "language-admin",
+      "before": 80,
+      "width": 390,
+      "top": 80,
+      "height": 181,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        196,
+        196,
+        196,
+        196,
+        196
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "language-admin",
+      "before": 80,
+      "width": 768,
+      "top": 80,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        208.5,
+        208.5,
+        208.5,
+        208.5,
+        208.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "language-admin",
+      "before": 80,
+      "width": 1440,
+      "top": 80,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        208.5,
+        208.5,
+        208.5,
+        208.5,
+        208.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "super-admin",
+      "before": 80,
+      "width": 320,
+      "top": 80,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        211,
+        211,
+        211,
+        211,
+        211
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "super-admin",
+      "before": 80,
+      "width": 360,
+      "top": 80,
+      "height": 196,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        211,
+        211,
+        211,
+        211,
+        211
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "super-admin",
+      "before": 80,
+      "width": 390,
+      "top": 80,
+      "height": 181,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        196,
+        196,
+        196,
+        196,
+        196
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "super-admin",
+      "before": 80,
+      "width": 768,
+      "top": 80,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        208.5,
+        208.5,
+        208.5,
+        208.5,
+        208.5
+      ],
+      "searchVisible": true
+    },
+    {
+      "workspace": "super-admin",
+      "before": 80,
+      "width": 1440,
+      "top": 80,
+      "height": 193.5,
+      "scrolled": 600,
+      "pageOverflow": false,
+      "filterTops": [
+        208.5,
+        208.5,
+        208.5,
+        208.5,
+        208.5
+      ],
+      "searchVisible": true
+    }
+  ]
+}

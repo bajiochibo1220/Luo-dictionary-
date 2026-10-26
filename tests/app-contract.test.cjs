@@ -46,6 +46,7 @@ test('public bootstrap uses current active language/module data and omits accoun
   assert.equal(result.data.apiVersion, 1);
   assert.equal(result.data.app.name, 'Luo Heritage');
   assert.equal(result.data.selectedLanguage.code, 'luo');
+  assert.equal(result.data.languages.some(item => item.code === 'eng'), false);
   assert.equal(result.data.modules[0].title, 'Muma');
   assert.equal(result.data.modules[0].href, moduleHref('dictionary'));
   assert.equal(result.data.modules[0].contributionHref, contributionHref('dictionary'));
@@ -57,8 +58,9 @@ test('public bootstrap uses current active language/module data and omits accoun
 
 test('bootstrap supports chosen languages and rejects unknown or malformed language selections', async () => {
   const get = bootstrap();
-  const english = await get(new NextRequest('https://example.test/api/v1/bootstrap?language=ENG'));
-  assert.equal((await english.json()).data.selectedLanguage.code, 'eng');
+  const selected = await get(new NextRequest('https://example.test/api/v1/bootstrap?language=LUO'));
+  assert.equal((await selected.json()).data.selectedLanguage.code, 'luo');
+  assert.equal((await get(new NextRequest('https://example.test/api/v1/bootstrap?language=ENG'))).status, 404);
   assert.equal((await get(new NextRequest('https://example.test/api/v1/bootstrap?language=missing'))).status, 404);
   assert.equal((await get(new NextRequest('https://example.test/api/v1/bootstrap?language=..%2Fadmin'))).status, 400);
 });

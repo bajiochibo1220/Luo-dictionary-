@@ -7,11 +7,23 @@ import { ValidationChecklist } from "./validation-checklist";
 
 type RejectionProposal = { proposerName: string; reason: string; invalidVotes: number; validVotes: number; threshold: number; hasVoted: boolean; canVote: boolean };
 
-export function ValidationActions({ recordId, canAct, rejectionProposal }: { recordId: string; canAct: boolean; rejectionProposal?: RejectionProposal | null }) {
+export function ValidationActions({ recordId, canAct, rejectionProposal, canStartEdit = false }: { recordId: string; canAct: boolean; canStartEdit?: boolean; rejectionProposal?: RejectionProposal | null }) {
   const router = useRouter();
   const [comments, setComments] = useState("");
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
+
+  async function startEditing() {
+    setBusy(true);
+    try {
+      const response = await fetch(`/api/content/${recordId}/start-edit`, { method: "POST" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not open editing.");
+      router.push(`/admin/content/${recordId}/edit`);
+      router.refresh();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Could not open editing."); }
+    finally { setBusy(false); }
+  }
 
   async function culturalDecision() {
     setBusy(true);
@@ -62,11 +74,11 @@ export function ValidationActions({ recordId, canAct, rejectionProposal }: { rec
     <div className="space-y-5 rounded-xl border border-red-200 bg-red-50 p-6">
       <div>
         <h2 className="font-semibold text-red-900">Proposed cultural rejection</h2>
-        <p className="mt-1 text-sm text-red-800">Proposed by {rejectionProposal.proposerName || "a cultural reviewer"}</p>
+        <p className="mt-1 text-sm text-red-800">Proposed by {rejectionProposal.proposerName || "an editor"}</p>
         <p className="mt-3 whitespace-pre-line text-sm text-stone-800">{rejectionProposal.reason}</p>
       </div>
-      <p className="text-sm text-stone-700">Invalid votes: {rejectionProposal.invalidVotes} · Valid votes: {rejectionProposal.validVotes} · {rejectionProposal.threshold} invalid vote{rejectionProposal.threshold === 1 ? "" : "s"} needed from the other assigned cultural reviewers.</p>
-      {!rejectionProposal.canVote ? <p className="text-sm font-medium text-stone-700">You proposed this review or are not assigned as an independent cultural reviewer, so you cannot vote on it.</p> : rejectionProposal.hasVoted ? <p className="text-sm font-medium text-stone-700">Your vote has been recorded.</p> : <>
+      <p className="text-sm text-stone-700">Invalid votes: {rejectionProposal.invalidVotes} · Valid votes: {rejectionProposal.validVotes} · {rejectionProposal.threshold} invalid vote{rejectionProposal.threshold === 1 ? "" : "s"} needed from the other assigned editors.</p>
+      {!rejectionProposal.canVote ? <p className="text-sm font-medium text-stone-700">You proposed this review or are not assigned as an independent editor, so you cannot vote on it.</p> : rejectionProposal.hasVoted ? <p className="text-sm font-medium text-stone-700">Your vote has been recorded.</p> : <>
         <textarea value={comments} onChange={(event) => setComments(event.target.value)} rows={3} placeholder="Reason for an invalid vote (required), or optional note for a valid vote" className="w-full rounded-lg border border-stone-300 bg-white px-4 py-3 text-sm" />
         <div className="grid gap-3 sm:grid-cols-2">
           <button type="button" disabled={busy} onClick={() => void rejectionAction("vote_invalid")} className="rounded-lg bg-red-700 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">Vote that this is culturally invalid</button>
@@ -98,9 +110,10 @@ export function ValidationActions({ recordId, canAct, rejectionProposal }: { rec
 
   return (
     <div className="space-y-6">
+      {canAct && canStartEdit && <button type="button" disabled={busy} onClick={() => void startEditing()} className="min-h-11 rounded-lg bg-stone-800 px-4 text-white">Review &amp; edit both versions</button>}
       {canAct ? <ValidationChecklist onChange={setChecks} /> : (
         <p className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-          This item is waiting for a cultural expert. You can view it here, but you cannot complete the cultural review with this role.
+          This item is waiting for an editor. You can view it here, but you cannot complete the cultural review with this role.
         </p>
       )}
 

@@ -69,11 +69,11 @@ async function handlePOST(
   }
   const updated = await prisma.culturalRecord.findUniqueOrThrow({ where: { id: params.id } });
 
-  // Notify cultural experts first. Language admins are notified as overseers.
+  // Notify editors first. Language admins are notified as overseers.
   const reviewers = await prisma.userLanguageRole.findMany({
     where: {
       languageId: record.languageId,
-      role: "cultural_expert",
+      role: "content_editor",
     },
     select: { userId: true },
   });

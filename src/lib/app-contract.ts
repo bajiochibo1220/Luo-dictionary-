@@ -41,7 +41,7 @@ export const AppLibrarySchema = z.object({
   languageName: z.string(), languageCode: z.string(), languageId: z.number().int().positive(),
   moduleCode: z.string(), canContribute: z.boolean(),
   items: z.array(z.object({
-    id: z.string(), title: z.string(), summary: z.string().nullable(), englishSummary: z.string().nullable().optional(),
+    id: z.string(), title: z.string(), englishTitle: z.string().nullable().optional(), englishBodyText: z.string().nullable().optional(), summary: z.string().nullable(), englishSummary: z.string().nullable().optional(),
     bodyText: z.string().nullable().optional(),
     kind: z.enum(["cultural", "dictionary"]).optional(),
     moduleCode: z.string().optional(), moduleName: z.string().optional(), createdAt: z.string().datetime().optional(),

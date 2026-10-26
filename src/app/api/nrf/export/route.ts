@@ -7,7 +7,7 @@ import { canAccessGovernedItem } from "@/lib/governance";
 
 export const dynamic = "force-dynamic";
 
-const EXPORT_ROLES = new Set(["researcher", "language_admin", "cultural_expert", "uploader", "publisher"]);
+const EXPORT_ROLES = new Set(["researcher", "language_admin", "content_editor", "uploader", "publisher"]);
 const RELEASED_STATUSES = ["curated", "validated", "published"];
 const METADATA_COLUMNS = ["kind", "id", "recordId", "dictionaryId", "languageId", "title", "dholuo", "english", "module", "status", "type", "format", "checksum", "sizeBytes", "durationSecs", "width", "height", "assetId", "nrfUri", "nrfMetadata", "consentScope", "restrictionLevel", "sourcePermission", "attributionPreference", "embargoUntil", "countyCode", "siteName", "sourceReference", "sessionId", "createdAt", "updatedAt"];
 

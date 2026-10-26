@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 // Shared only within a server render; language/module edits are visible on
 // the next request without a global stale-content cache.
 export const getDefaultPublicLanguage = cacheForRender(() => prisma.language.findFirst({
-  where: { isActive: true },
+  where: { isActive: true, code: { not: "eng" } },
   orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
   select: { id: true, code: true, nativeName: true },
 }));

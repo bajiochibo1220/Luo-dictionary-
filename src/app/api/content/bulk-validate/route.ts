@@ -31,7 +31,7 @@ async function handlePOST(request: NextRequest) {
       if (missing.length) return NextResponse.json({ success: false, error: `${record.title}: complete the English version before cultural approval. Missing: ${missing.join(", ")}.` }, { status: 400 });
     }
   }
-  if (!canValidateCulture(session, languageId)) return NextResponse.json({ success: false, error: "Only a cultural expert assigned to this language can approve these items." }, { status: 403 });
+  if (!canValidateCulture(session, languageId)) return NextResponse.json({ success: false, error: "Only an editor assigned to this language can approve these items." }, { status: 403 });
   const reviewerId = session.user.id!;
   await prisma.$transaction(async (tx) => {
     for (const record of records) {

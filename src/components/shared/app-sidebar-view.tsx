@@ -19,7 +19,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
 }) {
 
   const items = [
-    { code: "", title: "Overview", baseName: "Dashboard" },
+    { code: "", title: "Explore heritage", baseName: "Public library" },
     ...modules,
   ];
 
@@ -36,9 +36,8 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
       <nav className="flex-1 overflow-y-auto py-2">
         {staffHref && <Link href={staffHref} onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Staff content workspace</Link>}
         <Link href="/learn" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Lessons, games &amp; calendar</Link>
-        <Link href="/courses" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Learning pathways &amp; courses</Link>
-        <Link href="/classrooms" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Teaching &amp; my classes</Link>
-        <Link href="/settings" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Profile, sessions &amp; notifications</Link>
+        <Link href="/courses" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Explore at your own pace</Link>
+        <Link href="/settings" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Settings</Link>
         <Link href="/contribute" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Contribute &amp; submissions</Link>
         <Link href="/saved" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15">Saved words &amp; items</Link>
         {items.map((item) => {

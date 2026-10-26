@@ -5,7 +5,7 @@ import { repositoryExportFields } from "@/lib/repository-export";
 import { logAction } from "@/lib/audit";
 import type { AppAccount } from "@/lib/account-contract";
 export class ResearchError extends Error { constructor(public status: number, message: string) { super(message); } }
-const roles = ["researcher", "language_admin", "cultural_expert", "uploader", "publisher"];
+const roles = ["researcher", "language_admin", "content_editor", "uploader", "publisher"];
 export function mayUseResearch(account: AppAccount | null, languageId: number) {
   return !!account && (!!account.isSuperAdmin || !!account.isMasterSuperAdmin || account.languageRoles.some(role => role.languageId === languageId && roles.includes(role.role)));
 }

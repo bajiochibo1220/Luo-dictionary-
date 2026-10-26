@@ -18,7 +18,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
   const roles = (user.languageRoles ?? []) as any[];
   if (!isSuperAdmin && !roles.some((role) => ["language_admin", "uploader"].includes(role.role))) redirect("/admin/dashboard");
   const uploaderOnly = !isSuperAdmin && roles.length > 0 && roles.every((role) => role.role === "uploader");
-  const languageRoles = roles.filter((role) => ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role));
+  const languageRoles = roles.filter((role) => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role));
   const managedLanguageIds = [...new Set(languageRoles.map((role) => role.languageId))];
 
   const modules = await prisma.module.findMany({ orderBy: { displayOrder: "asc" } });
@@ -59,7 +59,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     canModerate: canUploadContent(session, record.languageId),
     canEdit: canEditContent(session, record.languageId),
     canDelete: record.status !== "published" && (
-      isSuperAdmin ||
+      canEditContent(session, record.languageId) ||
       roles.some((role) => role.languageId === record.languageId && role.role === "language_admin") ||
       (record.contributorId === user.id && canUploadContent(session, record.languageId))
     ),
@@ -69,7 +69,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     canPublish: !!record.validatorId && canFinalizeContent(session, record.languageId),
   }));
 
-  const canBulkWorkflow = roles.some((role) => ["language_admin", "uploader", "cultural_expert", "publisher", "content_editor"].includes(role.role));
+  const canBulkWorkflow = roles.some((role) => ["language_admin", "uploader", "content_editor", "publisher"].includes(role.role));
   const selectedCultureId = await getSelectedAdminCultureId();
   const uploaderLanguageIds = [...new Set(roles.filter((role) => ["uploader", "language_admin"].includes(role.role)).map((role) => role.languageId))];
   const requestedUploaderLanguageId = searchParams.languageId ? Number(searchParams.languageId) : undefined;
@@ -94,13 +94,16 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
           <h1 className="mb-1 text-3xl font-serif text-stone-800">Content</h1>
           <p className="text-sm text-stone-500">Items are grouped by language and content area. Select several items at the same stage to move them together.</p>
         </div>
-        <div className="flex flex-wrap justify-end gap-2">
+        {!!createLanguageId && canUploadContent(session, createLanguageId) && <details className="relative shrink-0">
+          <summary className="flex min-h-11 cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white">+ New upload</summary>
+          <div className="absolute right-0 z-30 mt-2 grid max-h-[60dvh] w-64 max-w-[calc(100vw-2rem)] gap-1 overflow-y-auto rounded-xl border border-stone-300 bg-white p-2 shadow-xl">
           {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub && !!createLanguageId && canUploadContent(session, createLanguageId)).map((contentModule) => (
-            <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-medium text-white hover:bg-amber-900">
+            <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-stone-900 hover:bg-amber-50">
               + {contentModule.baseName}
             </Link>
           ))}
-        </div>
+          </div>
+        </details>}
       </header>
 
       {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">

@@ -21,11 +21,12 @@ export async function GET(request: NextRequest) {
   }
   try {
     await assertServiceAvailable();
-    const languages = await prisma.language.findMany({
+    const availableLanguages = await prisma.language.findMany({
       where: { isActive: true },
       orderBy: [{ isDefault: "desc" }, { displayOrder: "asc" }],
       select: { id: true, code: true, name: true, nativeName: true },
     });
+    const languages = availableLanguages.filter(item => item.code !== "eng");
     const selectedLanguage = preferredCode === null ? languages[0] : languages.find(item => item.code === preferredCode.toLowerCase());
     if (!selectedLanguage) {
       return NextResponse.json({ success: false, error: "Language not available." }, { status: 404, headers });

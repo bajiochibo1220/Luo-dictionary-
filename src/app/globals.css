@@ -103,3 +103,10 @@
 .workspace-heading { position: sticky; top: 0; z-index: 20; background: #b89a68; padding-top: .5rem; padding-bottom: .75rem; isolation: isolate; }
 .workspace-heading button, .workspace-heading a { flex-shrink: 0; }
 @media (max-width: 639px) { .workspace-heading h1 { font-size: 1.5rem; } }
+
+/* Approved partner colours are configured through System > General. */
+:root { --jooust-brand: #5c3a1c; --nrf-brand: #6b4724; }
+.institution-masthead {
+  background: linear-gradient(110deg, color-mix(in srgb, var(--jooust-brand) 65%, #111), color-mix(in srgb, var(--nrf-brand) 65%, #111));
+}
+.institution-border { border-bottom: 3px solid var(--jooust-brand); box-shadow: 0 1px 0 var(--nrf-brand); }

@@ -17,7 +17,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
   const media = { where: publicMediaWhere(), select: { id: true, type: true, url: true, thumbnailUrl: true, format: true } };
   const [records, entries] = await Promise.all([
     page.records === "end" ? Promise.resolve([]) : prisma.culturalRecord.findMany({
-      where: { ...(isMediaLibrary ? { media: { some: publicMediaWhere() } } : { moduleId: mod.id }), ...(language.code === "eng" ? {} : { languageId: language.id }), ...publicRecordWhere(), ...(page.query ? { title: { contains: page.query, mode: "insensitive" as const } } : {}) },
+      where: { ...(isMediaLibrary ? { media: { some: publicMediaWhere() } } : { moduleId: mod.id }), ...(language.code === "eng" ? {} : { languageId: language.id }), ...publicRecordWhere(), ...(page.query ? { OR: [{ title: { contains: page.query, mode: "insensitive" as const } }, { translations: { some: { languageId: englishLanguage?.id ?? language.id, title: { contains: page.query, mode: "insensitive" as const } } } }] } : {}) },
       ...(page.records ? { cursor: { id: page.records }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 50,
       select: {
@@ -43,6 +43,8 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
       id: record.id,
       kind: "cultural" as const,
       title: record.languageId === language.id ? record.title : record.translations.find(item => item.languageId === language.id)?.title || record.title,
+      englishTitle: record.translations.find(item => item.languageId === englishLanguage?.id)?.title ?? null,
+      englishBodyText: recordText(record.translations.find(item => item.languageId === englishLanguage?.id)?.data),
       summary: summary(record, language.id), englishSummary: englishLanguage ? summary(record, englishLanguage.id) : null,
       bodyText: recordText(record.languageId === language.id ? record.data : record.translations.find(item => item.languageId === language.id)?.data),
       moduleCode: record.module?.code ?? mod.code, moduleName: record.module?.baseName ?? mod.baseName,
@@ -52,6 +54,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
     ...entries.map(entry => ({
       id: entry.id, title: entry.dholuo, kind: "dictionary" as const,
       summary: (language.code === "eng" ? [entry.english, entry.kiswahili] : [entry.pronunciation]).filter(Boolean).join("\n"),
+      englishTitle: entry.english,
       englishSummary: [entry.english, entry.kiswahili].filter(Boolean).join("\n"),
       bodyText: [entry.english, entry.kiswahili, entry.pronunciation, entry.grammarClass, entry.wordOrigin, entry.synonyms?.join(", "), entry.antonyms?.join(", "), entry.examples ? JSON.stringify(entry.examples) : null].filter(Boolean).join("\n\n"),
       moduleCode: "dictionary", moduleName: "Dictionary", createdAt: entry.createdAt.toISOString(),

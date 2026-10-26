@@ -30,7 +30,7 @@ async function handlePOST(
     return NextResponse.json({ error: "You cannot review your own contribution. Ask another reviewer." }, { status: 403 });
   }
   const cultureStage = (record.status === "submitted" || (record.status === "under_review" && !record.validatorId)) && canValidateCulture(session, record.languageId);
-  if (!cultureStage) return NextResponse.json({ error: "Only an assigned cultural expert can return an item for editing." }, { status: 403 });
+  if (!cultureStage) return NextResponse.json({ error: "Only an assigned editor can return an item for editing." }, { status: 403 });
 
   const oldStatus = record.status;
   const stage = "cultural_validation";

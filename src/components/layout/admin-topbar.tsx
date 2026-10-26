@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { BrandMark } from "./brand-mark";
 import { SidebarToggle } from "./sidebar-controls";
+import { PartnerBranding } from "@/components/shared/partner-branding";
 import { APP_NAME } from "@/lib/brand";
 
 type AdminNotification = {
@@ -93,17 +94,17 @@ export function AdminTopbar({
   }
 
   return (
-    <header className="bg-[#5c3a1c] border-b border-black/30 h-20 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
+    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 h-20 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
         <SidebarToggle />
-        <Link
+        <div className="min-w-0"><Link
           href="/admin/dashboard"
           aria-label={`${APP_NAME} administration`}
-          className="flex min-w-0 items-center gap-2 rounded-xl text-xl font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
+          className="hidden min-w-0 items-center gap-2 rounded-xl text-xl sm:flex font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
         >
           <BrandMark className="h-11 w-11 md:h-12 md:w-12" />
           <span className="hidden truncate sm:block">{APP_NAME}</span>
-        </Link>
+        </Link><PartnerBranding /></div>
         {isSuperAdmin && (
           <span className="hidden xl:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
             {isMasterSuperAdmin ? "Master Super Admin" : "Super Admin"}
@@ -113,7 +114,7 @@ export function AdminTopbar({
 
       <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
         {isSuperAdmin && (
-          <label className="flex items-center gap-2 text-xs text-amber-100/80">
+          <label className="hidden sm:flex items-center gap-2 text-xs text-amber-100/80">
             <span className="hidden lg:inline">Language</span>
             <select
               aria-label="Choose language to manage"
@@ -132,7 +133,7 @@ export function AdminTopbar({
               onChange={(event) => void selectCulture(event.target.value === "all" ? null : Number(event.target.value))}
               className="max-w-36 rounded-lg border border-amber-100/20 bg-[#6b4724] px-2 py-1.5 text-xs text-amber-50 focus:outline-hidden focus:ring-2 focus:ring-amber-400">
               <option value="all">All cultures</option>
-              {languages.map((language) => <option key={language.id} value={language.id}>{language.nativeName}</option>)}
+              {languages.filter(language => language.code !== "eng").map((language) => <option key={language.id} value={language.id}>{language.nativeName}</option>)}
             </select>
           </label>
         )}
@@ -203,6 +204,7 @@ export function AdminTopbar({
                 onClick={() => setMenuOpen(false)}
               />
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-stone-200 py-2 z-20">
+                {isSuperAdmin && <label className="block border-b px-4 py-3 text-sm text-stone-800 sm:hidden">Manage community<select aria-label="Choose community to manage" value={selectedLanguageId ?? ""} onChange={event => void selectLanguage(Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 bg-white px-2">{languages.map(language => <option key={language.id} value={language.id}>{language.nativeName}</option>)}</select></label>}
                 <div className="px-4 py-2 border-b border-stone-100">
                   <p className="text-sm font-medium text-stone-800 truncate">
                     {userName || "Admin"}

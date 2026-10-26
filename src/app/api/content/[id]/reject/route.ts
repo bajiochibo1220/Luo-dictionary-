@@ -30,7 +30,7 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
       return NextResponse.json({ success: false, error: "This item is not waiting for cultural review." }, { status: 409 });
     }
     const otherReviewers = await prisma.userLanguageRole.findMany({
-      where: { languageId: record.languageId, role: "cultural_expert", userId: { notIn: [userId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
+      where: { languageId: record.languageId, role: "content_editor", userId: { notIn: [userId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
       select: { userId: true },
       distinct: ["userId"],
     });
@@ -82,12 +82,12 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
   if (proposal.reviewerId === userId) return NextResponse.json({ success: false, error: "The reviewer who proposed rejection cannot vote on that proposal." }, { status: 403 });
 
   const reviewerAssignments = await prisma.userLanguageRole.findMany({
-    where: { languageId: record.languageId, role: "cultural_expert", userId: { notIn: [proposal.reviewerId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
+    where: { languageId: record.languageId, role: "content_editor", userId: { notIn: [proposal.reviewerId, ...(record.contributorId ? [record.contributorId] : [])] }, user: { status: "active" } },
     select: { userId: true },
     distinct: ["userId"],
   });
   const eligibleIds = reviewerAssignments.map(({ userId: assignedUserId }) => assignedUserId);
-  if (!eligibleIds.includes(userId)) return NextResponse.json({ success: false, error: "Only another active cultural expert assigned to this language may vote." }, { status: 403 });
+  if (!eligibleIds.includes(userId)) return NextResponse.json({ success: false, error: "Only another active editor assigned to this language may vote." }, { status: 403 });
 
   const existingVote = await prisma.reviewHistory.findFirst({ where: { recordId: record.id, reviewerId: userId, stage, action: { in: ["rejection_vote_invalid", "rejection_vote_valid"] } } });
   if (existingVote) return NextResponse.json({ success: false, error: "You have already voted on this proposal." }, { status: 409 });

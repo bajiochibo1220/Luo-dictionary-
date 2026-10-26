@@ -116,7 +116,7 @@ async function handlePOST(req: NextRequest) {
           reviewerId,
           action: "approved_public",
           stage: "final_publish_review",
-          comments: "Published by an authorized cultural expert or administrator after cultural and editorial review.",
+          comments: "Published by an authorized editor or administrator after cultural and editorial review.",
         },
       });
     }

@@ -14,7 +14,7 @@ export default async function TranscriptLibraryPage() {
   const user = session.user as any;
   const roles = user.languageRoles ?? [];
   const reviewerRoles = roles.filter((role: any) =>
-    ["language_admin", "cultural_expert"].includes(role.role)
+    ["language_admin", "content_editor"].includes(role.role)
   );
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   if (!isSuperAdmin && reviewerRoles.length === 0) notFound();

@@ -34,7 +34,7 @@ export default async function EditContentPage({
     editingTranslation ? prisma.language.findUnique({ where: { id: languageId } }) : Promise.resolve(record.language),
     editingTranslation ? prisma.culturalRecordTranslation.findUnique({ where: { recordId_languageId: { recordId: record.id, languageId } } }) : Promise.resolve(null),
   ]);
-  if (!language || (editingTranslation && (!translation || (!canEditContent(session, record.languageId) && !canUploadContent(session, record.languageId))))) notFound();
+  if (!language || (editingTranslation && (!canEditContent(session, record.languageId) && !canUploadContent(session, record.languageId)))) notFound();
 
   const fieldDefs = await prisma.fieldDefinition.findMany({
     where: { moduleId: record.moduleId },
@@ -92,7 +92,7 @@ export default async function EditContentPage({
         fieldDefs={formatted}
         initialData={initialData}
         recordId={record.id}
-        redirectTo="/admin/content"
+        redirectTo={canEditContent(session, record.languageId) ? `/admin/validation-queue/${record.id}` : "/admin/content"}
         existingMedia={record.media.filter((asset) => canReviewGovernedItem(
           { isSuperAdmin: currentUser?.isSuperAdmin, languageRoles: currentUser?.languageRoles ?? [] },
           asset,

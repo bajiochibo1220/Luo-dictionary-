@@ -5,6 +5,7 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { BrandMark } from "./brand-mark";
 import { SidebarToggle } from "./sidebar-controls";
+import { PartnerBranding } from "@/components/shared/partner-branding";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 
 export function AppTopbar({
@@ -29,7 +30,7 @@ export function AppTopbar({
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
-    <header className="bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-3 shadow-lg relative z-30">
+    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-3 shadow-lg relative z-30">
       {/* Left: Logo */}
       <div className="flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
         <SidebarToggle />
@@ -39,7 +40,8 @@ export function AppTopbar({
           <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
             {APP_NAME}
           </h1>
-          <p className="text-[10px] uppercase tracking-[0.25em] text-amber-200/60 hidden sm:block">
+          <PartnerBranding />
+          <p className="sr-only">
             {APP_TAGLINE}
           </p>
         </div>

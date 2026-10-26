@@ -86,6 +86,7 @@ export function ContributionHub({ request, transport, languageId, initialModule 
         deviceDraft={scope ? { scope, initial: resuming, onChange: () => { void refreshDeviceDrafts(); } } : undefined}
         navigate={() => { setForm(false); setEditing(null); setResuming(undefined); void reload(); }}
       />}
+      {data.deletionHistory?.length > 0 && <section className="space-y-3 rounded-xl bg-white/80 p-4"><h2 className="font-serif text-xl">Removed uploads ? retained history</h2>{data.deletionHistory.map((item: any) => <p key={item.id}>{item.newValue?.title || item.entityId} ? Deleted by {item.user?.name || "Staff"} ? {new Date(item.createdAt).toLocaleString()}</p>)}</section>}
       <h2 className="font-serif text-2xl">My online submissions</h2>
       {!data.submissions.length && <p>No submissions loaded.</p>}
       {data.submissions.filter((item: any) => !selected || item.moduleId === selected.id).map((item: any) => <article key={item.id} className="space-y-2 rounded-xl bg-white/80 p-4">

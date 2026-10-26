@@ -48,18 +48,20 @@ async function handleGET(
     });
   }
 
-  if (asset.deliveryType !== "authenticated") {
+  const download = request.nextUrl.searchParams.get("download") === "1";
+  if (asset.deliveryType !== "authenticated" && !download) {
     return NextResponse.redirect(asset.url, 302);
   }
 
   await configureCloudinary();
 
   const expiresAt = Math.floor(Date.now() / 1000) + 120;
-  const signedUrl = cloudinary.utils.private_download_url(asset.publicId, asset.format, {
+  const signedUrl = asset.deliveryType !== "authenticated" ? asset.url : cloudinary.utils.private_download_url(asset.publicId, asset.format, {
     resource_type: asset.resourceType,
     type: "authenticated",
     expires_at: expiresAt,
   });
+  if (asset.deliveryType !== "authenticated" && !/^https:\/\/res\.cloudinary\.com\//i.test(signedUrl)) return NextResponse.json({ error: "Media storage address unavailable." }, { status: 502 });
   const range = request.headers.get("range");
   const upstream = await fetch(signedUrl, {
     headers: range ? { range } : undefined,
@@ -76,7 +78,7 @@ async function handleGET(
     "Content-Type": safeInline ? contentType : "application/octet-stream",
     "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",
-    "Content-Disposition": safeInline ? "inline" : `attachment; filename="${filename}"`,
+    "Content-Disposition": safeInline && !download ? "inline" : `attachment; filename="${filename}"`,
   });
   for (const name of ["accept-ranges", "content-length", "content-range"]) {
     const value = upstream.headers.get(name);

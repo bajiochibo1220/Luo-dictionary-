@@ -21,7 +21,7 @@ export default async function AdminDashboardPage() {
   if (!isSuperAdmin && !userRoles.some((role) => role.role === "language_admin")) {
     const roleLanguages = (roleName: string) => [...new Set<number>(userRoles.filter((role) => role.role === roleName).map((role) => Number(role.languageId)))];
     const uploaderLanguages = roleLanguages("uploader");
-    const cultureLanguages = roleLanguages("cultural_expert");
+    const cultureLanguages = roleLanguages("content_editor");
     const editorLanguages = roleLanguages("content_editor");
     const publisherLanguages = roleLanguages("publisher");
     const [uploadsToFinish, culturePending, editorPending, publishPending, publishedHistory] = await Promise.all([
@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
             "uploader",
             "publisher",
             "content_editor",
-            "cultural_expert",
+            "content_editor",
           ].includes(r.role)
         )
         .map((r) => r.languageId);
@@ -73,7 +73,7 @@ export default async function AdminDashboardPage() {
     : { languageId: { in: managedLanguageIds } };
 
   const hasLanguageAdminRole = userRoles.some((role) => role.role === "language_admin");
-  const hasCultureRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "cultural_expert");
+  const hasCultureRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "content_editor");
   const hasEditorRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "content_editor");
   const hasFinalRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "publisher");
   const hasUploaderRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "uploader");
@@ -139,8 +139,8 @@ export default async function AdminDashboardPage() {
   const satisfactionPct = rated === 0 ? 0 : Math.round((up / rated) * 100);
 
   const workQueues = [
-    ...(hasCultureRole ? [{ title: isSuperAdmin && !userRoles.some((role) => role.role === "cultural_expert") ? "Cultural review oversight" : "Cultural review", count: cultureQueueCount, href: "/admin/validation-queue", help: "A cultural expert must check each item first." }] : []),
-    ...(hasEditorRole ? [{ title: "Editor work", count: editorQueueCount, href: "/admin/editor-queue", help: "Edit items returned by cultural reviewers." }] : []),
+    ...(hasCultureRole ? [{ title: isSuperAdmin && !userRoles.some((role) => role.role === "content_editor") ? "Editor review oversight" : "Cultural review", count: cultureQueueCount, href: "/admin/validation-queue", help: "A editor must check each item first." }] : []),
+    ...(hasEditorRole ? [{ title: "Editor work", count: editorQueueCount, href: "/admin/editor-queue", help: "Edit items returned by editors." }] : []),
     ...(hasFinalRole ? [{ title: "Publishing", count: finalQueueCount, href: "/admin/review-queue", help: "Publish items that passed cultural review and any requested editing." }] : []),
     ...(hasUploaderRole ? [{ title: "Upload content", count: pendingRecords, href: "/admin/content", help: "Upload content in your assigned language areas and send it for cultural review." }] : []),
   ];

@@ -11,7 +11,6 @@ const ROLES = [
   { value: "language_admin", label: "Language Admin" },
   { value: "uploader", label: "Uploader" },
   { value: "content_editor", label: "Content Editor" },
-  { value: "cultural_expert", label: "Cultural Expert" },
   { value: "publisher", label: "Publisher" },
 ];
 

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { PartnerBrandingSettings } from "@/components/shared/partner-branding";
+import { webFeatureRequest } from "@/lib/web-feature-request";
 import { SettingsTabs } from "@/components/admin/settings-tabs";
 
 type Language = { id: number; code: string; name: string; nativeName: string };
@@ -132,7 +134,8 @@ export function SystemClient({
       <SettingsTabs active={tab} onChange={setTab} isMasterSuperAdmin={isMasterSuperAdmin} /></div>
 
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
-        {tab === "general" && (
+        {tab === "general" && <PartnerBrandingSettings request={webFeatureRequest} />}
+      {tab === "general" && (
           <>
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4">
               General Configuration

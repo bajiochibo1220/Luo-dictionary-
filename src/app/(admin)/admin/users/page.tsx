@@ -82,7 +82,7 @@ export default async function UsersPage({
             {s}
           </Link>
         ))}
-        {["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].map((r) => (
+        {["language_admin", "uploader", "publisher", "content_editor"].map((r) => (
           <Link
             key={r}
             href={`/admin/users?role=${r}`}

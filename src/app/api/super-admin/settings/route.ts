@@ -36,6 +36,7 @@ export async function PATCH(req: NextRequest) {
     if ((key === "terms_content" || key === "privacy_content") && value.length > 50_000) {
       return NextResponse.json({ error: "Legal documents must be under 50,000 characters" }, { status: 400 });
     }
+    if (["jooust_color", "nrf_color"].includes(key) && !/^#[0-9a-f]{6}$/i.test(value)) return NextResponse.json({ error: "Choose a valid six-digit colour." }, { status: 400 });
     // Skip masked values (user didn't change them)
     if (
       isSecretSetting(key) &&

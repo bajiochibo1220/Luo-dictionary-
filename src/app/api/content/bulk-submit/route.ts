@@ -57,7 +57,7 @@ async function handlePOST(request: NextRequest) {
   for (const record of records) groups.set(record.languageId, [...(groups.get(record.languageId) ?? []), record]);
   for (const [languageId, languageRecords] of groups) {
     const reviewers = await prisma.userLanguageRole.findMany({
-      where: { languageId, role: "cultural_expert" },
+      where: { languageId, role: "content_editor" },
       select: { userId: true },
       distinct: ["userId"],
     });

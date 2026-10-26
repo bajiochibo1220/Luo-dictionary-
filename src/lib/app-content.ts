@@ -13,6 +13,8 @@ export type ContentItem = {
   kind?: "cultural" | "dictionary";
   summary: string | null;
   bodyText?: string | null;
+  englishTitle?: string | null;
+  englishBodyText?: string | null;
   englishSummary?: string | null;
   media: MediaItem[];
   moduleCode?: string;

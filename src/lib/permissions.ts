@@ -35,7 +35,7 @@ export function hasRole(
   role: string
 ): boolean {
   return getRoles(session).some(
-    (lr) => lr.languageId === languageId && lr.role === role
+    (lr) => lr.languageId === languageId && (lr.role === role || role === "content_editor" && lr.role === "cultural_expert")
   );
 }
 
@@ -69,8 +69,7 @@ export function canReviewContent(
   return (
     isMasterSuperAdmin(session) ||
     hasRole(session, languageId, "language_admin") ||
-    hasRole(session, languageId, "content_editor") ||
-    hasRole(session, languageId, "cultural_expert")
+    hasRole(session, languageId, "content_editor")
   );
 }
 
@@ -78,9 +77,8 @@ export function canValidateCulture(
   session: Session | null,
   languageId: number
 ): boolean {
-  // Cultural review is a required workflow stage. Super admins can oversee
-  // every queue, but must also hold this language role to perform this review.
-  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "cultural_expert");
+  // Editors review cultural accuracy and both language versions before publishing.
+  return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "content_editor");
 }
 
 export function canSendToFinalReview(session: Session | null, languageId: number): boolean {
@@ -121,7 +119,7 @@ export function getManagedLanguageIds(session: Session | null): number[] {
 export function hasAnyAdminRole(session: Session | null): boolean {
   if (isSuperAdmin(session)) return true;
   return getRoles(session).some((lr) =>
-    ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(
+    ["language_admin", "uploader", "publisher", "content_editor"].includes(
       lr.role
     )
   );

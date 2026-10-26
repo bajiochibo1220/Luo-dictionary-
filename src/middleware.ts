@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
 
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
+  if (pathname === "/api/branding") return true;
   if (pathname === "/api/app-version") return true;
   if (pathname === "/api/v1/bootstrap") return true;
   if (pathname === "/api/v1/library") return true;
@@ -118,8 +119,7 @@ export async function middleware(req: NextRequest) {
         lr.role === "language_admin" ||
         lr.role === "uploader" ||
         lr.role === "publisher" ||
-        lr.role === "content_editor" ||
-        lr.role === "cultural_expert"
+        lr.role === "content_editor"
       );
     });
 

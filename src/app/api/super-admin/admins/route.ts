@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
-const ADMIN_ROLES = ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"];
+const ADMIN_ROLES = ["language_admin", "uploader", "publisher", "content_editor"];
 
 export async function GET() {
   const session = await auth();
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session?.user?.isSuperAdmin) return NextResponse.json({ error: "Forbidden" }, { status: session?.user ? 403 : 401 });
     const master = session.user.isMasterSuperAdmin;
-    const parsed = z.object({ email: z.string().trim().email().max(254), name: z.string().trim().max(100).nullable().optional(), password: z.string().min(8).max(128), role: z.enum(["super_admin", "language_admin", "uploader", "publisher", "content_editor", "cultural_expert"]), languageId: z.number().int().positive().optional(), languageIds: z.array(z.number().int().positive()).max(64).optional() }).strict().safeParse(await req.json().catch(() => null));
+    const parsed = z.object({ email: z.string().trim().email().max(254), name: z.string().trim().max(100).nullable().optional(), password: z.string().min(8).max(128), role: z.enum(["super_admin", "language_admin", "uploader", "publisher", "content_editor"]), languageId: z.number().int().positive().optional(), languageIds: z.array(z.number().int().positive()).max(64).optional() }).strict().safeParse(await req.json().catch(() => null));
     if (!parsed.success) return NextResponse.json({ error: "Check the email, password, role and language choices." }, { status: 400 });
     const body = parsed.data;
     const { email, name, role, password } = body;

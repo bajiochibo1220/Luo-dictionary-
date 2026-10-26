@@ -24,7 +24,7 @@ export default async function AdminLayout({
   const isAdmin =
     isSuperAdmin ||
     languageRoles.some((r: any) =>
-      ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(
+      ["language_admin", "uploader", "publisher", "content_editor"].includes(
         r.role
       )
     );

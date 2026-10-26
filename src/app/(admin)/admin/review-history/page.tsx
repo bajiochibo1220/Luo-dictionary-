@@ -9,7 +9,7 @@ export default async function ReviewHistoryPage() {
   const user = session.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const isLanguageAdmin = (user.languageRoles ?? []).some((role: any) => role.role === "language_admin");
-  const languageIds = [...new Set<number>((user.languageRoles ?? []).filter((role: any) => ["cultural_expert", "language_admin"].includes(role.role)).map((role: any) => Number(role.languageId)))];
+  const languageIds = [...new Set<number>((user.languageRoles ?? []).filter((role: any) => ["content_editor", "language_admin"].includes(role.role)).map((role: any) => Number(role.languageId)))];
   if (!isSuperAdmin && !languageIds.length) redirect("/admin/dashboard");
   const reviews = await prisma.reviewHistory.findMany({
     where: {

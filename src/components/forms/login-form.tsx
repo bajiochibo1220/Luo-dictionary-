@@ -78,7 +78,7 @@ export function LoginForm() {
           "uploader",
           "publisher",
           "content_editor",
-          "cultural_expert",
+          "content_editor",
         ].includes(r.role)
       );
 

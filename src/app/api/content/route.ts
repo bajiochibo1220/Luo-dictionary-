@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
               "uploader",
               "publisher",
               "content_editor",
-              "cultural_expert",
+              "content_editor",
             ].includes(r.role)
           )
           .map((r) => r.languageId);
@@ -283,7 +283,7 @@ export async function POST(req: NextRequest) {
       const reviewers = await prisma.userLanguageRole.findMany({
         where: {
           languageId,
-          role: "cultural_expert",
+          role: "content_editor",
         },
         select: { userId: true },
       });

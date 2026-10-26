@@ -7,7 +7,7 @@ export function DashboardOverview({ languageName, name }: { languageName: string
         <div className="w-16 h-1 bg-amber-800/70 rounded-full" />
       </header>
       <div className="max-w-2xl space-y-4">
-        <p className="text-lg md:text-xl text-stone-900/90 leading-relaxed font-serif">Pick a module from the sidebar to explore or contribute.</p>
+        <p className="text-lg md:text-xl text-stone-900/90 leading-relaxed font-serif">A public library of community language, culture and living memory.</p>
         <p className="text-base text-stone-800/80 leading-relaxed">
           Use the filter tabs at the top of each module to browse by{" "}
           <span className="font-semibold text-amber-900">images</span>,{" "}
@@ -15,7 +15,8 @@ export function DashboardOverview({ languageName, name }: { languageName: string
           <span className="font-semibold text-amber-900">video</span>, or{" "}
           <span className="font-semibold text-amber-900">transcripts</span>.
         </p>
-        <p className="text-base text-stone-800/80 leading-relaxed">Your language: <strong className="text-amber-900 font-semibold">{languageName}</strong></p>
+        <p className="text-base text-stone-800/80 leading-relaxed">Explore stories, traditions and recordings at your own pace. Switch between the community language and its English version, or download available files to keep learning offline.</p>
+        <p className="text-base text-stone-800/80 leading-relaxed">Community language: <strong className="text-amber-900 font-semibold">{languageName}</strong></p>
       </div>
     </div>
   );

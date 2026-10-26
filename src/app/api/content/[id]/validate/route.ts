@@ -35,10 +35,10 @@ async function handlePOST(
   if (record.contributorId !== session.user.id && !mayReviewRecord(session.user, record)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (!canValidateCulture(session, record.languageId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (record.contributorId && record.contributorId === (session.user as any).id) {
-    return NextResponse.json({ error: "You cannot culturally approve your own contribution. Ask another cultural expert to review it." }, { status: 403 });
+    return NextResponse.json({ error: "You cannot culturally approve your own contribution. Ask another editor to review it." }, { status: 403 });
   }
   const legacyCultureQueueItem = record.status === "under_review" && !record.validatorId;
-  if (record.status !== "submitted" && !legacyCultureQueueItem) {
+  if (!["submitted", "needs_edit"].includes(record.status) && !legacyCultureQueueItem) {
     return NextResponse.json({ error: "This item is no longer waiting for cultural review." }, { status: 409 });
   }
   if (record.language.code !== "eng") {

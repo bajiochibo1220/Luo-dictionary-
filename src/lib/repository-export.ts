@@ -1,6 +1,6 @@
 const protectedKeys = new Set(["nrfmetadata", "consentrecords", "consentlinks", "sourcepermission", "attributionpreference", "sourceuri", "sourcereference", "sourceid", "sourcename", "participantid", "participantname", "collector", "narrator", "speaker", "speakername", "email", "phone", "identity", "latitude", "longitude", "lat", "lng", "lon", "gps", "exactgps", "preciselocation", "coordinates", "sessionid", "sitename", "provenance"]);
 export function mayReadConsentEvidence(user: { isSuperAdmin?: boolean; isMasterSuperAdmin?: boolean; languageRoles?: { languageId: number; role: string }[] }, languageId?: number) {
-  return !!(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles?.some(role => role.languageId === languageId && ["language_admin", "cultural_expert"].includes(role.role)));
+  return !!(user.isSuperAdmin || user.isMasterSuperAdmin || user.languageRoles?.some(role => role.languageId === languageId && ["language_admin", "content_editor"].includes(role.role)));
 }
 export function repositoryExportFields<T>(value: T, privileged = false): T {
   if (privileged || value === null || value === undefined || value instanceof Date) return value;

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { SendToFinalReviewButton } from "@/components/admin/send-to-final-review-button";
+
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,7 @@ export default async function EditorQueuePage() {
       <header className="workspace-heading mb-6">
         <p className="text-xs uppercase tracking-widest text-stone-500">Stage 2 · Content editors</p>
         <h1 className="mt-1 font-serif text-3xl text-stone-900">Editor Queue</h1>
-        <p className="mt-2 text-sm text-stone-600">These items were returned by cultural reviewers for edits. Make the requested changes, then send them back for cultural review.</p>
+        <p className="mt-2 text-sm text-stone-600">Review and edit each community-language version together with its English version, then send it for publishing.</p>
       </header>
 
       {records.length === 0 ? (
@@ -67,7 +67,7 @@ export default async function EditorQueuePage() {
                     </div>
     <div className="flex flex-wrap gap-2">
                       {record.canForward && <Link href={`/admin/content/${record.id}/edit`} className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-semibold text-white hover:bg-stone-900">Edit details</Link>}
-                      {record.canForward ? <SendToFinalReviewButton recordId={record.id} /> : <span className="self-center text-xs text-stone-500">Waiting for an assigned editor</span>}
+                      {record.canForward ? <Link href={`/admin/validation-queue/${record.id}`} className="inline-flex min-h-11 items-center rounded-lg border border-stone-400 px-4 text-sm">Review both versions &amp; send for publishing</Link> : <span className="self-center text-xs text-stone-500">Waiting for an assigned editor</span>}
                     </div>
                   </li>
                 ))}

@@ -121,7 +121,7 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
             languageId: lr.languageId,
             languageCode: lr.language.code,
             languageName: lr.language.name,
-            role: lr.role,
+            role: lr.role === "cultural_expert" ? "content_editor" : lr.role,
           })),
         };
       },
@@ -155,7 +155,7 @@ export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
                   languageId: lr.languageId,
                   languageCode: lr.language.code,
                   languageName: lr.language.name,
-                  role: lr.role,
+                  role: lr.role === "cultural_expert" ? "content_editor" : lr.role,
                 }));
           } else {
             return null;
@@ -245,5 +245,5 @@ export const auth = cacheForRender(async () => {
   if (!id) return null;
   const user = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true, name: true, image: true, status: true, isSuperAdmin: true, isMasterSuperAdmin: true, languageRoles: { select: { languageId: true, role: true, language: { select: { code: true, name: true } } } } } });
   if (!user || user.status !== "active") return null;
-  return { expires: new Date(Date.now() + 600000).toISOString(), user: { id: user.id, email: user.email, name: user.name, image: user.image, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, role: role.role, languageCode: role.language.code, languageName: role.language.name })) } };
+  return { expires: new Date(Date.now() + 600000).toISOString(), user: { id: user.id, email: user.email, name: user.name, image: user.image, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, role: role.role === "cultural_expert" ? "content_editor" : role.role, languageCode: role.language.code, languageName: role.language.name })) } };
 });

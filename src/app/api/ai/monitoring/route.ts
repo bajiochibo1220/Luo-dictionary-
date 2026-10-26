@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
     const reviewLanguageIds = Array.from(new Set<number>(
       (user.languageRoles ?? [])
-        .filter((role: any) => ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role))
+        .filter((role: any) => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role))
         .map((role: any) => Number(role.languageId))
         .filter(Number.isInteger)
     ));

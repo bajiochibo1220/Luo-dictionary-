@@ -20,7 +20,7 @@ export default async function MediaLibraryPage({
     ? undefined
     : ((user.languageRoles ?? []) as any[])
         .filter((r) =>
-          ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(r.role)
+          ["language_admin", "uploader", "publisher", "content_editor"].includes(r.role)
         )
         .map((r) => r.languageId);
 

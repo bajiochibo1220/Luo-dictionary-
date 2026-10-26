@@ -9,7 +9,7 @@ export default async function ValidationQueuePage() {
   const user = session!.user as any;
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const managedLanguageIds = ((user.languageRoles ?? []) as any[])
-    .filter((role) => ["cultural_expert", "language_admin"].includes(role.role))
+    .filter((role) => ["content_editor", "language_admin"].includes(role.role))
     .map((role) => role.languageId);
   if (!isSuperAdmin && !managedLanguageIds.length) redirect("/admin/dashboard");
 
@@ -39,7 +39,7 @@ export default async function ValidationQueuePage() {
   return (
     <div>
       <header className="workspace-heading mb-6">
-        <h1 className="mb-1 text-3xl font-serif text-stone-800">Cultural Validation Queue</h1>
+        <h1 className="mb-1 text-3xl font-serif text-stone-800">Review &amp; edit</h1>
         <p className="text-sm text-stone-500">{records.length} {records.length === 1 ? "item" : "items"} awaiting linguistic and cultural review</p>
       </header>
       {records.length === 0 ? (

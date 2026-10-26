@@ -1,7 +1,8 @@
+import { deleteUnpublishedContent } from "@/lib/content-deletion";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { canEditContent, canReviewContent, canUploadContent, isLanguageAdmin } from "@/lib/permissions";
+import { canEditContent, canReviewContent, canUploadContent } from "@/lib/permissions";
 import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, canReadRecord, canAccessGovernedItem, canReviewGovernedItem, parseGovernanceMetadata } from "@/lib/governance";
@@ -57,7 +58,7 @@ export async function GET(
     });
   }
   const result = { ...record, media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) };
-  const staff = !!user.isSuperAdmin || (user.languageRoles ?? []).some((role: { languageId: number; role: string }) => role.languageId === record.languageId && ["language_admin", "uploader", "publisher", "content_editor", "cultural_expert"].includes(role.role));
+  const staff = !!user.isSuperAdmin || (user.languageRoles ?? []).some((role: { languageId: number; role: string }) => role.languageId === record.languageId && ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role));
   return NextResponse.json({ success: true, data: record.contributorId === user.id || staff ? result : publicFields(result) });
 }
 
@@ -78,7 +79,7 @@ async function handlePATCH(
   const { title, data, tags } = body;
   const provenance = parseContentProvenance(body.provenance);
   if (!provenance.success) return NextResponse.json({ error: provenance.error.issues[0]?.message || "Invalid provenance metadata" }, { status: 400 });
-  const targetLanguageId = Number(body.languageId) || record.languageId;
+  const targetLanguageId = Number(body.translationLanguageId ?? body.languageId) || record.languageId;
 
   if (targetLanguageId !== record.languageId) {
     if (!["draft", "needs_edit", "rejected", "curated"].includes(record.status)) {
@@ -90,19 +91,22 @@ async function handlePATCH(
     const languageTranslation = await prisma.culturalRecordTranslation.findUnique({
       where: { recordId_languageId: { recordId: record.id, languageId: targetLanguageId } },
     });
-    if (!languageTranslation) return NextResponse.json({ error: "Translation not found" }, { status: 404 });
+    const targetLanguage = await prisma.language.findUnique({ where: { id: targetLanguageId } });
+    if (!targetLanguage || targetLanguage.code !== "eng") return NextResponse.json({ error: "Only a paired English translation may be edited here." }, { status: 400 });
 
     const updated = await prisma.$transaction(async (tx) => {
       const current = await lockEditableRecord(tx, record.id);
       if (current.updatedAt.getTime() !== record.updatedAt.getTime() || !canReadRecord(session.user, current)) throw Object.assign(new Error("Content changed. Refresh before editing."), { status: 409 });
-      const translated = await tx.culturalRecordTranslation.update({
-        where: { id: languageTranslation.id },
-        data: {
-          title: typeof title === "string" ? title : languageTranslation.title,
-          data: data ?? languageTranslation.data,
-          summary: typeof data?.description === "string" ? data.description : languageTranslation.summary,
+      const translated = await tx.culturalRecordTranslation.upsert({
+        where: { recordId_languageId: { recordId: record.id, languageId: targetLanguageId } },
+        create: { recordId: record.id, languageId: targetLanguageId, title: typeof title === "string" ? title : record.title, data: data ?? {}, summary: typeof data?.description === "string" ? data.description : null },
+        update: {
+          title: typeof title === "string" ? title : languageTranslation?.title ?? record.title,
+          data: data ?? languageTranslation?.data ?? {},
+          summary: typeof data?.description === "string" ? data.description : languageTranslation?.summary,
         },
       });
+      await tx.culturalRecord.update({ where: { id: record.id }, data: { updatedAt: new Date() } });
       await addContentVersion(tx, {
         recordId: record.id,
         changedBy: (session.user as any).id,
@@ -284,29 +288,11 @@ async function handlePATCH(
   return NextResponse.json({ success: true, data: updated });
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params: promisedParams }: { params: Promise<{ id: string }> }
-) {
-  const params = await promisedParams;
+export const DELETE = withApiErrors(async (_req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const record = await prisma.culturalRecord.findUnique({ where: { id: params.id }, select: { id: true, languageId: true, contributorId: true, status: true, consentScope: true, restrictionLevel: true, embargoUntil: true } });
-  if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (!canReadRecord(session.user, record)) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (record.status === "published") return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
-  const userId = (session.user as any).id;
-  const isUploaderOwner = record.contributorId === userId && canUploadContent(session, record.languageId);
-  if (!isUploaderOwner && !isLanguageAdmin(session, record.languageId)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const deleted = await prisma.culturalRecord.deleteMany({ where: { id: params.id, status: { not: "published" } } });
-  if (!deleted.count) return NextResponse.json({ error: "Published content cannot be deleted" }, { status: 409 });
+  const { id } = await params;
+  await deleteUnpublishedContent(session, [id]);
   return NextResponse.json({ success: true });
-}
+});
 
 export const PATCH = withApiErrors(handlePATCH);

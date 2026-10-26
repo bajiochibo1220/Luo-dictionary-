@@ -102,7 +102,7 @@ export default async function ReviewDetailPage({
           </div>
         </div>
         <p className="mt-3 border-t border-amber-200 pt-3 text-xs text-stone-700">
-          Cultural review passed by {record.validator?.name || record.validator?.email || "a cultural expert"}. Age alone does not prove or disprove authenticity.
+          Cultural review passed by {record.validator?.name || record.validator?.email || "a editor"}. Age alone does not prove or disprove authenticity.
         </p>
       </section>
 
