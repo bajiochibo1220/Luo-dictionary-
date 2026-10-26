@@ -3,11 +3,13 @@ import { InterfaceButton, InterfaceText } from "@/components/shared/interface-la
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "@/components/layout/user-menu";
 import { APP_NAME } from "@/lib/brand";
+import { pairedLanguageNavigation } from "@/lib/app-navigation";
+import { hasAnyAdminRole } from "@/lib/permissions";
 
 const NAV_MODULES = [
   { code: "dictionary", path: "muma" },
@@ -26,18 +28,11 @@ function labelFor(code: string, t: (c: string) => string): string {
 export function Header() {
   const { language, t } = useLanguage();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const isAdmin = Boolean(
-    session?.user?.isSuperAdmin ||
-    session?.user?.languageRoles?.some((role) =>
-      ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role)
-    )
-  );
-  const alternateCode = language.code === "luo" ? "eng" : "luo";
-  const alternatePath = pathname.startsWith(`/${language.code}`)
-    ? pathname.replace(`/${language.code}`, `/${alternateCode}`)
-    : `/${alternateCode}`;
+  const isAdmin = hasAnyAdminRole(session);
+  const { alternateHref, alternateLabel, cultureQuery } = pairedLanguageNavigation(language.code, pathname, searchParams.toString());
 
   return (
     <header className="institution-border bg-white border-b border-stone-200 sticky top-0 z-40">
@@ -55,7 +50,7 @@ export function Header() {
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}
-              href={`/${language.code}/${mod.path}`}
+              href={`/${language.code}/${mod.path}${cultureQuery}`}
               className="text-sm text-stone-700 hover:text-amber-600 transition"
             >
               {labelFor(mod.code, t)}
@@ -65,10 +60,10 @@ export function Header() {
 
         <div className="flex shrink-0 items-center gap-2 md:gap-3">
           <Link
-            href={alternatePath}
+            href={alternateHref}
             className="hidden sm:inline-flex text-xs text-stone-500 hover:text-amber-600 border border-stone-200 rounded-sm px-2 py-1"
           >
-            <InterfaceText source={alternateCode === "luo" ? "Dholuo" : "English"} />
+            <InterfaceText source={alternateLabel} />
           </Link>
 
           {session?.user ? (
@@ -102,11 +97,11 @@ export function Header() {
 
       {menuOpen && (
         <nav className="xl:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
-          <Link href={alternatePath} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden"><InterfaceText source="Switch to " /><InterfaceText source={alternateCode === "luo" ? "Dholuo" : "English"} /></Link>
+          <Link href={alternateHref} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden"><InterfaceText source="Switch to " /><InterfaceText source={alternateLabel} /></Link>
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}
-              href={`/${language.code}/${mod.path}`}
+              href={`/${language.code}/${mod.path}${cultureQuery}`}
               onClick={() => setMenuOpen(false)}
               className="text-sm text-stone-700 hover:text-amber-600 py-1"
             >

@@ -6,6 +6,9 @@ import { prisma } from "@/lib/db";
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { Header } from "@/components/layout/header";
 
+// Maintenance and administrator access must be evaluated for every request.
+export const dynamic = "force-dynamic";
+
 export default async function LangLayout({
   children,
   params: promisedParams,

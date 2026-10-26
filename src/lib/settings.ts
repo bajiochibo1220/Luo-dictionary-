@@ -3,8 +3,8 @@ import { prisma } from "@/lib/db";
 const CACHE_TTL_MS = 60_000;
 let cache: { data: Record<string, string>; ts: number } | null = null;
 
-export async function getSystemSettings(): Promise<Record<string, string>> {
-  if (cache && Date.now() - cache.ts < CACHE_TTL_MS) {
+export async function getSystemSettings({ fresh = false }: { fresh?: boolean } = {}): Promise<Record<string, string>> {
+  if (!fresh && cache && Date.now() - cache.ts < CACHE_TTL_MS) {
     return cache.data;
   }
 

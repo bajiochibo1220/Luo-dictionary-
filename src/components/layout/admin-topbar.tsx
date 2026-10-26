@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { SidebarToggle } from "./sidebar-controls";
+import { accountDashboardHref } from "@/lib/app-navigation";
 import { APP_NAME } from "@/lib/brand";
 
 type AdminNotification = {
@@ -39,6 +40,7 @@ export function AdminTopbar({
   selectedLanguageId: number | null;
   selectedCultureId: number | null;
 }) {
+  const dashboardHref = accountDashboardHref({ isAdmin: true, isSuperAdmin: isSuperAdmin || isMasterSuperAdmin });
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -98,7 +100,7 @@ export function AdminTopbar({
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
         <SidebarToggle />
         <div className="min-w-0"><Link
-          href="/admin/dashboard"
+          href={dashboardHref}
           aria-label={`${APP_NAME} administration`}
           className="flex min-w-0 items-center gap-2 rounded-xl text-lg font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
         >
@@ -201,11 +203,11 @@ export function AdminTopbar({
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
                 ><InterfaceText source="View public site" /></Link>
                 <Link
-                  href="/admin/dashboard"
+                  href={dashboardHref}
                   onClick={() => setMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
-                ><InterfaceText source="Admin dashboard" /></Link>
-                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Super Admin dashboard" /></Link>}
+                ><InterfaceText source={isSuperAdmin || isMasterSuperAdmin ? "Super Admin dashboard" : "Admin dashboard"} /></Link>
+
                 <Link href="/mobile-apps" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="App updates & installation" /></Link>
                 <button
                   onClick={() => signOut({ redirectTo: "/login" })}

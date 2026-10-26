@@ -14,4 +14,6 @@ The [editorial workflow and interface-language follow-up](docs/system-audit/edit
 
 The [sign-in dashboard routing fix](docs/system-audit/login-routing-fix-2026-10-26.md) makes current account roles take precedence over remembered public-library return locations. Master/Super Admin accounts open their dashboard; assigned staff and public users receive their appropriate destinations. Native handoff and explicit public browsing are preserved.
 
+The [authentication logo, maintenance and navigation follow-up](docs/system-audit/auth-logo-and-maintenance-followup-2026-10-26.md) records the contained JOOUST form watermark, immediately saved maintenance switch, fresh server checks, automatic recovery of open maintenance notices, role-correct dashboard links and preserved community context in English navigation.
+
 The previous checklist is preserved as [historical status](docs/system-audit/historical-status-checklist-2026-10-25.md).

@@ -133,6 +133,9 @@ body:has(.library-media-dock) .floating-chatbot { bottom: calc(5.25rem + env(saf
 
 .media-dock-five { grid-template-columns: minmax(0, 1fr); }
 
-.auth-page { background: #e9e3d6; }
-.auth-logo-background { position: fixed; inset: 0; z-index: -1; background-position: center; background-size: cover; background-repeat: no-repeat; pointer-events: none; }
-.auth-logo-background::after { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, #fffdf7b8, #eee4ce94); }
+.auth-page { background: radial-gradient(ellipse at top, #fffdf6, #e9e3d6 75%); }
+.auth-form-surface { isolation: isolate; overflow: hidden; border: 1px solid #fff; background: #fffdf7; box-shadow: 0 16px 48px #3d29151a; }
+.auth-form-surface::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--jooust-brand), var(--nrf-brand)); }
+.auth-logo-background { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.auth-logo-image { position: absolute; top: clamp(14rem, 32svh, 18rem); left: 50%; transform: translateX(-50%); width: 82%; max-width: 320px; height: auto; object-fit: contain; opacity: .24; }
+.auth-form-content :is(input:not([type="checkbox"]), select, fieldset) { background-color: #fffffff0; }

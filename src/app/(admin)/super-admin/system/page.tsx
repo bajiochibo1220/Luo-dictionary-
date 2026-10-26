@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SystemPage() {
   const [settings, languages, session] = await Promise.all([
-    getSystemSettings(),
+    getSystemSettings({ fresh: true }),
     prisma.language.findMany({
       where: { isActive: true },
       orderBy: { displayOrder: "asc" },

@@ -128,9 +128,9 @@ async function main() {
     }
     for(const width of [360,1440]) {
       await command('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:width<768});await command('Page.navigate',{url:`${origin}/?kind=register`});
-      await waitFor('!!document.querySelector("input[name=name]") && !!document.querySelector(".auth-logo-background").style.backgroundImage');
-      const background=await evaluate('(()=>{const node=document.querySelector(".auth-logo-background"),s=getComputedStyle(node),b=node.getBoundingClientRect();return {filter:s.filter,size:s.backgroundSize,width:b.width,height:b.height,url:s.backgroundImage};})()');
-      assert.equal(background.filter,'none');assert.equal(background.size,'cover');assert.ok(background.width>=width-20 && background.width<=width);assert.equal(background.height,844);assert.ok(background.url.includes(branding.jooust_logo_url));
+      await waitFor('!!document.querySelector("input[name=name]") && document.querySelector(".auth-logo-image")?.naturalWidth>0');
+      const background=await evaluate('(()=>{const node=document.querySelector(".auth-logo-image"),s=getComputedStyle(node),b=node.getBoundingClientRect();return {filter:s.filter,fit:s.objectFit,width:b.width,height:b.height,url:node.src,naturalWidth:node.naturalWidth};})()');
+      assert.equal(background.filter,'none');assert.equal(background.fit,'contain');assert.ok(background.width<=Math.min(background.naturalWidth,320)+1);assert.equal(background.url,branding.jooust_logo_url);
       await evaluate(`(()=>{document.querySelector('input[name=name]').value='Fixture Name';const control=document.querySelector('[aria-label="Interface language"]');control.value='luo:local';control.dispatchEvent(new Event('change',{bubbles:true}));})()`);
       await waitFor('document.querySelector("input[name=name]").placeholder==="Nyingi duto" && document.documentElement.lang==="luo"');
       assert.ok(await evaluate('document.querySelector("button[type=submit]").textContent.includes("Yub akaunt")'));
@@ -151,7 +151,7 @@ async function main() {
     await waitFor('document.querySelector("[role=status]")?.textContent.includes("Saved 1 entries")');
     assert.equal(fixtureCatalog.Home.english,'Community home');
     results.push({kind:'interface-editor',pairedCopySave:true});
-    console.log('PASS editor follow-up: headings scroll away at three widths, 40-item selection, clear full-screen background, Dholuo/English switching preserves form data, paired copy edits save.');
+    console.log('PASS editor follow-up: headings scroll away at three widths, 40-item selection, bounded unblurred background crest, Dholuo/English switching preserves form data, paired copy edits save.');
     fs.writeFileSync('docs/system-audit/editor-interface-verification.json',JSON.stringify({fixtureContent:true,realSavedBranding:true,results},null,2));
   } finally {socket?.close();chrome.kill();await new Promise(resolve=>server.close(resolve));}
 }

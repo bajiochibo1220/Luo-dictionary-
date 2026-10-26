@@ -12,6 +12,26 @@ export const APP_ROUTES = {
   appUpdates: "/mobile-apps",
 } as const;
 
+export function accountDashboardHref({ isAdmin, isSuperAdmin }: { isAdmin: boolean; isSuperAdmin: boolean }) {
+  return isSuperAdmin ? APP_ROUTES.superAdmin : isAdmin ? APP_ROUTES.admin : APP_ROUTES.overview;
+}
+
+export function pairedLanguageNavigation(languageCode: string, pathname: string, search: string) {
+  const params = new URLSearchParams(search);
+  const culture = languageCode === "eng" ? params.get("culture") : languageCode;
+  if (!culture || culture === "eng" || !/^[a-z]{2,8}(?:-[a-z0-9]+)?$/.test(culture)) {
+    return { alternateHref: "/application", cultureQuery: "", alternateLabel: "Explore heritage" };
+  }
+  const target = pathname.replace(`/${languageCode}`, languageCode === "eng" ? `/${culture}` : "/eng");
+  if (languageCode === "eng") params.delete("culture");
+  else params.set("culture", culture);
+  return {
+    alternateHref: target + (params.size ? `?${params}` : ""),
+    cultureQuery: languageCode === "eng" ? `?culture=${encodeURIComponent(culture)}` : "",
+    alternateLabel: languageCode === "eng" ? "Community language" : "English",
+  };
+}
+
 export function moduleHref(code: string) {
   if (!code) return APP_ROUTES.overview;
   if (code === "research") return "/research";

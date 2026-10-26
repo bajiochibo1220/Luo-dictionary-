@@ -3,7 +3,7 @@ import { InterfaceOption, InterfaceText } from "@/components/shared/interface-la
 
 import Link from "next/link";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PartnerBrandingSettings } from "@/components/shared/partner-branding";
@@ -60,16 +60,19 @@ export function SystemClient({
   const [tab, setTab] = useState("general");
   const [values, setValues] = useState(settings);
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    setValues(current => ({ ...current, maintenance_mode: settings.maintenance_mode ?? "off" }));
+  }, [settings.maintenance_mode]);
 
   function update(key: string, value: string) {
     setValues((v) => ({ ...v, [key]: value }));
   }
 
-  async function save(keys: string[]) {
+  async function save(keys: string[], overrides: Record<string, string> = {}) {
     setBusy(true);
     try {
       const payload: Record<string, string> = {};
-      for (const k of keys) payload[k] = values[k] ?? "";
+      for (const k of keys) payload[k] = overrides[k] ?? values[k] ?? "";
 
       const res = await fetch("/api/super-admin/settings", {
         method: "PATCH",
@@ -80,6 +83,7 @@ export function SystemClient({
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed");
       }
+      setValues(current => ({ ...current, ...overrides }));
       toast.success(<InterfaceText source={"Settings saved"} />);
       router.refresh();
     } catch (e: any) {
@@ -312,11 +316,15 @@ export function SystemClient({
 
             <div className="flex items-center gap-3 mb-4">
               <button
+                type="button"
+                role="switch"
+                aria-label="Maintenance mode"
+                aria-checked={values.maintenance_mode === "on"}
+                disabled={busy}
                 onClick={() =>
-                  update(
-                    "maintenance_mode",
-                    values.maintenance_mode === "on" ? "off" : "on"
-                  )
+                  void save(["maintenance_mode"], {
+                    maintenance_mode: values.maintenance_mode === "on" ? "off" : "on",
+                  })
                 }
                 className={`relative w-12 h-6 rounded-full transition ${
                   values.maintenance_mode === "on"

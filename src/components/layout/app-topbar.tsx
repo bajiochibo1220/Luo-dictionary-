@@ -6,6 +6,7 @@ import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissibl
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { SidebarToggle } from "./sidebar-controls";
+import { accountDashboardHref } from "@/lib/app-navigation";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 
 export function AppTopbar({
@@ -28,13 +29,14 @@ export function AppTopbar({
   stats: { uploads: number; approved: number; pending: number };
 }) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const dashboardHref = accountDashboardHref({ isAdmin, isSuperAdmin });
 
   return (
     <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-2 shadow-sm relative z-30">
       {/* Left: Logo */}
       <div className="flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
         <SidebarToggle />
-        <Link href="/dashboard" aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
+        <Link href={dashboardHref} aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
         <div className="min-w-0">
           <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
             {APP_NAME}
@@ -75,7 +77,7 @@ export function AppTopbar({
 
         {isAdmin && (
           <Link
-            href="/admin/dashboard"
+            href={dashboardHref}
             className="hidden sm:inline-flex text-xs bg-amber-400 text-stone-900 px-3 py-1.5 rounded-full hover:bg-amber-300 transition font-semibold shadow-sm"
           ><InterfaceText source="Admin" /></Link>
         )}
@@ -98,12 +100,12 @@ export function AppTopbar({
                   <p className="text-sm font-semibold text-stone-800 truncate">{userName || "Account"}</p>
                   <p className="text-xs text-stone-500 truncate">{userEmail}</p>
                 </div>
-                <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My dashboard" /></Link>
+                <Link href={dashboardHref} onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My dashboard" /></Link>
                 <Link href="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My account & saved chats" /></Link>
-                <Link href="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Profile options" /></Link>
+                <Link href="/settings" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Settings & profile" /></Link>
                 <Link href="/mobile-apps" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="App updates & installation" /></Link>
-                {isAdmin && <Link href="/admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Admin dashboard" /></Link>}
-                {isSuperAdmin && <Link href="/super-admin/dashboard" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Super Admin dashboard" /></Link>}
+                {(isAdmin || isSuperAdmin) && <Link href="/application" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Public site" /></Link>}
+
                 <button type="button" onClick={() => signOut({ redirectTo: "/login" })} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"><InterfaceText source="Sign out" /></button>
               </div>
             </>

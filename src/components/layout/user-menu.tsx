@@ -3,6 +3,7 @@ import { InterfaceButton, InterfaceText } from "@/components/shared/interface-la
 
 import { NavigationLink as Link } from "./navigation-link";
 import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
+import { accountDashboardHref } from "@/lib/app-navigation";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
@@ -20,6 +21,7 @@ export function UserMenu({
   isSuperAdmin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const dashboardHref = accountDashboardHref({ isAdmin, isSuperAdmin });
 
   return (
     <DismissiblePopover open={open} onClose={() => setOpen(false)}>
@@ -46,21 +48,14 @@ export function UserMenu({
               <p className="text-xs text-stone-500 truncate">{userEmail}</p>
             </div>
             <Link
-              href="/dashboard"
+              href="/application"
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
             ><InterfaceText source="Public site" /></Link>
             <Link
-              href="/dashboard"
+              href={dashboardHref}
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
             ><InterfaceText source="My dashboard" /></Link>
-            <Link href="/profile" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Profile options" /></Link>
-            {isAdmin && (
-              <Link
-                href="/admin/dashboard"
-                className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
-              ><InterfaceText source="Admin dashboard" /></Link>
-            )}
-            {isSuperAdmin && <Link href="/super-admin/dashboard" className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"><InterfaceText source="Super Admin dashboard" /></Link>}
+            <Link href="/settings" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Settings & profile" /></Link>
             <button
               onClick={() => signOut({ redirectTo: "/login" })}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
