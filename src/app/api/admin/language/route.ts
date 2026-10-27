@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isSuperAdmin } from "@/lib/permissions";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  if (!(session.user as any).isSuperAdmin) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+  if (!isSuperAdmin(session)) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
   const body = await req.json().catch(() => ({}));
   const languageId = Number(body.languageId);
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  if (!(session.user as any).isSuperAdmin) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+  if (!isSuperAdmin(session)) return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
   const body = await req.json().catch(() => ({}));
   const rawId = body.cultureId;
   const response = NextResponse.json({ success: true });

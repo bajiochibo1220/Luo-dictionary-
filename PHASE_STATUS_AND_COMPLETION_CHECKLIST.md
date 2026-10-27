@@ -1,5 +1,9 @@
 # Luo Heritage: current implementation status
 
+The [27 October account Help, navigation and branding update](docs/system-audit/account-help-navigation-branding-2026-10-27.md) adds role-specific manuals, verifies account destinations and replaces foreground partner branding with a JOOUST-only background at the owner's request. NRF logo presentation is superseded by this update. It records 238 passing tests, 42 Help/branding UI journeys and 17 sign-in-routing journeys.
+
+The [27 October PRD implementation tracker](PRD_IMPLEMENTATION_TRACKER.md) records the sections 1–15 implementation, module boundaries, new documentation, 230 passing regression tests and remaining acceptance work. It supersedes the older software assessment for the features changed in this pass; it does not claim full PRD or NRF acceptance. Read it before using the historical percentage below.
+
 The current combined assessment is [SYSTEM_IMPLEMENTATION_STATUS.md](SYSTEM_IMPLEMENTATION_STATUS.md).
 
 Estimated software coverage: **72.9% covered / 27.1% remaining**, excluding the explicit user-approved deferrals. Formal acceptance recorded: **0/212**. These figures are calculated from the source-linked register; tests/builds alone do not mean the full system is accepted.

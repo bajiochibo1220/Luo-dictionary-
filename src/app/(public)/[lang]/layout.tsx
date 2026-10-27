@@ -47,10 +47,10 @@ export default async function LangLayout({
       }}
       moduleTitles={moduleTitles}
     >
-      <div className="min-h-screen bg-stone-50">
+      <div className="relative isolate min-h-screen bg-stone-50">
+        <PartnerBranding />
         <Header />
-        <main className="container mx-auto px-4 py-8">{children}</main>
-        <PartnerBranding variant="footer" />
+        <main className="relative z-10 container mx-auto px-4 py-8">{children}</main>
       </div>
     </LanguageProvider>
   );

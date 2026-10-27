@@ -1,4 +1,8 @@
+import { publicLocation } from "@/lib/public-location";
+import { KnowledgeLinks } from "@/lib/knowledge-links";
+import { RESEARCH_KINDS } from "@/lib/prd-content-catalog";
 const REQUIRED_FIELDS: Record<string, string[]> = {
+  research: ["research_kind", "abstract", "license"],
   dictionary: ["dholuo", "english"],
   proverbs: ["original_text", "translation", "meaning"],
   riddles: ["question", "answer", "explanation"],
@@ -23,6 +27,8 @@ export function validatePhaseOneSubmission(
   data: unknown,
   hasLinkedTranscript = false
 ): string | null {
+  if (data && typeof data === "object" && !Array.isArray(data) && "related_records" in data && !KnowledgeLinks.safeParse((data as Record<string,unknown>).related_records).success) return "Check the related-record relationships.";
+  if (data && typeof data === "object" && (data as Record<string,unknown>).public_map_permission === "confirmed" && !publicLocation(data)) return "Add valid latitude and longitude for the approved public map location.";
   const required = REQUIRED_FIELDS[moduleCode];
   if (!title?.trim()) return "A title is required before submission.";
   if (!data || typeof data !== "object" || Array.isArray(data)) {
@@ -30,6 +36,7 @@ export function validatePhaseOneSubmission(
     return "Add the required content fields before submission.";
   }
   const values = data as Record<string, unknown>;
+  if (moduleCode === "research" && typeof values.research_kind === "string" && !Object.hasOwn(RESEARCH_KINDS, values.research_kind)) return "Choose a valid research document type.";
   if (values.sourcePermission === "not_granted") {
     return "Permission has not been granted. Keep this contribution as a draft.";
   }

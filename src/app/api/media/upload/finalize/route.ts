@@ -1,3 +1,4 @@
+import { verifiedMediaFormat } from "@/lib/raw-media-format";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Could not verify uploaded file with Cloudinary" }, { status: 400 });
     }
     const checksumHex = String(checksum).toLowerCase();
-    const verifiedChecksum = await calculateCloudinarySha256(upload.public_id, verified.format ?? "bin", expectedResourceType);
+    const verifiedChecksum = await calculateCloudinarySha256(upload.public_id, verifiedMediaFormat(verified, expectedResourceType), expectedResourceType);
     if (verifiedChecksum !== checksumHex) {
       await deleteFromCloudinary(upload.public_id, expectedResourceType as "image" | "video" | "raw").catch(() => undefined);
       return NextResponse.json({ success: false, error: "Uploaded file checksum did not match the original file" }, { status: 400 });
@@ -80,10 +81,10 @@ export async function POST(req: NextRequest) {
             siteName: context.record.siteName,
             moduleCode,
             mediaType: assetType,
-            extension: verified.format ?? "bin",
+            extension: verifiedMediaFormat(verified, expectedResourceType),
             recordedAt: context.record.createdAt,
           }),
-          format: verified.format ?? "bin",
+          format: verifiedMediaFormat(verified, expectedResourceType),
           sizeBytes: BigInt(verified.bytes ?? 0),
           durationSecs: verified.duration ? Math.round(verified.duration) : null,
           width: verified.width ?? null,

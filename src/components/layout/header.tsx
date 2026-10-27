@@ -47,6 +47,7 @@ export function Header() {
         </Link>
 
         <nav className="hidden xl:flex items-center gap-6">
+          <Link href="/help" className="text-sm text-stone-700 hover:text-amber-600"><InterfaceText source="Help & training"/></Link>
           {NAV_MODULES.map((mod) => (
             <Link
               key={mod.code}
@@ -97,6 +98,7 @@ export function Header() {
 
       {menuOpen && (
         <nav className="xl:hidden bg-stone-50 border-t border-stone-200 px-4 py-3 flex flex-col gap-2">
+          <Link href="/help" onClick={()=>setMenuOpen(false)} className="min-h-11 py-2 text-sm text-stone-700"><InterfaceText source="Help & training"/></Link>
           <Link href={alternateHref} onClick={() => setMenuOpen(false)} className="py-2 text-sm text-stone-700 hover:text-amber-600 sm:hidden"><InterfaceText source="Switch to " /><InterfaceText source={alternateLabel} /></Link>
           {NAV_MODULES.map((mod) => (
             <Link

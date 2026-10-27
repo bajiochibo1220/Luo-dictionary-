@@ -68,7 +68,7 @@ export function AdminSidebar({ isSuperAdmin, isMasterSuperAdmin = false, roles, 
     <div key={`${section.title ?? "section"}-${idx}`} className="mb-6">
       {section.title && <p className="mb-2 px-4 text-xs uppercase tracking-wider text-amber-200/70"><InterfaceText source={section.title} /></p>}
       <nav className="space-y-0.5">
-        {section.items.filter(item => item.href !== "/admin/interface" || isMasterSuperAdmin || roleSet.has("content_editor") || roleSet.has("language_admin")).map((entry) => {
+        {section.items.filter(item => (item.href !== "/super-admin/backup" || isMasterSuperAdmin) && (item.href !== "/admin/interface" || isMasterSuperAdmin || roleSet.has("content_editor") || roleSet.has("language_admin"))).map((entry) => {
           const item = isSuperAdmin && entry === DASHBOARD ? { ...entry, href: "/super-admin/dashboard" } : entry;
           return <Link key={item.href} href={item.href} onClick={onNavigate} className={`mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition ${isActive(item.href) ? "border-l-2 border-amber-400 bg-black/25 text-amber-100" : "text-amber-50/80 hover:bg-black/15 hover:text-amber-50"}`}>
           <span className="w-5 text-center text-base">{item.icon}</span><span><InterfaceText source={item.label} /></span>
@@ -79,6 +79,7 @@ export function AdminSidebar({ isSuperAdmin, isMasterSuperAdmin = false, roles, 
 
   return <div className="h-full overflow-y-auto bg-transparent py-4 text-amber-50">
     {sections.map(renderSection)}
+    <nav aria-label="Workspace help" className="mb-4 border-t border-amber-100/15 pt-3"><Link href={isSuperAdmin ? "/super-admin/help" : "/admin/help"} onClick={onNavigate} className={`mx-2 flex min-h-11 items-center rounded-lg px-4 text-sm ${isActive(isSuperAdmin ? "/super-admin/help" : "/admin/help") ? "bg-black/25 text-amber-100" : "text-amber-50/80 hover:bg-black/15"}`}><InterfaceText source="Help & training"/></Link></nav>
     {isSuperAdmin && <div className="mt-8 border-t border-amber-100/15 pt-6">{renderSection(SUPER_ADMIN_SECTION, 999)}</div>}
   </div>;
 }

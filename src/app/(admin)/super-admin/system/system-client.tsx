@@ -1,5 +1,6 @@
 "use client";
-import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceButton, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+
 
 import Link from "next/link";
 
@@ -202,6 +203,10 @@ export function SystemClient({
               helpText="Used by the AI chatbot, semantic search, and content embeddings."
             />
 
+            <Field values={values} update={update} label="Text model" settingKey="gemini_model" placeholder="gemini-3.8-flash" />
+            <Field values={values} update={update} label="Fallback text model" settingKey="gemini_fallback_model" placeholder="gemini-3.6-flash" />
+            <Field values={values} update={update} label="Illustration model" settingKey="gemini_image_model" placeholder="gemini-nano-banana-2.1" />
+
             <Field values={values} update={update}               label="Cloudinary Cloud Name"
               settingKey="cloudinary_cloud_name"
               placeholder="your-cloud-name"
@@ -221,7 +226,7 @@ export function SystemClient({
             <button
               onClick={() =>
                 save([
-                  "gemini_api_key",
+                  "gemini_api_key", "gemini_model", "gemini_fallback_model", "gemini_image_model",
                   "cloudinary_cloud_name",
                   "cloudinary_api_key",
                   "cloudinary_api_secret",
@@ -315,7 +320,7 @@ export function SystemClient({
             <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Maintenance Mode" /></h2>
 
             <div className="flex items-center gap-3 mb-4">
-              <button
+              <InterfaceButton
                 type="button"
                 role="switch"
                 aria-label="Maintenance mode"
@@ -339,7 +344,7 @@ export function SystemClient({
                       : "translate-x-0.5"
                   }`}
                 />
-              </button>
+              </InterfaceButton>
               <span className="text-sm text-stone-700">
                 <InterfaceText source={values.maintenance_mode === "on"
                   ? "Maintenance mode is ON — only super admins can access the site"

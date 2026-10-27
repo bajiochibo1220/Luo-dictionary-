@@ -1,6 +1,6 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const {loader}=require('./load-ts.cjs');
 const researcher={id:'researcher',isSuperAdmin:false,isMasterSuperAdmin:false,languageRoles:[{languageId:1,role:'researcher'}]};
-const permitted={consentScope:'research_only',restrictionLevel:'internal',embargoUntil:null,languageId:1};
+const permitted={consentScope:'research_only',restrictionLevel:'internal',embargoUntil:null,languageId:1,status:'curated'};
 test('research library requires real assigned language roles before querying protected collections',async()=>{
  const {researchLibrary}=loader({'@/lib/db':{prisma:{language:{findFirst:()=>assert.fail('Unauthorized read')}}}})('src/lib/research-service.ts');
  await assert.rejects(researchLibrary(null,new URLSearchParams('languageId=1')),e=>e.status===401);

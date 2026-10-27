@@ -1,0 +1,373 @@
+{
+  "fixtureAccounts": true,
+  "productionWrites": false,
+  "actualUploadedJooustLogo": true,
+  "results": [
+    {
+      "kind": "help",
+      "role": "guest",
+      "width": 320,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "public",
+      "width": 320,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "uploader",
+      "width": 320,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "content_editor",
+      "width": 320,
+      "guide": "content_editor",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "publisher",
+      "width": 320,
+      "guide": "publisher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "language_admin",
+      "width": 320,
+      "guide": "language_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "teacher",
+      "width": 320,
+      "guide": "teacher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "researcher",
+      "width": 320,
+      "guide": "researcher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "super",
+      "width": 320,
+      "guide": "super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "master",
+      "width": 320,
+      "guide": "master_super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "multi",
+      "width": 320,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "login",
+      "width": 320,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "register",
+      "width": 320,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "help",
+      "role": "guest",
+      "width": 390,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "public",
+      "width": 390,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "uploader",
+      "width": 390,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "content_editor",
+      "width": 390,
+      "guide": "content_editor",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "publisher",
+      "width": 390,
+      "guide": "publisher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "language_admin",
+      "width": 390,
+      "guide": "language_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "teacher",
+      "width": 390,
+      "guide": "teacher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "researcher",
+      "width": 390,
+      "guide": "researcher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "super",
+      "width": 390,
+      "guide": "super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "master",
+      "width": 390,
+      "guide": "master_super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "multi",
+      "width": 390,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "login",
+      "width": 390,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "register",
+      "width": 390,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "help",
+      "role": "guest",
+      "width": 1440,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "public",
+      "width": 1440,
+      "guide": "public",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "uploader",
+      "width": 1440,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "content_editor",
+      "width": 1440,
+      "guide": "content_editor",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "publisher",
+      "width": 1440,
+      "guide": "publisher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "language_admin",
+      "width": 1440,
+      "guide": "language_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "teacher",
+      "width": 1440,
+      "guide": "teacher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "researcher",
+      "width": 1440,
+      "guide": "researcher",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "super",
+      "width": 1440,
+      "guide": "super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "master",
+      "width": 1440,
+      "guide": "master_super_admin",
+      "noOverflow": true
+    },
+    {
+      "kind": "help",
+      "role": "multi",
+      "width": 1440,
+      "guide": "uploader",
+      "noOverflow": true
+    },
+    {
+      "kind": "login",
+      "width": 1440,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "register",
+      "width": 1440,
+      "layout": {
+        "source": "https://res.cloudinary.com/izn4yxke/image/upload/v1793024193/luolinguaai/branding/hfnvojvrt91magcknwzl.jpg",
+        "width": 212,
+        "height": 173,
+        "naturalWidth": 212,
+        "naturalHeight": 173,
+        "filter": "none",
+        "opacity": 0.34,
+        "within": true,
+        "pointer": "none",
+        "logos": 1,
+        "overflow": false
+      },
+      "inputUsable": true
+    },
+    {
+      "kind": "packaged-help",
+      "role": "public",
+      "expectedGuide": "public",
+      "actionStaysInApp": true,
+      "backgroundStable": true,
+      "chatIconUsable": true,
+      "sidebarHelpReturns": true
+    },
+    {
+      "kind": "packaged-help",
+      "role": "content_editor",
+      "expectedGuide": "content_editor",
+      "actionStaysInApp": true,
+      "backgroundStable": true,
+      "chatIconUsable": true,
+      "sidebarHelpReturns": true
+    },
+    {
+      "kind": "packaged-help",
+      "role": "master",
+      "expectedGuide": "master_super_admin",
+      "actionStaysInApp": true,
+      "backgroundStable": true,
+      "chatIconUsable": true,
+      "sidebarHelpReturns": true
+    }
+  ]
+}

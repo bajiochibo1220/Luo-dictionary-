@@ -21,7 +21,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
 }) {
   const items = [
     { code: "", title: "Explore heritage", baseName: "Public library" },
-    ...modules,
+    ...modules.filter(module=>!["ai_tutor","games","learning","cultural_calendar"].includes(module.code)),
   ];
 
   return (
@@ -35,11 +35,16 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
       {/* Module list */}
       <nav className="flex-1 overflow-y-auto py-2">
         {staffHref && <Link href={staffHref} onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Staff content workspace" /></Link>}
+        <Link href="/places" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Cultural places map" /></Link>
+        <Link href="/knowledge" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Cultural connections" /></Link>
+        <Link href="/ai-tools" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="AI media tools" /></Link>
+        <Link href="/tutor" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="AI language tutor" /></Link>
         <Link href="/learn" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Lessons, games & calendar" /></Link>
         <Link href="/courses" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Explore at your own pace" /></Link>
         <Link href="/settings" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Settings" /></Link>
         <Link href="/contribute" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Contribute & submissions" /></Link>
         <Link href="/saved" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15"><InterfaceText source="Saved words & items" /></Link>
+        <Link href="/help" onClick={onNavigate} className="flex min-h-12 items-center px-5 py-3 font-semibold text-amber-50 hover:bg-black/15" ><InterfaceText source="Help & training" /></Link>
         {items.map((item) => {
           const isActive = item.code === "chatbot" ? pathname === "/chatbot" :
             (pathname === "/dashboard" && item.code === "" && !activeModule) ||
@@ -76,7 +81,6 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
         })}
       </nav>
 
-      <div className="p-3 border-t border-amber-100/15 text-[10px] tracking-widest text-amber-100/40 text-center"><InterfaceText source="JOOUST · NRF" /></div>
     </div>
   );
 }

@@ -2,7 +2,10 @@
 import { InterfaceInput, InterfaceOption, InterfaceText, InterfaceTextarea, useInterfaceLanguage } from "@/components/shared/interface-language";
 
 import { useEffect, useRef, useState } from "react";
+import { PRD_SUBJECTS, RESEARCH_KINDS } from "@/lib/prd-content-catalog";
 import { completeCollectionFields } from "@/lib/collection-fields";
+import { RecordLinksEditor } from "./record-links-editor";
+import { KnowledgeLinks } from "@/lib/knowledge-links";
 import { ProtectedMedia } from "./protected-media";
 import { toast } from "sonner";
 import { uploadMediaFile } from "@/lib/media-upload-client";
@@ -305,7 +308,7 @@ export function ContentFormCore({
             {f.isRequired && <span className="text-red-600 ml-1">*</span>}
           </label>
 
-          {f.fieldType === "textarea" ? (
+          {f.fieldCode === "subject_area" || f.fieldCode === "research_kind" ? <select className="min-h-11 w-full rounded-xl border border-stone-400 bg-white p-3" value={values[f.fieldCode] || ""} onChange={event=>update(f.fieldCode,event.target.value)} required={f.isRequired}><InterfaceOption value="">Choose a category</InterfaceOption>{(f.fieldCode === "subject_area" ? PRD_SUBJECTS.map(value=>[value,value]) : Object.entries(RESEARCH_KINDS)).map(([value,label])=><InterfaceOption value={value} key={value}>{label}</InterfaceOption>)}</select> : f.fieldType === "textarea" ? (
             <textarea
               value={values[f.fieldCode] ?? ""}
               onChange={(e) => update(f.fieldCode, e.target.value)}
@@ -323,6 +326,8 @@ export function ContentFormCore({
         </div>
       ))}
 
+      {!isTranslation && ["heritage_sites","oral_histories"].includes(moduleCode) && <fieldset className="my-5 space-y-3 rounded-xl border border-stone-300 bg-white/80 p-4"><legend><InterfaceText source="Public map location" /></legend><p><InterfaceText source="Approve only a broad public location. Exact collection GPS remains protected; public map points are rounded to two decimal places." /></p><label className="flex gap-2"><input type="checkbox" checked={values.public_map_permission === "confirmed"} onChange={event=>setValues(previous=>({...previous,public_map_permission:event.target.checked?"confirmed":"not_shared"}))}/><InterfaceText source="This approximate location is permitted for public display." /></label>{values.public_map_permission === "confirmed" && <div className="grid gap-3 sm:grid-cols-2">{[["public_map_latitude","Public latitude",-90,90],["public_map_longitude","Public longitude",-180,180]].map(([key,label,min,max])=><label key={key}><InterfaceText source={String(label)}/><input className="block min-h-11 w-full rounded-lg border p-3" type="number" step="any" required min={Number(min)} max={Number(max)} value={values[String(key)] ?? ""} onChange={event=>setValues(previous=>({...previous,[String(key)]:event.target.value}))}/></label>)}</div>}</fieldset>}
+      {!isTranslation && <RecordLinksEditor languageCode={languageCode} recordId={savedRecordId} transport={transport} links={KnowledgeLinks.safeParse(values.related_records || []).success ? values.related_records || [] : []} onChange={links => setValues(previous => ({...previous,related_records:links}))} />}
       <section className="my-7 rounded-xl border border-stone-900/10 bg-white/60 p-4">
         <h3 className="font-semibold text-stone-800"><InterfaceText source="Media and transcripts" /></h3>
         <p className="mb-4 mt-1 text-xs text-stone-600"><InterfaceText source="Attached files stay with this item when you edit it. Choose a file only if you want to add another one." /></p>
@@ -339,7 +344,7 @@ export function ContentFormCore({
           {(["image", "video", "audio", "document"] as const).map((type) => (
             <label key={type} className="block text-sm text-stone-700 capitalize">
               {existingMedia.some((asset) => asset.type === type) ? `Add another ${type === "document" ? "transcript or document" : type}` : type === "document" ? "Transcript or document" : type}
-              <input type="file" accept={type === "image" ? "image/*" : type === "video" ? "video/*" : type === "audio" ? "audio/*" : ".txt,.pdf,.doc,.docx"}
+              <input type="file" accept={type === "image" ? "image/*" : type === "video" ? "video/*" : type === "audio" ? "audio/*" : ".txt,.pdf,.doc,.docx,.obj,.glb,.gltf,.csv,.json,.jsonl,.geojson,.zip,.onnx,.pt"}
                 onChange={(e) => setFiles((current) => ({ ...current, [type]: e.target.files?.[0] ?? null }))}
                 className="mt-1 block w-full text-xs" />
             </label>

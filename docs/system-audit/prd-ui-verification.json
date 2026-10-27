@@ -1,0 +1,62 @@
+{
+  "fixtureTransport": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 320,
+      "tutorConsent": true,
+      "feedback": true,
+      "vocabularyGrade": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "tutorConsent": true,
+      "feedback": true,
+      "vocabularyGrade": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1440,
+      "tutorConsent": true,
+      "feedback": true,
+      "vocabularyGrade": true,
+      "noOverflow": true
+    },
+    {
+      "kind": "word_puzzle",
+      "interaction": true
+    },
+    {
+      "kind": "story_completion",
+      "interaction": true
+    },
+    {
+      "kind": "proverbs",
+      "interaction": true
+    },
+    {
+      "kind": "memory",
+      "interaction": true
+    },
+    {
+      "kind": "vocabulary_race",
+      "interaction": true
+    },
+    {
+      "kind": "treasure_hunt",
+      "interaction": true
+    },
+    {
+      "kind": "artifact",
+      "interaction": true
+    },
+    {
+      "kind": "obj",
+      "loaded": true,
+      "webgl": true,
+      "zoom": true,
+      "noOverflow": true
+    }
+  ]
+}

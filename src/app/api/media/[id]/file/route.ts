@@ -6,6 +6,8 @@ import { prisma } from "@/lib/db";
 import { cloudinary, configureCloudinary } from "@/lib/cloudinary";
 import { canReadMedia, isPubliclyEligible } from "@/lib/governance";
 import { logAction } from "@/lib/audit";
+import { nativeApiHeaders } from "@/lib/native-api-headers";
+import { trackEvent } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -49,14 +51,17 @@ async function handleGET(
   }
 
   const download = request.nextUrl.searchParams.get("download") === "1";
-  if (asset.deliveryType !== "authenticated" && !download) {
+  const requestedWidth = request.nextUrl.searchParams.get("width");
+  const width = requestedWidth ? Number(requestedWidth) : null;
+  if (requestedWidth && (asset.type !== "image" || ![320,640,960,1280].includes(width!))) return NextResponse.json({ error: "Choose a supported image size." }, { status: 400 });
+  if (asset.deliveryType !== "authenticated" && !download && !width) {
     return NextResponse.redirect(asset.url, 302);
   }
 
   await configureCloudinary();
 
   const expiresAt = Math.floor(Date.now() / 1000) + 120;
-  const signedUrl = asset.deliveryType !== "authenticated" ? asset.url : cloudinary.utils.private_download_url(asset.publicId, asset.format, {
+  const signedUrl = width && !download ? cloudinary.url(asset.publicId, { resource_type: "image", type: asset.deliveryType === "authenticated" ? "authenticated" : "upload", sign_url: true, secure: true, format: asset.format, transformation: [{ width, crop: "limit", quality: "auto", fetch_format: "auto" }] }) : asset.deliveryType !== "authenticated" ? asset.url : cloudinary.utils.private_download_url(asset.publicId, asset.format, {
     resource_type: asset.resourceType,
     type: "authenticated",
     expires_at: expiresAt,
@@ -64,17 +69,23 @@ async function handleGET(
   if (asset.deliveryType !== "authenticated" && !/^https:\/\/res\.cloudinary\.com\//i.test(signedUrl)) return NextResponse.json({ error: "Media storage address unavailable." }, { status: 502 });
   const range = request.headers.get("range");
   const upstream = await fetch(signedUrl, {
-    headers: range ? { range } : undefined,
+    headers: { ...(range ? { range } : {}), ...(width && request.headers.get("Accept") ? { Accept: request.headers.get("Accept")! } : {}) },
     cache: "no-store",
   });
   if (!upstream.ok || !upstream.body) {
     return NextResponse.json({ error: "Media is temporarily unavailable" }, { status: 502 });
+  }
+  if (download) {
+    const country = process.env.VERCEL === "1" ? request.headers.get("x-vercel-ip-country") : null;
+    await trackEvent({ eventType: "download", userId: user?.id ?? null, languageId: asset.languageId, entityType: "media_asset", entityId: asset.id, metadata: country && /^[A-Z]{2}$/.test(country) ? {country} : {} });
+    await logAction({ userId: user?.id ?? null, action: "media.downloaded", entityType: "media_asset", entityId: asset.id });
   }
 
   const contentType = upstream.headers.get("content-type") || "application/octet-stream";
   const safeInline = /^(?:image\/(?:jpeg|png|gif|webp|avif|bmp)|audio\/[a-z0-9.+-]+|video\/[a-z0-9.+-]+)(?:;|$)/i.test(contentType);
   const filename = `${asset.assetId || asset.id}.${asset.format}`.replace(/[^a-zA-Z0-9_.-]/g, "_");
   const headers = new Headers({
+    ...nativeApiHeaders(request),
     "Content-Type": safeInline ? contentType : "application/octet-stream",
     "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",

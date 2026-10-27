@@ -56,6 +56,7 @@ export function UserMenu({
               className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"
             ><InterfaceText source="My dashboard" /></Link>
             <Link href="/settings" className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Settings & profile" /></Link>
+            <Link href={isSuperAdmin ? "/super-admin/help" : isAdmin ? "/admin/help" : "/help"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Help & training" /></Link>
             <button
               onClick={() => signOut({ redirectTo: "/login" })}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"

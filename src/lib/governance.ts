@@ -107,14 +107,14 @@ export function isPubliclyEligible(
 }
 
 export function canAccessGovernedItem(
-  user: { isSuperAdmin?: boolean; languageRoles?: { role: string; languageId?: number }[] } | null,
+  user: { isSuperAdmin?: boolean; isMasterSuperAdmin?: boolean; languageRoles?: { role: string; languageId?: number }[] } | null,
   item: GovernanceAccessFields,
   languageId?: number,
   now = new Date()
 ): boolean {
   if (isPubliclyEligible(item, now)) return true;
   if (!user) return false;
-  if (user.isSuperAdmin) return true;
+  if (user.isSuperAdmin || user.isMasterSuperAdmin) return true;
 
   const roles = new Set((user.languageRoles ?? [])
     .filter((role) => languageId === undefined || role.languageId === languageId)

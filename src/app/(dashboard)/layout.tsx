@@ -56,6 +56,7 @@ export default async function DashboardLayout({
   const userInitial = (user.name || user.email || "U").charAt(0).toUpperCase();
   const isAdmin =
     user.isSuperAdmin ||
+    user.isMasterSuperAdmin ||
     (user.languageRoles ?? []).some((r: any) =>
       ["language_admin", "uploader", "publisher", "content_editor"].includes(
         r.role

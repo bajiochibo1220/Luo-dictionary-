@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { AppAccount } from "@/lib/account-contract";
 import { canEditContent, canFinalizeContent, canValidateCulture } from "@/lib/permissions";
-import { publicRecordWhere } from "@/lib/governance";
+import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
 import { ResourceInput, ProgressInput, gradeQuestions, type ResourceBody } from "@/lib/learning-contract";
 
 export class LearningError extends Error {
@@ -18,8 +18,8 @@ export function resourceView(resource: any, answers = false) {
   return {
     id: resource.id, languageId: resource.languageId, kind: resource.kind, title: resource.title,
     description: resource.description, level: resource.level, audience: resource.audience,
-    body: { text: body.text, teacherNotes: body.teacherNotes, activities: body.activities,
-      questions: body.questions.map(q => ({ ...q, answer: answers ? q.answer : -1, explanation: answers ? q.explanation : "" })) },
+    body: { text: body.text, teacherNotes: body.teacherNotes, activities: body.activities, gameMode: body.gameMode, timeLimit: body.timeLimit,
+      questions: body.questions.map(q => ({ ...q, letters: body.gameMode === "word_puzzle" ? Array.from(q.choices[q.answer]).reverse().join("") : undefined, answer: answers || body.gameMode === "memory" ? q.answer : -1, explanation: answers ? q.explanation : "" })) },
     status: resource.status, version: resource.version, downloadAllowed: resource.downloadAllowed,
     ...(answers ? { sourceIds: resource.sourceIds || [], consentScope: resource.consentScope, restrictionLevel: resource.restrictionLevel } : {}),
     startsAt: resource.startsAt?.toISOString() ?? null, endsAt: resource.endsAt?.toISOString() ?? null,
@@ -30,6 +30,9 @@ export function resourceView(resource: any, answers = false) {
 export async function listResources(query: URLSearchParams, account: AppAccount | null) {
   const languageId = Number(query.get("languageId"));
   if (!Number.isSafeInteger(languageId) || languageId < 1) throw new LearningError(400, "Choose a language.");
+  if (query.get("media") === "images") {
+    return { images: await prisma.mediaAsset.findMany({ where: { languageId, type: "image", ...publicMediaWhere(), OR: [{ record: { is: publicRecordWhere() } }, { dictionary: { is: publicRecordWhere() } }] }, take: 100, orderBy: { createdAt: "desc" }, select: { id: true, caption: true, altText: true } }) };
+  }
   if (query.has("downloads")) {
     const ids = z.array(z.string().uuid()).max(100).parse(query.get("downloads")!.split(",").filter(Boolean));
     return { downloads: await prisma.learningResource.findMany({ where: { id: { in: ids }, languageId, downloadAllowed: true, ...publicLearningWhere }, select: { id: true, version: true } }) };
@@ -55,6 +58,8 @@ export async function saveResource(account: AppAccount, input: unknown, existing
   if (!edit(account, parsed.languageId)) throw new LearningError(403, "An editor for this language must author resources.");
   const language = await prisma.language.findFirst({ where: { id: parsed.languageId, isActive: true } });
   if (!language) throw new LearningError(400, "Language unavailable.");
+  const imageIds = [...new Set(parsed.body.questions.flatMap(q => q.imageId ? [q.imageId] : []))];
+  if (imageIds.length && await prisma.mediaAsset.count({ where: { id: { in: imageIds }, languageId: parsed.languageId, type: "image", ...publicMediaWhere(), OR: [{ record: { is: publicRecordWhere() } }, { dictionary: { is: publicRecordWhere() } }] } }) !== imageIds.length) throw new LearningError(400, "Choose only reviewed public images from this community.");
   if (parsed.sourceIds.length) {
     const count = await prisma.culturalRecord.count({ where: { id: { in: parsed.sourceIds }, ...publicRecordWhere() } });
     if (count !== new Set(parsed.sourceIds).size) throw new LearningError(400, "Link only approved public source records.");

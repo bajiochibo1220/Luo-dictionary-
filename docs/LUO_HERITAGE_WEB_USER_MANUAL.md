@@ -1,5 +1,7 @@
 # Luo Heritage
 
+Historical edition: use the [current PRD user guide](PRD_USER_GUIDE.md) and [administrator/training guide](PRD_ADMIN_AND_TRAINING_GUIDE.md) for the merged editor role, new features and current workflows. Older PDF/DOCX/HTML exports require regeneration before redistribution.
+
 ## Web Application User Manual
 
 **Edition 1.0 · 14 October 2026**

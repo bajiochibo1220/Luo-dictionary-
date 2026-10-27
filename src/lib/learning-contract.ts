@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { GameMode } from "./game-contract";
 
 export const ResourceKind = z.enum(["lesson", "game", "event"]);
 export const QuestionSchema = z.object({
   id: z.string().min(1).max(80), prompt: z.string().min(1).max(2000),
   choices: z.array(z.string().min(1).max(500)).min(2).max(8),
   answer: z.number().int().min(0).max(7), explanation: z.string().max(2000).default(""),
+  imageId: z.string().uuid().optional(), letters: z.string().max(500).optional(),
 }).refine(q => q.answer < q.choices.length, "Answer must identify an available choice.");
 export const ResourceInput = z.object({
   languageId: z.number().int().positive(), kind: ResourceKind,
@@ -13,6 +15,7 @@ export const ResourceInput = z.object({
   audience: z.enum(["all", "children", "youth", "adults", "teachers"]).default("all"),
   body: z.object({
     text: z.string().max(100000).default(""),
+    gameMode: GameMode.optional(), timeLimit: z.number().int().min(15).max(600).optional(),
     questions: z.array(QuestionSchema).max(100).default([]),
     teacherNotes: z.string().max(10000).default(""),
     activities: z.array(z.object({ type: z.enum(["reading", "writing", "speaking", "listening"]), instruction: z.string().min(1).max(4000) })).max(40).default([]),
@@ -27,11 +30,13 @@ export const ResourceInput = z.object({
   if (value.kind === "event" && !value.startsAt) ctx.addIssue({ code: "custom", message: "An event needs a start date." });
   if (value.endsAt && (!value.startsAt || value.endsAt < value.startsAt)) ctx.addIssue({ code: "custom", message: "End date must follow start date." });
   if (value.kind === "game" && !value.body.questions.length) ctx.addIssue({ code: "custom", message: "A game needs questions." });
+  if (value.body.gameMode === "memory" && value.body.questions.length > 12) ctx.addIssue({ code: "custom", message: "Memory games support up to twelve pairs." });
+  if (value.body.gameMode === "artifact" && value.body.questions.some(q => !q.imageId)) ctx.addIssue({ code: "custom", message: "Choose a reviewed image for each artifact question." });
 });
 export const ProgressInput = z.object({
   ownerId: z.string().uuid(),
   operationId: z.string().uuid(), resourceId: z.string().uuid(), version: z.number().int().positive(),
-  answers: z.record(z.number().int().min(0).max(7)).default({}), position: z.number().int().min(0).max(100000).default(0),
+  answers: z.record(z.number().int().min(-1).max(7)).default({}), position: z.number().int().min(0).max(100000).default(0),
   complete: z.boolean().default(false),
 }).strict();
 export type ResourceBody = z.infer<typeof ResourceInput>["body"];

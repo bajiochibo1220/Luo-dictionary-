@@ -1,6 +1,4 @@
 import { InterfaceLanguageSelector } from "@/components/shared/interface-language";
-import { PartnerBranding } from "@/components/shared/partner-branding";
-import { BrandMark } from "./brand-mark";
 import { APP_NAME } from "@/lib/brand";
 import { AuthLogoBackground } from "@/components/shared/auth-logo-background";
 
@@ -19,7 +17,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         {/* Application identity stays outside the form. */}
         <div className="relative mb-5 flex w-full max-w-md items-center gap-3 z-10">
-          <BrandMark className="h-14 w-14 shadow-lg" />
           <p className="font-serif text-2xl text-stone-900">{APP_NAME}</p>
         </div>
 
@@ -27,7 +24,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <AuthLogoBackground />
           <div className="auth-form-content relative z-10">
             <div className="mb-4 flex justify-end"><InterfaceLanguageSelector /></div>
-            <div className="mb-6 border-b border-stone-200 pb-4"><PartnerBranding variant="auth" /></div>
             {children}
           </div>
         </div>

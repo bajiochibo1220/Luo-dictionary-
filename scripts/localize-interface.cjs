@@ -17,6 +17,17 @@ function jsxText(text) {
   }).filter(Boolean).join(' '));
 }
 function register(value) { const key = value.replace(/\s+/g, ' ').trim(); if (key && /[a-zA-Z]{2}/.test(key) && !Object.hasOwn(catalog, key)) catalog[key] = ''; }
+// Role-specific manuals are authored data, rather than literal JSX children.
+// Register their human-readable wording so editors can translate the guides too.
+const helpFile = 'src/lib/account-help.ts';
+if (fs.existsSync(helpFile)) {
+  const helpSource = ts.createSourceFile(helpFile, fs.readFileSync(helpFile, 'utf8'), ts.ScriptTarget.Latest, true);
+  function helpText(node) {
+    if (ts.isStringLiteral(node) && /\s/.test(node.text) && !node.text.startsWith('/')) register(node.text);
+    ts.forEachChild(node, helpText);
+  }
+  helpText(helpSource);
+}
 function walk(dir) { return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(dir, entry.name)) : entry.name.endsWith('.tsx') ? [path.join(dir, entry.name)] : []); }
 let files = 0, entries = 0;
 for (const filename of [...walk('src/components'), ...walk('src/app').filter(file => !file.includes(`${path.sep}api${path.sep}`))]) {
@@ -77,20 +88,20 @@ for (const filename of [...walk('src/components'), ...walk('src/app').filter(fil
     ts.forEachChild(node, visit);
   }
   visit(source);
-  if (!edits.length && original === raw) continue;
+  if (!edits.length) continue;
   let output = original;
   for (const edit of edits.sort((a, b) => b.start - a.start)) output = output.slice(0, edit.start) + edit.text + output.slice(edit.end);
   // Existing imports are updated on subsequent runs without introducing duplicates.
   const importPattern = /import \{ ([^}]+) \} from "@\/components\/shared\/interface-language";\r?\n/;
   const existing = output.match(importPattern);
   if (existing) { existing[1].split(',').map(s => s.trim()).forEach(s => imports.add(s)); output = output.replace(importPattern, ''); }
-  const importLine = `import { ${[...imports].sort().join(', ')} } from "@/components/shared/interface-language";\n`;
+  const importLine = imports.size ? `import { ${[...imports].sort().join(', ')} } from "@/components/shared/interface-language";\n` : '';
   const outputSource = ts.createSourceFile(filename, output, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const directive = outputSource.statements.find(statement => ts.isExpressionStatement(statement) && ts.isStringLiteral(statement.expression) && statement.expression.text === 'use client');
   if (directive) {
     output = '"use client";\n' + importLine + output.slice(0, directive.getStart(outputSource)) + output.slice(directive.end);
   } else output = importLine + output;
-  fs.writeFileSync(filename, output); files++;
+  fs.writeFileSync(filename, (raw.startsWith('\uFEFF') ? '\uFEFF' : '') + output); files++;
 }
 fs.writeFileSync(defaultsPath, JSON.stringify(Object.fromEntries(Object.entries(catalog).sort(([a], [b]) => a.localeCompare(b))), null, 2) + '\n');
 console.log(JSON.stringify({ files, textBoundaries: entries, catalogEntries: Object.keys(catalog).length }));

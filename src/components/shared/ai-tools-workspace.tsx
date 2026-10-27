@@ -1,0 +1,28 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import type { FeatureRequest } from "./learning-hub";
+import { InterfaceOption, InterfaceText } from "./interface-language";
+type Sources = { assets: {id: string; type: string; title: string}[]; stories: {id: string; title: string}[] };
+const labels = { ocr: "Read text from an image", transcribe: "Transcribe audio", describe: "Describe an image", illustrate: "Illustrate a folktale" };
+export function AiToolsWorkspace({ request, languageId }: { request: FeatureRequest; languageId: number }) {
+  const [task, setTask] = useState<keyof typeof labels>("ocr"); const [sourceId, setSourceId] = useState(""); const [consent, setConsent] = useState(false);
+  const [sources, setSources] = useState<Sources>({ assets: [], stories: [] }); const [result, setResult] = useState<{ text: string; image?: string } | null>(null);
+  const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [retry, setRetry] = useState(0);
+  const epoch = useRef(0);
+  useEffect(() => { const current = ++epoch.current; setResult(null); setSources({assets:[],stories:[]}); setSourceId(""); setBusy(false); setError(""); void request(`/api/v1/ai-tools?languageId=${languageId}`).then(data => { if (current === epoch.current) setSources(data); }).catch(reason => { if (current === epoch.current) setError(reason instanceof Error ? reason.message : "Unable to load reviewed sources."); }); return () => { epoch.current++; }; }, [languageId, request, retry]);
+  const choices = task === "illustrate" ? sources.stories : sources.assets.filter(asset => asset.type === (task === "transcribe" ? "audio" : "image"));
+  async function run() {
+    const current = epoch.current; setBusy(true); setError(""); setResult(null);
+    try { const data = await request("/api/v1/ai-tools", { method: "POST", body: JSON.stringify({ task, consent, ...(task === "illustrate" ? { recordId: sourceId } : { assetId: sourceId }) }) }); if (current === epoch.current) setResult(data); }
+    catch(reason) { if (current === epoch.current) setError(reason instanceof Error ? reason.message : "Processing could not complete. Please retry."); }
+    finally { if (current === epoch.current) setBusy(false); }
+  }
+  function downloadText() { if (!result?.text) return; const address = URL.createObjectURL(new Blob([result.text], { type: "text/plain;charset=utf-8" })); const anchor = document.createElement("a"); anchor.href = address; anchor.download = `ai-${task}-draft.txt`; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(address), 1000); }
+  return <section className="mx-auto max-w-3xl space-y-5 p-5 text-stone-900 md:p-8"><header><h1 className="font-serif text-3xl"><InterfaceText source="AI media tools" /></h1><p className="mt-2"><InterfaceText source="Create reviewable drafts from approved public sources. Results are not automatically published or treated as verified cultural knowledge." /></p></header>
+    <form className="space-y-4 rounded-xl bg-white p-5" onSubmit={event => { event.preventDefault(); void run(); }}><label className="block"><InterfaceText source="Tool" /><select className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 p-3" value={task} disabled={busy} onChange={event => { setTask(event.target.value as typeof task); setSourceId(""); setResult(null); }}>{Object.entries(labels).map(([value,label]) => <InterfaceOption value={value} key={value}>{label}</InterfaceOption>)}</select></label>
+      <label className="block"><InterfaceText source="Reviewed source" /><select className="mt-2 min-h-11 w-full rounded-lg border border-stone-400 p-3" required value={sourceId} onChange={event => setSourceId(event.target.value)}><InterfaceOption value="">Choose a source</InterfaceOption>{choices.map(item => <InterfaceOption key={item.id} value={item.id}>{item.title}</InterfaceOption>)}</select></label>{!choices.length && <p><InterfaceText source="No suitable approved sources are available yet. Add and review authentic material before using this tool." /></p>}
+      <label className="flex gap-3"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} /><InterfaceText source="Allow the configured AI service to process this approved source and create a draft." /></label><button className="min-h-11 rounded-full bg-amber-900 px-5 py-2 text-white disabled:opacity-50" disabled={busy || !sourceId || !consent}><InterfaceText source={busy ? "Processing..." : "Create AI draft"} /></button>
+    </form>{error && <div role="alert" className="rounded-lg bg-red-50 p-4"><p>{error}</p><button className="min-h-11 underline" onClick={() => setRetry(value => value+1)}><InterfaceText source="Reload sources" /></button></div>}
+    {result && <article className="space-y-3 rounded-xl bg-white p-5"><h2 className="font-semibold"><InterfaceText source="AI draft — fluent and cultural review required" /></h2>{result.text && <><p className="whitespace-pre-wrap">{result.text}</p><button type="button" className="min-h-11 underline" onClick={downloadText}><InterfaceText source="Download draft text" /></button></>}{result.image && <figure><img src={result.image} alt="AI-generated story illustration, pending review" className="max-h-96 max-w-full object-contain" /><figcaption><InterfaceText source="AI-generated educational illustration. Not documentary evidence." /></figcaption><a className="inline-block min-h-11 py-2 underline" href={result.image} download="ai-story-illustration.png"><InterfaceText source="Download illustration" /></a></figure>}</article>}
+  </section>;
+}

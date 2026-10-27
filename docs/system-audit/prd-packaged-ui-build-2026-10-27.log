@@ -1,0 +1,47 @@
+
+> luo-heritage-mobile@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+(node:780) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/LUO%20LINGUAL%20SYSTEM/System/VERSION%20PROJECTS/luolinguaal%20-%20Copy/tailwind.config.ts?id=1793049065198 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\LUO LINGUAL SYSTEM\System\VERSION PROJECTS\luolinguaal - Copy\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ 1671 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    0.46 kB │ gzip:   0.29 kB
+dist/assets/6d38f9d4e0f4772b-s-DBDPsn_N.woff2      8.90 kB
+dist/assets/df0a9ae256c0569c-s-YEzCLjIM.woff2     10.28 kB
+dist/assets/c5fe6dc8356a8c31-s-Ai74Rjx-.woff2     11.27 kB
+dist/assets/36008747766f78c6-s-Ct1FAkai.woff2     17.28 kB
+dist/assets/21350d82a1f187e9-s-C5ekK6td.woff2     18.74 kB
+dist/assets/19cfc7226ec3afaa-s-BQL42Lnq.woff2     19.04 kB
+dist/assets/08aedeceaf1dcd57-s-DgyGNlSC.woff2     20.17 kB
+dist/assets/0086f8992871c45b-s-DvGMrinY.woff2     21.25 kB
+dist/assets/03b436aa846269de-s-S8vInfZS.woff2     23.58 kB
+dist/assets/ba9851c3c22cd980-s-Cpd2YT5r.woff2     25.84 kB
+dist/assets/ab00a911ac2adf48-s-ghDDbscC.woff2     29.23 kB
+dist/assets/5c0c2bcbaa4149ca-s.p-BplyFJq7.woff2   37.79 kB
+dist/assets/luo-heritage-512-edrN4VfK.png         43.77 kB
+dist/assets/e4af272ccee01ff0-s.p-8kRkwJBP.woff2   48.43 kB
+dist/assets/8e9860b6e62d6359-s-B_-bZUTo.woff2     85.27 kB
+dist/assets/places-map-canvas-vh-t_kPv.css        15.09 kB │ gzip:   6.36 kB
+dist/assets/index-BaMAkhIB.css                    76.81 kB │ gzip:  15.35 kB
+dist/assets/web-BdH9gaTm.js                        0.36 kB │ gzip:   0.24 kB
+dist/assets/web-Cu5afhWD.js                        0.84 kB │ gzip:   0.39 kB
+dist/assets/places-map-canvas-7lOd7Fe4.js        153.69 kB │ gzip:  45.21 kB
+dist/assets/index-sspVx7Hm.js                    538.67 kB │ gzip: 156.13 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 57.83s
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 50.0s of this 55.6s build (90%).
+1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
+  - plugin vite:css transform (2 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

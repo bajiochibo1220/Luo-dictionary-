@@ -1,5 +1,6 @@
 "use client";
 import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
+import { emitActivity } from "@/lib/activity-events";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ModuleContentView, type ModuleContentProps, type AppLink } from "./module-content-view";
@@ -16,7 +17,7 @@ export function PaginatedLibrary({ initial, request, Link }: { initial: ModuleCo
       const params = new URLSearchParams({ language: initial.languageCode, module: initial.moduleCode === "all" ? "audio_visual" : initial.moduleCode, q: more ? appliedQuery : query });
       if (more) { params.set("records", content.continuation?.records || "end"); params.set("dictionary", content.continuation?.dictionary || "end"); }
       const next = await request(`/api/v1/library?${params}`);
-      if (!more) setAppliedQuery(query);
+      if (!more) { setAppliedQuery(query); if(query.trim())emitActivity({eventType:"search",query:query.trim().slice(0,100)}); }
       setContent(previous => ({ ...next, items: more ? [...previous.items, ...next.items.filter((item: { id: string }) => !previous.items.some(existing => existing.id === item.id))] : next.items }));
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Library unavailable. Retry."); }
     finally { setBusy(false); }

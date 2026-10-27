@@ -7,13 +7,30 @@ export const APP_ROUTES = {
   contribute: "/contribute",
   submissions: "/my-submissions",
   chatbot: "/chatbot",
+  tutor: "/tutor",
+  aiTools: "/ai-tools",
+  knowledge: "/knowledge",
+  places: "/places",
   admin: "/admin/dashboard",
   superAdmin: "/super-admin/dashboard",
   appUpdates: "/mobile-apps",
+  help: "/help",
 } as const;
 
 export function accountDashboardHref({ isAdmin, isSuperAdmin }: { isAdmin: boolean; isSuperAdmin: boolean }) {
   return isSuperAdmin ? APP_ROUTES.superAdmin : isAdmin ? APP_ROUTES.admin : APP_ROUTES.overview;
+}
+
+// One route contract for links and hash navigation in the packaged application.
+export function applicationScreenHref(href: string): string | null {
+  if (!href.startsWith("/") || href.startsWith("//") || href.length > 4096 || /[\\\u0000-\u001f]/.test(href)) return null;
+  const url = new URL(href, "https://client.local");
+  if (url.pathname === "/application") return "/dashboard" + url.search;
+  if (["/admin/help", "/super-admin/help"].includes(url.pathname)) return "/help";
+  if (url.pathname === "/profile") return "/settings";
+  if (url.pathname === "/classrooms") return "/learn";
+  const screens = ["/dashboard", "/learn", "/research", "/courses", "/settings", "/saved", "/workspace", "/account", "/chatbot", "/places", "/knowledge", "/ai-tools", "/tutor", "/help", "/contribute", "/my-submissions"];
+  return screens.includes(url.pathname) || /^\/contribute\/[a-z0-9_-]+$/.test(url.pathname) ? url.pathname + url.search : null;
 }
 
 export function pairedLanguageNavigation(languageCode: string, pathname: string, search: string) {
@@ -34,6 +51,7 @@ export function pairedLanguageNavigation(languageCode: string, pathname: string,
 
 export function moduleHref(code: string) {
   if (!code) return APP_ROUTES.overview;
+  if (code === "ai_tutor" || code === "language_tutor" || code === "tutor") return "/tutor";
   if (code === "research") return "/research";
   if (code === "chatbot") return APP_ROUTES.chatbot;
   if (code === "cultural_calendar") return "/learn?section=event";

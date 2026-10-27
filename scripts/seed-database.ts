@@ -80,7 +80,7 @@ const MODULES = [
   { code: "chatbot", baseName: "AI Chatbot", displayOrder: 11, isStub: false },
   { code: "games", baseName: "Games", displayOrder: 12, isStub: true },
   { code: "learning", baseName: "Learning Centre", displayOrder: 13, isStub: true },
-  { code: "ai_tutor", baseName: "AI Language Tutor", displayOrder: 14, isStub: true },
+  { code: "ai_tutor", baseName: "AI Language Tutor", displayOrder: 14, isStub: false },
   { code: "research", baseName: "Research Portal", displayOrder: 15, isStub: false },
 ];
 
@@ -175,6 +175,7 @@ const FIELDS_BY_MODULE: Record<string, FieldDef[]> = {
     { fieldCode: "clan", baseLabel: "Clan", fieldType: "text", isRequired: false, displayOrder: 3 },
     { fieldCode: "usage", baseLabel: "Usage", fieldType: "textarea", isRequired: false, displayOrder: 4 },
   ],
+  research: [["research_kind","Document type"],["abstract","Abstract or description"],["citation","Citation"],["publication_year","Publication year"],["license","Rights and permitted reuse"],["field_notes","Field notes"],["dataset_description","Dataset documentation"],["model_card","Model card and limitations"]].map(([fieldCode,baseLabel],index)=>({fieldCode,baseLabel,fieldType:"textarea",isRequired:["research_kind","abstract","license"].includes(fieldCode),displayOrder:index+1})),
   heritage_sites: [
     { fieldCode: "county", baseLabel: "County", fieldType: "text", isRequired: false, displayOrder: 1 },
     { fieldCode: "description", baseLabel: "Description", fieldType: "textarea", isRequired: true, displayOrder: 2 },

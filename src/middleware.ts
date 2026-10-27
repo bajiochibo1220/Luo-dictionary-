@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   "/chatbot",
   "/mobile-apps",
   "/application",
+  "/help",
 ];
 
 function isPublic(pathname: string): boolean {
@@ -14,6 +15,9 @@ function isPublic(pathname: string): boolean {
   if (pathname === "/api/branding") return true;
   if (pathname === "/api/interface-copy") return true;
   if (pathname === "/api/app-version") return true;
+  if (pathname === "/api/v1/places") return true;
+  if (pathname === "/api/v1/activity") return true;
+  if (pathname === "/api/v1/knowledge") return true;
   if (pathname === "/api/v1/bootstrap") return true;
   if (pathname === "/api/v1/library") return true;
   if (pathname === "/api/v1/learning") return true;

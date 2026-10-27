@@ -104,23 +104,13 @@
 .workspace-heading button, .workspace-heading a { flex-shrink: 0; }
 @media (max-width: 639px) { .workspace-heading h1 { font-size: 1.5rem; } }
 
-/* Approved partner colours are configured through System > General. */
-:root { --jooust-brand: #5c3a1c; --nrf-brand: #6b4724; }
+/* JOOUST appearance is configured through System > General. */
+:root { --jooust-brand: #5c3a1c; }
 .institution-masthead {
-  background: linear-gradient(110deg, color-mix(in srgb, var(--jooust-brand) 65%, #111), color-mix(in srgb, var(--nrf-brand) 65%, #111));
+  background: linear-gradient(110deg, color-mix(in srgb, var(--jooust-brand) 65%, #111), #30251b);
 }
-.institution-border { border-bottom: 3px solid var(--jooust-brand); box-shadow: 0 1px 0 var(--nrf-brand); }
+.institution-border { border-bottom: 3px solid var(--jooust-brand); }
 
-/* Quiet institutional placement: large on auth pages, one pair in page footers. */
-.partner-branding { display: flex; align-items: center; gap: .75rem; }
-.partner-mark { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-bottom: 2px solid; padding: .125rem .375rem; font-size: .7rem; font-weight: 600; }
-.partner-logo { height: 1.75rem; max-width: 4.5rem; object-fit: contain; background: white; border-radius: .25rem; padding: .125rem; }
-.partner-branding-footer { justify-content: center; padding: 1rem .75rem calc(5.5rem + env(safe-area-inset-bottom, 0px)); color: #57534e; }
-.partner-branding-auth { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.partner-branding-auth .partner-mark { flex-direction: column; justify-content: flex-start; align-self: stretch; padding: .5rem; min-width: 0; }
-.partner-branding-auth .partner-logo { width: 100%; height: 5.5rem; max-width: 9rem; padding: .25rem; background: transparent; }
-.partner-caption { max-width: 12rem; text-align: center; font-size: .65rem; line-height: 1.4; }
-@media (min-width: 768px) { .partner-branding-auth .partner-logo { height: 7rem; max-width: 11rem; } }
 /* Media controls stay at the bottom; only search and language use the top. */
 .library-page { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
 .library-media-dock { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 30; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 1fr); gap: .25rem; padding: .375rem .5rem calc(.375rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid #d6c8af; background: #f8f4eb; box-shadow: 0 -3px 14px #29252412; }
@@ -135,7 +125,12 @@ body:has(.library-media-dock) .floating-chatbot { bottom: calc(5.25rem + env(saf
 
 .auth-page { background: radial-gradient(ellipse at top, #fffdf6, #e9e3d6 75%); }
 .auth-form-surface { isolation: isolate; overflow: hidden; border: 1px solid #fff; background: #fffdf7; box-shadow: 0 16px 48px #3d29151a; }
-.auth-form-surface::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--jooust-brand), var(--nrf-brand)); }
+.auth-form-surface::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--jooust-brand); }
 .auth-logo-background { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.auth-logo-image { position: absolute; top: clamp(14rem, 32svh, 18rem); left: 50%; transform: translateX(-50%); width: 82%; max-width: 320px; height: auto; object-fit: contain; opacity: .24; }
+.auth-logo-image { position: absolute; top: clamp(11rem, 28svh, 16rem); left: 50%; transform: translateX(-50%); width: 82%; max-width: 320px; height: auto; object-fit: contain; opacity: .34; filter: none; }
+.institution-logo-background { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
+.institution-logo-image { width: 64%; max-width: 320px; max-height: 55%; height: auto; object-fit: contain; opacity: .22; filter: none; }
 .auth-form-content :is(input:not([type="checkbox"]), select, fieldset) { background-color: #fffffff0; }
+
+@keyframes heritage-story-scene { from { transform: scale(1); opacity: .65; } to { transform: scale(1.05); opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { .story-scene-motion { animation: heritage-story-scene 6s ease-out both; } }

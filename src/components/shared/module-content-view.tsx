@@ -1,6 +1,9 @@
 "use client";
 import { InterfaceOption, InterfaceSelect, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
 
+import { emitActivity } from "@/lib/activity-events";
+import { ObjViewer } from "./obj-viewer";
+import { StoryTour } from "./story-tour";
 import { useState, useMemo, useEffect, useRef, type ComponentType, type ReactNode } from "react";
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
 import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
@@ -112,7 +115,7 @@ export function ModuleContentView({
       ) : view === "feed" ? (
         <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
       ) : (
-        <GridView viewLanguageCode={viewLanguageCode} items={filteredItems} mediaForCard={mediaForCard} onOpen={setSelectedItem} />
+        <GridView viewLanguageCode={viewLanguageCode} items={filteredItems} mediaForCard={mediaForCard} onOpen={item => { emitActivity({eventType:"view",recordId:item.id}); setSelectedItem(item); }} />
       )}
 
       {selectedItem && <ContentDialog viewLanguageCode={viewLanguageCode} item={selectedItem} onSave={onSave} languageCode={languageCode} onClose={() => setSelectedItem(null)} />}
@@ -140,9 +143,9 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
       {media.length > 0 && <div className="min-w-0 space-y-2 md:space-y-4">
         {media.map((asset) => (
           <div key={asset.id} className="w-full flex items-center justify-center bg-black/5 overflow-hidden rounded-lg">
-            {asset.type === "image" && <img src={asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
-            {asset.type === "video" && <video src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
-            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><audio src={asset.url} controls className="w-full" /></div>}
+            {asset.type === "image" && <img loading="lazy" onError={event=>{const original=new URL(asset.url,location.href).href;if(event.currentTarget.src!==original)event.currentTarget.src=original;}} src={asset.thumbnailUrl || asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+            {asset.type === "video" && <video onPlay={()=>emitActivity({eventType:"video_play",recordId:item.id})} preload="none" src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><audio onPlay={()=>emitActivity({eventType:"audio_play",recordId:item.id})} preload="none" src={asset.url} controls className="w-full" /></div>}
             {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline"><InterfaceText source="Open transcript or document" /></a>}
           </div>
         ))}
@@ -158,6 +161,8 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
         {description && <div className="space-y-2"><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
         {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
         {description && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
+        {(item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}
+        {item.moduleCode === "artifacts" && item.media.filter(asset => asset.format === "obj").map(asset => <ObjViewer key={asset.id} address={asset.url} />)}
         {onSave && <button type="button" className="mt-3 min-h-11 rounded-lg bg-amber-900 px-4 py-2 text-sm text-white" onClick={() => onSave(item)}><InterfaceText source="Save item" /></button>}
         {showEnglish && !item.englishSummary && <p className="text-sm text-stone-700 italic"><InterfaceText source="An English description has not been added yet." /></p>}
       </div>

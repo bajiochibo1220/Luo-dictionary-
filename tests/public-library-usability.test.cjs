@@ -62,7 +62,7 @@ test('public branding exposes approved presentation fields without exposing serv
   const { GET } = loader({ '@/lib/settings': { getSystemSettings: async () => ({ jooust_logo_url: 'https://example.test/logo.png', nrf_logo_url: '', jooust_color: '#123456', nrf_color: '#654321', cloudinary_api_secret: 'private', smtp_password: 'private' }) } })('src/app/api/branding/route.ts');
   const response = await GET(new Request('https://example.test/api/branding'));
   const result = await response.json();
-  assert.deepEqual(Object.keys(result.data).sort(), ['jooust_color', 'jooust_logo_url', 'nrf_color', 'nrf_logo_url']);
+  assert.deepEqual(Object.keys(result.data).sort(), ['jooust_color', 'jooust_logo_url']);
   assert.equal(JSON.stringify(result).includes('private'), false);
 });
 

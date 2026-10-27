@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { cloudinary, configureCloudinary } from "@/lib/cloudinary";
 import { authorizeMediaUpload } from "@/lib/media-upload-auth";
+import { rawFileExtension } from "@/lib/raw-media-format";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,10 @@ export async function POST(req: NextRequest) {
     const resourceType = assetType === "image" ? "image" : assetType === "document" ? "raw" : "video";
     const timestamp = Math.floor(Date.now() / 1000);
     const baseName = fileName.replace(/\.[^.]+$/, "").normalize("NFKD").replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "").slice(0, 90) || "media";
-    if (requestedPublicId !== undefined && (typeof requestedPublicId !== "string" || !/^[\w-]{1,90}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedPublicId))) {
+    if (requestedPublicId !== undefined && (typeof requestedPublicId !== "string" || !/^[\w-]{1,90}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\.[a-z0-9]{1,8})?$/i.test(requestedPublicId))) {
       return NextResponse.json({ success: false, error: "Invalid upload identifier" }, { status: 400 });
     }
-    const publicId = requestedPublicId || `${baseName}-${crypto.randomUUID()}`;
+    const publicId = requestedPublicId || `${baseName}-${crypto.randomUUID()}${resourceType === "raw" ? "." + rawFileExtension(fileName) : ""}`;
     const tags = [languageCode, moduleCode, assetType].join(",");
     const deliveryType = "authenticated" as const;
     const paramsToSign = { folder: context.folder, public_id: publicId, tags, type: deliveryType, overwrite: false, timestamp };

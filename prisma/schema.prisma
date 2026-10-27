@@ -137,6 +137,8 @@ model User {
   classMemberships ClassMembership[]
   assignmentSubmissions AssignmentSubmission[]
   savedItems       SavedItem[]
+  hostedGames      GameRoom[]
+  gameMemberships  GamePlayer[]
 
   @@map("users")
 }
@@ -699,10 +701,43 @@ model LearningResource {
   states          LearningState[]
   courseUnits     CourseUnit[]
   assignments     ClassAssignment[]
+  gameRooms       GameRoom[]
 
   @@index([languageId, kind, status])
   @@index([startsAt])
   @@map("learning_resources")
+}
+
+model GameRoom {
+  id              String @id @default(uuid())
+  code            String @unique
+  resourceId      String
+  resourceVersion Int
+  hostId          String
+  status          String @default("waiting")
+  startsAt        DateTime?
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  resource        LearningResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  host            User @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  players         GamePlayer[]
+  @@index([expiresAt])
+  @@map("game_rooms")
+}
+
+model GamePlayer {
+  id          String @id @default(uuid())
+  roomId      String
+  userId      String
+  alias       String
+  answers     Json @default("{}")
+  score       Int?
+  submittedAt DateTime?
+  joinedAt    DateTime @default(now())
+  room        GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([roomId, userId])
+  @@map("game_players")
 }
 
 model LearningState {

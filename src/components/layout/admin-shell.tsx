@@ -72,11 +72,12 @@ function AdminWorkspace({ children, topbar, isSuperAdmin, isMasterSuperAdmin, ro
         <div className="flex h-20 items-center border-b border-amber-100/15 px-5"><span className="font-serif text-lg text-amber-50"><InterfaceText source="Admin workspace" /></span></div>
         <div className="h-[calc(100%_-_5rem)]"><AdminSidebar isSuperAdmin={isSuperAdmin} isMasterSuperAdmin={isMasterSuperAdmin} roles={roles} onNavigate={closeMobile} /></div>
       </SidebarPanel>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative isolate flex min-w-0 flex-1 flex-col">
+        <PartnerBranding />
         {topbar}
-        <main className="relative flex-1 overflow-y-auto overscroll-contain bg-[#b89a68] p-4 md:p-8">
+        <main className="relative z-10 flex-1 overflow-y-auto overscroll-contain p-4 md:p-8">
           <div className="absolute inset-0 opacity-[0.10] pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fff2d3' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
-          <div className="relative z-10">{children}<PartnerBranding variant="footer" /></div>
+          <div className="relative z-10">{children}</div>
         </main>
       </div>
     </div>;

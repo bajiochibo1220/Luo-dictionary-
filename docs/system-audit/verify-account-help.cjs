@@ -1,0 +1,69 @@
+// Hydrated real Help, authentication and packaged application components.
+// Only the public JOOUST logo setting is read; accounts and content are fixtures.
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
+const {spawn}=require('node:child_process');const assert=require('node:assert/strict');
+async function main(){
+ require('dotenv').config({quiet:true});const {PrismaClient}=require('@prisma/client');const prisma=new PrismaClient();let logo;
+ try{logo=(await prisma.systemSetting.findUnique({where:{key:'jooust_logo_url'},select:{value:true}}))?.value;}finally{await prisma.$disconnect();}
+ assert.ok(logo,'The uploaded JOOUST logo must be configured.');
+ const source=`import React from 'react';import{createRoot}from'react-dom/client';import{AccountHelp}from'@/components/shared/account-help';import{PartnerBranding}from'@/components/shared/partner-branding';import{AuthShell}from'@/components/layout/auth-shell';import{LoginForm}from'@/components/forms/login-form';import{RegisterForm}from'@/components/forms/register-form';import{SharedApplication}from'@/components/shared/application';
+ const params=new URLSearchParams(location.search),role=params.get('role')||'public',kind=params.get('kind')||'help';const language={id:1,code:'luo',nativeName:'Dholuo',name:'Dholuo'};
+ const account=role==='guest'?null:{id:'fixture-'+role,name:'Fixture',email:'fixture@example.test',image:null,profileTypes:[],isSuperAdmin:role==='super',isMasterSuperAdmin:role==='master',languageRoles:['uploader','content_editor','publisher','language_admin','teacher','researcher'].includes(role)?[{role,languageId:1,languageCode:'luo',languageName:'Dholuo'}]:role==='multi'?[{role:'uploader',languageId:1,languageCode:'luo',languageName:'Dholuo'},{role:'content_editor',languageId:1,languageCode:'luo',languageName:'Dholuo'}]:[]};
+ window.fixtureDownload=null;const realCreate=URL.createObjectURL;URL.createObjectURL=blob=>{blob.text().then(text=>{window.fixtureDownload=text;});return realCreate(blob);};const realClick=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){if(!this.download)realClick.call(this);};
+ const request=async url=>url==='/api/branding'?(await(await fetch(url)).json()).data:url.startsWith('/api/v1/contributions')?{language,modules:[]}:[];
+ const adapters={apiOrigin:location.origin,artwork:'',bootstrap:async()=>({languages:[language],selectedLanguage:language,modules:[]}),library:async()=>({items:[],title:'Dictionary',baseName:'Dictionary',moduleCode:'dictionary',languageId:1,languageCode:'luo',languageName:'Dholuo'}),account:async()=>account,conversations:async()=>[],featureRequest:request,featureFetch:fetch,chatRequest:fetch,nativeSession:{isNative:true,subscribe:callback=>{callback(account?{accountId:account.id,expiresAt:new Date(Date.now()+3600000).toISOString()}:null,'restore');return()=>{};},connect:async()=>()=>{},start:async()=>{},resume:async()=>{},signOut:async()=>{}}};
+ const Link=({href,children,...props})=><a href={href} {...props}>{children}</a>;
+ createRoot(document.getElementById('root')).render(kind==='application'?<SharedApplication adapters={adapters}/>:kind==='login'||kind==='register'?<AuthShell>{kind==='login'?<LoginForm/>:<RegisterForm/>}</AuthShell>:<main className='relative isolate min-h-dvh bg-[#eee5d5]'><PartnerBranding/><div className='relative z-10'><AccountHelp account={account} Link={Link}/></div></main>);`;
+ const bundle=await require('esbuild').build({stdin:{contents:source,loader:'tsx',resolveDir:process.cwd()},bundle:true,write:false,loader:{'.css':'empty'},jsx:'automatic',platform:'browser',tsconfig:path.resolve('tsconfig.json'),define:{'process.env.NODE_ENV':'"production"','process.env':'{}'},plugins:[{name:'fixture',setup(build){build.onResolve({filter:/^(next\/link|next\/navigation|next-auth\/react)$/},args=>({path:args.path,namespace:'fixture'}));build.onLoad({filter:/.*/,namespace:'fixture'},args=>({loader:'jsx',resolveDir:process.cwd(),contents:args.path==='next/link'?"import React from 'react';export const useLinkStatus=()=>({pending:false});export default function Link({children,...props}){return <a {...props}>{children}</a>}":args.path==='next/navigation'?"export const useRouter=()=>({push:()=>{},refresh:()=>{}});export const usePathname=()=>'/help';export const useSearchParams=()=>new URLSearchParams(location.search);":"export const signIn=async()=>{};export const signOut=async()=>{};export const useSession=()=>({data:null});"}));}}]});
+ const css=await require('postcss')([require('@tailwindcss/postcss')()]).process(fs.readFileSync('src/app/globals.css','utf8'),{from:path.resolve('src/app/globals.css')});
+ const server=http.createServer((req,res)=>{const route=new URL(req.url,'http://fixture').pathname;if(route==='/bundle.js'){res.setHeader('Content-Type','text/javascript');res.end(bundle.outputFiles[0].text);}else if(route==='/style.css'){res.setHeader('Content-Type','text/css');res.end(css.css);}else if(route==='/api/branding'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({success:true,data:{jooust_logo_url:logo,jooust_color:'#293c75',nrf_logo_url:'https://example.invalid/nrf-removed.png'}}));}else if(route.startsWith('/api/')){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({success:true,data:route==='/api/conversations'?[]:route==='/api/languages'?[{code:'luo',nativeName:'Dholuo'}]:{catalog:{}}}));}else{res.setHeader('Content-Type','text/html');res.end('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/bundle.js"></script>');}});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const origin='http://127.0.0.1:'+server.address().port;
+ const profile=fs.mkdtempSync(path.join(os.tmpdir(),'heritage-account-help-'));const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-sandbox','--disable-gpu','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{windowsHide:true,stdio:['ignore','ignore','pipe']});let socket;
+ try{
+ const endpoint=await new Promise((resolve,reject)=>{let output='';const timer=setTimeout(()=>reject(new Error('Chrome startup timed out')),30000);chrome.stderr.on('data',chunk=>{output+=chunk;const match=output.match(/DevTools listening on (ws:\/\/[^\s]+)/);if(match){clearTimeout(timer);resolve(match[1]);}});chrome.once('error',reject);});
+ const tabs=await(await fetch(endpoint.replace('ws://','http://').replace(/\/devtools\/browser\/.*/,'/json'))).json();socket=new WebSocket(tabs.find(tab=>tab.type==='page').webSocketDebuggerUrl);await new Promise(resolve=>socket.addEventListener('open',resolve,{once:true}));let sequence=0;const pending=new Map();
+ socket.addEventListener('message',event=>{const reply=JSON.parse(event.data);if(pending.has(reply.id)){const{resolve,reject}=pending.get(reply.id);pending.delete(reply.id);reply.error?reject(new Error(JSON.stringify(reply.error))):resolve(reply.result);}});
+ const command=(method,params={})=>new Promise((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
+ const evaluate=async expression=>{const result=await command('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(result.exceptionDetails)throw new Error(JSON.stringify(result.exceptionDetails));return result.result.value;};
+ const wait=async expression=>{for(let i=0;i<150;i++){if(await evaluate(expression))return;await new Promise(resolve=>setTimeout(resolve,100));}throw new Error('Timed out: '+expression);};
+ const click=async selector=>{await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);const point=await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);await command('Input.dispatchMouseEvent',{type:'mousePressed',...point,button:'left',clickCount:1});await command('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});};
+ const results=[];
+ for(const width of[320,390,1440]){
+ await command('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:width<600});
+ for(const role of['guest','public','uploader','content_editor','publisher','language_admin','teacher','researcher','super','master','multi']){
+  await command('Page.navigate',{url:origin+'/?role='+role});await wait('!!document.querySelector("[data-help-guide]")');
+  const expected=role==='guest'?'public':role==='master'?'master_super_admin':role==='super'?'super_admin':role==='multi'?'uploader':role;
+  assert.equal(await evaluate('document.querySelector("[data-help-guide]").dataset.helpGuide'),expected);
+  assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,role+' overflow '+width);
+  await click('summary');assert.equal(await evaluate('document.querySelector("details").open'),true);
+  if(role==='public'){assert.equal(await evaluate('!!document.querySelector("nav")'),false);await evaluate('[...document.querySelectorAll("button")].find(node=>node.textContent.includes("Download my guide")).click()');await wait('!!window.fixtureDownload');assert.match(await evaluate('window.fixtureDownload'),/^Public library guide/);assert.doesNotMatch(await evaluate('window.fixtureDownload'),/Master Super Admin guide|Publisher guide/);}
+  if(role==='multi'){await evaluate('[...document.querySelectorAll("button")].find(node=>node.textContent==="Content editor guide").click()');assert.equal(await evaluate('document.querySelector("[data-help-guide]").dataset.helpGuide'),'content_editor');}
+  results.push({kind:'help',role,width,guide:expected,noOverflow:true});
+ }
+ for(const kind of['login','register']){
+  await command('Page.navigate',{url:origin+'/?kind='+kind});await wait('!!document.querySelector(".auth-logo-image")?.naturalWidth');
+  const layout=await evaluate(`(()=>{const image=document.querySelector('.auth-logo-image'),style=getComputedStyle(image),box=image.getBoundingClientRect(),parent=image.closest('.auth-form-surface').getBoundingClientRect();return{source:image.src,width:box.width,height:box.height,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,filter:style.filter,opacity:Number(style.opacity),within:box.left>=parent.left&&box.right<=parent.right&&box.top>=parent.top&&box.bottom<=parent.bottom,pointer:getComputedStyle(image.parentElement).pointerEvents,logos:document.querySelectorAll('img').length,overflow:document.documentElement.scrollWidth>innerWidth}})()`);
+  assert.equal(layout.source,logo);assert.equal(layout.logos,1);assert.equal(layout.filter,'none');assert.equal(layout.pointer,'none');assert.ok(layout.opacity>=.3&&layout.within&&!layout.overflow);assert.ok(Math.abs(layout.width/layout.height-layout.naturalWidth/layout.naturalHeight)<.01);
+  await click(kind==='register'?'input[name=name]':'input[name=email]');await command('Input.insertText',{text:kind==='register'?'Fixture reader':'fixture@example.test'});
+  assert.ok(await evaluate('document.activeElement.value.length>0'));
+  if(width===390){await evaluate('document.activeElement.blur();window.scrollTo(0,0)');const screenshot=await command('Page.captureScreenshot',{format:'png'});fs.writeFileSync('docs/system-audit/screenshots/jooust-background-'+kind+'-390.png',Buffer.from(screenshot.data,'base64'));}
+  results.push({kind,width,layout,inputUsable:true});
+ }
+ }
+ await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
+ for(const role of['public','content_editor','master']){
+ await command('Page.navigate',{url:origin+'/?kind=application&role='+role+'#/help'});const expected=role==='master'?'master_super_admin':role;
+ await wait(`document.querySelector('[data-help-guide]')?.dataset.helpGuide===${JSON.stringify(expected)}`);
+ await wait('!!document.querySelector(".institution-logo-image")?.naturalWidth');
+ const before=await evaluate('document.querySelector(".institution-logo-image").getBoundingClientRect().top');
+ await evaluate('document.querySelector("main").scrollTop=200');const after=await evaluate('document.querySelector(".institution-logo-image").getBoundingClientRect().top');assert.equal(after,before,'Background remains in place during content scroll');
+ await click('[data-help-guide] + p + div a');await wait(`location.hash===${JSON.stringify(role==='public'?'#/dashboard':'#/workspace')}`);
+ await click('a[href="#/chatbot"]');await wait('location.hash==="#/chatbot" && document.body.textContent.includes("Chat with Luo Lingua")');
+ await click('button[aria-label="Open menu"]');await wait('document.querySelector("aside").getAttribute("aria-modal")==="true" && document.querySelector("aside").getBoundingClientRect().left>=0');
+ await click('a[href="#/help"]');await wait(`document.querySelector('[data-help-guide]')?.dataset.helpGuide===${JSON.stringify(expected)}`);
+ results.push({kind:'packaged-help',role,expectedGuide:expected,actionStaysInApp:true,backgroundStable:true,chatIconUsable:true,sidebarHelpReturns:true});
+ }
+ fs.writeFileSync('docs/system-audit/account-help-browser-verification-2026-10-27.json',JSON.stringify({fixtureAccounts:true,productionWrites:false,actualUploadedJooustLogo:true,results},null,2)+'\n');console.log('PASS '+results.length+' real UI journeys: role-specific manuals, phone/desktop layout, downloadable public-only guide, JOOUST-only clear backgrounds and packaged navigation.');
+ }finally{socket?.close();chrome.kill();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+}
+main().catch(error=>{console.error(error.stack);process.exitCode=1;});

@@ -1,5 +1,7 @@
 # Trainer quick start — Sunday, 25 October 2026
 
+For current roles and PRD features, start with the [administrator/training guide](PRD_ADMIN_AND_TRAINING_GUIDE.md) and [user guide](PRD_USER_GUIDE.md). The 25 October slides and exports preserve historical workflows and require regeneration before redistribution, particularly their separate cultural-review role.
+
 Use the common application at **`/application`**. It uses the same interface components as the Android/iOS bundle. The older website routes continue to work.
 
 ## Start the local website

@@ -389,7 +389,6 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
           )}
         </div>
 
-        <div className="p-3 border-t border-amber-100/15 text-[10px] text-amber-100/40 text-center tracking-widest"><InterfaceText source="JOOUST · NRF" /></div>
       </aside>
 
       {sidebarOpen && (

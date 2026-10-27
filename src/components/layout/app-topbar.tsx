@@ -103,6 +103,7 @@ export function AppTopbar({
                 <Link href={dashboardHref} onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My dashboard" /></Link>
                 <Link href="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="My account & saved chats" /></Link>
                 <Link href="/settings" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Settings & profile" /></Link>
+                <Link href={isSuperAdmin ? "/super-admin/help" : isAdmin ? "/admin/help" : "/help"} onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Help & training" /></Link>
                 <Link href="/mobile-apps" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="App updates & installation" /></Link>
                 {(isAdmin || isSuperAdmin) && <Link href="/application" onClick={() => setProfileOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50"><InterfaceText source="Public site" /></Link>}
 

@@ -49,7 +49,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
       bodyText: recordText(record.languageId === language.id ? record.data : record.translations.find(item => item.languageId === language.id)?.data),
       moduleCode: record.module?.code ?? mod.code, moduleName: record.module?.baseName ?? mod.baseName,
       createdAt: record.createdAt.toISOString(),
-      media: record.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: asset.type === "image" ? `/api/media/${asset.id}/file` : null, format: asset.format })),
+      media: record.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: asset.type === "image" ? `/api/media/${asset.id}/file?width=640` : null, format: asset.format })),
     })),
     ...entries.map(entry => ({
       id: entry.id, title: entry.dholuo, kind: "dictionary" as const,

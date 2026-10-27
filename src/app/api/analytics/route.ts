@@ -25,6 +25,9 @@ export async function GET(req: NextRequest) {
     if (languageId > 0) where.languageId = languageId;
     else if (!isSuperAdmin(session)) where.languageId = { in: managed };
 
+    const progressWhere = {updatedAt:{gte:since},resource:{...(languageId > 0 ? {languageId} : !isSuperAdmin(session) ? {languageId:{in:managed}} : {})}};
+    const [aiCount,learningProgress,completedLearning] = await Promise.all([prisma.aIResponse.count({where}),prisma.learningState.aggregate({where:progressWhere,_count:{id:true},_avg:{bestScore:true}}),prisma.learningState.count({where:{...progressWhere,completed:true}})]);
+
     // Total events
     const totalEvents = await prisma.analyticsEvent.count({ where });
 
@@ -147,6 +150,11 @@ export async function GET(req: NextRequest) {
       success: true,
       data: {
         totalEvents,
+        downloads: events.filter(event=>event.eventType==="download").length,
+        aiInteractions: aiCount + events.filter(event=>event.eventType==="tutor_interaction").length,
+        learningProgress: {records:learningProgress._count.id,completed:completedLearning,averageScore:learningProgress._avg.bestScore},
+        learningAttempts: events.filter(event=>["tutor_quiz","game_completed"].includes(event.eventType)).length,
+        engagementEvents: events.filter(event=>["audio_play","video_play","view"].includes(event.eventType)).length,
         uniqueVisitors: uniqueUsers.length,
         identifiedVisitors: uniqueUsers.length,
         visitorCountScope: "Distinct signed-in accounts only; anonymous events are included in event totals.",

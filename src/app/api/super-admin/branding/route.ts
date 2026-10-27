@@ -12,7 +12,7 @@ export const POST = withApiErrors(async (request: NextRequest) => {
   const form = await request.formData();
   const partner = form.get("partner");
   const file = form.get("file");
-  if (!["jooust", "nrf"].includes(String(partner)) || !(file instanceof File) || !file.size || file.size > 2 * 1024 * 1024) return NextResponse.json({ error: "Choose a partner and a PNG, JPEG or WebP logo under 2 MB." }, { status: 400 });
+  if (partner !== "jooust" || !(file instanceof File) || !file.size || file.size > 2 * 1024 * 1024) return NextResponse.json({ error: "Choose the JOOUST background and a PNG, JPEG or WebP logo under 2 MB." }, { status: 400 });
   const bytes = Buffer.from(await file.arrayBuffer());
   const png = bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   const jpeg = bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
