@@ -7,12 +7,15 @@ import { createHash } from "crypto";
 import { getSystemSetting } from "@/lib/settings";
 import { DEFAULT_PRIVACY, DEFAULT_TERMS } from "@/lib/legal-content";
 import { assertAccountRateLimit } from "@/lib/account-security";
+import { readBoundedJson } from "@/lib/bounded-json";
+import { sameOriginBrowserPost } from "@/lib/native-api-headers";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    if (!sameOriginBrowserPost(req)) return NextResponse.json({ success: false, error: "Use a same-origin registration request." }, { status: 403 });
+    const body = await readBoundedJson(req, 20000);
     const data = registerSchema.parse(body);
     await assertAccountRateLimit(data.email, "register");
 
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
     const language = await prisma.language.findUnique({
       where: { id: data.languageId },
     });
-    if (!language) {
+    if (!language || !language.isActive || language.code === "eng") {
       return NextResponse.json(
         { success: false, error: "Invalid language" },
         { status: 400 }
@@ -95,6 +98,9 @@ export async function POST(req: NextRequest) {
       data: { id: user.id, email: user.email, status: user.status },
     });
   } catch (err: any) {
+    if (err instanceof SyntaxError) return NextResponse.json({ success: false, error: "Use valid registration details." }, { status: 400 });
+    if ([400, 413].includes(err.status)) return NextResponse.json({ success: false, error: "Check the registration details." }, { status: err.status });
+    if (err.code === "P2002") return NextResponse.json({ success: false, error: "Email already registered" }, { status: 409 });
     if (err.status === 429) return NextResponse.json({ success: false, error: err.message }, { status: 429 });
     if (err.name === "ZodError") {
       return NextResponse.json(
@@ -102,7 +108,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error("[register]", err);
+    console.error("[register] Registration failed.");
     return NextResponse.json(
       { success: false, error: "Registration failed" },
       { status: 500 }

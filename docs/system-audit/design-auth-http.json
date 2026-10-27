@@ -1,0 +1,13 @@
+{
+  "registration": true,
+  "consentSaved": true,
+  "hashedPassword": true,
+  "noPrivilegeAssignment": true,
+  "incorrectPasswordRejected": true,
+  "realCredentialsSession": true,
+  "correctDashboard": true,
+  "ownAccountApi": true,
+  "signOut": true,
+  "fixtureRemoved": true,
+  "externalMessagesSent": false
+}

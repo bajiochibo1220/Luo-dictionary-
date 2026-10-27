@@ -2,7 +2,17 @@
 
 This guide describes the PRD implementation. Collections can be empty until approved material is published. No class membership is required to explore the public library.
 
+The dashboard has shortcuts for listening, learning, the tutor and **My manual**. Teachers and researchers also see entry cards relevant to their assigned duties. Navigation icons accompany labels; use the menu button on phones to open the sidebar. The same interface is shared with packaged mobile clients.
+
+The registration form reports unavailable community languages and provides a retry action. Select an active community, enter the required details and accept the Terms and Privacy Policy. Password visibility buttons can show or hide the password. A successful account registration continues to sign-in; failures retain a clear retry or login path. Your assigned roles determine the dashboard reached after login.
+
 ## Discover and download
+
+Open **Start here** for paths for children, youth, adults, schools, universities, researchers, cultural institutions, museums, tourists, diaspora communities, linguists, AI researchers and government cultural agencies. Choosing a path only changes recommendations; it does not change your account or grant access. Children can explore stories and riddles with a trusted adult without supplying a child's personal details.
+
+The same page lists all fifteen modules and all twenty-seven PRD subjects. Select a subject to browse its published, publicly permitted records across active collections. Search within that subject or load more results. The dictionary subject also includes the structured dictionary. Other subjects depend on editors classifying records using **Subject area**; empty results do not mean records have been invented or automatically approved.
+
+The sidebar keeps primary destinations visible. Expand **Collections** for individual archives, or **More & settings** for places, cultural connections, AI media tools, courses, contributions, settings and help. The current collection opens automatically. The public research portal is always reachable from primary navigation; restricted research still requires an assigned role.
 
 Choose a community, search a collection and use the bottom media controls to show all content, images, audio, video or transcripts. Switch between the community language and its English version. English remains a translation of that community's material. Open an item for its full text. Use its download links for text and eligible attached files. Restricted material requires assigned access; a link does not override consent.
 

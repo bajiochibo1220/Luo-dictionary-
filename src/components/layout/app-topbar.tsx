@@ -8,6 +8,7 @@ import { signOut } from "next-auth/react";
 import { SidebarToggle } from "./sidebar-controls";
 import { accountDashboardHref } from "@/lib/app-navigation";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
+import { BrandMark } from "@/components/shared/brand-mark";
 
 export function AppTopbar({
   userInitial,
@@ -37,6 +38,7 @@ export function AppTopbar({
       <div className="flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
         <SidebarToggle />
         <Link href={dashboardHref} aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
+        <BrandMark />
         <div className="min-w-0">
           <h1 className="font-serif text-lg md:text-xl text-amber-50 leading-tight truncate">
             {APP_NAME}

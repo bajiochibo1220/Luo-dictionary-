@@ -8,6 +8,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "@/components/layout/user-menu";
 import { APP_NAME } from "@/lib/brand";
+import { BrandMark } from "@/components/shared/brand-mark";
 import { pairedLanguageNavigation } from "@/lib/app-navigation";
 import { hasAnyAdminRole } from "@/lib/permissions";
 
@@ -38,6 +39,7 @@ export function Header() {
     <header className="institution-border bg-white border-b border-stone-200 sticky top-0 z-40">
       <div className="container mx-auto px-3 md:px-4 py-3 flex items-center justify-between gap-3">
         <Link href={`/${language.code}`} className="flex min-w-0 items-center gap-2">
+          <BrandMark />
           <span className="truncate text-xl sm:text-2xl font-serif text-stone-800">
             {APP_NAME}
           </span>

@@ -15,6 +15,7 @@ export function PaginatedLibrary({ initial, request, Link }: { initial: ModuleCo
     setBusy(true); setError("");
     try {
       const params = new URLSearchParams({ language: initial.languageCode, module: initial.moduleCode === "all" ? "audio_visual" : initial.moduleCode, q: more ? appliedQuery : query });
+      if (initial.subject) params.set("subject", initial.subject);
       if (more) { params.set("records", content.continuation?.records || "end"); params.set("dictionary", content.continuation?.dictionary || "end"); }
       const next = await request(`/api/v1/library?${params}`);
       if (!more) { setAppliedQuery(query); if(query.trim())emitActivity({eventType:"search",query:query.trim().slice(0,100)}); }

@@ -67,7 +67,7 @@ export function AppShell({ sidebar, children }: { sidebar: React.ReactNode; chil
       className={`relative z-20 hidden w-1 shrink-0 cursor-col-resize transition-colors focus-visible:bg-amber-400 md:block ${dragging ? "bg-amber-400" : "bg-black/30 hover:bg-amber-400/70"}`} title="Drag to resize, or use the arrow keys">
       <div className="absolute inset-y-0 -left-1.5 -right-1.5" />
     </div>}
-    <main className="relative min-w-0 flex-1 overflow-hidden bg-[#b89a68]">
+    <main className="heritage-canvas relative min-w-0 flex-1 overflow-hidden bg-[#b89a68]">
       <PartnerBranding />
       <div className="pointer-events-none absolute inset-0 opacity-[0.10]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fff2d3' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
       <div className="relative z-10 h-full overflow-y-auto overscroll-contain">{children}</div>

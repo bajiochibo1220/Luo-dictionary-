@@ -1,0 +1,86 @@
+{
+  "fixtureTransport": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 320,
+      "audiences": 13,
+      "moduleLinks": 15,
+      "subjects": 27,
+      "logo": {
+        "loaded": true,
+        "width": 48,
+        "height": 48
+      },
+      "sidebar": {
+        "links": 7,
+        "details": [
+          false,
+          false
+        ]
+      },
+      "subjectSearch": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "audiences": 13,
+      "moduleLinks": 15,
+      "subjects": 27,
+      "logo": {
+        "loaded": true,
+        "width": 48,
+        "height": 48
+      },
+      "sidebar": {
+        "links": 7,
+        "details": [
+          false,
+          false
+        ]
+      },
+      "subjectSearch": true,
+      "noOverflow": true
+    },
+    {
+      "width": 768,
+      "audiences": 13,
+      "moduleLinks": 15,
+      "subjects": 27,
+      "logo": {
+        "loaded": true,
+        "width": 56,
+        "height": 56
+      },
+      "sidebar": {
+        "links": 7,
+        "details": [
+          false,
+          false
+        ]
+      },
+      "subjectSearch": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1440,
+      "audiences": 13,
+      "moduleLinks": 15,
+      "subjects": 27,
+      "logo": {
+        "loaded": true,
+        "width": 56,
+        "height": 56
+      },
+      "sidebar": {
+        "links": 7,
+        "details": [
+          false,
+          false
+        ]
+      },
+      "subjectSearch": true,
+      "noOverflow": true
+    }
+  ]
+}

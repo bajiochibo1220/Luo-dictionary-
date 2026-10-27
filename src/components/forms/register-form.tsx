@@ -1,9 +1,11 @@
 "use client";
-import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
+
 import { authenticationContinueTarget } from "@/lib/application-return";
 
 import Link from "next/link";
 
+import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -14,7 +16,7 @@ import {
   DateOfBirth,
 } from "./date-of-birth-picker";
 
-type Language = { id: number; code: string; name: string; nativeName: string };
+type Language = { id: number; code: string; name: string; nativeName: string; isActive?: boolean };
 
 export function RegisterForm() {
   const router = useRouter();
@@ -31,15 +33,28 @@ export function RegisterForm() {
     year: null,
   });
 
+  const [languagesError, setLanguagesError] = useState("");
+  const [languageAttempt, setLanguageAttempt] = useState(0);
+  const [loadingLanguages, setLoadingLanguages] = useState(true);
   useEffect(() => {
-    fetch("/api/languages")
-      .then((r) => r.json())
-      .then((data) => setLanguages(data.data || []))
-      .catch(() => {});
-  }, []);
+    let active = true; const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    setLanguagesError(""); setLoadingLanguages(true);
+    void fetch("/api/languages", { signal: controller.signal }).then(async response => {
+      if (!response.ok) throw new Error();
+      const result = await response.json();
+      if (!Array.isArray(result.data)) throw new Error();
+      const available = result.data.filter((item: Language) => item.code !== "eng" && item.isActive !== false);
+      if (!available.length) throw new Error();
+      if (active) setLanguages(available);
+    }).catch(() => { if (active) { setLanguages([]); setLanguagesError("Community languages could not load. Please retry."); } })
+      .finally(() => { clearTimeout(timeout); if (active) setLoadingLanguages(false); });
+    return () => { active = false; clearTimeout(timeout); controller.abort(); };
+  }, [languageAttempt]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (loading) return;
 
     if (!dob.day || !dob.month || !dob.year) {
       toast.error(<InterfaceText source={"Please enter your full date of birth"} />);
@@ -72,9 +87,8 @@ export function RegisterForm() {
       toast.error(<InterfaceText source={"Unable to create your account right now. Please try again."} />);
       return;
     }
-    setLoading(false);
-
     if (!data.success) {
+      setLoading(false);
       toast.error(<InterfaceText source={data.error || "Registration failed"} />);
       return;
     }
@@ -93,7 +107,7 @@ export function RegisterForm() {
       toast.error(<InterfaceText source={"Account created, but sign in could not connect. Please log in with your email and password."} />);
       router.push(loginHref); router.refresh(); return;
     }
-    if (signInResult?.error) {
+    if (!signInResult || signInResult.error || !signInResult.ok) {
       toast.error(<InterfaceText source={"Account created, but sign in failed. Please log in with your email and password."} />);
       router.push(loginHref);
       router.refresh();
@@ -115,7 +129,7 @@ export function RegisterForm() {
           name="name"
           required
           minLength={2}
-          placeholder="Full name"
+          placeholder="Full name" aria-label="Full name"
           autoComplete="name"
           className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
         />
@@ -124,7 +138,7 @@ export function RegisterForm() {
           name="email"
           type="email"
           required
-          placeholder="Email address"
+          placeholder="Email address" aria-label="Email address"
           autoComplete="email"
           className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400"
         />
@@ -142,21 +156,24 @@ export function RegisterForm() {
             type={showPassword ? "text" : "password"}
             required
             minLength={8}
-            placeholder="Password (min 8 characters)"
-            autoComplete="new-password"
+            placeholder="Password (min 8 characters)" aria-label="Password"
+            autoComplete="new-password" maxLength={72}
             className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] placeholder:text-stone-400 pr-16"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-stone-500 hover:text-amber-700"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-stone-500 hover:text-teal-800"
           >
-            <InterfaceText source={showPassword ? "Hide" : "Show"} />
+            {showPassword ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}
           </button>
         </div>
 
-        <select
+        <InterfaceSelect
           name="languageId"
+          aria-label="Choose your community language"
           required
           defaultValue=""
           className="w-full px-4 py-3.5 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-[15px] text-stone-700"
@@ -169,8 +186,9 @@ export function RegisterForm() {
               {l.nativeName} ({l.name})
             </InterfaceOption>
           ))}
-        </select>
+        </InterfaceSelect>
 
+        {languagesError && <div role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800"><InterfaceText source={languagesError} /><button type="button" className="ml-2 min-h-11 font-semibold underline" onClick={() => setLanguageAttempt(value => value + 1)}><InterfaceText source="Retry loading languages" /></button></div>}
         <fieldset className="rounded-xl border border-stone-300 bg-white p-4">
           <legend className="px-1 text-sm font-medium text-stone-700"><InterfaceText source="How do you plan to use Luo Heritage? (Choose any)" /></legend>
           <div className="mt-2 grid grid-cols-1 gap-2 text-sm text-stone-700">
@@ -182,7 +200,7 @@ export function RegisterForm() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || loadingLanguages || !languages.length}
           className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded-full font-semibold disabled:opacity-50 transition shadow-lg text-[15px]"
         >
           <InterfaceText source={loading ? "Creating account..." : "Create account"} />

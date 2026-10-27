@@ -82,3 +82,29 @@ Updated 27 October 2026. The older combined PRD/NRF percentage is a historical a
 ### Remaining acceptance work
 
 Only the custom speech/pronunciation/voice and culturally accurate reconstruction/classification research described above is deferred for training-data availability. The following are separate prerequisites, not data deferrals: provider quota/configuration, authentic reviewed holdings and fluent interface translations, target-user accessibility/usability review, representative performance/security evaluation, Cloudinary backup/restore rehearsal, Android/iOS signing/device testing, store verification and stakeholder acceptance. The PRD is not honestly 100% accepted while those remain.
+
+## Public discovery follow-up — 27 October 2026
+
+The Word source was read directly again, including sections 7 and 9–12 omitted from the user's excerpts. See [verified source text](docs/system-audit/prd-source-verified.txt) and the [audience/success acceptance matrix](docs/PRD_ACCEPTANCE_MATRIX.md).
+
+- Added **Start here** in the shared web/mobile application with specific paths for all 13 audiences and a directory of all 15 modules. Audience choice is transient discovery state and does not assign privileges.
+- Added public browsing for all 27 exact inventory subjects, using cross-collection JSON classification with existing publication, consent, embargo and media protections. Search/pagination retain the subject. Structured dictionary entries remain visible under their dictionary subject only when that module is active. Unclassified or unpublished content is not invented or automatically released.
+- Reduced the sidebar to seven primary links, expandable **Collections**, and **More & settings**. Research is a direct primary destination. Secondary tools, settings/help and staff access remain available. Returning to a page resets its content scroll; selecting a subject scrolls to its results.
+- Restored an app identity mark using existing artwork: 48 px on phones, 56 px on desktop; packaged clients use their bundled artwork. Institutional background/logo permissions remain separate.
+- Registered 63 new discovery strings in the existing interface editor. Approved fluent translations still need to be supplied; blank local text uses English.
+- Full regression: **245 passed, 0 failed**. Seven discovery tests cover route completeness, grouping, exact subject queries, invalid input, active-module checks and translation-editor availability.
+- Real shared-application browser checks cover all audience choices, fifteen module destinations, scoped subject search, seven primary sidebar links, scroll restoration and loaded logos at **320, 390, 768 and 1440 px**. [Browser evidence](docs/system-audit/prd-discovery-browser.json), [phone screenshot](docs/system-audit/prd-discovery-320.png), [desktop screenshot](docs/system-audit/prd-discovery-1440.png). Fixture transport does not establish provider quality or authentic holdings.
+- Real PostgreSQL discovery integration passed exact classification, draft/sacred/embargo/other-subject exclusion, private-field redaction and withdrawal. All five fixture records were rolled back and confirmed absent. [Repeatable rollback-only harness](docs/system-audit/verify-prd-discovery-database.cjs).
+- Packaged UI TypeScript/Vite build passed using `--configLoader runner`; bundle-size/module-format warnings remain. No signed native binary or app-store release is claimed.
+- Final web production build passed (exit 0), including type validation, all 53 static pages, optimization and traces. ESLint reports 0 errors and 39 warnings. Built-server HTTP checks passed the exact public redirect targets, actual public subject API response, invalid-subject rejection and anonymous account protection. [Final verification report](docs/system-audit/prd-discovery-verification.md).
+
+The success matrix distinguishes software evidence from actual preservation quality, learning outcomes, adoption and stakeholder acceptance. Those outcomes cannot be established by adding navigation or passing a build.
+
+## Dashboard and account experience follow-up — 27 October 2026
+
+- Redesigned shared public/mobile and administration shells, dashboard entry cards, teacher/researcher shortcuts, discovery cards, authentication pages and manual headers with a common palette and reusable icons. Critical labels and accessible icon names are retained.
+- Corrected narrow-phone administrator actions, tablet dashboard shortcuts and date-of-birth control widths. Browser checks pass at 320/390/768/1440 px.
+- Strengthened registration request validation, community eligibility, duplicate-email handling and language-loading recovery. Prevented duplicate form submission and required a successful login result before routing.
+- Retained manuals selected from assigned roles, added visible dashboard access and updated classroom teaching instructions. Profile interests do not assign staff permissions. Master-only backup actions are filtered from ordinary super-admin quick actions.
+- **251 automated tests**, **36 browser journeys**, web and packaged UI production builds passed. Real registration, consent, password rejection/login, session/account access, dashboard routing and sign-out passed with temporary account/consent/rate-counter cleanup. ESLint: 0 errors, 39 warnings.
+- [Verification, screenshots and limits](docs/system-audit/design-verification.md). The interrupted audience-plan scaffold was removed without applying any migration; broader audience workflows are not marked complete by this redesign.

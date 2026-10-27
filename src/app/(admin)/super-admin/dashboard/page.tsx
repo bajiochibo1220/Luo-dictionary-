@@ -108,7 +108,7 @@ export default async function SuperAdminDashboardPage() {
       {/* Activity + quick actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentActivity entries={activity} />
-        <QuickActions />
+        <QuickActions canBackup={!!session.user.isMasterSuperAdmin} />
       </div>
     </div>
   );

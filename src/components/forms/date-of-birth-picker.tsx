@@ -1,5 +1,6 @@
 "use client";
-import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
+
 
 import { useMemo, useState, useEffect } from "react";
 
@@ -67,12 +68,13 @@ export function DateOfBirthPicker({
       </label>
       <div className="grid grid-cols-3 gap-2">
         {/* Day */}
-        <select
+        <InterfaceSelect
+          aria-label="Day of birth"
           value={value.day ?? ""}
           onChange={(e) =>
             onChange({ ...value, day: e.target.value ? Number(e.target.value) : null })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="min-w-0 w-full px-2 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <InterfaceOption value="">Day</InterfaceOption>
           {days.map((d) => (
@@ -80,10 +82,11 @@ export function DateOfBirthPicker({
               {d}
             </InterfaceOption>
           ))}
-        </select>
+        </InterfaceSelect>
 
         {/* Month */}
-        <select
+        <InterfaceSelect
+          aria-label="Month of birth"
           value={value.month ?? ""}
           onChange={(e) =>
             onChange({
@@ -91,7 +94,7 @@ export function DateOfBirthPicker({
               month: e.target.value ? Number(e.target.value) : null,
             })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="min-w-0 w-full px-2 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <InterfaceOption value="">Month</InterfaceOption>
           {MONTHS.map((m, i) => (
@@ -99,10 +102,11 @@ export function DateOfBirthPicker({
               {m}
             </InterfaceOption>
           ))}
-        </select>
+        </InterfaceSelect>
 
         {/* Year */}
-        <select
+        <InterfaceSelect
+          aria-label="Year of birth"
           value={value.year ?? ""}
           onChange={(e) =>
             onChange({
@@ -110,7 +114,7 @@ export function DateOfBirthPicker({
               year: e.target.value ? Number(e.target.value) : null,
             })
           }
-          className="px-3 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
+          className="min-w-0 w-full px-2 py-3 bg-stone-50 border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-[15px] text-stone-800"
         >
           <InterfaceOption value="">Year</InterfaceOption>
           {years.map((y) => (
@@ -118,7 +122,7 @@ export function DateOfBirthPicker({
               {y}
             </InterfaceOption>
           ))}
-        </select>
+        </InterfaceSelect>
       </div>
 
       {helpText && (

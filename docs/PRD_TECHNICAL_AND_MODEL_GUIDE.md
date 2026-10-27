@@ -38,4 +38,6 @@ Approved map coordinates are rounded to two decimal places and explicitly consen
 
 ## Evidence and acceptance
 
+Public discovery uses `/explore`, which redirects into the shared browser/packaged `/application#/explore` screen. Optional `subject` values are restricted to the exact PRD subject catalog. `GET /api/v1/library?language=luo&module=subjects&subject=Fishing%20traditions` retrieves matching `data.subject_area` classifications across active public modules, retaining existing publication, consent, embargo and media permission filters. Its `q`, `records` and `dictionary` parameters keep the same bounded search/pagination contract. Responses carry `subject` so subsequent search and pagination preserve their scope. No database migration or permission assignment is involved. Audience choices remain transient client discovery state.
+
 Automated tests use isolated fixtures, not production cultural data. Builds and tests verify software paths; actual provider output quality, fluent translations, accessibility with target users, native devices, backup restoration and stakeholder acceptance require separately recorded checks. See [the tracker](../PRD_IMPLEMENTATION_TRACKER.md).

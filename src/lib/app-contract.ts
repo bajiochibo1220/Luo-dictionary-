@@ -40,6 +40,7 @@ export const AppLibrarySchema = z.object({
   title: z.string(), baseName: z.string(),
   languageName: z.string(), languageCode: z.string(), languageId: z.number().int().positive(),
   moduleCode: z.string(), canContribute: z.boolean(),
+  subject: z.string().optional(),
   items: z.array(z.object({
     id: z.string(), title: z.string(), englishTitle: z.string().nullable().optional(), englishBodyText: z.string().nullable().optional(), summary: z.string().nullable(), englishSummary: z.string().nullable().optional(),
     bodyText: z.string().nullable().optional(),

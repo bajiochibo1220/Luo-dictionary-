@@ -1,0 +1,258 @@
+{
+  "fixtureTransport": true,
+  "productionWrites": false,
+  "results": [
+    {
+      "width": 320,
+      "kind": "home",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "explore",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "login",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "register",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "admin",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "help-public",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "help-editor",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "help-teacher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 320,
+      "kind": "help-researcher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "home",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "explore",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "login",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "register",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "admin",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "help-public",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "help-editor",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "help-teacher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 390,
+      "kind": "help-researcher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "home",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "explore",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "login",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "register",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "admin",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "help-public",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "help-editor",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "help-teacher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 768,
+      "kind": "help-researcher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "home",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "explore",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "login",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "register",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "admin",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "help-public",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "help-editor",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "help-teacher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    },
+    {
+      "width": 1440,
+      "kind": "help-researcher",
+      "noPageOverflow": true,
+      "noControlOverflow": true,
+      "interaction": true
+    }
+  ]
+}

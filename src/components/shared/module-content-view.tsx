@@ -19,6 +19,7 @@ export type ModuleContentProps = {
   languageCode: string;
   languageId: number;
   moduleCode: string;
+  subject?: string;
   items: ContentItem[];
   canContribute?: boolean;
   onSave?: (item: ContentItem) => void;

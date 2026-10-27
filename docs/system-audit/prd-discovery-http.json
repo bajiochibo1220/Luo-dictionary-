@@ -1,0 +1,36 @@
+{
+  "productionBuild": true,
+  "accountWrites": false,
+  "contentWrites": false,
+  "results": [
+    {
+      "path": "/explore?subject=Fishing%20traditions",
+      "status": 200,
+      "target": "/application#/explore?subject=Fishing%20traditions",
+      "redirectMode": "html-refresh"
+    },
+    {
+      "path": "/explore?subject=unknown",
+      "status": 200,
+      "target": "/application#/explore",
+      "redirectMode": "html-refresh"
+    },
+    {
+      "path": "/application",
+      "status": 200
+    },
+    {
+      "path": "invalid-subject",
+      "status": 400
+    },
+    {
+      "path": "public-subject-library",
+      "status": 200,
+      "typedItems": true
+    },
+    {
+      "path": "/api/v1/account",
+      "status": 401
+    }
+  ]
+}

@@ -19,5 +19,6 @@ export default async function UserDashboardPage({ searchParams }: { searchParams
     const library = await getPublicLibrary({ id: languageId, code: languageCode, nativeName: languageName }, moduleCode);
     if (library) return <ModuleContent key={moduleCode} {...library} />;
   }
-  return <DashboardOverview languageName={languageName} name={session.user.name} />;
+  const roles = session.user.languageRoles?.map(role => role.role) || [];
+  return <DashboardOverview languageName={languageName} name={session.user.name} mode={roles.includes("teacher") ? "teacher" : roles.includes("researcher") ? "researcher" : "public"} />;
 }

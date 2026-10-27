@@ -3,21 +3,24 @@ import { prisma } from "@/lib/db";
 import { publicMediaWhere, publicRecordWhere } from "@/lib/governance";
 import { getPublicModules } from "@/lib/public-navigation";
 import type { ContentItem } from "@/lib/app-content";
+import { PRD_SUBJECTS } from "@/lib/prd-content-catalog";
 
 const recordText = publicCulturalText;
 
 // Shared public projection: never serialize contributor identities, consent
 // documents or internal repository metadata from raw Prisma records.
-export async function getPublicLibrary(language: { id: number; code: string; nativeName: string }, moduleCode: string, page: { records?: string; dictionary?: string; query?: string } = {}) {
+export async function getPublicLibrary(language: { id: number; code: string; nativeName: string }, moduleCode: string, page: { records?: string; dictionary?: string; query?: string; subject?: string } = {}) {
+  if (moduleCode === "subjects" && !PRD_SUBJECTS.some(value => value === page.subject)) return null;
   const modules = await getPublicModules(language.id);
-  const mod = modules.find(item => item.code === moduleCode);
+  const isSubjectLibrary = moduleCode === "subjects";
+  const mod = isSubjectLibrary ? { id: -1, code: "subjects", baseName: page.subject!, translations: [], _count: { fieldDefinitions: 0 } } : modules.find(item => item.code === moduleCode);
   if (!mod || mod.code === "chatbot") return null;
   const isMediaLibrary = mod.code === "audio_visual";
   const englishLanguage = language.code === "eng" ? { id: language.id } : await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
   const media = { where: publicMediaWhere(), select: { id: true, type: true, url: true, thumbnailUrl: true, format: true } };
   const [records, entries] = await Promise.all([
     page.records === "end" ? Promise.resolve([]) : prisma.culturalRecord.findMany({
-      where: { ...(isMediaLibrary ? { media: { some: publicMediaWhere() } } : { moduleId: mod.id }), ...(language.code === "eng" ? {} : { languageId: language.id }), ...publicRecordWhere(), ...(page.query ? { OR: [{ title: { contains: page.query, mode: "insensitive" as const } }, { translations: { some: { languageId: englishLanguage?.id ?? language.id, title: { contains: page.query, mode: "insensitive" as const } } } }] } : {}) },
+      where: { ...(isSubjectLibrary ? { moduleId: { in: modules.filter(item => item.code !== "chatbot").map(item => item.id) }, data: { path: ["subject_area"], equals: page.subject } } : isMediaLibrary ? { media: { some: publicMediaWhere() } } : { moduleId: mod.id }), ...(language.code === "eng" ? {} : { languageId: language.id }), ...publicRecordWhere(), ...(page.query ? { OR: [{ title: { contains: page.query, mode: "insensitive" as const } }, { translations: { some: { languageId: englishLanguage?.id ?? language.id, title: { contains: page.query, mode: "insensitive" as const } } } }] } : {}) },
       ...(page.records ? { cursor: { id: page.records }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 50,
       select: {
@@ -26,7 +29,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
         translations: { where: { languageId: { in: Array.from(new Set([language.id, ...(englishLanguage ? [englishLanguage.id] : [])])) } }, select: { languageId: true, title: true, summary: true, data: true } },
       },
     }),
-    mod.code === "dictionary" && page.dictionary !== "end" ? prisma.dictionaryEntry.findMany({
+    (mod.code === "dictionary" || isSubjectLibrary && page.subject === "Dholuo dictionary" && modules.some(item => item.code === "dictionary")) && page.dictionary !== "end" ? prisma.dictionaryEntry.findMany({
       where: { ...(language.code === "eng" ? {} : { languageId: language.id }), ...publicRecordWhere(), ...(page.query ? { OR: ["dholuo", "english", "kiswahili"].map(field => ({ [field]: { contains: page.query, mode: "insensitive" as const } })) } : {}) },
       ...(page.dictionary ? { cursor: { id: page.dictionary }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 100,
@@ -65,6 +68,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
     title: mod.translations[0]?.title ?? mod.baseName, baseName: mod.baseName,
     languageName: language.nativeName, languageCode: language.code, languageId: language.id,
     moduleCode: isMediaLibrary ? "all" : mod.code,
+    ...(isSubjectLibrary ? { subject: page.subject } : {}),
     canContribute: !isMediaLibrary && mod._count.fieldDefinitions > 0,
     items, limits: { records: 50, dictionaryEntries: 100 },
     continuation: { records: records.length === 50 ? records[records.length - 1].id : null, dictionary: entries.length === 100 ? entries[entries.length - 1].id : null },

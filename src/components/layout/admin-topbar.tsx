@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { SidebarToggle } from "./sidebar-controls";
 import { accountDashboardHref } from "@/lib/app-navigation";
+import { Bell } from "lucide-react";
+import { BrandMark } from "@/components/shared/brand-mark";
 import { APP_NAME } from "@/lib/brand";
 
 type AdminNotification = {
@@ -96,7 +98,7 @@ export function AdminTopbar({
   }
 
   return (
-    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
+    <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 min-h-18 py-2 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
         <SidebarToggle />
         <div className="min-w-0"><Link
@@ -104,7 +106,7 @@ export function AdminTopbar({
           aria-label={`${APP_NAME} administration`}
           className="flex min-w-0 items-center gap-2 rounded-xl text-lg font-serif text-amber-50 focus-visible:outline-2 focus-visible:outline-amber-300"
         >
-          <span className="truncate">{APP_NAME}</span>
+          <BrandMark /><span className="truncate text-base md:text-lg">{APP_NAME}</span>
         </Link></div>
         {isSuperAdmin && (
           <span className="hidden xl:inline text-xs uppercase tracking-wider bg-amber-400/15 text-amber-100 px-2 py-0.5 rounded-sm">
@@ -133,7 +135,7 @@ export function AdminTopbar({
             aria-label="Notifications"
             aria-expanded={notificationsOpen}
           >
-            🔔
+            <Bell size={21} aria-hidden="true" />
               {unreadCount > 0 && (
                 <span className="absolute top-0 right-0 text-xs bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
                   {unreadCount > 9 ? "9+" : unreadCount}

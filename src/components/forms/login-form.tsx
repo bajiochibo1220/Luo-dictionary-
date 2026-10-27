@@ -2,6 +2,7 @@
 import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 import { authenticationContinueTarget } from "@/lib/application-return";
 
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,7 @@ export function LoginForm() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
@@ -42,7 +44,7 @@ export function LoginForm() {
       return;
     }
 
-    if (result?.error) {
+    if (!result || result.error || !result.ok) {
       setLoading(false);
       toast.error(<InterfaceText source={"Incorrect email or password"} />);
       return;
@@ -67,14 +69,15 @@ export function LoginForm() {
           ? "This account is not available. Please contact an administrator."
           : "We could not sign you in with Google. Please try again or create an account."}
       </div>}
-      <form onSubmit={onSubmit} className="space-y-3" autoComplete="off">
+      <form onSubmit={onSubmit} className="space-y-3" autoComplete="on">
         <InterfaceInput
           id="email"
           name="email"
           type="email"
           required
           placeholder="Email address"
-          autoComplete="off"
+          aria-label="Email address"
+          autoComplete="username"
           className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400"
         />
 
@@ -85,24 +88,27 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             required
             placeholder="Password"
-            autoComplete="off"
+            aria-label="Password"
+            autoComplete="current-password"
             className="w-full px-4 py-4 bg-white border border-stone-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-[15px] placeholder:text-stone-400 pr-16"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-stone-500 hover:text-amber-700"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-stone-500 hover:text-teal-800"
           >
-            <InterfaceText source={showPassword ? "Hide" : "Show"} />
+            {showPassword ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}
           </button>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-amber-700 hover:bg-amber-800 text-white py-4 rounded-full font-semibold disabled:opacity-50 transition shadow-lg shadow-amber-700/20 text-[15px]"
+          className="flex items-center justify-center gap-2 w-full bg-amber-700 hover:bg-amber-800 text-white py-4 rounded-full font-semibold disabled:opacity-50 transition shadow-lg shadow-amber-700/20 text-[15px]"
         >
-          <InterfaceText source={loading ? "Logging in..." : "Log in"} />
+          <LogIn size={19} aria-hidden="true" /><InterfaceText source={loading ? "Logging in..." : "Log in"} />
         </button>
       </form>
 

@@ -65,7 +65,7 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider id="public-sidebar" storageKey="luoheritage-public-sidebar">
-    <div className="h-dvh flex flex-col bg-[#b89a68] overflow-hidden">
+    <div className="heritage-app h-dvh flex flex-col bg-[#b89a68] overflow-hidden">
       <AppTopbar
         userInitial={userInitial}
         userName={user.name ?? null}

@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   "/chatbot",
   "/mobile-apps",
   "/application",
+  "/explore",
   "/help",
 ];
 

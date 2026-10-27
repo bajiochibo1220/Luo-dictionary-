@@ -1,11 +1,15 @@
 import { InterfaceLanguageSelector } from "@/components/shared/interface-language";
 import { APP_NAME } from "@/lib/brand";
 import { AuthLogoBackground } from "@/components/shared/auth-logo-background";
+import { BrandMark } from "@/components/shared/brand-mark";
+import { InterfaceText } from "@/components/shared/interface-language";
+import { BookOpen, Headphones, Sparkles, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="auth-page relative isolate min-h-screen flex flex-col">
-      <main className="relative flex-1 flex flex-col items-center justify-center px-4 py-6 lg:py-12 lg:px-16 overflow-hidden">
+      <main className="auth-layout relative flex-1 px-4 py-6 lg:py-12 lg:px-16">
         {/* Diamond pattern */}
         <div
           className="absolute inset-0 opacity-[0.08] pointer-events-none"
@@ -16,8 +20,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         />
 
         {/* Application identity stays outside the form. */}
-        <div className="relative mb-5 flex w-full max-w-md items-center gap-3 z-10">
-          <p className="font-serif text-2xl text-stone-900">{APP_NAME}</p>
+        <div className="auth-introduction relative z-10"><Link href="/application" className="auth-brand"><BrandMark /><span className="font-serif text-2xl">{APP_NAME}</span></Link>
+          <div className="auth-story"><span className="hero-eyebrow"><BookOpen size={16} aria-hidden="true" /><InterfaceText source="Language. Culture. Connection." /></span><h2 className="font-serif"><InterfaceText source="Your roots. A world of discovery." /></h2><p><InterfaceText source="Keep language and living knowledge close. Learn something new, revisit a familiar story, and carry it forward." /></p>
+          <div className="auth-highlights">{[{ Icon: BookOpen, label: "Explore cultural stories" }, { Icon: Headphones, label: "Listen and learn" }, { Icon: Sparkles, label: "Practise with your tutor" }].map(({ Icon, label }) => <div key={label}><Icon size={21} aria-hidden="true" /><InterfaceText source={label} /></div>)}</div>
+          <Link href="/application" className="hero-button"><InterfaceText source="Browse the public library" /><ArrowUpRight size={18} aria-hidden="true" /></Link></div>
         </div>
 
         <div className="auth-form-surface relative z-10 w-full max-w-md rounded-3xl p-5 sm:p-7">

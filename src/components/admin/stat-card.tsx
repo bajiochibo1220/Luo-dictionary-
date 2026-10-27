@@ -1,3 +1,4 @@
+import { NavigationIcon } from "@/components/shared/navigation-icon";
 export function StatCard({
   label,
   value,
@@ -18,9 +19,10 @@ export function StatCard({
 
   return (
     <div
-      className={`bg-white rounded-xl shadow-xs border border-stone-100 border-l-4 ${accentClasses[accent]} p-5`}
+      className={`metric-card bg-white rounded-2xl border border-stone-100 ${accentClasses[accent]} p-5`}
     >
-      <p className="text-xs uppercase tracking-wider text-stone-500 mb-1">
+      <span className={`feature-icon tone-${accent === "amber" ? "gold" : accent === "green" ? "teal" : accent === "stone" ? "violet" : "blue"} mb-4`}><NavigationIcon href={/user|contributor/i.test(label) ? "/admin/users" : /language/i.test(label) ? "/super-admin/languages" : /AI/i.test(label) ? "/admin/ai-monitoring" : /media/i.test(label) ? "/admin/media" : "/admin/content"} /></span>
+      <p className="text-xs uppercase tracking-wider text-stone-500 mb-2">
         {label}
       </p>
       <p className="text-3xl font-serif text-stone-800">{value}</p>
