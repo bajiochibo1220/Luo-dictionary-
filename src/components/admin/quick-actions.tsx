@@ -25,7 +25,7 @@ export function QuickActions({ canBackup = false }: { canBackup?: boolean }) {
             className="flex items-center gap-3 p-3 rounded-lg border border-stone-200 hover:border-amber-400 hover:bg-amber-50 transition"
           >
             <span className="feature-icon tone-teal"><NavigationIcon href={a.href} /></span>
-            <span className="text-sm text-stone-700">{a.label}</span>
+            <span className="text-sm text-stone-700"><InterfaceText source={a.label} /></span>
           </Link>
         ))}
       </div>

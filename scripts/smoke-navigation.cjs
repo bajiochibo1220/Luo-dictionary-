@@ -79,6 +79,9 @@ async function main() {
     captureFailure = async () => { const shot = await send('Page.captureScreenshot', { format: 'png' }); await fs.writeFile(path.join(os.tmpdir(), 'luolingua-navigation-failure.png'), Buffer.from(shot.data, 'base64')); };
     await send('Page.enable');
     await send('Runtime.enable');
+    // Run the legacy control-selector checks in English; bilingual rendering
+    // is covered separately and translated accessible names remain localized.
+    await send('Page.addScriptToEvaluateOnNewDocument', { source: 'try { localStorage.setItem("heritage-interface", JSON.stringify({community:"luo",local:false})); } catch {}' });
     await send('Network.enable');
     await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });
     const setAccount = async user => { await send('Network.clearBrowserCookies'); await send('Network.setCookie', { name: 'authjs.session-token', value: await cookieFor(user), url: base, httpOnly: true, sameSite: 'Lax' }); };
@@ -203,6 +206,23 @@ async function main() {
       return;
     }
     await setAccount(administrator);
+    if (process.argv.includes('--dashboard-capture')) {
+      for (const pathname of ['/dashboard', '/admin/dashboard', '/super-admin/dashboard']) {
+        await loadPage(pathname, `location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('.heritage-canvas h1')`, 120_000);
+        await until(() => evaluate(`(() => { const control = document.querySelector('select[aria-label="Interface language"]'); return !!control && Object.keys(control).some(key => key.startsWith('__reactProps$')); })()`), 'language control hydration');
+        await evaluate(`(() => { const control = document.querySelector('select[aria-label="Interface language"]'); control.value = 'luo:local'; control.dispatchEvent(new Event('change', {bubbles:true})); })()`);
+        await until(() => evaluate(`document.documentElement.lang === 'luo' && !!document.querySelector('.interface-text-pair [lang="en"][contenteditable="false"]')`), 'Dholuo with English help');
+        for (const width of [1365, 390, 320]) {
+          await send('Emulation.setDeviceMetricsOverride', { width, height: width > 767 ? 900 : 844, deviceScaleFactor: 1, mobile: width < 768 });
+          await delay(500);
+          assert.equal(await evaluate('document.documentElement.scrollWidth <= innerWidth'), true, pathname + ' bilingual view fits ' + width);
+          const shot = await send('Page.captureScreenshot', {format:'png'});
+          await fs.writeFile(path.join(os.tmpdir(), 'luo-bilingual-' + pathname.replaceAll('/', '-') + '-' + width + '.png'), Buffer.from(shot.data, 'base64'));
+        }
+        console.log('PASS loaded bilingual dashboard, noneditable English help and 1365/390/320px widths: ' + pathname);
+      }
+      return;
+    }
     if (process.argv.includes('--appearance')) {
       let exceptions = 0;
       websocket.addEventListener('message', event => { if (JSON.parse(event.data).method === 'Runtime.exceptionThrown') exceptions++; });
@@ -225,7 +245,7 @@ async function main() {
         for (const width of [320, 390]) {
           await send('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true });
           await delay(500);
-          const geometry = await evaluate(`(() => { const button = document.querySelector('button[aria-label="Open menu"]'), logo = document.querySelector('header img[src="/icons/luo-heritage.svg"]'); const a = button.getBoundingClientRect(), b = logo.getBoundingClientRect(); return { separate: a.right <= b.left, width: b.width, normalFlow: getComputedStyle(button).position !== 'fixed', fits: document.documentElement.scrollWidth <= innerWidth }; })()`);
+          const geometry = await evaluate(`(() => { const button = document.querySelector('button[aria-label="Open menu"]'), logo = document.querySelector('header a img[alt=""]'); const a = button.getBoundingClientRect(), b = logo.getBoundingClientRect(); return { separate: a.right <= b.left, width: b.width, normalFlow: getComputedStyle(button).position !== 'fixed', fits: document.documentElement.scrollWidth <= innerWidth }; })()`);
           assert.equal(geometry.separate, true, 'Menu and logo do not overlap');
           assert.equal(geometry.normalFlow, true, 'Menu belongs to the header layout');
           assert.equal(geometry.fits, true, 'Phone view does not overflow');
@@ -269,6 +289,7 @@ async function main() {
       await delay(500);
       await clickVisible('button[aria-label="Open menu"]');
       await until(() => visible('public-sidebar'), 'public drawer open for navigation');
+      await evaluate(`(() => { const group = document.querySelector('aside a[href="/dashboard?module=dictionary"]').closest('details'); if (group && !group.open) group.querySelector('summary').click(); })()`);
       await clickVisible('aside a[href="/dashboard?module=dictionary"]');
       await until(() => evaluate(`location.search.includes('module=dictionary') && document.querySelector('button[aria-label="Open menu"]').getAttribute('aria-expanded') === 'false'`), 'module navigation closes drawer');
       await send('Emulation.setDeviceMetricsOverride', { width: 1365, height: 768, deviceScaleFactor: 1, mobile: false });

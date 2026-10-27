@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomInt } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { sendSystemEmail, getEmailConfiguration } from "@/lib/email";
@@ -37,12 +37,39 @@ export async function requestAccountEmail(email: string, purpose: "reset" | "ver
   try { await sendSystemEmail(user.email, purpose === "reset" ? "Reset your Luo Heritage password" : purpose === "delete" ? "Confirm Luo Heritage account deletion" : "Verify your Luo Heritage email", `Open this link within 30 minutes:\n${url.href}\n\nIf you did not request this, ignore this email.`); }
   catch (error) { await prisma.verificationToken.deleteMany({ where: { token: key } }); throw error; }
 }
-export async function completeAccountEmail(token: string, purpose: "reset" | "verify" | "delete", password?: string) {
-  const key = `${purpose}:${digest(token)}`;
+// Bind short codes to the email address and rate-limit guesses independently
+// of delivery requests. Only the digest is stored, never the emailed code.
+export async function requestPasswordResetCode(email: string) {
+  await assertAccountRateLimit(email, "reset");
+  await getEmailConfiguration();
+  const user = await prisma.user.findFirst({ where: { email: { equals: email, mode: "insensitive" }, status: "active" }, select: { id: true, email: true } });
+  if (!user) return;
+  const code = randomInt(100000, 1000000).toString();
+  const key = `reset-code:${digest(`${email}:${code}`)}`;
+  await prisma.$transaction(async tx => {
+    await tx.$queryRaw`WITH locked AS MATERIALIZED (SELECT pg_advisory_xact_lock(hashtext(${`reset-code:${user.id}`}))) SELECT 1::int AS locked FROM locked`;
+    await tx.verificationToken.deleteMany({ where: { identifier: `account-reset:${user.id}`, token: { startsWith: "reset-code:" } } });
+    await tx.verificationToken.create({ data: { identifier: `account-reset:${user.id}`, token: key, expires: new Date(Date.now() + 10 * 60000) } });
+  });
+  try {
+    await sendSystemEmail(user.email, "Reset your Luo Heritage password", `Your password reset code is: ${code}\n\nEnter this code with your new password on the password reset page. It expires in 10 minutes and can only be used once.\n\nIf you did not request this, ignore this email.`);
+  } catch (error) {
+    await prisma.verificationToken.deleteMany({ where: { token: key } });
+    throw error;
+  }
+}
+
+export async function completePasswordResetCode(email: string, code: string, password: string) {
+  await assertAccountRateLimit(email, "reset-code-check", 10);
+  return completeAccountEmail(`${email}:${code}`, "reset", password, true);
+}
+
+export async function completeAccountEmail(token: string, purpose: "reset" | "verify" | "delete", password?: string, resetCode = false) {
+  const key = `${resetCode ? "reset-code" : purpose}:${digest(token)}`;
   const passwordHash = purpose === "reset" ? await bcrypt.hash(password!, 12) : null;
   return prisma.$transaction(async tx => {
     const row = await tx.verificationToken.findUnique({ where: { token: key } });
-    if (!row || !row.identifier.startsWith(`account-${purpose}:`) || row.expires <= new Date()) throw Object.assign(new Error("This link is invalid or expired. Request a new one."), { status: 400 });
+    if (!row || !row.identifier.startsWith(`account-${purpose}:`) || row.expires <= new Date()) throw Object.assign(new Error("This code or link is invalid or expired. Request a new one."), { status: 400 });
     const userId = row.identifier.slice(`account-${purpose}:`.length);
     if (purpose === "delete") {
       const user = await tx.user.findUnique({ where: { id: userId }, select: { isMasterSuperAdmin: true } });

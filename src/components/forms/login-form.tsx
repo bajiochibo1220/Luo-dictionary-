@@ -113,7 +113,7 @@ export function LoginForm() {
       </form>
 
       <div className="text-center">
-        <Link href="/account-recovery" className="inline-flex min-h-11 items-center text-sm font-medium text-amber-800 hover:text-amber-900"><InterfaceText source="Forgotten password?" /></Link>
+        <Link href="/forgot-password" className="inline-flex min-h-11 items-center text-sm font-medium text-amber-800 hover:text-amber-900"><InterfaceText source="Forgotten password?" /></Link>
       </div>
 
       <div className="relative py-4">

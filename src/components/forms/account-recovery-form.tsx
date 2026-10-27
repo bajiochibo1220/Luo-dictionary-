@@ -1,12 +1,14 @@
 "use client";
-import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceText } from "@/components/shared/interface-language";
+import { PasswordResetForm } from "./password-reset-form";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 export function AccountRecoveryForm() {
   const params = useSearchParams(); const token = params.get("token");
-  const [purpose, setPurpose] = useState(["verify", "delete"].includes(params.get("purpose") || "") ? params.get("purpose")! : "reset");
+  const purpose = ["verify", "delete"].includes(params.get("purpose") || "") ? params.get("purpose")! : "reset";
   const [message, setMessage] = useState(""); const [error, setError] = useState(""); const [busy, setBusy] = useState(false);
+  if (!token && purpose === "reset") return <PasswordResetForm />;
   return <form className="mx-auto max-w-md space-y-5 rounded-xl bg-white p-6 text-stone-900" onSubmit={async event => {
     event.preventDefault(); const fields = new FormData(event.currentTarget); setBusy(true); setMessage(""); setError("");
     try {
@@ -16,7 +18,7 @@ export function AccountRecoveryForm() {
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to connect. Retry."); } finally { setBusy(false); }
   }}>
     <h1 className="font-serif text-3xl">{purpose === "delete" ? "Delete account" : purpose === "verify" ? "Verify email" : "Reset password"}</h1>
-    {!token && <><label className="block"><InterfaceText source="Action" /><select className="w-full rounded border p-3" value={purpose} onChange={e => setPurpose(e.target.value)}><InterfaceOption value="reset">Reset password</InterfaceOption><InterfaceOption value="verify">Verify email</InterfaceOption><InterfaceOption value="delete">Delete account</InterfaceOption></select></label><label className="block"><InterfaceText source="Email" /><input name="email" type="email" autoComplete="email" required className="w-full rounded border p-3" /></label></>}
+    {!token && <label className="block"><InterfaceText source="Email" /><input name="email" type="email" autoComplete="email" required className="w-full rounded border p-3" /></label>}
     {token && purpose === "reset" && <label className="block"><InterfaceText source="New password" /><input name="password" type="password" autoComplete="new-password" minLength={12} maxLength={128} required className="w-full rounded border p-3" /></label>}
     {purpose === "delete" && <p className="rounded border border-red-800 p-3"><InterfaceText source="Confirming the emailed link permanently removes your sign-in, profile, saved chats and personal progress. Required cultural-source, consent and audit evidence is retained under institutional policy." /></p>}
     {error && <p role="alert" className="text-red-800">{error}</p>}{message && <p role="status">{message}</p>}

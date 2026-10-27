@@ -9,6 +9,8 @@ const PUBLIC_PATHS = [
   "/application",
   "/explore",
   "/help",
+  "/forgot-password",
+  "/account-recovery",
 ];
 
 function isPublic(pathname: string): boolean {

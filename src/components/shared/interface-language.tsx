@@ -10,7 +10,7 @@ const InterfaceContext = createContext<InterfaceState>(Identity);
 export const useInterfaceLanguage = () => useContext(InterfaceContext);
 
 export function InterfaceLanguageProvider({ children, transport = fetch }: { children: ReactNode; transport?: typeof fetch }) {
-  const [selection, setSelection] = useState({ community: "luo", local: false });
+  const [selection, setSelection] = useState({ community: "luo", local: true });
   const [languages, setLanguages] = useState<Language[]>(Identity.languages);
   const [catalog, setCatalog] = useState<InterfaceCatalog>(defaultInterfaceCatalog("luo"));
   useEffect(() => {
@@ -31,7 +31,15 @@ export function InterfaceLanguageProvider({ children, transport = fetch }: { chi
   return <InterfaceContext.Provider value={value}>{children}</InterfaceContext.Provider>;
 }
 
-export function InterfaceText({ source }: { source: string }) { return <>{useInterfaceLanguage().t(source)}</>; }
+export function InterfaceText({ source }: { source: string }) {
+  const { t, local, community } = useInterfaceLanguage();
+  const translated = t(source);
+  const english = t(source, false);
+  if (!local || translated.trim() === english.trim()) return <>{translated}</>;
+  const leading = source.match(/^\s+/)?.[0] || "";
+  const trailing = source.match(/\s+$/)?.[0] || "";
+  return <>{leading}<span className="interface-text-pair" translate="no"><span lang={community}>{translated.trim()}</span><span lang="en" className="interface-english" contentEditable={false}>{english.trim()}</span></span>{trailing}</>;
+}
 export function InterfaceLanguageSelector() {
   const { community, local, languages, select } = useInterfaceLanguage();
   return <label className="inline-flex min-w-0 items-center"><span className="sr-only"><InterfaceText source="Interface language" /></span><select aria-label="Interface language" value={`${community}:${local ? "local" : "eng"}`} onChange={event => { const [code, variant] = event.target.value.split(":"); select(code, variant === "local"); }} className="min-h-11 max-w-36 rounded-lg border border-stone-400 bg-white px-2 text-sm text-stone-900">

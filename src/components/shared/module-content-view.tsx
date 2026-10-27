@@ -160,6 +160,11 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
           </button>
         )}
         {description && <div className="space-y-2"><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
+        {!showEnglish && languageCode !== "eng" && <div lang="en" translate="no" contentEditable={false} className="mt-4 space-y-2 border-t border-stone-300 pt-3 text-sm text-stone-700">
+          <p className="text-xs font-semibold uppercase tracking-wide">English</p>
+          {item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
+          {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic">An English description has not been added yet.</p>}
+        </div>}
         {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
         {description && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
         {(item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}
@@ -206,6 +211,7 @@ function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLangu
             </div>
             <div className="p-3">
               <p className="font-serif text-sm text-stone-900 line-clamp-2 leading-tight">{viewLanguageCode === "eng" ? item.englishTitle || item.title : item.title}</p>
+              {viewLanguageCode !== "eng" && item.englishTitle && <p lang="en" translate="no" contentEditable={false} className="mt-2 line-clamp-2 text-xs leading-relaxed text-stone-700">{item.englishTitle}</p>}
             </div>
           </button>
         );
