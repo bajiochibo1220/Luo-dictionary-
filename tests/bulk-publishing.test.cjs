@@ -37,3 +37,9 @@ test('reviewed batch rejects an unassigned language before any item is published
  const batch=finalRoute({user:{id:'publisher',languageRoles:[{languageId:1,role:'publisher'}]}});
  assert.equal((await batch.post()).status,403); assert.deepEqual(batch.writes,[]); assert.equal(batch.transactions(),0);
 });
+
+test('blocked public sharing displays the missing setting and a direct correction link',()=>{
+ const html=render([{...record,status:'draft',canEdit:true,earlyPublicationIssues:['Set Source permission to Permission confirmed.']}],['a']);
+ assert.match(html,/Public sharing settings need attention/); assert.match(html,/Set Source permission to Permission confirmed/);
+ assert.match(html,/#source-and-access/); assert.doesNotMatch(html,/>Publish selected before review</);
+});

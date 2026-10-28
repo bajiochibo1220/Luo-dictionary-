@@ -25,6 +25,7 @@ type ContentRecord = {
   canPublish: boolean;
   canEarlyPublish: boolean;
   hasPublicVersion: boolean;
+  earlyPublicationIssues?: string[];
   language: { code: string; nativeName: string };
   module: { code: string; baseName: string };
 };
@@ -165,7 +166,7 @@ export function ContentTable({
   }
 
   async function publishSelectedBeforeReview() {
-    if (!selected.length || !selectedRecords.every(record => record.canEarlyPublish)) return;
+    if (!selected.length || !selectedRecords.every(record => record.canEarlyPublish && !record.earlyPublicationIssues?.length)) return;
     if (!confirm(`Publish ${selected.length} uploaded items while review continues? Confirm that their public consent and attached files allow public sharing. Reviewed versions will replace them when published.`)) return;
     setBulkBusy(true);
     try {
@@ -195,13 +196,14 @@ export function ContentTable({
           <InterfaceInput type="checkbox" disabled={bulkBusy} checked={selected.length > 0 && records.slice(0, 100).every(record => selected.includes(record.id))} onChange={(event) => setSelected(event.target.checked ? records.slice(0, 100).map((record) => record.id) : [])} aria-label="Select all visible content" />
           {selected.length ? `${selected.length} selected` : "Select up to 100 items"}
         </label>
-        {records.some(record => record.canEarlyPublish) && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canEarlyPublish).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-950 disabled:opacity-50"><InterfaceText source="Select items for publishing before review" /></button>}
+        {records.some(record => record.canEarlyPublish && !record.earlyPublicationIssues?.length) && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canEarlyPublish && !record.earlyPublicationIssues?.length).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-950 disabled:opacity-50"><InterfaceText source="Select items for publishing before review" /></button>}
         {records.some(record => record.status === "under_review" && record.canPublish) && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.status === "under_review" && record.canPublish).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border border-green-700 px-3 text-sm font-semibold text-green-900 disabled:opacity-50"><InterfaceText source="Select reviewed items ready to publish" /></button>}
         {canDelete && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canDelete).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border px-3 text-sm disabled:opacity-50"><InterfaceText source="Select deletable uploads" /></button>}
         {selected.length > 0 && <div className="flex flex-wrap gap-2">
+          {selectedRecords.some(record => record.canEarlyPublish && record.earlyPublicationIssues?.length) && <p role="status" className="w-full rounded-lg bg-amber-50 p-3 text-sm text-amber-950"><InterfaceText source="Some selected items need source and access settings before public release. See the notes below each title, or use the selection shortcut to choose items that are ready." /></p>}
           <button type="button" disabled={bulkBusy} onClick={() => setSelected([])} className="min-h-11 px-3 text-sm underline disabled:opacity-50"><InterfaceText source="Clear selection" /></button>
-          {!selectedRecords.every(record => record.canEarlyPublish) && !(selectedStage === "under_review" && selectedRecords.every(record => record.canPublish)) && <p role="status" className="w-full text-sm text-stone-600"><InterfaceText source="For publishing, select only items ready for review publication or only items eligible for publication before review." /></p>}
-          {selectedRecords.every(record => record.canEarlyPublish) && <button type="button" disabled={bulkBusy} onClick={() => void publishSelectedBeforeReview()} className="min-h-11 rounded-lg border border-amber-700 px-3 text-xs font-semibold text-amber-900 disabled:opacity-50"><InterfaceText source={bulkBusy ? "Publishing…" : "Publish selected before review"} /></button>}
+          {!selectedRecords.every(record => record.canEarlyPublish && !record.earlyPublicationIssues?.length) && !(selectedStage === "under_review" && selectedRecords.every(record => record.canPublish)) && <p role="status" className="w-full text-sm text-stone-600"><InterfaceText source="For publishing, select only items ready for review publication or only items eligible for publication before review." /></p>}
+          {selectedRecords.every(record => record.canEarlyPublish && !record.earlyPublicationIssues?.length) && <button type="button" disabled={bulkBusy} onClick={() => void publishSelectedBeforeReview()} className="min-h-11 rounded-lg border border-amber-700 px-3 text-xs font-semibold text-amber-900 disabled:opacity-50"><InterfaceText source={bulkBusy ? "Publishing…" : "Publish selected before review"} /></button>}
           {(canBulkWorkflow || selectedStage === "under_review") && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
           {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve editor review" : "Send selected to cultural review"}
           </button>}
@@ -224,7 +226,9 @@ export function ContentTable({
             {records.map((record) => (
               <tr key={record.id} className="border-b border-stone-100 transition hover:bg-stone-50">
                 {canSelect && <td className="px-3 py-3"><input type="checkbox" disabled={bulkBusy || selected.length >= 100 && !selected.includes(record.id)} checked={selected.includes(record.id)} onChange={(event) => setSelected((current) => event.target.checked ? [...current, record.id] : current.filter((id) => id !== record.id))} aria-label={`Select ${record.title}`} /></td>}
-                <td className="px-4 py-3">{record.canEdit ? <Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="font-medium text-stone-800 hover:text-amber-700">{record.title}</Link> : <span className="font-medium text-stone-800">{record.title}</span>}</td>
+                <td className="px-4 py-3">{record.canEdit && ["draft", "needs_edit", "rejected", "curated"].includes(record.status) ? <Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="font-medium text-stone-800 hover:text-amber-700">{record.title}</Link> : <span className="font-medium text-stone-800">{record.title}</span>}
+                  {record.canEarlyPublish && !!record.earlyPublicationIssues?.length && <details className="mt-2 max-w-md text-xs text-amber-950"><summary className="min-h-8 cursor-pointer font-semibold"><InterfaceText source="Public sharing settings need attention" /></summary><ul className="my-2 list-disc space-y-1 pl-4">{record.earlyPublicationIssues.map(issue => <li key={issue}><InterfaceText source={issue} /></li>)}</ul>{record.canEdit && ["draft", "needs_edit", "rejected", "curated"].includes(record.status) ? <Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}#source-and-access`} className="inline-flex min-h-11 items-center font-semibold underline"><InterfaceText source="Set source and access" /></Link> : <p><InterfaceText source="Ask the cultural reviewer to return this item for editing so its source and access settings can be corrected." /></p>}</details>}
+                </td>
                 <td className="px-4 py-3 text-stone-600">{record.module.baseName}</td>
                 <td className="px-4 py-3 text-stone-600">{record.language.nativeName}</td>
                 <td className="px-4 py-3"><span className={`inline-block rounded-full px-2 py-1 text-xs ${STATUS_STYLES[record.status] || STATUS_STYLES.draft}`}>{record.status === "published_source" ? "published" : record.status.replaceAll("_", " ")}</span></td>

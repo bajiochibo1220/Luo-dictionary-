@@ -362,7 +362,7 @@ export function ContentFormCore({
         )}
       </section>
 
-      {!isTranslation && <section className="my-7 rounded-xl border border-stone-900/10 bg-white/60 p-4">
+      {!isTranslation && <section id="source-and-access" className="scroll-mt-24 my-7 rounded-xl border border-stone-900/10 bg-white/60 p-4">
         <h3 className="font-semibold text-stone-800"><InterfaceText source="Source and access" /></h3>
         <p className="mb-4 mt-1 text-xs text-stone-600"><InterfaceText source={isElderContributor ? "If you are unsure, leave permission for a reviewer to check." : "Set the source permission and access here. If unsure, leave it for review."} /><InterfaceText source=" Public release needs confirmed permission." /></p>
         <div className="grid gap-4 sm:grid-cols-2">

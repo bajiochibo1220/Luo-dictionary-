@@ -70,3 +70,7 @@ Open **Admin ? Content**. Tick individual rows, use the header checkbox (up to 1
 - Use **Clear selection** to start again. Existing public versions cannot be published early again; publish their reviewed source to replace them automatically.
 
 Master administrators can see the selection controls even without separate language-role assignments. An independent authorized person must publish each upload; users cannot publish their own contributions.
+
+### When publishing before review reports missing sharing permissions
+
+Content review and sharing permission are separate. Uploads start with pending consent and internal access. Expand **Public sharing settings need attention** under the item title to see the exact blocker. For editable items, choose **Set source and access**. Once the source or rights holder has authorized public sharing, set **Source permission ? Permission confirmed**, **Consent scope ? public excerpt**, and **Restriction level ? public**. Save, then publish before review. An active embargo must expire first. Items already in review must be returned for editing before those settings can be changed. The bulk early-publication shortcut selects only items whose sharing settings are ready.

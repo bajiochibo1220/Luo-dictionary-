@@ -166,3 +166,18 @@ test('bulk early publication rejects duplicate, empty, oversized and unauthentic
   assert.equal(batch.stats().transactions, 0);
   const guest = batchEarlyRoute([], null); assert.equal((await guest.post(['a'])).status, 401); assert.equal(guest.stats().transactions, 0);
 });
+
+test('early release names the blocked upload and only the settings that need correction', async () => {
+  const context = fixture(); context.source.title = 'Community story'; context.source.consentScope = 'pending';
+  const response = await earlyRoute(context, actor('publisher'))(new Request('http://localhost'), { params: Promise.resolve({id:'upload'}) });
+  assert.equal(response.status,400); const body=await response.json();
+  assert.match(body.error,/Community story/); assert.match(body.error,/Consent scope/); assert.doesNotMatch(body.error,/Restriction level|set Source permission/);
+  assert.equal(context.state.publication,null);
+});
+test('public release readiness lists pending permission, private access and an active embargo separately',()=>{
+  const {publicReleaseIssues}=loader()('src/lib/public-release-readiness.ts'); const context=fixture();
+  assert.deepEqual(publicReleaseIssues(context.source),[]);
+  Object.assign(context.source,{title:' ',consentScope:'pending',restrictionLevel:'internal',embargoUntil:new Date('2099-01-01'),data:{}});
+  const issues=publicReleaseIssues(context.source); assert.equal(issues.length,5);
+  assert.match(issues.join(' '),/Add a title|Consent scope|Restriction level|2099-01-01|Source permission/);
+});

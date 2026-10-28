@@ -7,6 +7,7 @@ import { ContentTable } from "@/components/admin/content-table";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
 import { canEditContent, canFinalizeContent, canPublishBeforeReview, canReviewContent, canSendToFinalReview, canUploadContent, canValidateCulture } from "@/lib/permissions";
 import { redirect } from "next/navigation";
+import { publicReleaseIssues } from "@/lib/public-release-readiness";
 
 type SearchParams = { status?: string; module?: string; languageId?: string };
 
@@ -54,6 +55,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     title: record.title,
     status: record.status,
     hasPublicVersion: record.publication?.status === "published",
+    earlyPublicationIssues: publicReleaseIssues(record),
     canEarlyPublish: !record.publication && record.contributorId !== user.id && ["draft", "submitted", "under_review", "needs_edit"].includes(record.status) && canPublishBeforeReview(session, record.languageId),
     validatorId: record.validatorId,
     createdAt: record.createdAt.toISOString(),
