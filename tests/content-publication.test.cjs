@@ -145,7 +145,7 @@ function batchEarlyRoute(contexts, session = actor('publisher')) {
     const snapshots = contexts.map(c => ({ source: structuredClone(c.source), state: structuredClone(c.state) }));
     try { return await callback(tx); } catch (error) { rolledBack = true; contexts.forEach((c, i) => { Object.assign(c.source, snapshots[i].source); Object.assign(c.state, snapshots[i].state); }); throw error; }
   } } } })('src/app/api/content/bulk-publish-before-review/route.ts').POST;
-  return { post: (ids, confirmPublicSharing) => post(new Request('http://localhost/api/content/bulk-publish-before-review', { method: 'POST', body: JSON.stringify({ recordIds: ids, confirmPublicSharing }) })), stats: () => ({ transactions, rolledBack }) };
+  return { post: (ids, confirmPublicSharing, overrideAccessRestrictions) => post(new Request('http://localhost/api/content/bulk-publish-before-review', { method: 'POST', body: JSON.stringify({ recordIds: ids, confirmPublicSharing, overrideAccessRestrictions }) })), stats: () => ({ transactions, rolledBack }) };
 }
 test('a single early-publication batch releases multiple uploads across stages and content areas', async () => {
   const a = fixture(), b = fixture(); a.source.id = 'a'; a.source.status = 'draft'; b.source.id = 'b'; b.source.status = 'needs_edit'; b.source.moduleId = 3;
@@ -222,4 +222,80 @@ test('bulk explicit approval covers all selected uploads in a single transaction
 test('a string approval does not count as explicit consent',async()=>{
  const c=pendingPermissionFixture();const res=await earlyRoute(c,actor('publisher'))(new Request('http://localhost',{method:'POST',body:JSON.stringify({confirmPublicSharing:'true'})}),{params:Promise.resolve({id:'upload'})});
  assert.equal(res.status,400);assert.equal(c.approvals.length,0);assert.equal(c.source.consentScope,'pending');
+});
+
+function overrideFixture() {
+ const c=pendingPermissionFixture();
+ c.tx.mediaAsset.findMany=async()=>structuredClone(c.source.media);
+ c.tx.transcript.findMany=async()=>structuredClone(c.source.transcripts);
+ c.tx.mediaAsset.updateMany=async({data})=>c.source.media.forEach(item=>Object.assign(item,data));
+ c.tx.transcript.updateMany=async({data})=>c.source.transcripts.forEach(item=>Object.assign(item,data));
+ return c;
+}
+function overrideRequest(value=true) {return new Request('http://localhost',{method:'POST',body:JSON.stringify({overrideAccessRestrictions:value})});}
+
+test('direct staff publishing overrides all access blockers without claiming source permission',async()=>{
+ for(const changes of [{consentScope:'research_only'},{consentScope:'community_only'},{restrictionLevel:'sacred'},{restrictionLevel:'restricted'},{embargoUntil:new Date('2099-01-01')},{data:{sourcePermission:'not_granted'}}]) {
+  const c=overrideFixture();Object.assign(c.source,changes);const permission=c.source.data.sourcePermission;
+  c.source.media[0].restrictionLevel='sacred';c.source.media[0].embargoUntil=new Date('2099-01-01');
+  c.source.transcripts[0].consentScope='research_only';
+  const res=await earlyRoute(c,actor('publisher'))(overrideRequest(),{params:Promise.resolve({id:'upload'})});
+  assert.equal(res.status,200,JSON.stringify(changes));assert.equal(c.source.status,'under_review');
+  assert.equal(c.source.embargoUntil,null);assert.equal(c.source.data.sourcePermission,permission);
+  assert.equal(c.state.publication.restrictionLevel,'public');assert.equal(c.state.publication.isProvisional,true);
+  assert.equal(c.state.media.length,1);assert.equal(c.state.media[0].embargoUntil,null);assert.equal(c.state.transcripts.length,1);
+  assert.equal(c.approvals.length,0,'No fabricated rights-holder consent');
+  assert.equal(c.state.audits[0].action,'content.public_access_overridden');assert.equal(c.state.audits[0].oldValue.assets[0].restrictionLevel,'sacred');
+ }
+});
+
+test('direct publishing supports own staff uploads but still enforces roles and language scope',async()=>{
+ for(const [session,status] of [[null,401],[actor('uploader'),403],[actor('publisher',9),403],[{user:{...actor('language_admin').user,id:'uploader'}},200],[{user:{id:'uploader',isMasterSuperAdmin:true,languageRoles:[]}},200]]) {
+  const c=overrideFixture();const res=await earlyRoute(c,session)(overrideRequest(),{params:Promise.resolve({id:'upload'})});
+  assert.equal(res.status,status);assert.equal(!!c.state.publication,status===200);
+ }
+ const c=overrideFixture();assert.equal((await earlyRoute(c,actor('publisher'))(overrideRequest('true'),{params:Promise.resolve({id:'upload'})})).status,400);
+});
+
+test('bulk direct publishing releases restricted uploads and rolls back on an invalid stage',async()=>{
+ const a=overrideFixture(),b=overrideFixture();a.source.id='a';b.source.id='b';b.source.data.sourcePermission='not_granted';b.source.embargoUntil=new Date('2099-01-01');
+ const batch=batchEarlyRoute([a,b]);assert.equal((await batch.post(['b','a'],false,true)).status,200);
+ assert.equal(a.state.publication.isProvisional,true);assert.equal(b.state.publication.embargoUntil,null);
+ const x=overrideFixture(),y=overrideFixture();x.source.id='x';y.source.id='y';y.source.status='rejected';
+ const invalid=batchEarlyRoute([x,y]);assert.equal((await invalid.post(['x','y'],false,true)).status,409);
+ assert.equal(invalid.stats().rolledBack,true);assert.equal(x.state.publication,null);assert.equal(x.source.restrictionLevel,'internal');
+});
+
+test('single and bulk publishing dialogs submit directly without a consent checkbox',async()=>{
+ const React=require('react');const {renderToStaticMarkup}=require('react-dom/server');
+ for(const props of [{recordId:'upload'},{recordIds:['a','b']}]) {
+  let stateIndex=0,refreshed=false,closed=false,request;
+  const {EarlyPublishButton}=loader({react:{...React,useState:initial=>[stateIndex++===0?true:initial,()=>{}],useEffect:()=>{},useRef:()=>({current:{close:()=>{closed=true;}}})},
+   'next/navigation':{useRouter:()=>({refresh:()=>{refreshed=true;}})},sonner:{toast:{success:()=>{}}},
+   '@/components/shared/interface-language':{InterfaceText:({source})=>source},
+  })('src/components/admin/early-publish-button.tsx');
+  const tree=EarlyPublishButton(props);const html=renderToStaticMarkup(tree);
+  assert.doesNotMatch(html,/checkbox|rights holder/);assert.match(html,/Publish now/);assert.doesNotMatch(html.match(/<button[^>]*type="submit"[^>]*>/)[0],/\sdisabled(?:=|\s|>)/);
+  const previous=global.fetch;global.fetch=async(url,init)=>{request={url,body:JSON.parse(init.body)};return Response.json({success:true,count:props.recordIds?.length??1});};
+  try{await tree.props.children[1].props.children.props.onSubmit({preventDefault(){}});}finally{global.fetch=previous;}
+  assert.equal(request.body.overrideAccessRestrictions,true);assert.equal(request.body.confirmPublicSharing,undefined);
+  assert.equal(request.url,props.recordIds?'/api/content/bulk-publish-before-review':'/api/content/upload/publish-before-review');
+  assert.equal(closed,true);assert.equal(refreshed,true);
+ }
+});
+
+test('a recorded staff release survives edits and supports reviewed replacement without inventing permission',async()=>{
+ const c=overrideFixture();c.source.data.sourcePermission='not_granted';
+ assert.equal((await earlyRoute(c,actor('publisher'))(overrideRequest(),{params:Promise.resolve({id:'upload'})})).status,200);
+ const {hasPublicReleasePermission}=loader()('src/lib/public-release-readiness.ts');
+ assert.equal(hasPublicReleasePermission(c.source),true);
+ const publicId=c.state.publication.id;c.source.title='Edited and reviewed';c.source.data.story='Reviewed text';
+ assert.equal(hasPublicReleasePermission(c.source),true);
+ const {finishPublication}=loader()('src/lib/content-publication.ts');
+ assert.equal(await finishPublication(c.tx,'upload','publisher',hasPublicReleasePermission(c.source)),publicId);
+ assert.equal(c.state.publication.title,'Edited and reviewed');assert.equal(c.state.publication.isProvisional,false);
+ assert.equal(c.source.data.sourcePermission,'not_granted');
+ c.source.data.sourcePermission='needs_review';assert.equal(hasPublicReleasePermission(c.source),false,'Changed permission evidence requires a new decision');
+ assert.equal(hasPublicReleasePermission({data:{sourcePermission:'needs_review'}}),false);
+ assert.equal(hasPublicReleasePermission({data:{sourcePermission:'confirmed'}}),true);
 });

@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceText } from "@/components/shared/interface-language";
 
@@ -79,7 +79,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
       {audio && (
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-8">
           <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Listen" /></p>
-          <audio controls className="w-full" src={audio.url}><InterfaceText source="Your browser does not support audio." /></audio>
+          <MediaAudio controls className="w-full" src={audio.url}><InterfaceText source="Your browser does not support audio." /></MediaAudio>
         </div>
       )}
 

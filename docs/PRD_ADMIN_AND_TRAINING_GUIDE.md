@@ -14,7 +14,7 @@ Administrative interfaces remain English. In **Edit system text**, select the co
 
 ## Publish while review continues
 
-An independent assigned editor, publisher or administrator can use **Publish before review** from Content or an item's review page. Content also supports **Publish selected before review**. Public consent, public restrictions, source permission and embargo checks remain in force. The public package is separate from the source being edited; restricted attachments are excluded from an early release.
+An assigned editor, publisher or administrator can use **Publish before review** from Content or an item's review page, including their own uploads. Content also supports **Publish selected before review**. Choose **Publish now** to release the uploads and attachments without separate consent, source-permission, access or embargo edits. The public package is separate from the source being edited.
 
 Continue the normal review and paired editing workflow. Final publication replaces the public package at the same link, including its text, translations and eligible files. Rejection or removal of public/source permission withdraws the early public version. Sources with an existing public package cannot be deleted through ordinary queue deletion.
 
@@ -73,8 +73,20 @@ Master administrators can see the selection controls even without separate langu
 
 ### Approve public sharing while content review continues
 
-Use **Publish before review**, or select up to 100 uploads and choose **Publish selected before review**. In the dialog, tick **I have confirmed that the source or rights holder permits public sharing of every selected item and its ordinary attachments**, then choose **Approve sharing and publish**. Confirm this only when the source or rights holder has authorized public sharing.
+Use **Publish before review**, or select up to 100 uploads and choose **Publish selected before review**. In the dialog, choose **Publish now**. There is no permission checkbox. This explicitly overrides existing access restrictions and embargoes on the selected uploads and their attachments, including transcripts.
 
-This works for every content area. It records an audited permission confirmation and changes pending consent/internal access to public sharing inside the same publication transaction. Content already in review stays in review; it does not need to be returned for content editing merely to approve public sharing. Ordinary pending attachments are included. Restricted attachments stay private. Explicit non-public consent, denied source permission and active embargoes must be resolved separately. A batch is rolled back if any selected item fails.
+This works for every content area. It records the publishing staff member and previous record/attachment access settings, then sets public access and clears embargoes inside the same publication transaction. Existing source-permission evidence is preserved; this action does not create a rights-holder consent record. Content already in review stays in review. The reviewed publication replaces the earlier snapshot at the same public link. Role and language authorization, valid upload stages and a nonempty title still apply. A batch is rolled back if any selected item fails.
 
 Continue editing and reviewing the source. Final publication replaces its earlier public version at the same public link.
+
+## Final system audit: media and AI operation
+
+Editors and publishers can open **Content & early publishing** directly from their sidebar. Main dashboard record totals count source uploads once, excluding their public snapshots. Navigation between admin pages returns the content scroller to the top.
+
+Media review uses access-checked application links. Audio previews use a compatible compressed format while downloads preserve originals. The media manager identifies audio by its content type, even when storage classifies it as a video resource. A failed converted audio/video preview switches to an original-file URL consistently, preserving seeking. Device previews enforce their size limit while receiving the response.
+
+For AI configuration, use model identifiers available to the provider project. The validated default text model is `gemini-3.6-flash`; the illustration default is `gemini-3.1-flash-image`. Environment settings and saved System values still override defaults. Text, tutor, OCR and transcription share a stateless transport fallback. The provider's Interactions endpoint may be unavailable while its standard generation API still works. Invalid credentials and exhausted generation quota produce explicit errors. Do not repeatedly retry an exhausted image-generation quota; check the project quota/billing or configure an account with available image-generation capacity.
+
+AI media sources are explicitly public; results remain drafts. Current media assistance accepts sources below 8 MB and personal practice transcription below 2 MB. Practice recording is limited to one minute. Physical microphone, speaker and native-device behavior should also be checked on the actual deployment devices.
+
+Vocabulary practice uses reviewed, published words from both current dictionary uploads and the older dictionary collection. At least four distinct English meanings are needed for a quiz. A replaced or withdrawn uploaded source invalidates an existing quiz; start a new attempt to use the current reviewed version. Unreviewed public snapshots are excluded from vocabulary grading.

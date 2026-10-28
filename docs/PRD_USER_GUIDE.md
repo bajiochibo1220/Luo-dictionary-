@@ -55,3 +55,9 @@ Public research publications, reports and datasets can be explored without privi
 Open the account menu for Settings & profile, saved conversations and sign out. The menu closes using its trigger, outside click or Escape. Interface language is separate from your assigned roles. Missing reviewed translations fall back to English; report missing wording to an editor through the project's support process.
 
 Offline saved content and compatible learning progress are available through the existing offline library. AI, new downloads, research exports, maps and multiplayer need a connection. Synchronize queued progress after reconnecting.
+
+## Audio, video and AI troubleshooting
+
+Use the play controls to listen or watch. Starting another player pauses the previous one. If playback fails, choose **Try again** or download the original file. Practice voice recordings stay on your device unless you explicitly request AI transcription; device voices and dictation languages depend on the browser. If a microphone is unavailable, type your practice or upload a recording instead.
+
+AI suggestions remain drafts. If an AI tool reports that its provider quota is reached, try later and notify an administrator. Image-generation quota is separate from text generation. Choosing a different page or repeatedly clicking Create AI draft does not restore exhausted provider quota.

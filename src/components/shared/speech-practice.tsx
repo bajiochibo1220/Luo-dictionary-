@@ -1,4 +1,6 @@
 "use client";
+import { MediaAudio } from "@/components/shared/media-preview";
+
 import { useEffect, useRef, useState } from "react";
 import { InterfaceText } from "./interface-language";
 
@@ -9,6 +11,8 @@ const control = "min-h-11 rounded-lg border border-stone-400 bg-white px-4 py-2 
 export function SpeechPractice({ languageCode, playbackLanguageCode = languageCode, text, onTranscript, onTranscribeRecording }: { languageCode: string; playbackLanguageCode?: string; text: string; onTranscript?: (text: string) => void; onTranscribeRecording?: (recording: Blob) => Promise<string> }) {
   const [notice, setNotice] = useState("");
   const [recording, setRecording] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const startingCapture = useRef(false);
   const [recognizing, setRecognizing] = useState(false);
   const [speechConsent, setSpeechConsent] = useState(false);
   const [recordingConsent,setRecordingConsent] = useState(false);
@@ -38,10 +42,12 @@ export function SpeechPractice({ languageCode, playbackLanguageCode = languageCo
   }, []);
   const voice = voices.find(item => item.lang.split(/[-_]/)[0].toLowerCase() === (playbackLanguageCode === "eng" ? "en" : playbackLanguageCode));
   async function record() {
+    if (startingCapture.current) return;
     setNotice("");
     if (recording) { recorder.current?.stop(); return; }
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") { setNotice("Recording is unavailable in this browser. Use a supported browser with microphone access."); return; }
     let stream: MediaStream | undefined;
+    startingCapture.current = true; setStarting(true);
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       if (!active.current) { stream.getTracks().forEach(track => track.stop()); return; }
@@ -53,12 +59,14 @@ export function SpeechPractice({ languageCode, playbackLanguageCode = languageCo
         if (!active.current) return;
         if (url.current) URL.revokeObjectURL(url.current);
         const blob = new Blob(chunks, { type: capture.mimeType || "audio/webm" });
+        if (!blob.size) { setRecording(false); setNotice("No audio was captured. Please record again."); return; }
         recordingBlob.current = blob;
         url.current = URL.createObjectURL(blob); setRecordingUrl(url.current); setRecordingType(blob.type); setRecording(false);
       };
       capture.onerror = () => { stream?.getTracks().forEach(track => track.stop()); if (active.current) { setRecording(false); setNotice("Recording failed. Check microphone access and retry."); } };
       capture.start(); setRecording(true); recordingTimer.current = window.setTimeout(()=>{if(capture.state === "recording")capture.stop();},60000);
-    } catch { stream?.getTracks().forEach(track => track.stop()); setNotice("Microphone access was denied or unavailable. You can still type your practice."); }
+    } catch { stream?.getTracks().forEach(track => track.stop()); if (active.current) setNotice("Microphone access was denied or unavailable. You can still type your practice."); }
+    finally { startingCapture.current = false; if (active.current) setStarting(false); }
   }
   function dictate() {
     setNotice("");
@@ -70,7 +78,7 @@ export function SpeechPractice({ languageCode, playbackLanguageCode = languageCo
     recognizer.lang = languageCode === "eng" ? "en-KE" : languageCode === "luo" ? "luo-KE" : languageCode;
     recognizer.continuous = false; recognizer.interimResults = false;
     recognizer.onresult = event => { if (active.current) onTranscript?.(event.results[0][0].transcript); };
-    recognizer.onerror = event => { if (active.current) setNotice(event.error === "language-not-supported" ? "This speech service does not support the selected language. Use recording or typed practice." : "Dictation could not complete. Check your connection and microphone permissions."); };
+    recognizer.onerror = event => { if (active.current) { setRecognizing(false); setNotice(event.error === "language-not-supported" ? "This speech service does not support the selected language. Use recording or typed practice." : "Dictation could not complete. Check your connection and microphone permissions."); } };
     recognizer.onend = () => { if (active.current) setRecognizing(false); };
     try { recognizer.start(); setRecognizing(true); } catch { setRecognizing(false); setNotice("Dictation could not start. Please retry."); }
   }
@@ -81,10 +89,10 @@ export function SpeechPractice({ languageCode, playbackLanguageCode = languageCo
   return <fieldset className="space-y-3 rounded-xl border border-stone-300 bg-stone-50 p-4">
     <legend className="font-semibold"><InterfaceText source="Speaking and listening practice" /></legend>
     <p className="text-sm"><InterfaceText source="Practice recordings stop after one minute and stay on this device unless you choose AI transcription. Compare with reviewed audio; no automatic pronunciation score is claimed." /></p>
-    <div className="flex flex-wrap gap-2"><button type="button" className={control} onClick={() => void record()}><InterfaceText source={recording ? "Stop recording" : "Record my voice"} /></button><button type="button" className={control} disabled={!text.trim()} onClick={speak}><InterfaceText source="Listen to text" /></button><button type="button" className={control} onClick={() => window.speechSynthesis?.cancel()}><InterfaceText source="Stop playback" /></button></div>
+    <div className="flex flex-wrap gap-2"><button type="button" className={control} disabled={starting} onClick={() => void record()}><InterfaceText source={starting ? "Opening microphone..." : recording ? "Stop recording" : "Record my voice"} /></button><button type="button" className={control} disabled={!text.trim()} onClick={speak}><InterfaceText source="Listen to text" /></button><button type="button" className={control} onClick={() => window.speechSynthesis?.cancel()}><InterfaceText source="Stop playback" /></button></div>
     {onTranscript && <><label className="flex gap-2 text-sm"><input type="checkbox" checked={speechConsent} onChange={event => { setSpeechConsent(event.target.checked); if (!event.target.checked) { recognition.current?.stop(); setRecognizing(false); } }} /><InterfaceText source="I allow this browser's speech service to process my voice for dictation. Supported languages depend on the service." /></label><button type="button" className={control} disabled={!speechConsent} onClick={dictate}><InterfaceText source={recognizing ? "Stop dictation" : "Dictate text"} /></button></>}
     {onTranscribeRecording && recordingUrl && <><label className="flex gap-2 text-sm"><input type="checkbox" checked={recordingConsent} onChange={event=>setRecordingConsent(event.target.checked)}/><InterfaceText source="I allow the configured AI service to transcribe this personal recording. It will not be published."/></label><button type="button" className={control} disabled={!recordingConsent || transcribing} onClick={()=>{if(!recordingBlob.current)return;setTranscribing(true);setNotice("");void onTranscribeRecording(recordingBlob.current).then(value=>{if(active.current)onTranscript?.(value);}).catch(reason=>{if(active.current)setNotice(reason instanceof Error?reason.message:"Transcription unavailable.");}).finally(()=>{if(active.current)setTranscribing(false);});}}><InterfaceText source={transcribing?"Transcribing...":"Transcribe my recording"}/></button></>}
-    {recordingUrl && <div className="space-y-2"><audio controls src={recordingUrl} className="max-w-full" /><a className="inline-block min-h-11 py-2 underline" href={recordingUrl} download={`my-practice.${recordingType.includes("mp4") ? "m4a" : recordingType.includes("ogg") ? "ogg" : "webm"}`}><InterfaceText source="Download my recording" /></a></div>}
-    {notice && <p role="status" className="text-sm">{notice}</p>}
+    {recordingUrl && <div className="space-y-2"><MediaAudio controls src={recordingUrl} className="max-w-full" /><a className="inline-block min-h-11 py-2 underline" href={recordingUrl} download={`my-practice.${recordingType.includes("mp4") ? "m4a" : recordingType.includes("ogg") ? "ogg" : "webm"}`}><InterfaceText source="Download my recording" /></a></div>}
+    {notice && <p role="status" className="text-sm"><InterfaceText source={notice} /></p>}
   </fieldset>;
 }

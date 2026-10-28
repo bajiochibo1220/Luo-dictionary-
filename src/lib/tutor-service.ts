@@ -15,9 +15,12 @@ export async function tutor(input: unknown, userId: string | null): Promise<Tuto
   if (data.mode === "grade") {
     const attempt = await prisma.activityReceipt.findUnique({ where: { userId_operationId: { userId, operationId: data.attemptId } } });
     if (!attempt || attempt.fingerprint !== "tutor-vocabulary-v1" || Date.now() - attempt.createdAt.getTime() > 3600000) throw new TutorError(404, "This practice attempt expired. Start another quiz.");
-    const saved = attempt.result as { languageId: number; questions: { id: string; prompt: string; answer: number; explanation: string; choices: string[] }[] };
+    const saved = attempt.result as { languageId: number; questions: { id: string; prompt: string; answer: number; explanation: string; choices: string[]; sourceKind?: "record"; sourceId?: string; sourceVersion?: string }[] };
     if (Object.keys(data.answers).length !== saved.questions.length || saved.questions.some(q => !Object.hasOwn(data.answers, q.id))) throw new TutorError(400, "Answer each question before checking your work.");
-    const available = await prisma.dictionaryEntry.count({ where: { id: { in: saved.questions.map(q => q.id) }, languageId: saved.languageId, ...publicRecordWhere() } });
+    const legacy = saved.questions.filter(q => q.sourceKind !== "record");
+    const records = saved.questions.filter(q => q.sourceKind === "record");
+    const available = (legacy.length ? await prisma.dictionaryEntry.count({ where: { id: { in: legacy.map(q => q.id) }, languageId: saved.languageId, ...publicRecordWhere() } }) : 0) +
+      (records.length ? await prisma.culturalRecord.count({ where: { languageId: saved.languageId, module: { code: "dictionary" }, isProvisional: false, ...publicRecordWhere(), OR: records.map(q => ({ id: q.sourceId, ...(q.sourceVersion ? { updatedAt: new Date(q.sourceVersion) } : {}) })) } }) : 0);
     if (available !== saved.questions.length) throw new TutorError(409, "Some source words were withdrawn. Start a new quiz.");
     const results = saved.questions.map(q => ({ id: q.id, correct: data.answers[q.id] === q.answer, answer: q.answer, explanation: q.explanation }));
     const score = Math.round(results.filter(result => result.correct).length / results.length * 100);
@@ -33,19 +36,34 @@ export async function tutor(input: unknown, userId: string | null): Promise<Tuto
     await trackEvent({eventType:"tutor_interaction",userId,languageId:language.id,metadata:{mode:data.mode,model:result.model}});
     return {text:result.text,model:result.model,sources:[]};
   }
-  const entries = await prisma.dictionaryEntry.findMany({ where: { languageId: language.id, ...publicRecordWhere() }, orderBy: { id: "asc" }, take: 40,
-    select: { id: true, dholuo: true, english: true, pronunciation: true } });
+  const [legacyEntries, uploadedWords] = await Promise.all([
+    prisma.dictionaryEntry.findMany({ where: { languageId: language.id, ...publicRecordWhere() }, orderBy: { id: "asc" }, take: 40,
+      select: { id: true, dholuo: true, english: true, pronunciation: true } }),
+    prisma.culturalRecord.findMany({ where: { languageId: language.id, module: { code: "dictionary" }, isProvisional: false, ...publicRecordWhere() }, orderBy: { updatedAt: "desc" }, take: 40,
+      select: { id: true, data: true, updatedAt: true } }),
+  ]);
+  const modern = uploadedWords.flatMap(record => {
+    const fields = record.data && typeof record.data === "object" && !Array.isArray(record.data) ? record.data as Record<string, unknown> : {};
+    if (typeof fields.dholuo !== "string" || !fields.dholuo.trim() || typeof fields.english !== "string" || !fields.english.trim()) return [];
+    return [{ id: `record:${record.id}`, dholuo: fields.dholuo.trim(), english: fields.english.trim(), pronunciation: typeof fields.pronunciation === "string" ? fields.pronunciation : null,
+      sourceKind: "record" as const, sourceId: record.id, sourceVersion: record.updatedAt.toISOString() }];
+  });
+  const seenWords = new Set<string>();
+  const entries = [...modern, ...legacyEntries.map(entry => ({ ...entry, sourceKind: undefined, sourceId: undefined, sourceVersion: undefined }))].filter(entry => {
+    const key = entry.dholuo.trim().toLocaleLowerCase(); if (!key || seenWords.has(key)) return false; seenWords.add(key); return true;
+  });
   if (data.mode === "vocabulary") {
     const words = entries.filter(entry => entry.english?.trim());
     if (new Set(words.map(entry => entry.english.trim().toLocaleLowerCase())).size < 4) throw new TutorError(409, "Vocabulary practice needs at least four distinct reviewed dictionary entries in this community. Try another practice mode while the collection grows.");
     const questions = words.slice(0, 10).map(entry => {
-      const alternatives = [...new Set(words.filter(other => other.english.trim().toLocaleLowerCase() !== entry.english.trim().toLocaleLowerCase()).map(other => other.english.trim()))].slice(0, 3);
+      const alternatives = [...new Map(words.filter(other => other.english.trim().toLocaleLowerCase() !== entry.english.trim().toLocaleLowerCase()).map(other => [other.english.trim().toLocaleLowerCase(), other.english.trim()])).values()].slice(0, 3);
       const answer = randomInt(alternatives.length + 1); alternatives.splice(answer, 0, entry.english.trim());
-      return { id: entry.id, prompt: entry.dholuo, choices: alternatives, answer, explanation: `${entry.dholuo}: ${entry.english}` };
+      return { id: entry.id, prompt: entry.dholuo, choices: alternatives, answer, explanation: `${entry.dholuo}: ${entry.english}`,
+        ...(entry.sourceKind ? { sourceKind: entry.sourceKind, sourceId: entry.sourceId, sourceVersion: entry.sourceVersion } : {}) };
     });
     const attemptId = randomUUID();
     await prisma.activityReceipt.create({ data: { userId, operationId: attemptId, fingerprint: "tutor-vocabulary-v1", result: { languageId: language.id, questions } } });
-    return { attemptId, questions: questions.map(({ answer: _answer, explanation: _explanation, ...question }) => question) };
+    return { attemptId, questions: questions.map(({ id, prompt, choices }) => ({ id, prompt, choices })) };
   }
   const records = await prisma.culturalRecord.findMany({ where: { languageId: language.id, ...publicRecordWhere() }, orderBy: { updatedAt: "desc" }, take: 8,
     select: { id: true, title: true, summary: true, data: true, module: { select: { code: true } } } });

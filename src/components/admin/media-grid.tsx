@@ -1,4 +1,6 @@
 "use client";
+import { MediaAudio, MediaVideo, MediaImage } from "@/components/shared/media-preview";
+
 import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
@@ -142,14 +144,14 @@ export function MediaGrid({
           >
             <div className="aspect-square bg-stone-100 flex items-center justify-center overflow-hidden">
               {a.resourceType === "image" ? (
-                <img
+                <MediaImage
                   src={a.thumbnailUrl || a.url}
                   alt={a.caption || a.publicId}
                   className="w-full h-full object-cover group-hover:scale-105 transition"
                 />
               ) : a.resourceType === "video" ? (
                 a.thumbnailUrl ? (
-                  <img
+                  <MediaImage
                     src={a.thumbnailUrl}
                     alt={a.caption || a.publicId}
                     className="w-full h-full object-cover group-hover:scale-105 transition"
@@ -195,16 +197,16 @@ export function MediaGrid({
             <div className="p-6">
               {/* Preview */}
               <div className="bg-stone-100 rounded-lg overflow-hidden mb-4">
-                {selected.resourceType === "image" ? (
-                  <img
+                {selected.type === "image" ? (
+                  <MediaImage
                     src={selected.url}
                     alt={selected.caption || ""}
                     className="w-full"
                   />
-                ) : selected.resourceType === "video" ? (
-                  <video src={selected.url} controls className="w-full" />
+                ) : selected.type === "video" ? (
+                  <MediaVideo src={selected.url} controls className="w-full" />
                 ) : selected.type === "audio" ? (
-                  <audio src={selected.url} controls className="w-full p-4" />
+                  <MediaAudio src={selected.url} controls className="w-full p-4" />
                 ) : (
                   <div className="p-8 text-center text-stone-400">
                     <span className="text-5xl">📄</span>
@@ -309,9 +311,11 @@ export function MediaGrid({
               {/* Actions */}
               <div className="mt-6 pt-6 border-t border-stone-100 space-y-3">
                 <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(selected.url);
-                    toast.success(<InterfaceText source={"URL copied"} />);
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(new URL(selected.url, location.origin).href);
+                      toast.success(<InterfaceText source="URL copied" />);
+                    } catch { toast.error(<InterfaceText source="Copying is unavailable. Use Open in new tab to open the file." />); }
                   }}
                   className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-sm font-medium"
                 ><InterfaceText source="Copy URL" /></button>

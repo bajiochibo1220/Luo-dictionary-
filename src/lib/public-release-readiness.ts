@@ -1,5 +1,14 @@
 import { hasPublicReleaseSourcePermission } from "@/lib/phase-one-content";
 
+/** Server-authored staff decision; source-permission evidence remains separate. */
+export function hasPublicReleasePermission(record: { data: unknown; nrfMetadata?: unknown }): boolean {
+  if (hasPublicReleaseSourcePermission("", record.data)) return true;
+  const data = record.data && typeof record.data === "object" ? record.data as Record<string, unknown> : {};
+  const metadata = record.nrfMetadata && typeof record.nrfMetadata === "object" ? record.nrfMetadata as Record<string, unknown> : {};
+  const decision = metadata.staffPublicRelease as Record<string, unknown> | undefined;
+  return !!decision && typeof decision.approvedById === "string" && !!decision.approvedById && decision.sourcePermission === (data.sourcePermission ?? null);
+}
+
 type ReleaseRecord = {
   title: string; consentScope: string; restrictionLevel: string;
   embargoUntil?: Date | null; data: unknown; module: { code: string };

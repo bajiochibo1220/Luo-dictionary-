@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceText } from "@/components/shared/interface-language";
 
@@ -50,7 +50,7 @@ export function DictionaryCard({
       {(entry.media ?? []).map((item) => item.type === "image" ? (
         <MediaImage key={item.id} src={item.url} alt={entry.dholuo} className="mt-3 max-h-40 w-full object-cover rounded-lg" />
       ) : item.type === "audio" ? (
-        <audio key={item.id} src={item.url} controls className="mt-3 w-full" />
+        <MediaAudio key={item.id} src={item.url} controls className="mt-3 w-full" />
       ) : item.type === "video" ? (
         <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="mt-3 max-h-48 w-full rounded-lg" />
       ) : null)}

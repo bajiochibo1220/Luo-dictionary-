@@ -29,10 +29,10 @@ async function main() {
   if (interactions) console.log('CHECK read-only session preparation');
   const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
   if (!entryOnly) assert.ok(secret, 'Session secret is required');
-  const users = entryOnly ? [] : await until(() => prisma.user.findMany({ where: { status: 'active' }, select: { id: true, name: true, email: true, isSuperAdmin: true, isMasterSuperAdmin: true, languageRoles: { include: { language: true } } } }), 'active account database query', 60_000);
+  const users = entryOnly ? [] : await until(() => prisma.user.findMany({ where: { status: 'active' }, select: { id: true, name: true, email: true, isSuperAdmin: true, isMasterSuperAdmin: true, sessionVersion: true, languageRoles: { include: { language: true } } } }), 'active account database query', 60_000);
   const administrator = users.find(user => user.isMasterSuperAdmin);
   if (!entryOnly) assert.ok(administrator, 'An active master administrator is required');
-  const cookieFor = async user => encode({ secret, salt: 'authjs.session-token', maxAge: 600, token: { sub: user.id, id: user.id, name: user.name, email: user.email, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, languageCode: role.language.code, languageName: role.language.name, role: role.role })) } });
+  const cookieFor = async user => encode({ secret, salt: 'authjs.session-token', maxAge: 600, token: { sub: user.id, id: user.id, sessionVersion: user.sessionVersion, name: user.name, email: user.email, isSuperAdmin: user.isSuperAdmin || user.isMasterSuperAdmin, isMasterSuperAdmin: user.isMasterSuperAdmin, languageRoles: user.languageRoles.map(role => ({ languageId: role.languageId, languageCode: role.language.code, languageName: role.language.name, role: role.role })) } });
   if (process.argv.includes('--forms')) {
     const headers = { Cookie: 'authjs.session-token=' + await cookieFor(administrator) };
     for (const moduleCode of ['dictionary', 'proverbs', 'riddles', 'songs', 'folktales', 'oral_histories', 'artifacts', 'heritage_sites']) {
@@ -206,6 +206,17 @@ async function main() {
       return;
     }
     await setAccount(administrator);
+    if (process.argv.includes('--scroll')) {
+      await navigate('/admin/content');
+      await until(() => evaluate(`document.querySelector('main.heritage-canvas').scrollHeight > document.querySelector('main.heritage-canvas').clientHeight`), 'scrollable content list');
+      await evaluate(`window.__scrollAuditToken='same-document'; const main=document.querySelector('main.heritage-canvas');main.scrollTop=main.scrollHeight;`);
+      assert.ok(await evaluate(`document.querySelector('main.heritage-canvas').scrollTop`) > 0);
+      await clickVisible('aside a[href="/super-admin/dashboard"]');
+      await until(() => evaluate(`location.pathname==='/super-admin/dashboard' && !!document.querySelector('main.heritage-canvas h1') && document.querySelector('main.heritage-canvas').scrollTop===0`), 'admin route resets content scroll');
+      assert.equal(await evaluate(`window.__scrollAuditToken`), 'same-document', 'Navigation remained inside the same browser document');
+      console.log('PASS real admin client navigation resets the inner content scroller to the top');
+      return;
+    }
     if (process.argv.includes('--dashboard-capture')) {
       for (const pathname of ['/dashboard', '/admin/dashboard', '/super-admin/dashboard']) {
         await loadPage(pathname, `location.pathname === ${JSON.stringify(pathname)} && !!document.querySelector('.heritage-canvas h1')`, 120_000);
@@ -363,8 +374,9 @@ async function main() {
     const screenshot = await send('Page.captureScreenshot', { format: 'png' });
     await fs.writeFile(path.join(os.tmpdir(), 'luolingua-public-review.png'), Buffer.from(screenshot.data, 'base64'));
     await openMenu();
-    await clickMenuLink('/admin/dashboard');
-    console.log('PASS public account menu: return to administrator dashboard');
+    await clickMenuLink('/super-admin/dashboard');
+    console.log('PASS public account menu: return to the role-correct master dashboard');
+    await navigate('/admin/dashboard');
     await openMenu();
     await clickMenuLink('/super-admin/dashboard');
     console.log('PASS administrator account menu: return to super administrator dashboard');
@@ -396,26 +408,26 @@ async function main() {
       console.log(`PASS ${role}: administrator to public dashboard`);
     }
     const masterToken = await cookieFor(administrator);
-    const adminPages = ['/admin/dashboard', '/admin/content', '/admin/validation-queue', '/admin/review-queue', '/admin/editor-queue', '/admin/published-history', '/admin/review-history', '/admin/media', '/admin/transcripts', '/admin/users', '/admin/translations', '/admin/analytics', '/admin/ai-monitoring', '/admin/audit-logs', '/super-admin/dashboard', '/super-admin/admins', '/super-admin/languages', '/super-admin/backup', '/super-admin/system', '/dashboard', '/profile', '/my-submissions', '/contribute'];
+    const adminPages = ['/admin/dashboard', '/admin/content', '/admin/validation-queue', '/admin/review-queue', '/admin/published-history', '/admin/review-history', '/admin/media', '/admin/transcripts', '/admin/users', '/admin/interface', '/admin/analytics', '/admin/ai-monitoring', '/admin/audit-logs', '/super-admin/dashboard', '/super-admin/admins', '/super-admin/languages', '/super-admin/backup', '/super-admin/system', '/dashboard', '/profile', '/my-submissions', '/contribute'];
     for (const pathname of adminPages) {
       const response = await fetch(base + pathname, { headers: { Cookie: 'authjs.session-token=' + masterToken }, redirect: 'manual' });
       assert.equal(response.status, 200, 'Administrator page ' + pathname);
       await response.text();
     }
-    console.log('PASS 23 signed-in administrator/public pages: HTTP 200');
-    for (const [pathname, destination] of [['/', '/login'], ['/luo', '/'], ['/eng', '/']]) {
+    console.log('PASS signed-in administrator/public pages: HTTP 200');
+    for (const [pathname, destination] of [['/', '/application'], ['/luo', '/'], ['/eng', '/']]) {
       const response = await fetch(base + pathname, { redirect: 'manual' });
       // A loading boundary can commit HTML before the server resolves auth;
       // Next then emits the redirect inside that stream instead of HTTP 307.
       if (pathname === '/' && response.status === 200) {
         const html = await response.text();
-        assert.ok(html.includes('NEXT_REDIRECT') && html.includes('url=/login'), 'Streamed anonymous login redirect');
+        assert.ok(html.includes('NEXT_REDIRECT') && html.includes('url=/application'), 'Streamed anonymous public-library redirect');
         continue;
       }
       assert.equal(response.status, 307, 'Retired landing ' + pathname);
       assert.equal(new URL(response.headers.get('location'), base).pathname, destination);
     }
-    console.log('PASS anonymous entry routes: current login replaces the retired landing screen');
+    console.log('PASS anonymous entry routes: public library opens without mandatory login');
     const publicPages = ['/luo/muma', '/luo/ngero', '/luo/ngeche', '/luo/sigana', '/luo/sigana/folktales', '/luo/wende', '/luo/gik-luo', '/luo/piny-luo', '/luo/search', '/chatbot', '/about', '/privacy', '/terms', '/login', '/register', '/mobile-apps'];
     for (const pathname of publicPages) {
       const response = await fetch(base + pathname, { redirect: 'manual' });

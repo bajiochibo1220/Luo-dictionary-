@@ -5,7 +5,8 @@ import { prisma } from "@/lib/db";
 import { canFinalizeContent } from "@/lib/permissions";
 import { logAction } from "@/lib/audit";
 import { buildRecordUri, isPubliclyEligible, mayReviewRecord } from "@/lib/governance";
-import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/lib/phase-one-content";
+import { validatePhaseOneSubmission } from "@/lib/phase-one-content";
+import { hasPublicReleasePermission } from "@/lib/public-release-readiness";
 import { hasGemini } from "@/lib/ai/gemini";
 import { embedRecord, embedTranscript } from "@/lib/ai/embeddings";
 import { missingEnglishTranslation } from "@/lib/english-translation";
@@ -42,7 +43,7 @@ async function handlePOST(req: NextRequest) {
     const contentError = validatePhaseOneSubmission(record.module.code, record.title, record.data, hasLinkedTranscript);
     if (contentError) return NextResponse.json({ success: false, error: `${record.title}: ${contentError}` }, { status: 400 });
     if (!isPubliclyEligible(record)) return NextResponse.json({ success: false, error: `${record.title}: public consent, public restriction, or the embargo date needs attention.` }, { status: 400 });
-    if (!hasPublicReleaseSourcePermission(record.module.code, record.data)) return NextResponse.json({ success: false, error: `${record.title}: confirmed source permission is required.` }, { status: 400 });
+    if (!hasPublicReleasePermission(record)) return NextResponse.json({ success: false, error: `${record.title}: confirmed source permission or a recorded staff release decision is required.` }, { status: 400 });
   }
 
   const reviewerId = (session.user as any).id as string;
@@ -90,16 +91,16 @@ async function handlePOST(req: NextRequest) {
           contributorName: priorConsent?.contributorName ?? "Undisclosed contributor",
           contributorType: "reviewer",
           consentType: "source_permission",
-          consentGiven: true,
-          consentDate: priorConsent?.consentDate ?? null,
-          sourcePermissionStatus: "confirmed",
+          consentGiven: contentData.sourcePermission === "confirmed",
+          consentDate: contentData.sourcePermission === "confirmed" ? priorConsent?.consentDate ?? null : null,
+          sourcePermissionStatus: contentData.sourcePermission === "confirmed" ? "confirmed" : contentData.sourcePermission === "not_granted" ? "not_granted" : "needs_review",
           attributionPreference: typeof contentData.attributionPreference === "string" ? contentData.attributionPreference : priorConsent?.attributionPreference ?? null,
           consentScope: record.consentScope,
           restrictionLevel: record.restrictionLevel,
           embargoUntil: record.embargoUntil,
           reviewedById: reviewerId,
           reviewedAt: publishedAt,
-          notes: "Source permission and attached files checked during bulk final approval.",
+          notes: "Recorded existing source permission evidence during bulk final approval; a staff public-release decision may authorize publication separately.",
         },
       });
       const attachedMedia = await tx.mediaAsset.findMany({ where: { recordId: record.id }, select: { id: true } });

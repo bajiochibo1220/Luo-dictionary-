@@ -1,6 +1,7 @@
 import { createAppClient } from "@/lib/app-client";
 import { createNativeSession } from "./native-session";
 import { createChatTransport } from "@/lib/chat-transport";
+import { apiRequestTimeout } from "@/lib/api-request-timeout";
 
 const configuredOrigin = import.meta.env.VITE_API_ORIGIN || "http://localhost:3000";
 export const nativeSession = createNativeSession(configuredOrigin);
@@ -22,7 +23,7 @@ export const featureFetch: typeof fetch = async (input, init) => {
   const headers = new Headers(init?.headers);
   if (typeof init?.body === "string" && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`); else headers.delete("Authorization");
-  return fetch(url, { ...init, credentials: "omit", cache: "no-store", headers, signal: init?.signal ?? AbortSignal.timeout(40000) });
+  return fetch(url, { ...init, credentials: "omit", cache: "no-store", headers, signal: init?.signal ?? AbortSignal.timeout(apiRequestTimeout(url.href, init?.method)) });
 };
 export async function featureRequest(path: string, init?: RequestInit) {
   const response = await featureFetch(path, init);

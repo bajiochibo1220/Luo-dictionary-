@@ -1,4 +1,4 @@
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
@@ -33,7 +33,7 @@ export function FolktaleCard({
       ) : item.type === "video" ? (
         <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-64 w-full bg-stone-950" />
       ) : item.type === "audio" ? (
-        <audio key={item.id} src={item.url} controls className="w-full" />
+        <MediaAudio key={item.id} src={item.url} controls className="w-full" />
       ) : null)}
       <Link href={`/${langCode}/sigana/folktales/${tale.id}`} className="block">
       <div className="p-6">

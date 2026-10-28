@@ -26,8 +26,8 @@ export default async function AdminDashboardPage() {
     const publisherLanguages = roleLanguages("publisher");
     const [uploadsToFinish, culturePending, publishPending, publishedHistory] = await Promise.all([
       uploaderLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: uploaderLanguages }, contributorId: user.id, status: "draft" } }) : 0,
-      cultureLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: cultureLanguages }, OR: [{ status: "submitted" }, { status: "needs_edit" }, { status: "under_review", validatorId: null }, { status: "rejection_review" }], } }) : 0,
-      publisherLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: publisherLanguages }, status: "under_review", validatorId: { not: null } } }) : 0,
+      cultureLanguages.length ? prisma.culturalRecord.count({ where: { publicationOfId: null, languageId: { in: cultureLanguages }, OR: [{ status: "submitted" }, { status: "needs_edit" }, { status: "under_review", validatorId: null }, { status: "rejection_review" }], } }) : 0,
+      publisherLanguages.length ? prisma.culturalRecord.count({ where: { publicationOfId: null, languageId: { in: publisherLanguages }, status: "under_review", validatorId: { not: null } } }) : 0,
       publisherLanguages.length ? prisma.culturalRecord.count({ where: { languageId: { in: publisherLanguages }, status: "published" } }) : 0,
     ]);
     const roleWork = [
@@ -59,10 +59,10 @@ export default async function AdminDashboardPage() {
         )
         .map((r) => r.languageId);
   const recordScope: any = isSuperAdmin && selectedCultureId
-    ? { languageId: selectedCultureId }
+    ? { languageId: selectedCultureId, publicationOfId: null }
     : isSuperAdmin
-    ? {}
-    : { languageId: { in: managedLanguageIds } };
+    ? { publicationOfId: null }
+    : { languageId: { in: managedLanguageIds }, publicationOfId: null };
 
   const hasLanguageAdminRole = userRoles.some((role) => role.role === "language_admin");
   const hasCultureRole = isSuperAdmin || hasLanguageAdminRole || userRoles.some((role) => role.role === "content_editor");

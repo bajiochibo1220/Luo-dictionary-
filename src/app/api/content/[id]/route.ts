@@ -14,7 +14,7 @@ import { parseContentProvenance } from "@/lib/content-provenance";
 import { publicFields } from "@/lib/public-projection";
 import { withdrawPublication } from "@/lib/content-publication";
 import { isPubliclyEligible } from "@/lib/governance";
-import { hasPublicReleaseSourcePermission } from "@/lib/phase-one-content";
+import { hasPublicReleasePermission } from "@/lib/public-release-readiness";
 
 export async function GET(
   _req: NextRequest,
@@ -164,6 +164,7 @@ async function handlePATCH(
     if (!governance.success) return NextResponse.json({ error: governance.error.issues[0]?.message || "Invalid governance metadata" }, { status: 400 });
     Object.assign(update, governance.data);
     update.nrfMetadata = {
+      ...(record.nrfMetadata && typeof record.nrfMetadata === "object" && !Array.isArray(record.nrfMetadata) ? record.nrfMetadata : {}),
       domain: "culture",
       genre: (await prisma.module.findUnique({ where: { id: record.moduleId }, select: { code: true } }))?.code ?? "culture",
       consentScope: governance.data.consentScope,
@@ -199,7 +200,7 @@ async function handlePATCH(
     if (moved.count !== 1) throw new Error("This item moved to another review stage. Refresh before editing it again.");
     const saved = await tx.culturalRecord.findUnique({ where: { id: params.id } });
     if (!saved) throw new Error("This item could not be found after saving.");
-    if (!isPubliclyEligible(saved) || !hasPublicReleaseSourcePermission("", saved.data)) await withdrawPublication(tx, record.id);
+    if (!isPubliclyEligible(saved) || !hasPublicReleasePermission(saved)) await withdrawPublication(tx, record.id);
     if (provenance.data) {
       const existingProvenance = await tx.provenance.findFirst({
         where: {

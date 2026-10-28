@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceText } from "@/components/shared/interface-language";
 
@@ -45,7 +45,7 @@ export function ProverbCard({
         ) : item.type === "video" ? (
           <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-72 rounded-lg mb-4 bg-stone-950" />
         ) : item.type === "audio" ? (
-          <audio key={item.id} src={item.url} controls className="w-full mb-4" />
+          <MediaAudio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}
         <EnglishVersionLink langCode={langCode} href={`/${langCode}/ngero/${proverb.id}`} />
         <p className="text-xl md:text-2xl font-serif text-stone-800 mb-3 leading-snug">

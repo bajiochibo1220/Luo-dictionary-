@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
 
@@ -148,7 +148,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
           <div key={asset.id} className="w-full flex items-center justify-center bg-black/5 overflow-hidden rounded-lg">
             {asset.type === "image" && <MediaImage loading="lazy" src={asset.thumbnailUrl || asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
             {asset.type === "video" && <MediaVideo onPlay={()=>emitActivity({eventType:"video_play",recordId:item.id})} preload="none" src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
-            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><audio onPlay={()=>emitActivity({eventType:"audio_play",recordId:item.id})} preload="none" src={asset.url} controls className="w-full" /></div>}
+            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><MediaAudio onPlay={()=>emitActivity({eventType:"audio_play",recordId:item.id})} preload="none" src={asset.url} controls className="w-full" /></div>}
             {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline"><InterfaceText source="Open transcript or document" /></a>}
           </div>
         ))}

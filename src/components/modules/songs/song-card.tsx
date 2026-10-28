@@ -1,4 +1,4 @@
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
@@ -58,7 +58,7 @@ export function SongCard({
         ) : item.type === "video" ? (
           <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-64 rounded-lg mb-4 bg-stone-950" />
         ) : item.type === "audio" ? (
-          <audio key={item.id} src={item.url} controls className="w-full mb-4" />
+          <MediaAudio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}
         <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Song" /></span>
 

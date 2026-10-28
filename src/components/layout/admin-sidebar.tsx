@@ -13,11 +13,13 @@ const DASHBOARD: NavItem = { label: "Dashboard", href: "/admin/dashboard", icon:
 const ROLE_ITEMS: Record<string, NavItem[]> = {
   uploader: [{ label: "Upload Content", href: "/admin/content", icon: "↑" }],
   content_editor: [
+    { label: "Content & early publishing", href: "/admin/content", icon: "C" },
     { label: "Review & edit", href: "/admin/validation-queue", icon: "E" },
     { label: "Review history", href: "/admin/review-history", icon: "H" },
     { label: "Edit system text", href: "/admin/interface", icon: "T" },
   ],
   publisher: [
+    { label: "Content & early publishing", href: "/admin/content", icon: "C" },
     { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" },
     { label: "Published History", href: "/admin/published-history", icon: "H" },
   ],

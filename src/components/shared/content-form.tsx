@@ -77,17 +77,25 @@ export function ContentFormCore({
   const [sourcePermission, setSourcePermission] = useState<string>(local?.sourcePermission ?? initialData?.sourcePermission ?? "needs_review");
   const [attributionPreference, setAttributionPreference] = useState<string>(local?.attributionPreference ?? initialData?.attributionPreference ?? "ask_later");
   const [isRecording, setIsRecording] = useState(false);
+  const [preparingAudio, setPreparingAudio] = useState(false);
+  const startingCapture = useRef(false);
+  const captureEpoch = useRef(0);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const requiresSourcePermission = !isTranslation;
 
-  useEffect(() => () => {
-    if (recorderRef.current?.state === "recording") {
-      recorderRef.current.onstop = null;
-      recorderRef.current.stop();
-    }
-    streamRef.current?.getTracks().forEach((track) => track.stop());
+  useEffect(() => {
+    const version = captureEpoch;
+    version.current++;
+    return () => {
+      version.current++;
+      if (recorderRef.current?.state === "recording") {
+        recorderRef.current.onstop = null;
+        recorderRef.current.stop();
+      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
   }, []);
   const [governance, setGovernance] = useState({
     consentScope: initialData?.consentScope ?? "pending",
@@ -114,7 +122,7 @@ export function ContentFormCore({
       attributionPreference, governance, provenance, updatedAt: Date.now(), ...overrides };
   }
   async function saveOnDevice() {
-    if (!deviceDraft || deviceSaving || loading || isRecording) return;
+    if (!deviceDraft || deviceSaving || loading || isRecording || preparingAudio) return;
     setDeviceSaving(true);
     try {
       const draft = snapshot(); await saveDeviceDraft(deviceDraft.scope, draft);
@@ -129,7 +137,7 @@ export function ContentFormCore({
   }
 
   async function save(status: "draft" | "submitted") {
-    if (loading || deviceSaving || isRecording) return;
+    if (loading || deviceSaving || isRecording || preparingAudio) return;
     if (requiresSourcePermission && status === "submitted" && sourcePermission === "not_granted") {
       toast.error(<InterfaceText source={"Keep this as a draft until permission is granted."} />);
       return;
@@ -231,6 +239,7 @@ export function ContentFormCore({
   }
 
   async function startAudioRecording() {
+    if (startingCapture.current || recorderRef.current?.state === "recording") return;
     if (sourcePermission !== "confirmed") {
       toast.error(<InterfaceText source={"Confirm the speaker or knowledge holder has given permission before recording."} />);
       return;
@@ -239,19 +248,31 @@ export function ContentFormCore({
       toast.error(<InterfaceText source={"Audio recording is not supported in this browser. You can upload an audio file instead."} />);
       return;
     }
+    const expected = captureEpoch.current;
+    startingCapture.current = true; setPreparingAudio(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (captureEpoch.current !== expected) { stream.getTracks().forEach(track => track.stop()); return; }
       streamRef.current = stream;
       chunksRef.current = [];
       const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"].find((type) => MediaRecorder.isTypeSupported(type));
       const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      let captureFailed = false;
+      recorder.onerror = () => {
+        captureFailed = true; stream.getTracks().forEach(track => track.stop());
+        recorderRef.current = null; streamRef.current = null;
+        if (captureEpoch.current === expected) { setIsRecording(false); toast.error(<InterfaceText source="Recording failed. Check microphone access and try again." />); }
+      };
       recorder.ondataavailable = (event) => {
         if (event.data.size) chunksRef.current.push(event.data);
       };
       recorder.onstop = () => {
+        stream.getTracks().forEach(track => track.stop());
+        if (captureEpoch.current !== expected || captureFailed) return;
         const type = recorder.mimeType || "audio/webm";
         const extension = type.includes("mp4") ? "m4a" : "webm";
         const recording = new File(chunksRef.current, `${moduleCode}-${Date.now()}.${extension}`, { type });
+        if (!recording.size) { setIsRecording(false); recorderRef.current = null; streamRef.current = null; toast.error(<InterfaceText source="No audio was captured. Please record again or upload an audio file." />); return; }
         setFiles((current) => ({ ...current, audio: recording }));
         stream.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
@@ -266,7 +287,7 @@ export function ContentFormCore({
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
       toast.error(<InterfaceText source={"Microphone access was unavailable. Check browser permission or upload an audio file."} />);
-    }
+    } finally { startingCapture.current = false; if (captureEpoch.current === expected) setPreparingAudio(false); }
   }
 
   function stopAudioRecording() {
@@ -354,8 +375,8 @@ export function ContentFormCore({
           <div className="mt-5 rounded-lg border border-stone-900/10 bg-white p-4">
             <p className="text-sm font-semibold text-stone-900"><InterfaceText source="Record an oral-history audio narration" /></p>
             <p className="mt-1 text-xs leading-5 text-stone-700"><InterfaceText source="Confirm permission first. The recording stays private until a reviewer checks the contribution and its access settings." /></p>
-            <button type="button" onClick={isRecording ? stopAudioRecording : startAudioRecording} disabled={loading} className="mt-3 min-h-11 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">
-              <InterfaceText source={isRecording ? "Stop recording" : "Start recording"} />
+            <button type="button" onClick={isRecording ? stopAudioRecording : startAudioRecording} disabled={loading || preparingAudio} className="mt-3 min-h-11 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">
+              <InterfaceText source={preparingAudio ? "Opening microphone..." : isRecording ? "Stop recording" : "Start recording"} />
             </button>
             {files.audio && <p className="mt-2 text-xs text-stone-700" role="status"><InterfaceText source="Audio attached: " />{files.audio.name}</p>}
           </div>
@@ -427,7 +448,7 @@ export function ContentFormCore({
       {deviceDraft && <section className="my-5 rounded-xl border border-stone-300 bg-white p-4">
         <h3 className="font-semibold"><InterfaceText source="Work on this device" /></h3>
         <p className="mt-2 text-sm"><InterfaceText source="Save text and selected files before closing the app or going offline. Device copies use this browser or app profile; use a trusted device and remove copies when finished. Clearing app data removes them. Changes after a device save need another save." /></p>
-        <button type="button" disabled={loading || deviceSaving || isRecording} onClick={() => void saveOnDevice()} className="mt-3 min-h-11 rounded-full border border-stone-400 px-5 py-2 disabled:opacity-50"><InterfaceText source={deviceSaving ? "Saving on device..." : "Save on this device"} /></button>
+        <button type="button" disabled={loading || deviceSaving || isRecording || preparingAudio} onClick={() => void saveOnDevice()} className="mt-3 min-h-11 rounded-full border border-stone-400 px-5 py-2 disabled:opacity-50"><InterfaceText source={deviceSaving ? "Saving on device..." : "Save on this device"} /></button>
         {deviceSavedAt && <p role="status" className="mt-2 text-sm"><InterfaceText source="Device copy saved " />{new Date(deviceSavedAt).toLocaleString()}.</p>}
         {Object.entries(files).filter(([, file]) => file).map(([type, file]) => <p key={type} className="mt-2 text-sm"><InterfaceText source="Selected " />{type}: {file!.name} ({Math.ceil(file!.size / 1024)}<InterfaceText source=" KB) " /><button type="button" className="min-h-11 px-3 underline" disabled={loading || deviceSaving} onClick={() => setFiles(current => ({ ...current, [type]: null }))}><InterfaceText source="Remove " />{type}</button></p>)}
       </section>}
@@ -435,14 +456,14 @@ export function ContentFormCore({
         {!isTranslation && !isAdmin && <button
           type="button"
           onClick={() => save("draft")}
-          disabled={loading || deviceSaving || isRecording}
+          disabled={loading || deviceSaving || isRecording || preparingAudio}
           className="min-h-11 rounded-full border border-stone-900/25 bg-white/70 px-5 py-3 font-semibold text-stone-900 hover:bg-white disabled:opacity-50"
         >
           <InterfaceText source={loading ? "Saving..." : "Save private draft"} />
         </button>}
         <button
           type="submit"
-          disabled={loading || deviceSaving || isRecording}
+          disabled={loading || deviceSaving || isRecording || preparingAudio}
           className="px-6 py-3 bg-amber-700 text-amber-50 rounded-full font-semibold hover:bg-amber-800 disabled:opacity-50 transition shadow-lg"
         >
           {loading ? "Saving..." : isTranslation ? "Save translation" : isAdmin ? recordId ? "Save changes" : "Save draft" : "Submit for reviewer"}

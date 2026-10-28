@@ -3,33 +3,33 @@
   "results": [
     {
       "width": 360,
-      "first": 122,
-      "second": 122,
+      "first": 65,
+      "second": 65,
       "filters": [
         {
           "label": "All",
-          "top": 293,
-          "width": 44
+          "top": 842,
+          "width": 55.0625
         },
         {
           "label": "Images",
-          "top": 293,
-          "width": 44
+          "top": 842,
+          "width": 55.0625
         },
         {
           "label": "Audio",
-          "top": 293,
-          "width": 44
+          "top": 842,
+          "width": 55.0625
         },
         {
           "label": "Video",
-          "top": 293,
-          "width": 44
+          "top": 842,
+          "width": 55.0625
         },
         {
           "label": "Transcripts",
-          "top": 293,
-          "width": 44
+          "top": 842,
+          "width": 55.0625
         }
       ]
     },
@@ -40,28 +40,28 @@
       "filters": [
         {
           "label": "All",
-          "top": 162,
-          "width": 75.015625
+          "top": 842,
+          "width": 185.890625
         },
         {
           "label": "Images",
-          "top": 162,
-          "width": 102.21875
+          "top": 842,
+          "width": 185.90625
         },
         {
           "label": "Audio",
-          "top": 162,
-          "width": 94.015625
+          "top": 842,
+          "width": 185.890625
         },
         {
           "label": "Video",
-          "top": 162,
-          "width": 93.765625
+          "top": 842,
+          "width": 185.90625
         },
         {
           "label": "Transcripts",
-          "top": 162,
-          "width": 125.921875
+          "top": 842,
+          "width": 185.890625
         }
       ]
     }

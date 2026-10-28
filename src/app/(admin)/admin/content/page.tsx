@@ -56,7 +56,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     status: record.status,
     hasPublicVersion: record.publication?.status === "published",
     earlyPublicationIssues: publicReleaseIssues(record),
-    canEarlyPublish: !record.publication && record.contributorId !== user.id && ["draft", "submitted", "under_review", "needs_edit"].includes(record.status) && canPublishBeforeReview(session, record.languageId),
+    canEarlyPublish: !record.publication && ["draft", "submitted", "under_review", "needs_edit"].includes(record.status) && canPublishBeforeReview(session, record.languageId),
     validatorId: record.validatorId,
     createdAt: record.createdAt.toISOString(),
     editLanguageId: record.languageId,

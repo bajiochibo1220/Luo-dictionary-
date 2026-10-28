@@ -53,10 +53,11 @@ test('poster is a small JPEG and invalid sizes do not fetch storage', async () =
   });
   await withFetch(() => assert.fail('invalid size must not fetch'), async () => { assert.equal((await f.get('?width=999999')).status, 400); });
 });
-test('processing video derivative falls back to streaming original; downloads always retain original', async () => {
+test('processing video derivative signals failure so the player can switch consistently to original bytes', async () => {
   const f = fixture('video'); let urls = [];
   await withFetch(async url => { urls.push(url); return url.endsWith('optimized') ? new Response('', { status: 423 }) : new Response('original', { headers: { 'content-type': 'video/quicktime' } }); }, async () => {
-    assert.equal(await (await f.get()).text(), 'original'); assert.equal(urls.length, 2);
+    assert.equal((await f.get()).status, 502); assert.equal(urls.length, 1);
+    urls = []; assert.equal(await (await f.get('?original=1')).text(), 'original'); assert.equal(urls.length, 1);
     urls = []; const response = await f.get('?download=1'); assert.equal(urls.length, 1); assert.match(urls[0], /original$/);
     assert.match(response.headers.get('content-disposition'), /attachment/); assert.equal(response.headers.get('cache-control'), 'private, no-store');
   });
@@ -72,4 +73,13 @@ test('responsive image URLs preserve poster parameters without rewriting downloa
   assert.match(responsiveMediaSources('/api/media/a/file?poster=1&width=640').srcSet, /poster=1&width=320 320w/);
   assert.deepEqual(responsiveMediaSources('/api/media/a/file?download=1'), {});
   assert.deepEqual(responsiveMediaSources('https://external.test/image'), {});
+});
+
+test('audio previews stream compressed MP3 while original downloads and native previews retain original bytes',async()=>{
+ const f=fixture('audio');
+ await withFetch(async(url,init)=>new Response('audio',{status:init.headers.range?206:200,headers:{'content-type':'audio/mpeg',...(init.headers.range?{'content-range':'bytes 0-4/100'}:{})}}),async()=>{
+  const response=await f.get('',{Range:'bytes=0-4'});assert.equal(response.status,206);assert.equal(f.options().format,'mp3');assert.equal(f.options().transformation[1].bit_rate,'128k');
+  assert.equal(response.headers.get('content-range'),'bytes 0-4/100');
+ });
+ await withFetch(async url=>{assert.match(url,/original$/);return new Response('original',{headers:{'content-type':'audio/wav'}});},async()=>{assert.equal(await(await f.get('?original=1')).text(),'original');assert.equal(await(await f.get('?download=1')).text(),'original');});
 });

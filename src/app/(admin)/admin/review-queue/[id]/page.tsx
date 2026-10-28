@@ -1,3 +1,4 @@
+import { MediaAudio, MediaVideo, MediaImage } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import { mayReviewRecord, canReadMedia } from "@/lib/governance";
 import Link from "next/link";
@@ -133,19 +134,19 @@ export default async function ReviewDetailPage({
               {record.media.map((m) => (
                 <div key={m.id} className="bg-stone-50 rounded-lg overflow-hidden border border-stone-200">
                   {m.type === "image" && (
-                    <img src={m.url} alt={m.caption || ""} className="w-full max-h-64 object-cover" />
+                    <MediaImage src={`/api/media/${encodeURIComponent(m.id)}/file`} alt={m.caption || ""} className="w-full max-h-64 object-cover" />
                   )}
                   {m.type === "video" && (
-                    <video src={m.url} controls className="w-full max-h-64 bg-black" />
+                    <MediaVideo src={`/api/media/${encodeURIComponent(m.id)}/file`} controls className="w-full max-h-64 bg-black" />
                   )}
                   {m.type === "audio" && (
                     <div className="p-4">
-                      <audio src={m.url} controls className="w-full" />
+                      <MediaAudio src={`/api/media/${encodeURIComponent(m.id)}/file`} controls className="w-full" />
                     </div>
                   )}
                   <div className="px-3 py-2 text-xs text-stone-500 border-t border-stone-200">
                     <p className="font-medium text-stone-700 capitalize">{m.type}</p>
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline"><InterfaceText source="Open original â†’" /></a>
+                    <a href={`/api/media/${encodeURIComponent(m.id)}/file?original=1`} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline"><InterfaceText source="Open original â†’" /></a>
                   </div>
                 </div>
               ))}

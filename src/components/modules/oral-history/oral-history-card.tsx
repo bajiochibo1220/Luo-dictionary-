@@ -1,4 +1,4 @@
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
@@ -31,7 +31,7 @@ export function OralHistoryCard({
   return (
     <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       {(item.media ?? []).map((asset) => asset.type === "audio" ? (
-        <audio key={asset.id} src={asset.url} controls className="w-full" />
+        <MediaAudio key={asset.id} src={asset.url} controls className="w-full" />
       ) : asset.type === "video" ? (
         <MediaVideo key={asset.id} src={asset.url} poster={asset.thumbnailUrl ?? undefined} controls className="max-h-56 w-full bg-stone-950" />
       ) : asset.type === "image" ? (

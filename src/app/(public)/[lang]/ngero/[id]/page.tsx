@@ -1,4 +1,4 @@
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -92,7 +92,7 @@ export default async function ProverbDetailPage({
       {record.media.map((item) => <div key={item.id} className="my-5 rounded-xl bg-white border border-stone-100 p-5">
         {item.type === "image" ? <MediaImage src={item.url} alt={record.title} className="max-h-[32rem] w-full object-contain" /> :
           item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-[32rem] w-full bg-stone-950" /> :
-          item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
+          item.type === "audio" ? <MediaAudio src={item.url} controls className="w-full" /> :
           <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
       </div>)}
     </div>

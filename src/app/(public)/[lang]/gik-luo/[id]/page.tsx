@@ -1,4 +1,4 @@
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
@@ -118,7 +118,7 @@ export default async function ArtifactDetailPage({
       {record.media.filter((item) => item.type !== "image").map((item) => (
         <section key={item.id} className="mb-6 bg-white rounded-xl border border-stone-100 p-5">
           {item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
-            item.type === "audio" ? <audio src={item.url} controls className="w-full" /> :
+            item.type === "audio" ? <MediaAudio src={item.url} controls className="w-full" /> :
             <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
         </section>
       ))}

@@ -10,6 +10,7 @@ export const POST = withApiErrors(async (req: NextRequest, { params }: { params:
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
   if (body?.confirmPublicSharing !== undefined && typeof body.confirmPublicSharing !== "boolean") return NextResponse.json({ success: false, error: "Public sharing approval must be explicitly confirmed." }, { status: 400 });
-  const publication = await prisma.$transaction(tx => publishBeforeReview(tx, id, session, body?.confirmPublicSharing === true), { timeout: 60_000 });
+  if (body?.overrideAccessRestrictions !== undefined && typeof body.overrideAccessRestrictions !== "boolean") return NextResponse.json({ success: false, error: "Invalid publication option." }, { status: 400 });
+  const publication = await prisma.$transaction(tx => publishBeforeReview(tx, id, session, body?.confirmPublicSharing === true, body?.overrideAccessRestrictions === true), { timeout: 60_000 });
   return NextResponse.json({ success: true, publicationId: publication.id, isProvisional: true });
 });

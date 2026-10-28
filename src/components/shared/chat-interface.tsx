@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceButton, InterfaceOption, InterfaceText, InterfaceTextarea } from "@/components/shared/interface-language";
 
@@ -407,7 +407,7 @@ function MediaCard({ media }: { media: MediaItem }) {
         {media.mediaType === "audio" && (
           <div className="p-4">
             <p className="text-xs text-amber-100/70 mb-2"><InterfaceText source="🎵 Audio" /></p>
-            <audio src={media.url} controls className="w-full" />
+            <MediaAudio src={media.url} controls className="w-full" />
           </div>
         )}
       </div>

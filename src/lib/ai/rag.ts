@@ -23,11 +23,12 @@ function detectMediaIntent(question: string): string | null {
 
 async function generateWithRetry(prompt: string, systemInstruction: string): Promise<{ text: string; model: string }> {
   const primary = await getGeminiModelName();
-  const fallback = (process.env.GEMINI_FALLBACK_MODEL || await getSystemSetting("gemini_fallback_model") || "gemini-3.6-flash").trim();
+  const fallback = (process.env.GEMINI_FALLBACK_MODEL || await getSystemSetting("gemini_fallback_model") || "gemini-3.6-flash").trim().replace(/^models\//, "");
   try { return await generateGeminiText(prompt, systemInstruction, primary); }
   catch (error) {
+    if ((error as { status?: number })?.status === 429) throw error;
     if (!fallback || fallback === primary) throw error;
-    return generateGeminiText(prompt, systemInstruction, fallback, 10000);
+    return generateGeminiText(prompt, systemInstruction, fallback, 25000);
   }
 }
 

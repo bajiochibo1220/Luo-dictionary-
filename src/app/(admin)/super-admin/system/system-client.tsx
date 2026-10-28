@@ -203,9 +203,9 @@ export function SystemClient({
               helpText="Used by the AI chatbot, semantic search, and content embeddings."
             />
 
-            <Field values={values} update={update} label="Text model" settingKey="gemini_model" placeholder="gemini-3.8-flash" />
+            <Field values={values} update={update} label="Text model" settingKey="gemini_model" placeholder="gemini-3.6-flash" />
             <Field values={values} update={update} label="Fallback text model" settingKey="gemini_fallback_model" placeholder="gemini-3.6-flash" />
-            <Field values={values} update={update} label="Illustration model" settingKey="gemini_image_model" placeholder="gemini-nano-banana-2.1" />
+            <Field values={values} update={update} label="Illustration model" settingKey="gemini_image_model" placeholder="gemini-3.1-flash-image" />
 
             <Field values={values} update={update}               label="Cloudinary Cloud Name"
               settingKey="cloudinary_cloud_name"

@@ -10,7 +10,7 @@ const base = process.env.SMOKE_BASE_URL || 'http://localhost:3000';
 async function main() {
   const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
   assert.ok(secret, 'Local session secret required');
-  const users = await prisma.user.findMany({ where: { status: 'active' }, take: 2, select: { id: true } });
+  const users = await prisma.user.findMany({ where: { status: 'active' }, take: 2, select: { id: true, sessionVersion: true } });
   assert.ok(users.length, 'An existing active account is required');
   const secure = new URL(base).protocol === 'https:';
   const cookie = secure ? '__Secure-authjs.session-token' : 'authjs.session-token';
@@ -28,7 +28,7 @@ async function main() {
   assert.equal(deniedPreflight.status, 403);
   let detailChecks = 0;
   for (const user of users) {
-    const token = await encode({ secret, salt: cookie, maxAge: 300, token: { sub: user.id, id: user.id } });
+    const token = await encode({ secret, salt: cookie, maxAge: 300, token: { sub: user.id, id: user.id, sessionVersion: user.sessionVersion } });
     const headers = { Cookie: `${cookie}=${token}` };
     const account = await read('/api/v1/account', headers);
     assert.equal(account.response.status, 200);
@@ -61,10 +61,10 @@ async function main() {
     assert.ok(html.includes('My account') && html.includes('Saved chats'), 'Shared account/history screen is served');
     const chatPage = await fetch(base + '/chatbot', { headers, signal: AbortSignal.timeout(30000) });
     assert.equal(chatPage.status, 200);
-    assert.ok((await chatPage.text()).includes('Allow Google AI'), 'Shared chat renders its processing-permission choice');
+    assert.ok((await chatPage.text()).includes('Allow AI processing for this chat'), 'Shared chat renders its processing-permission choice');
     console.log('PASS existing account identity, shared saved-chat history and private no-store response');
   }
   console.log(`PASS shared account/chat screens, explicit native preflight, rejected bearer fallback and anonymous history denial; ${detailChecks} existing saved-message comparisons; no records modified`);
 }
 
-main().catch(() => { console.error('Account/history smoke check failed. No personal data was printed.'); process.exitCode = 1; }).finally(() => prisma.$disconnect());
+main().catch(error => { console.error('Account/history smoke check failed: '+error.name+(typeof error.actual==='number'?' status '+error.actual+' expected '+error.expected:' at line '+(error.stack?.match(/smoke-account-sharing\.cjs:(\d+):/)?.[1]||'unknown'))); process.exitCode = 1; }).finally(() => prisma.$disconnect());

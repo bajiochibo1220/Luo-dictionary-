@@ -49,12 +49,13 @@ async function handleGET(
   }
 
   const download = request.nextUrl.searchParams.get("download") === "1";
+  const original = request.nextUrl.searchParams.get("original") === "1";
   const requestedWidth = request.nextUrl.searchParams.get("width");
   const width = requestedWidth ? Number(requestedWidth) : null;
   const poster = request.nextUrl.searchParams.get("poster") === "1";
   if (poster && asset.type !== "video") return NextResponse.json({ error: "Only videos have posters." }, { status: 400 });
   if (requestedWidth && ((asset.type !== "image" && !poster) || ![320,640,960,1280].includes(width!))) return NextResponse.json({ error: "Choose a supported image size." }, { status: 400 });
-  const optimized = !download && (asset.type === "image" || asset.type === "video");
+  const optimized = !download && !original && ["image", "video", "audio"].includes(asset.type);
   if (asset.deliveryType !== "authenticated" && !download && !optimized) {
     return new NextResponse(null, { status: 302, headers: { Location: asset.url, "Cache-Control": "private, no-store" } });
   }
@@ -73,8 +74,8 @@ async function handleGET(
     resource_type: asset.resourceType,
     type: asset.deliveryType === "authenticated" ? "authenticated" : "upload",
     sign_url: true, secure: true,
-    format: poster ? "jpg" : asset.type === "video" ? "mp4" : asset.format,
-    transformation: [
+    format: poster ? "jpg" : asset.type === "video" ? "mp4" : asset.type === "audio" ? "mp3" : asset.format,
+    transformation: asset.type === "audio" ? [{ quality: "auto" }, { audio_codec: "mp3", bit_rate: "128k" }] : [
       { width: width ?? (poster ? 640 : 1280), crop: "limit" },
       { quality: "auto" },
       ...(asset.type === "image" ? [{ fetch_format: "auto" }] : poster ? [{ start_offset: "0" }] : [{ video_codec: "h264" }]),
@@ -92,9 +93,9 @@ async function handleGET(
   if (optimized && upstream.status === 304) {
     return new NextResponse(null, { status: 304, headers: { ...nativeApiHeaders(request), "Cache-Control": "private, no-cache", Vary: "Accept", ETag: upstream.headers.get("etag") || revalidate || "" } });
   }
-  // A new video derivative may still be processing, or a legacy asset may not
-  // support conversion. Continue streaming the original rather than break play.
-  if (optimized && !poster && !upstream.ok && upstream.status !== 416) {
+  // Images may fall back as a complete response. Audio/video players switch to
+  // ?original=1 themselves, keeping all seek requests on one representation.
+  if (optimized && asset.type === "image" && !upstream.ok && upstream.status !== 416) {
     await upstream.body?.cancel();
     upstream = await fetch(originalUrl(), { headers: { ...(range ? { range } : {}) }, cache: "no-store", signal: request.signal });
   }
@@ -103,6 +104,7 @@ async function handleGET(
     return new NextResponse(null, { status: 416, headers: { ...nativeApiHeaders(request), "Cache-Control": "private, no-store", "Content-Range": upstream.headers.get("content-range") || "bytes */*" } });
   }
   if (!upstream.ok || !upstream.body) {
+    await upstream.body?.cancel();
     return NextResponse.json({ error: "Media is temporarily unavailable" }, { status: 502 });
   }
   if (download) {

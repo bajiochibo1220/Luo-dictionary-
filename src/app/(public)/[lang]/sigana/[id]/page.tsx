@@ -1,3 +1,4 @@
+import { MediaAudio } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -89,11 +90,11 @@ export default async function OralHistoryDetailPage({
           {record.media.length > 0 ? (
             <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-4">
               <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Audio Recording" /></p>
-              <audio
+              <MediaAudio
                 controls
                 className="w-full"
                 src={record.media.find((m) => m.type === "audio")?.url}
-              ><InterfaceText source="Your browser does not support audio." /></audio>
+              ><InterfaceText source="Your browser does not support audio." /></MediaAudio>
             </div>
           ) : (
             <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 mb-4 text-center text-sm text-stone-500"><InterfaceText source="Audio recording not yet uploaded" /></div>

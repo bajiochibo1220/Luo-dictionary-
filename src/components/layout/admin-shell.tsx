@@ -2,7 +2,7 @@
 import { InterfaceText } from "@/components/shared/interface-language";
 import { PartnerBranding } from "@/components/shared/partner-branding";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "./admin-sidebar";
@@ -65,7 +65,8 @@ function AdminWorkspace({ children, topbar, isSuperAdmin, isMasterSuperAdmin, ro
   const sidebar = useSidebar();
   const closeMobile = sidebar?.closeMobile;
   const pathname = usePathname();
-  useEffect(() => { closeMobile?.(); }, [pathname, closeMobile]);
+  const main = useRef<HTMLElement>(null);
+  useEffect(() => { closeMobile?.(); main.current?.scrollTo({ top: 0, left: 0 }); }, [pathname, closeMobile]);
 
   return <div className="heritage-app flex h-dvh overflow-hidden bg-[#b89a68]">
       <SidebarPanel width={256}>
@@ -75,7 +76,7 @@ function AdminWorkspace({ children, topbar, isSuperAdmin, isMasterSuperAdmin, ro
       <div className="relative isolate flex min-w-0 flex-1 flex-col">
         <PartnerBranding />
         {topbar}
-        <main className="heritage-canvas relative z-10 min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain p-4 md:p-8">
+        <main ref={main} className="heritage-canvas relative z-10 min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain p-4 md:p-8">
           <div className="absolute inset-0 opacity-[0.10] pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%23fff2d3' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 60px" }} />
           <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">{children}</div>
         </main>

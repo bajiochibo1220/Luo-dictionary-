@@ -9,6 +9,7 @@ import { embedRecord, embedTranscript } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, isPubliclyEligible } from "@/lib/governance";
 import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/lib/phase-one-content";
+import { hasPublicReleasePermission } from "@/lib/public-release-readiness";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 import { finishPublication } from "@/lib/content-publication";
 
@@ -55,7 +56,7 @@ async function handlePOST(
 
   const oldStatus = record.status;
   const sourcePermissionConfirmed = hasPublicReleaseSourcePermission(contentModule?.code ?? "", record.data);
-  const publicRelease = isPubliclyEligible(record) && sourcePermissionConfirmed;
+  const publicRelease = isPubliclyEligible(record) && hasPublicReleasePermission(record);
   const nextStatus = publicRelease ? "published" : "curated";
   const decisionAt = new Date();
 

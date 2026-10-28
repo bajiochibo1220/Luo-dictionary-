@@ -1,5 +1,5 @@
 "use client";
-import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceText } from "@/components/shared/interface-language";
 
@@ -40,7 +40,7 @@ export function RiddleCard({
         ) : item.type === "video" ? (
           <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="my-3 max-h-64 w-full rounded-lg bg-stone-950" />
         ) : item.type === "audio" ? (
-          <audio key={item.id} src={item.url} controls className="my-3 w-full" />
+          <MediaAudio key={item.id} src={item.url} controls className="my-3 w-full" />
         ) : null)}
         <p className="text-xs uppercase tracking-wider text-amber-600 mb-3"><InterfaceText source="Riddle" /></p>
         <p className="text-xl md:text-2xl font-serif text-stone-800 mb-2 leading-snug">

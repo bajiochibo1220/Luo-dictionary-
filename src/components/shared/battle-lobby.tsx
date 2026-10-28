@@ -17,7 +17,7 @@ export function BattleLobby({ request, resourceId }: { request: FeatureRequest; 
     try { const data = await request(`/api/v1/games?room=${encodeURIComponent(room.id)}`); if (expected === epoch.current) { setRoom(data); setError(""); } }
     catch(reason) { if (expected === epoch.current) setError(reason instanceof Error ? reason.message : "Unable to refresh the challenge."); }
   }, [request, room?.id]);
-  useEffect(() => { if (!room || room.status === "finished") return; const timer = window.setInterval(() => void refresh(), 2500); return () => window.clearInterval(timer); }, [refresh, room?.status]);
+  useEffect(() => { if (!room?.status || room.status === "finished") return; const timer = window.setInterval(() => void refresh(), 2500); return () => window.clearInterval(timer); }, [refresh, room?.status]);
   async function act(data: unknown) {
     const expected = epoch.current; setBusy(true); setError("");
     try { const result = await request("/api/v1/games", { method: "POST", body: JSON.stringify(data) }); if (expected === epoch.current) setRoom(result); }

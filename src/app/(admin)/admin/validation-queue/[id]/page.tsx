@@ -1,3 +1,4 @@
+import { MediaAudio, MediaVideo, MediaImage } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import { mayReviewRecord, canReadMedia } from "@/lib/governance";
 import Link from "next/link";
@@ -95,7 +96,7 @@ export default async function ValidationDetailPage({
       <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
         {record.publication?.status === "published" ? <p className="text-sm"><InterfaceText source="The uploaded version is public. Continue reviewing and editing here; publishing the reviewed version will replace it automatically." /></p> : <>
           <p className="mb-2 text-sm"><InterfaceText source="You can publish the uploaded version while review continues. Publishing the reviewed version later will replace it at the same public link." /></p>
-          {!record.publication && record.status !== "rejection_review" && record.contributorId !== user.id && canPublishBeforeReview(session, record.languageId) && <EarlyPublishButton recordId={record.id} />}
+          {!record.publication && record.status !== "rejection_review" && canPublishBeforeReview(session, record.languageId) && <EarlyPublishButton recordId={record.id} />}
         </>}
       </div>
 
@@ -160,9 +161,9 @@ export default async function ValidationDetailPage({
         <h2 className="mb-4 text-xs uppercase tracking-wider text-stone-500"><InterfaceText source="Attached files (" />{record.media.length}<InterfaceText source=") · check these with the story" /></h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {record.media.map((asset) => <article key={asset.id} className="overflow-hidden rounded-lg border border-stone-200 bg-stone-50">
-            {asset.type === "image" && <img src={`/api/media/${asset.id}/file`} alt={asset.caption || "Attached cultural image"} className="max-h-80 w-full object-contain bg-stone-900/5" />}
-            {asset.type === "video" && <video src={`/api/media/${asset.id}/file`} controls className="max-h-80 w-full bg-black" />}
-            {asset.type === "audio" && <audio src={`/api/media/${asset.id}/file`} controls className="w-full p-4" />}
+            {asset.type === "image" && <MediaImage src={`/api/media/${asset.id}/file`} alt={asset.caption || "Attached cultural image"} className="max-h-80 w-full object-contain bg-stone-900/5" />}
+            {asset.type === "video" && <MediaVideo src={`/api/media/${asset.id}/file`} controls className="max-h-80 w-full bg-black" />}
+            {asset.type === "audio" && <MediaAudio src={`/api/media/${asset.id}/file`} controls className="w-full p-4" />}
             <div className="flex items-center justify-between gap-3 border-t border-stone-200 px-3 py-2 text-xs text-stone-600">
               <span className="capitalize">{asset.type} · {asset.format}</span>
               <a href={`/api/media/${asset.id}/file?download=1`} target="_blank" rel="noopener noreferrer" className="text-amber-800 underline"><InterfaceText source="Open file" /></a>

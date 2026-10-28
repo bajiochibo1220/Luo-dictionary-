@@ -16,3 +16,13 @@ export function responsiveMediaSources(src: string): { srcSet?: string } {
     return `${path}?${sized} ${width}w`;
   }).join(", ") };
 }
+
+export function originalMediaSource(src?: string): string | null {
+  if (!src) return null;
+  try {
+    const url = new URL(src, "https://client.local");
+    if (!/^https?:$/.test(url.protocol) || !/^\/api\/media\/[^/]+\/file$/.test(url.pathname) || url.searchParams.has("original") || url.searchParams.has("download")) return null;
+    url.searchParams.set("original", "1");
+    return src.startsWith("/") && !src.startsWith("//") ? url.pathname + url.search : url.href;
+  } catch { return null; }
+}

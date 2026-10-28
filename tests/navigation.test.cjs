@@ -74,5 +74,5 @@ test('admin aggregation keeps language scope and correct totals without queries 
   assert.ok(html.includes('Module 1'));
   assert.ok(html.includes('&quot;count&quot;:7'));
   assert.equal(calls.length, 2);
-  for (const query of calls) assert.deepEqual(query.where.languageId, { in: [1] });
+  for (const query of calls) { assert.deepEqual(query.where.languageId, { in: [1] }); assert.equal(query.where.publicationOfId, null, "Public snapshots must not double-count source uploads"); }
 });

@@ -72,7 +72,7 @@ async function main(){
     const area=document.querySelector('main form textarea');
     Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(area,'Offline contribution text');area.dispatchEvent(new Event('input',{bubbles:true}));
     const files=new DataTransfer(); files.items.add(new File(['synthetic transcript bytes'],'fixture.txt',{type:'text/plain'}));
-    const fileInput=document.querySelector('main input[type=file][accept=".txt,.pdf,.doc,.docx"]');fileInput.files=files.files;fileInput.dispatchEvent(new Event('change',{bubbles:true}));
+    const fileInput=document.querySelector('main input[type=file][accept^=".txt,.pdf,.doc,.docx"]');fileInput.files=files.files;fileInput.dispatchEvent(new Event('change',{bubbles:true}));
   })()`);
   await clickText('Save on this device');
   await until(()=>evaluate('document.querySelector("main")?.textContent.includes("Device copy saved")'),'device contribution persisted');

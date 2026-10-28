@@ -1,0 +1,39 @@
+[
+  {
+    "mode": "conversation",
+    "pass": true,
+    "model": "gemini-3.6-flash",
+    "ms": 10223
+  },
+  {
+    "mode": "translation",
+    "pass": true,
+    "model": "gemini-3.6-flash",
+    "ms": 7579
+  },
+  {
+    "mode": "grammar",
+    "pass": true,
+    "model": "gemini-3.6-flash",
+    "ms": 20365
+  },
+  {
+    "mode": "writing",
+    "pass": true,
+    "model": "gemini-3.6-flash",
+    "ms": 11749
+  },
+  {
+    "mode": "story",
+    "pass": true,
+    "model": "gemini-3.6-flash",
+    "ms": 12086
+  },
+  {
+    "mode": "vocabulary-and-grade",
+    "pass": true,
+    "questions": 4,
+    "score": 100,
+    "rolledBack": true
+  }
+]

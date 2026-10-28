@@ -1,0 +1,100 @@
+{
+  "at": "2026-10-28T10:41:09.108Z",
+  "checks": [
+    {
+      "name": "database-and-role-samples",
+      "pass": true,
+      "ms": 1663,
+      "records": 82,
+      "media": [
+        {
+          "_count": {
+            "_all": 46
+          },
+          "type": "image",
+          "format": "jpg"
+        },
+        {
+          "_count": {
+            "_all": 5
+          },
+          "type": "image",
+          "format": "png"
+        }
+      ],
+      "roles": [
+        {
+          "_count": {
+            "_all": 4
+          },
+          "role": "language_admin"
+        }
+      ]
+    },
+    {
+      "name": "text-primary",
+      "pass": true,
+      "ms": 3867,
+      "model": "gemini-3.6-flash",
+      "nonempty": true
+    },
+    {
+      "name": "chat-public-greeting",
+      "pass": true,
+      "ms": 4457,
+      "model": "gemini-3.6-flash",
+      "nonempty": true
+    },
+    {
+      "name": "embedding",
+      "pass": true,
+      "ms": 1506,
+      "dimensions": 768
+    },
+    {
+      "name": "audio-transcription-provider",
+      "pass": true,
+      "ms": 5327,
+      "model": "gemini-3.6-flash",
+      "nonempty": true
+    },
+    {
+      "name": "image-understanding-provider",
+      "pass": true,
+      "ms": 4002,
+      "model": "gemini-3.6-flash",
+      "nonempty": true
+    },
+    {
+      "name": "illustration-provider",
+      "pass": false,
+      "ms": 321,
+      "status": 429,
+      "error": "The AI provider quota was reached. Try again later or check the service quota in System settings."
+    },
+    {
+      "name": "stored-audio-delivery",
+      "pass": true,
+      "ms": 767,
+      "skipped": true,
+      "reason": "No stored sample"
+    },
+    {
+      "name": "stored-image-delivery",
+      "pass": true,
+      "ms": 1986,
+      "status": 206,
+      "mime": "image/jpeg",
+      "range": "bytes 0-4095/18825",
+      "sampleBytes": 4096,
+      "originalBytes": "18825"
+    },
+    {
+      "name": "stored-video-delivery",
+      "pass": true,
+      "ms": 309,
+      "skipped": true,
+      "reason": "No stored sample"
+    }
+  ]
+}

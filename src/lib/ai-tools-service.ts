@@ -50,7 +50,7 @@ export async function runAiTool(userId: string, input: unknown) {
     const audio = task.task === "transcribe";
     if (audio ? asset.type !== "audio" : asset.type !== "image") throw new TutorError(400, "Choose the appropriate media type for this tool.");
     if (asset.sizeBytes > BigInt(8 * 1024 * 1024)) throw new TutorError(413, "Choose a source smaller than 8 MB.");
-    const mimeByFormat: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", webm: "audio/webm", aac: "audio/aac" };
+    const mimeByFormat: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", mp4: "audio/mp4", flac: "audio/flac", webm: "audio/webm", aac: "audio/aac" };
     const mime = mimeByFormat[asset.format.toLowerCase()];
     if (!mime || !mime.startsWith(audio ? "audio/" : "image/")) throw new TutorError(400, "Use a supported image or audio format.");
     await configureCloudinary();
