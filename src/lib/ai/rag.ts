@@ -1,3 +1,4 @@
+import { mediaThumbnail } from "@/lib/media-preview";
 import { publicCulturalText } from "@/lib/public-cultural-text";
 import { prisma } from "@/lib/db";
 import { getSystemSetting } from "@/lib/settings";
@@ -113,8 +114,8 @@ export async function askQuestion(
       ...dictionary.map((entry) => ({ id: entry.id, title: entry.dholuo, module: "Dictionary", similarity: 1 })),
     ];
     const catalogMedia: RAGMediaItem[] = [
-      ...records.flatMap((record) => record.media.map((item) => ({ recordId: record.id, title: record.title, module: record.module.baseName, mediaType: item.type, url: `/api/media/${encodeURIComponent(item.id)}/file`, thumbnailUrl: null, format: item.format }))),
-      ...dictionary.flatMap((entry) => entry.media.map((item) => ({ recordId: entry.id, title: entry.dholuo, module: "Dictionary", mediaType: item.type, url: `/api/media/${encodeURIComponent(item.id)}/file`, thumbnailUrl: null, format: item.format }))),
+      ...records.flatMap((record) => record.media.map((item) => ({ recordId: record.id, title: record.title, module: record.module.baseName, mediaType: item.type, url: `/api/media/${encodeURIComponent(item.id)}/file`, thumbnailUrl: mediaThumbnail(item.id, item.type), format: item.format }))),
+      ...dictionary.flatMap((entry) => entry.media.map((item) => ({ recordId: entry.id, title: entry.dholuo, module: "Dictionary", mediaType: item.type, url: `/api/media/${encodeURIComponent(item.id)}/file`, thumbnailUrl: mediaThumbnail(item.id, item.type), format: item.format }))),
     ];
     const media = catalogMedia.slice(0, 30);
     const { text: answer, model } = await generateWithRetry(
@@ -232,7 +233,7 @@ export async function askQuestion(
         module: r.module,
         mediaType: a.type,
         url: `/api/media/${a.id}/file`,
-        thumbnailUrl: a.type === "image" ? `/api/media/${a.id}/file` : null,
+        thumbnailUrl: mediaThumbnail(a.id, a.type),
         format: a.format,
       });
     }

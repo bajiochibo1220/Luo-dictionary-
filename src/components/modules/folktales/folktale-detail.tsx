@@ -1,4 +1,6 @@
 "use client";
+import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import Link from "next/link";
@@ -83,8 +85,8 @@ export function FolktaleDetail({ tale, langCode }: Props) {
 
       {tale.media.filter((item) => item.type !== "audio").map((item, index) => (
         <div key={item.id ?? index} className="mb-5 bg-white rounded-xl border border-stone-100 p-5">
-          {item.type === "image" ? <img src={item.url} alt={tale.title} className="w-full max-h-[32rem] object-contain rounded-lg" /> :
-            item.type === "video" ? <video src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
+          {item.type === "image" ? <MediaImage src={item.url} alt={tale.title} className="w-full max-h-[32rem] object-contain rounded-lg" /> :
+            item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
             <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
         </div>
       ))}

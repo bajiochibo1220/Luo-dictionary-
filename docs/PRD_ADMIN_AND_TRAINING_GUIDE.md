@@ -59,3 +59,14 @@ Run maintenance only when needed. Save its switch and test a separate signed-out
 ## Training exercise
 
 Use a non-production environment with clearly labelled fixtures: create a contribution, edit both versions, reject an unsuitable file, approve a correct record, publish, verify a public download, withdraw the record and confirm it disappears from search and AI source selection. Test an unassigned account against each privileged route. Complete one learning activity, two-player game, consented tutor request and a backup restoration rehearsal. Record participant feedback and remediation; production cultural approval requires the responsible people.
+
+## Publish multiple uploads together
+
+Open **Admin ? Content**. Tick individual rows, use the header checkbox (up to 100 visible items), or use **Select reviewed items ready to publish** / **Select items for publishing before review**.
+
+- Choose **Publish selected** for culturally reviewed items awaiting final publication.
+- Choose **Publish selected before review** to release eligible uploads while their review continues. The batch is one transaction: if any item fails a permission, consent, source-permission or stage check, none of the selected items is published. Correct the reported item or deselect it, then retry.
+- Batches can include different content areas and languages when you have the required publishing permission for every item. Final publication still requires completed review and the English version where applicable.
+- Use **Clear selection** to start again. Existing public versions cannot be published early again; publish their reviewed source to replace them automatically.
+
+Master administrators can see the selection controls even without separate language-role assignments. An independent authorized person must publish each upload; users cannot publish their own contributions.

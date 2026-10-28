@@ -136,3 +136,33 @@ test('a repeated early-release click cannot expose edits made after initial rele
   assert.equal((await post(new Request('http://localhost'), params)).status, 409);
   assert.equal(context.state.publication.title, 'Uploaded story');
 });
+
+function batchEarlyRoute(contexts, session = actor('publisher')) {
+  let active, transactions = 0, rolledBack = false;
+  const tx = new Proxy({}, { get: (_target, key) => key === '$queryRaw' ? async (_sql, id) => { active = contexts.find(c => c.source.id === id); return []; } : active?.tx[key] });
+  const post = loader({ '@/lib/auth': { auth: async () => session }, '@/lib/db': { prisma: { $transaction: async callback => {
+    transactions++;
+    const snapshots = contexts.map(c => ({ source: structuredClone(c.source), state: structuredClone(c.state) }));
+    try { return await callback(tx); } catch (error) { rolledBack = true; contexts.forEach((c, i) => { Object.assign(c.source, snapshots[i].source); Object.assign(c.state, snapshots[i].state); }); throw error; }
+  } } } })('src/app/api/content/bulk-publish-before-review/route.ts').POST;
+  return { post: ids => post(new Request('http://localhost/api/content/bulk-publish-before-review', { method: 'POST', body: JSON.stringify({ recordIds: ids }) })), stats: () => ({ transactions, rolledBack }) };
+}
+test('a single early-publication batch releases multiple uploads across stages and content areas', async () => {
+  const a = fixture(), b = fixture(); a.source.id = 'a'; a.source.status = 'draft'; b.source.id = 'b'; b.source.status = 'needs_edit'; b.source.moduleId = 3;
+  const batch = batchEarlyRoute([a, b]); const response = await batch.post(['b', 'a']);
+  assert.equal(response.status, 200); assert.equal((await response.json()).count, 2);
+  assert.equal(batch.stats().transactions, 1); assert.equal(a.source.status, 'submitted'); assert.equal(b.source.status, 'needs_edit');
+  assert.equal(a.state.publication.isProvisional, true); assert.equal(b.state.publication.isProvisional, true);
+  assert.equal(a.state.audits.length, 1); assert.equal(b.state.audits.length, 1);
+});
+test('an invalid second upload aborts the batch transaction without leaving the first published', async () => {
+  const a = fixture(), b = fixture(); a.source.id = 'a'; b.source.id = 'b'; b.source.consentScope = 'pending';
+  const batch = batchEarlyRoute([a, b]); assert.equal((await batch.post(['a', 'b'])).status, 400);
+  assert.equal(batch.stats().rolledBack, true); assert.equal(a.state.publication, null); assert.equal(a.state.audits.length, 0);
+});
+test('bulk early publication rejects duplicate, empty, oversized and unauthenticated selections before starting a transaction', async () => {
+  const batch = batchEarlyRoute([]);
+  for (const ids of [[], ['a', 'a'], [''], Array.from({length:101}, (_,i) => String(i))]) assert.equal((await batch.post(ids)).status, 400);
+  assert.equal(batch.stats().transactions, 0);
+  const guest = batchEarlyRoute([], null); assert.equal((await guest.post(['a'])).status, 401); assert.equal(guest.stats().transactions, 0);
+});

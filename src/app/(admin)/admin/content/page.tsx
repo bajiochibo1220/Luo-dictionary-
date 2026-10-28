@@ -71,10 +71,10 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     canCultureReview: canValidateCulture(session, record.languageId),
     canForward: canSendToFinalReview(session, record.languageId),
     canFinalReview: !!record.validatorId && canFinalizeContent(session, record.languageId),
-    canPublish: !!record.validatorId && canFinalizeContent(session, record.languageId),
+    canPublish: record.contributorId !== user.id && !!record.validatorId && canFinalizeContent(session, record.languageId),
   }));
 
-  const canBulkWorkflow = roles.some((role) => ["language_admin", "uploader", "content_editor", "publisher"].includes(role.role));
+  const canBulkWorkflow = isSuperAdmin || roles.some((role) => ["language_admin", "uploader", "content_editor", "publisher"].includes(role.role));
   const selectedCultureId = await getSelectedAdminCultureId();
   const uploaderLanguageIds = [...new Set(roles.filter((role) => ["uploader", "language_admin"].includes(role.role)).map((role) => role.languageId))];
   const requestedUploaderLanguageId = searchParams.languageId ? Number(searchParams.languageId) : undefined;

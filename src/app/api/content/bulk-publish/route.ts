@@ -27,14 +27,12 @@ async function handlePOST(req: NextRequest) {
     include: { language: { select: { code: true } }, translations: englishLanguage ? { where: { languageId: englishLanguage.id } } : false, module: { select: { code: true } }, transcripts: { select: { id: true, text: true } } },
   });
   if (records.length !== recordIds.length) return NextResponse.json({ success: false, error: "One or more items could not be found." }, { status: 404 });
-  const languageId = records[0].languageId;
-  const moduleId = records[0].moduleId;
-  if (records.some((record) => record.languageId !== languageId || record.moduleId !== moduleId || record.status !== "under_review" || !record.validatorId)) {
-    return NextResponse.json({ success: false, error: "Select only items in one language and one content area that have passed cultural review and are waiting for final approval." }, { status: 400 });
+  if (records.some((record) => record.status !== "under_review" || !record.validatorId)) {
+    return NextResponse.json({ success: false, error: "Select only items that have passed cultural review and are waiting for final approval." }, { status: 400 });
   }
-  if (!canFinalizeContent(session, languageId)) return NextResponse.json({ success: false, error: "Only a publisher assigned to this language can publish these items." }, { status: 403 });
 
   for (const record of records) {
+    if (!canFinalizeContent(session, record.languageId)) return NextResponse.json({ success: false, error: "You must have publishing permission for every selected language." }, { status: 403 });
     if (record.contributorId === session.user.id || !mayReviewRecord(session.user, record)) return NextResponse.json({ success: false, error: "You cannot publish your own contribution or material outside your access permissions." }, { status: 403 });
     if (record.language.code !== "eng") {
       const missing = missingEnglishTranslation(record.title, record.data, record.translations[0]);
@@ -51,7 +49,7 @@ async function handlePOST(req: NextRequest) {
   const publishedAt = new Date();
   const publicationIds = new Map<string, string>();
   await prisma.$transaction(async (tx) => {
-    for (const record of records) {
+    for (const record of [...records].sort((a, b) => a.id.localeCompare(b.id))) {
       const moved = await tx.culturalRecord.updateMany({
         where: { id: record.id, status: "under_review", updatedAt: record.updatedAt, validatorId: { not: null } },
         data: {

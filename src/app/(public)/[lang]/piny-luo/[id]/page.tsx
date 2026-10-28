@@ -1,3 +1,4 @@
+import { MediaImage } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -51,7 +52,7 @@ export default async function HeritageSiteDetailPage({
               key={i}
               className="aspect-video rounded-xl overflow-hidden bg-stone-100"
             >
-              <img
+              <MediaImage
                 src={img.url}
                 alt={record.title}
                 className="w-full h-full object-cover"

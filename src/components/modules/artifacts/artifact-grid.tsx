@@ -1,4 +1,6 @@
 "use client";
+import { MediaImage } from "@/components/shared/media-preview";
+
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
@@ -54,7 +56,7 @@ export function ArtifactGrid({
                 className="w-full aspect-square bg-stone-100 flex items-center justify-center overflow-hidden"
               >
                 {image ? (
-                  <img
+                  <MediaImage
                     src={image.thumbnailUrl || image.url}
                     alt={a.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -94,7 +96,7 @@ export function ArtifactGrid({
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setLightbox(null)}
         >
-          <img
+          <MediaImage
             src={lightbox}
             alt="Artifact"
             className="max-w-full max-h-full rounded-lg shadow-2xl"

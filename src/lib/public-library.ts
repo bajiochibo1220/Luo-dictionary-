@@ -1,3 +1,4 @@
+import { mediaThumbnail } from "@/lib/media-preview";
 import { publicCulturalText } from "@/lib/public-cultural-text";
 import { prisma } from "@/lib/db";
 import { publicMediaWhere, publicRecordWhere } from "@/lib/governance";
@@ -53,7 +54,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
       bodyText: recordText(record.languageId === language.id ? record.data : record.translations.find(item => item.languageId === language.id)?.data),
       moduleCode: record.module?.code ?? mod.code, moduleName: record.module?.baseName ?? mod.baseName,
       createdAt: record.createdAt.toISOString(),
-      media: record.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: asset.type === "image" ? `/api/media/${asset.id}/file?width=640` : null, format: asset.format })),
+      media: record.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: mediaThumbnail(asset.id, asset.type), format: asset.format })),
     })),
     ...entries.map(entry => ({
       id: entry.id, title: entry.dholuo, kind: "dictionary" as const,
@@ -62,7 +63,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
       englishSummary: [entry.english, entry.kiswahili].filter(Boolean).join("\n"),
       bodyText: [entry.english, entry.kiswahili, entry.pronunciation, entry.grammarClass, entry.wordOrigin, entry.synonyms?.join(", "), entry.antonyms?.join(", "), entry.examples ? JSON.stringify(entry.examples) : null].filter(Boolean).join("\n\n"),
       moduleCode: "dictionary", moduleName: "Dictionary", createdAt: entry.createdAt.toISOString(),
-      media: entry.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: asset.type === "image" ? `/api/media/${asset.id}/file` : null, format: asset.format })),
+      media: entry.media.map(asset => ({ id: asset.id, type: asset.type, url: `/api/media/${asset.id}/file`, thumbnailUrl: mediaThumbnail(asset.id, asset.type), format: asset.format })),
     })),
   ].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
   return {

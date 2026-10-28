@@ -1,4 +1,6 @@
 "use client";
+import { MediaImage } from "@/components/shared/media-preview";
+
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
@@ -139,7 +141,7 @@ export function SitesMap({
               <Link href={`/${langCode}/piny-luo/${s.id}`} className="block">
               {img && (
                 <div className="aspect-video bg-stone-100 overflow-hidden">
-                  <img
+                  <MediaImage
                     src={img.thumbnailUrl || img.url}
                     alt={s.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition"

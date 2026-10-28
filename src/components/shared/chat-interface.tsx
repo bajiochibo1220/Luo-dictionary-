@@ -1,4 +1,6 @@
 "use client";
+import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
+
 import { InterfaceButton, InterfaceOption, InterfaceText, InterfaceTextarea } from "@/components/shared/interface-language";
 
 
@@ -388,14 +390,14 @@ function MediaCard({ media }: { media: MediaItem }) {
     <div className="bg-black/5 backdrop-blur-sm rounded-xl border border-stone-900/10 overflow-hidden shadow-xs">
       <div className="bg-stone-900">
         {media.mediaType === "image" && (
-          <img
+          <MediaImage
             src={media.url}
             alt={media.title}
             className="w-full max-h-64 object-cover"
           />
         )}
         {media.mediaType === "video" && (
-          <video
+          <MediaVideo
             src={media.url}
             poster={media.thumbnailUrl || undefined}
             controls

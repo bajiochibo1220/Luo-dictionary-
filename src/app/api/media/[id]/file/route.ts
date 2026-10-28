@@ -16,17 +16,15 @@ async function handleGET(
   { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
   const params = await promisedParams;
-  await assertServiceAvailable();
-  const asset = await prisma.mediaAsset.findUnique({
+  const [, asset, session] = await Promise.all([assertServiceAvailable(), prisma.mediaAsset.findUnique({
     where: { id: params.id },
     include: {
       record: { select: { status: true, consentScope: true, restrictionLevel: true, embargoUntil: true, languageId: true, contributorId: true } },
       dictionary: { select: { status: true, consentScope: true, restrictionLevel: true, embargoUntil: true, languageId: true, contributorId: true } },
     },
-  });
+  }), auth()]);
   if (!asset) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const session = await auth();
   const user = session?.user as any;
   const assetPublic = isPubliclyEligible(asset);
   const parent = asset.record ?? asset.dictionary;
@@ -53,25 +51,57 @@ async function handleGET(
   const download = request.nextUrl.searchParams.get("download") === "1";
   const requestedWidth = request.nextUrl.searchParams.get("width");
   const width = requestedWidth ? Number(requestedWidth) : null;
-  if (requestedWidth && (asset.type !== "image" || ![320,640,960,1280].includes(width!))) return NextResponse.json({ error: "Choose a supported image size." }, { status: 400 });
-  if (asset.deliveryType !== "authenticated" && !download && !width) {
-    return NextResponse.redirect(asset.url, 302);
+  const poster = request.nextUrl.searchParams.get("poster") === "1";
+  if (poster && asset.type !== "video") return NextResponse.json({ error: "Only videos have posters." }, { status: 400 });
+  if (requestedWidth && ((asset.type !== "image" && !poster) || ![320,640,960,1280].includes(width!))) return NextResponse.json({ error: "Choose a supported image size." }, { status: 400 });
+  const optimized = !download && (asset.type === "image" || asset.type === "video");
+  if (asset.deliveryType !== "authenticated" && !download && !optimized) {
+    return new NextResponse(null, { status: 302, headers: { Location: asset.url, "Cache-Control": "private, no-store" } });
   }
 
   await configureCloudinary();
 
   const expiresAt = Math.floor(Date.now() / 1000) + 120;
-  const signedUrl = width && !download ? cloudinary.url(asset.publicId, { resource_type: "image", type: asset.deliveryType === "authenticated" ? "authenticated" : "upload", sign_url: true, secure: true, format: asset.format, transformation: [{ width, crop: "limit", quality: "auto", fetch_format: "auto" }] }) : asset.deliveryType !== "authenticated" ? asset.url : cloudinary.utils.private_download_url(asset.publicId, asset.format, {
+  const originalUrl = () => asset.deliveryType !== "authenticated" ? asset.url : cloudinary.utils.private_download_url(asset.publicId, asset.format, {
     resource_type: asset.resourceType,
     type: "authenticated",
     expires_at: expiresAt,
   });
+  // Stable, signed CDN transformations reuse Cloudinary's derived files. Keep
+  // delivery behind this permission check, including every conditional request.
+  const signedUrl = optimized ? cloudinary.url(asset.publicId, {
+    resource_type: asset.resourceType,
+    type: asset.deliveryType === "authenticated" ? "authenticated" : "upload",
+    sign_url: true, secure: true,
+    format: poster ? "jpg" : asset.type === "video" ? "mp4" : asset.format,
+    transformation: [
+      { width: width ?? (poster ? 640 : 1280), crop: "limit" },
+      { quality: "auto" },
+      ...(asset.type === "image" ? [{ fetch_format: "auto" }] : poster ? [{ start_offset: "0" }] : [{ video_codec: "h264" }]),
+    ],
+  }) : originalUrl();
   if (asset.deliveryType !== "authenticated" && !/^https:\/\/res\.cloudinary\.com\//i.test(signedUrl)) return NextResponse.json({ error: "Media storage address unavailable." }, { status: 502 });
   const range = request.headers.get("range");
-  const upstream = await fetch(signedUrl, {
-    headers: { ...(range ? { range } : {}), ...(width && request.headers.get("Accept") ? { Accept: request.headers.get("Accept")! } : {}) },
+  const revalidate = optimized && !range && request.headers.get("if-none-match");
+  const upstreamHeaders = { ...(range ? { range } : {}), ...(optimized && request.headers.get("Accept") ? { Accept: request.headers.get("Accept")! } : {}), ...(revalidate ? { "If-None-Match": revalidate } : {}) };
+  let upstream = await fetch(signedUrl, {
+    headers: upstreamHeaders,
     cache: "no-store",
+    signal: request.signal,
   });
+  if (optimized && upstream.status === 304) {
+    return new NextResponse(null, { status: 304, headers: { ...nativeApiHeaders(request), "Cache-Control": "private, no-cache", Vary: "Accept", ETag: upstream.headers.get("etag") || revalidate || "" } });
+  }
+  // A new video derivative may still be processing, or a legacy asset may not
+  // support conversion. Continue streaming the original rather than break play.
+  if (optimized && !poster && !upstream.ok && upstream.status !== 416) {
+    await upstream.body?.cancel();
+    upstream = await fetch(originalUrl(), { headers: { ...(range ? { range } : {}) }, cache: "no-store", signal: request.signal });
+  }
+  if (upstream.status === 416) {
+    await upstream.body?.cancel();
+    return new NextResponse(null, { status: 416, headers: { ...nativeApiHeaders(request), "Cache-Control": "private, no-store", "Content-Range": upstream.headers.get("content-range") || "bytes */*" } });
+  }
   if (!upstream.ok || !upstream.body) {
     return NextResponse.json({ error: "Media is temporarily unavailable" }, { status: 502 });
   }
@@ -87,11 +117,12 @@ async function handleGET(
   const headers = new Headers({
     ...nativeApiHeaders(request),
     "Content-Type": safeInline ? contentType : "application/octet-stream",
-    "Cache-Control": "private, no-store",
+    "Cache-Control": optimized && safeInline ? "private, no-cache" : "private, no-store",
+    "Vary": "Accept",
     "X-Content-Type-Options": "nosniff",
     "Content-Disposition": safeInline && !download ? "inline" : `attachment; filename="${filename}"`,
   });
-  for (const name of ["accept-ranges", "content-length", "content-range"]) {
+  for (const name of ["accept-ranges", "content-length", "content-range", "etag"]) {
     const value = upstream.headers.get(name);
     if (value) headers.set(name, value);
   }

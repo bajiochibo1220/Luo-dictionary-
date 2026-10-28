@@ -168,35 +168,41 @@ export function ContentTable({
     if (!selected.length || !selectedRecords.every(record => record.canEarlyPublish)) return;
     if (!confirm(`Publish ${selected.length} uploaded items while review continues? Confirm that their public consent and attached files allow public sharing. Reviewed versions will replace them when published.`)) return;
     setBulkBusy(true);
-    let completed = 0;
     try {
-      for (const id of selected) {
-        const response = await fetch(`/api/content/${id}/publish-before-review`, { method: "POST" });
-        const result = await readApiResponse(response);
-        if (!response.ok || !result.success) throw new Error(`${completed} published; ${result.error || "one item could not be published"}`);
-        completed += 1;
-      }
-      toast.success(<InterfaceText source={`Published ${completed} items. Review can continue.`} />);
+      const response = await fetch("/api/content/bulk-publish-before-review", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recordIds: selected }),
+      });
+      const result = await readApiResponse(response);
+      if (!response.ok || !result.success) throw new Error(result.error || "Publishing failed. No selected items were published.");
+      toast.success(<InterfaceText source={`Published ${result.count} items. Review can continue.`} />);
+      setSelected([]);
+      router.refresh();
     } catch (error) { toast.error(<InterfaceText source={error instanceof Error ? error.message : "Publishing failed."} />); }
-    finally { setBulkBusy(false); setSelected([]); router.refresh(); }
+    finally { setBulkBusy(false); }
   }
 
   if (records.length === 0) {
     return <div className="rounded-xl border border-stone-100 bg-white p-12 text-center text-stone-500"><InterfaceText source="No content found in this selection." /></div>;
   }
 
-  const canSelect = canDelete || canBulkWorkflow;
+  const canSelect = canDelete || canBulkWorkflow || records.some(record => record.canEarlyPublish || record.canPublish);
   return (
     <div className="overflow-hidden rounded-xl border border-stone-100 bg-white shadow-xs">
+      {canSelect && <p className="border-b border-stone-100 bg-amber-50 px-4 py-3 text-sm text-stone-700"><InterfaceText source="Select up to 100 items, then publish reviewed content or publish before review. Reviewed versions automatically replace earlier public versions when published." /></p>}
       {canSelect && <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-4 py-3">
         <label className="flex items-center gap-2 text-sm text-stone-600">
           <InterfaceInput type="checkbox" disabled={bulkBusy} checked={selected.length > 0 && records.slice(0, 100).every(record => selected.includes(record.id))} onChange={(event) => setSelected(event.target.checked ? records.slice(0, 100).map((record) => record.id) : [])} aria-label="Select all visible content" />
           {selected.length ? `${selected.length} selected` : "Select up to 100 items"}
         </label>
+        {records.some(record => record.canEarlyPublish) && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canEarlyPublish).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border border-amber-700 px-3 text-sm font-semibold text-amber-950 disabled:opacity-50"><InterfaceText source="Select items for publishing before review" /></button>}
+        {records.some(record => record.status === "under_review" && record.canPublish) && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.status === "under_review" && record.canPublish).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border border-green-700 px-3 text-sm font-semibold text-green-900 disabled:opacity-50"><InterfaceText source="Select reviewed items ready to publish" /></button>}
         {canDelete && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canDelete).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border px-3 text-sm disabled:opacity-50"><InterfaceText source="Select deletable uploads" /></button>}
         {selected.length > 0 && <div className="flex flex-wrap gap-2">
+          <button type="button" disabled={bulkBusy} onClick={() => setSelected([])} className="min-h-11 px-3 text-sm underline disabled:opacity-50"><InterfaceText source="Clear selection" /></button>
+          {!selectedRecords.every(record => record.canEarlyPublish) && !(selectedStage === "under_review" && selectedRecords.every(record => record.canPublish)) && <p role="status" className="w-full text-sm text-stone-600"><InterfaceText source="For publishing, select only items ready for review publication or only items eligible for publication before review." /></p>}
           {selectedRecords.every(record => record.canEarlyPublish) && <button type="button" disabled={bulkBusy} onClick={() => void publishSelectedBeforeReview()} className="min-h-11 rounded-lg border border-amber-700 px-3 text-xs font-semibold text-amber-900 disabled:opacity-50"><InterfaceText source={bulkBusy ? "Publishing…" : "Publish selected before review"} /></button>}
-          {canBulkWorkflow && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
+          {(canBulkWorkflow || selectedStage === "under_review") && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
           {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve editor review" : "Send selected to cultural review"}
           </button>}
           {canDelete && selectedRecords.every((record) => record.canDelete) && <button type="button" onClick={() => void deleteSelected()} disabled={bulkBusy} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50"><InterfaceText source="Delete selected" /></button>}

@@ -1,3 +1,4 @@
+import { mediaThumbnail } from "@/lib/media-preview";
 // Public permission applies to the curated content, not participant identities,
 // operational metadata or storage-provider identifiers bundled into ORM rows.
 const privateKeys = new Set(["publicmaplatitude","publicmaplongitude","relatedrecords","contributorid", "contributorage", "reviewerid", "validatorid", "createdby", "reviewedby", "sourcereference", "sourceuri", "sourcechecksum", "sourceid", "sourcename", "nrfmetadata", "nrfuri", "consentrecords", "consentlinks", "provenance", "versions", "reviews", "publicid", "resourceType".toLowerCase(), "deliverytype", "checksum", "assetid", "storagekey", "email", "phone", "phonenumber", "participantid", "participantname", "identity", "preciselocation", "latitude", "longitude", "lat", "lng", "lon", "gps", "exactgps", "coordinates", "sourcepermission", "attributionpreference", "sessionid"]);
@@ -11,5 +12,5 @@ export function publicFields<T>(value: T, named = false): T {
   return Object.fromEntries(Object.entries(record).filter(([key]) => {
     const normalized = key.replaceAll("_", "").toLowerCase();
     return !["publicationofid", "publicationof", "publication"].includes(normalized) && !key.startsWith("__") && !privateKeys.has(normalized) && (allowName || !["speaker", "narrator", "speakername", "collector"].includes(normalized));
-  }).map(([key, item]) => [key, media && key === "url" ? `/api/media/${encodeURIComponent(String(record.id))}/file` : media && key === "thumbnailUrl" ? record.type === "image" ? `/api/media/${encodeURIComponent(String(record.id))}/file` : null : publicFields(item, allowName)])) as T;
+  }).map(([key, item]) => [key, media && key === "url" ? `/api/media/${encodeURIComponent(String(record.id))}/file` : media && key === "thumbnailUrl" ? mediaThumbnail(String(record.id), String(record.type)) : publicFields(item, allowName)])) as T;
 }

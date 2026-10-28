@@ -1,3 +1,4 @@
+import { MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
@@ -28,9 +29,9 @@ export function FolktaleCard({
   return (
     <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       {(tale.media ?? []).map((item) => item.type === "image" ? (
-        <img key={item.id} src={item.url} alt={tale.title} className="max-h-64 w-full object-contain" />
+        <MediaImage key={item.id} src={item.url} alt={tale.title} className="max-h-64 w-full object-contain" />
       ) : item.type === "video" ? (
-        <video key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-64 w-full bg-stone-950" />
+        <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-64 w-full bg-stone-950" />
       ) : item.type === "audio" ? (
         <audio key={item.id} src={item.url} controls className="w-full" />
       ) : null)}
