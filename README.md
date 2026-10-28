@@ -21,7 +21,7 @@ Open **Help & training** for the current manual selected for your assigned dutie
 - Tailwind CSS 4 + shadcn/ui (modern browsers)
 - Prisma + Neon PostgreSQL
 - NextAuth v5
-- DeepSeek (chat, tutor, translations, summaries, OCR and image descriptions)
+- DeepSeek or Groq (chat, tutor, translations, summaries, OCR and image descriptions)
 - Public text retrieval without an external embedding service
 - Cloudinary (authenticated media through permission checked application routes)
 

@@ -5,7 +5,7 @@ const prisma=new PrismaClient();
  const load=loader({'@/lib/db':{prisma}});
  const ProviderError=load('src/lib/ai/gemini-errors.ts').AiProviderError;
  async function check(name,fn){const started=Date.now();try{const data=await fn();console.log(JSON.stringify({name,pass:true,ms:Date.now()-started,...data}));}catch(e){console.log(JSON.stringify({name,pass:false,ms:Date.now()-started,code:e.code,status:e.status,error:e.name,reason:e.code==='P2028'?'Database transaction expired':e instanceof ProviderError?e.message:'Request failed'}));}}
- await check('configuration',async()=>{const s=await load('src/lib/settings.ts').getSystemSettings();return {keyConfigured:!!(process.env.DEEPSEEK_API_KEY||s.deepseek_api_key),provider:'deepseek',model:process.env.DEEPSEEK_MODEL||s.deepseek_model||'deepseek-flash',activeLanguages:(await prisma.language.findMany({where:{isActive:true},select:{code:true}})).map(l=>l.code)};});
+ await check('configuration',async()=>{const s=await load('src/lib/settings.ts').getSystemSettings();return {keyConfigured:await load('src/lib/ai/provider-config.ts').hasTextAi(),provider:await load('src/lib/ai/provider-config.ts').getTextAiProvider(),activeLanguages:(await prisma.language.findMany({where:{isActive:true},select:{code:true}})).map(l=>l.code)};});
  await check('quota-transaction',async()=>{await load('src/lib/ai/quota.ts').assertAiQuota(new Request('http://localhost/chatbot'));return {};});
  const rag=load('src/lib/ai/rag.ts');
  for(const question of ['Hello','Explain the role of proverbs in everyday conversation.','Show available cultural artifacts'])await check('chat: '+question,async()=>{const r=await rag.askQuestion(question);return {nonempty:!!r.answer,model:r.model,sources:r.sources.length,media:r.media.length};});

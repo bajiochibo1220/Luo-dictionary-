@@ -30,6 +30,7 @@ export default async function SystemPage() {
     ai_text_provider: "deepseek",
     deepseek_api_key: "",
     deepseek_model: "deepseek-flash",
+    groq_api_key: "", groq_model: "openai/gpt-oss-20b", groq_vision_model: "qwen/qwen3.8-27b",
     gemini_api_key: "",
     cloudinary_cloud_name: "",
     cloudinary_api_key: "",

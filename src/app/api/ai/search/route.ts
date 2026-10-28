@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     }
 
     await assertAiQuota(req, session?.user?.id);
-    if (provider === "deepseek") {
+    if (provider !== "gemini") {
       const cultureLanguageId = languageId ? await getContentCultureLanguageId(languageId) : undefined;
       const results = await searchPublicText(query, cultureLanguageId, limit);
       return NextResponse.json({ success: true, data: results.map(result => ({ id: result.record_id, title: result.title, module: result.module, moduleCode: result.module_code, similarity: result.similarity, excerpt: result.content.slice(0, 240) })) });

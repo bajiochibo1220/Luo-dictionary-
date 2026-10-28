@@ -38,8 +38,15 @@ export async function PATCH(req: NextRequest) {
     }
     if (["jooust_color", "nrf_color"].includes(key) && !/^#[0-9a-f]{6}$/i.test(value)) return NextResponse.json({ error: "Choose a valid six-digit colour." }, { status: 400 });
     if (key === "maintenance_mode" && value !== "on" && value !== "off") return NextResponse.json({ error: "Choose on or off for maintenance mode." }, { status: 400 });
-    if (key === "ai_text_provider" && value !== "deepseek") return NextResponse.json({ error: "This installation uses DeepSeek." }, { status: 400 });
+    if (key === "ai_text_provider" && !["deepseek", "groq"].includes(value)) return NextResponse.json({ error: "Choose DeepSeek or Groq." }, { status: 400 });
     if (key === "deepseek_model" && value && !/^[a-zA-Z0-9._-]{1,100}$/.test(value)) return NextResponse.json({ error: "Enter a valid DeepSeek model identifier." }, { status: 400 });
+    if (["groq_model", "groq_vision_model"].includes(key) && value && !/^[a-zA-Z0-9._/-]{1,150}$/.test(value)) return NextResponse.json({ error: "Enter a valid Groq model identifier." }, { status: 400 });
+    if (["deepseek_api_key", "groq_api_key"].includes(key) && value && value !== "\u2022".repeat(8)) {
+      const completeKey = value.replace(/\s+/g, "");
+      if (!completeKey || /\.{3}|\u2022|\u2026|\*{3,}/.test(completeKey)) return NextResponse.json({ error: `Paste the complete ${key === "groq_api_key" ? "Groq" : "DeepSeek"} API key, not a masked preview or placeholder.` }, { status: 400 });
+      updates[key] = completeKey;
+      continue;
+    }
     // Skip masked values (user didn't change them)
     if (
       isSecretSetting(key) &&

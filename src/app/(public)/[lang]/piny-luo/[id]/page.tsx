@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaImage } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
@@ -38,6 +39,7 @@ export default async function HeritageSiteDetailPage({
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-3">
           {record.title}
         </h1>
+        <CompleteItemDownload id={record.id} />
         {d.county && (
           <p className="text-stone-500">
             <span className="text-stone-400"><InterfaceText source="County:" /></span> {d.county}

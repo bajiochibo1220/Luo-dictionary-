@@ -2452,5 +2452,19 @@
   "your-cloud-name": "",
   "Youth": "",
   "Zoom in": "",
-  "Zoom out": ""
+  "Zoom out": "",
+  "Download complete item (ZIP)": "",
+  "Includes full descriptions, available translations, transcripts and original attached files.": "",
+  "Choose Download complete item (ZIP) to include full descriptions, available translations, transcripts and original attached files. Extract the ZIP and open index.html to view the item offline.": "",
+  "Groq": "",
+  "Image reading and descriptions use the selected AI service. Audio transcription and image generation are currently unavailable.": "",
+  "Save your provider and its own API key, then test the connection. Groq offers a free tier with usage limits; DeepSeek requires API credit. The saved provider selection takes precedence over the environment provider selection.": "",
+  "Both providers use public text search. No embedding rebuild is needed for chat.": "",
+  "AI provider": "",
+  "Create a Groq API key": "",
+  "Groq API Key": "",
+  "Groq text model": "",
+  "Groq image understanding model": "",
+  "Groq offers a free tier with usage limits. Create your own key at console.groq.com/keys. Keep it private.": "",
+  "Save settings and test a separate browser. Maintenance should be turned off when normal access is required. Choose DeepSeek or Groq in API Credentials, enter that provider's own key, save, then use Test AI connection. Groq has a free tier with provider limits. Both providers support text assistance and image understanding. Audio transcription and image generation are unavailable; browser dictation and ordinary media playback remain available.": ""
 }

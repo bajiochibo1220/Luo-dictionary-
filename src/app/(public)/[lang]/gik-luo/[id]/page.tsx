@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
@@ -67,6 +68,7 @@ export default async function ArtifactDetailPage({
           <h1 className="text-4xl font-serif text-stone-800 mt-2 mb-6">
             {record.title}
           </h1>
+        <CompleteItemDownload id={record.id} />
 
           <dl className="space-y-4">
             {d.description && (

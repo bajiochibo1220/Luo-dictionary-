@@ -21,9 +21,10 @@ export async function getSystemSettings({ fresh = false }: { fresh?: boolean } =
 
 export async function getSystemSetting(
   key: string,
-  fallback = ""
+  fallback = "",
+  options: { fresh?: boolean } = {}
 ): Promise<string> {
-  const all = await getSystemSettings();
+  const all = await getSystemSettings(options);
   return all[key] ?? fallback;
 }
 

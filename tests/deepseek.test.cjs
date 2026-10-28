@@ -77,3 +77,36 @@ test('unsupported audio, illustrations and legacy indexing never contact Google 
   await assert.rejects(load('src/lib/ai/gemini.ts').getGemini(),/retired/);
  });
 });
+
+test('a newly saved key is re-read before reporting missing credentials on another server instance',async()=>{
+ const previous=process.env.DEEPSEEK_API_KEY;delete process.env.DEEPSEEK_API_KEY;
+ try{
+  let freshReads=0;
+  const load=loader({'@/lib/settings':{getSystemSetting:async(key,_fallback,options)=>{if(key==='deepseek_api_key'&&options?.fresh){freshReads++;return'fresh-fixture-key';}return'';}}});
+  await withFetch(async(_url,init)=>{assert.equal(init.headers.Authorization,'Bearer fresh-fixture-key');return Response.json(success);},async()=>{assert.equal((await load('src/lib/ai/deepseek.ts').generateDeepSeekText('Q','I')).text,'A complete answer');});
+  assert.equal(freshReads,1);
+ }finally{if(previous===undefined)delete process.env.DEEPSEEK_API_KEY;else process.env.DEEPSEEK_API_KEY=previous;}
+});
+test('blank and placeholder environment values do not hide an admin-saved key',async()=>{
+ const previous=process.env.DEEPSEEK_API_KEY;
+ try{for(const value of ['   ','sk-...','\u2022'.repeat(8),'********','sk-\u2026','sk-****']){process.env.DEEPSEEK_API_KEY=value;const load=configured();assert.equal(await load('src/lib/ai/provider-config.ts').getDeepSeekApiKey(),'fixture-key');assert.equal(await load('src/lib/ai/provider-config.ts').hasTextAi(),true);}}
+ finally{if(previous===undefined)delete process.env.DEEPSEEK_API_KEY;else process.env.DEEPSEEK_API_KEY=previous;}
+});
+test('a usable environment key retains priority over saved credentials',async()=>{
+ const previous=process.env.DEEPSEEK_API_KEY;process.env.DEEPSEEK_API_KEY=' environment-fixture-key ';
+ try{const load=loader({'@/lib/settings':{getSystemSetting:()=>assert.fail('Valid environment configuration needs no database lookup')}});assert.equal(await load('src/lib/ai/provider-config.ts').getDeepSeekApiKey(),'environment-fixture-key');}
+ finally{if(previous===undefined)delete process.env.DEEPSEEK_API_KEY;else process.env.DEEPSEEK_API_KEY=previous;}
+});
+test('a fresh single-setting read bypasses the per-instance settings cache',async()=>{
+ let rows=[{key:'deepseek_api_key',value:''}],reads=0;
+ const {getSystemSetting}=loader({'@/lib/db':{prisma:{$queryRaw:async()=>{reads++;return rows;}}}})('src/lib/settings.ts');
+ assert.equal(await getSystemSetting('deepseek_api_key'),'');rows=[{key:'deepseek_api_key',value:'new-fixture-key'}];assert.equal(await getSystemSetting('deepseek_api_key'),'');assert.equal(await getSystemSetting('deepseek_api_key','',{fresh:true}),'new-fixture-key');assert.equal(reads,2);
+});
+
+test('admin saves reject key previews instead of reporting success for unusable credentials',async()=>{
+ let writes=0,saved;
+ const route=loader({'@/lib/auth':{auth:async()=>({user:{id:'master',isMasterSuperAdmin:true}})},'@/lib/settings':{setSystemSettings:async value=>{writes++;saved=value;}},'@/lib/audit':{logAction:async()=>{}}})('src/app/api/super-admin/settings/route.ts');
+ const request=value=>new Request('http://localhost/api/super-admin/settings',{method:'PATCH',body:JSON.stringify({deepseek_api_key:value})});
+ for(const value of ['sk-...masked','sk-\u2026masked','sk-****','   ']){const response=await route.PATCH(request(value));assert.equal(response.status,400);assert.match((await response.json()).error,/complete DeepSeek API key/);}
+ assert.equal(writes,0);assert.equal((await route.PATCH(request(' full-fixture-key\n'))).status,200);assert.equal(saved.deepseek_api_key,'full-fixture-key');
+});

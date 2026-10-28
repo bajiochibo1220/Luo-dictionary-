@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
@@ -32,7 +33,7 @@ export default async function DictionaryDetailPage({
       <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-stone-100 p-8 md:p-12">
         <Link href={`/${language.code}/muma`} className="text-sm text-amber-800 hover:underline"><InterfaceText source="← Back to Dictionary" /></Link>
         <div className="mt-5"><EnglishVersionLink langCode={language.code} href={`/${language.code}/muma/${params.id}`} /></div>
-        <h1 className="text-5xl font-serif text-stone-800 mt-8">{data.dholuo || authoredRecord.title}</h1>
+        <h1 className="text-5xl font-serif text-stone-800 mt-8">{data.dholuo || authoredRecord.title}</h1><CompleteItemDownload id={authoredRecord.id} />
         {data.pronunciation && <p className="text-stone-400 italic mt-2">/{data.pronunciation}/</p>}
         {data.english && <p className="text-2xl text-stone-700 mt-6">{data.english}</p>}
         {data.kiswahili && <p className="text-lg text-stone-600 mt-2"><InterfaceText source="Kiswahili: " />{data.kiswahili}</p>}
@@ -88,6 +89,7 @@ export default async function DictionaryDetailPage({
             <p className="text-stone-400 italic">/{entry.pronunciation}/</p>
           )}
         </header>
+        <CompleteItemDownload id={entry.id} kind="dictionary" />
 
         <section className="space-y-6">
           <div>

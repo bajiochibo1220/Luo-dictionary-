@@ -9,7 +9,7 @@ async function main() {
 
   if (!(await hasTextAi())) {
     console.error(
-      "DeepSeek is not configured. Save its key in System settings or set DEEPSEEK_API_KEY."
+      "The selected AI provider is not configured. Save its key in System settings."
     );
     process.exit(1);
   }

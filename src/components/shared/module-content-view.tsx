@@ -7,13 +7,15 @@ import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/sh
 import { emitActivity } from "@/lib/activity-events";
 import { ObjViewer } from "./obj-viewer";
 import { StoryTour } from "./story-tour";
-import { useState, useMemo, useEffect, useRef, type ComponentType, type ReactNode } from "react";
+import { useState, useMemo, useEffect, useRef, useContext, createContext, type ComponentType, type ReactNode } from "react";
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
 import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
 import { BottomMediaControls } from "./bottom-media-controls";
+import { CompleteItemDownload } from "./complete-item-download";
 import { CollectionToolbar } from "./collection-toolbar";
 import type { ContentItem, MediaItem } from "@/lib/app-content";
 
+const DownloadOrigin = createContext("");
 const FILTER_ICONS = { all: LayoutGrid, image: Image, audio: Headphones, video: Video, transcript: FileText };
 
 export type ModuleContentProps = {
@@ -24,6 +26,7 @@ export type ModuleContentProps = {
   languageId: number;
   moduleCode: string;
   subject?: string;
+  downloadOrigin?: string;
   items: ContentItem[];
   canContribute?: boolean;
   onSave?: (item: ContentItem) => void;
@@ -42,6 +45,7 @@ export function ModuleContentView({
   items,
   canContribute = true,
   onSave,
+  downloadOrigin,
   searchControls,
   Link: NavigationLink,
 }: ModuleContentProps & { Link: AppLink; searchControls?: ReactNode }) {
@@ -76,7 +80,7 @@ export function ModuleContentView({
   };
 
   return (
-    <div className="library-page" data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
+    <DownloadOrigin.Provider value={downloadOrigin || ""}><div className="library-page" data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
       <div className="module-controls sticky top-0 z-20 mb-2 bg-[#eee5d5] px-2 py-1 shadow-sm" data-sticky-controls>
       <CollectionToolbar onPlacementChange={setToolbarInMasthead}>
         {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
@@ -124,7 +128,7 @@ export function ModuleContentView({
       )}
 
       {selectedItem && <ContentDialog viewLanguageCode={viewLanguageCode} item={selectedItem} onSave={onSave} languageCode={languageCode} onClose={() => setSelectedItem(null)} />}
-    </div>
+    </div></DownloadOrigin.Provider>
   );
 }
 
@@ -139,6 +143,7 @@ function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave 
 }
 
 function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
+  const downloadOrigin = useContext(DownloadOrigin);
   const [expanded, setExpanded] = useState(true);
   const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
   useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
@@ -170,6 +175,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
           {item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
           {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic"><InterfaceText source="An English description has not been added yet." /></p>}
         </div>}
+        <CompleteItemDownload id={item.id} kind={item.kind || "cultural"} origin={downloadOrigin} />
         {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
         {description && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
         {(item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}

@@ -122,7 +122,7 @@ export async function askQuestion(
 
   const retrievalQuestion = recentHistory ? `Recent conversation:\n${recentHistory}\nCurrent question: ${question}` : question;
   let results: TextSearchResult[];
-  if (await getTextAiProvider() === "deepseek") {
+  if (await getTextAiProvider() !== "gemini") {
     results = await searchPublicText([question, ...history.filter(turn => turn.role === "user").slice(-1).map(turn => turn.content)].join(" "), cultureLanguageId ?? languageId);
   } else {
   const queryVector = await embedText(retrievalQuestion);

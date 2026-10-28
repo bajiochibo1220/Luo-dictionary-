@@ -1,9 +1,10 @@
 import { getSystemSetting } from "@/lib/settings";
 import { AiProviderError } from "./gemini-errors";
+import { getDeepSeekApiKey } from "./provider-config";
 
 export async function generateDeepSeekText(prompt: string, instruction: string, timeoutMs = 40000, image?: { mime: string; bytes: Buffer }): Promise<{ text: string; model: string }> {
   if (image && (!/^image\/(jpeg|png|gif|webp)$/.test(image.mime) || !image.bytes.length || image.bytes.length > 8 * 1024 * 1024)) throw new AiProviderError(400, "Choose a supported image smaller than 8 MB.");
-  const key = (process.env.DEEPSEEK_API_KEY || await getSystemSetting("deepseek_api_key") || "").replace(/\s+/g, "");
+  const key = await getDeepSeekApiKey();
   const model = (process.env.DEEPSEEK_MODEL || await getSystemSetting("deepseek_model") || "deepseek-flash").trim();
   if (!key || key.includes("...") || key.includes("\u2022")) throw new AiProviderError(503, "Add your DeepSeek API key in System > API Credentials, save it, then test the connection.");
   if (!/^[a-zA-Z0-9._-]{1,100}$/.test(model)) throw new AiProviderError(503, "Check the DeepSeek model in System settings.");

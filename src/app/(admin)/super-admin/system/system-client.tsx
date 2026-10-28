@@ -190,14 +190,21 @@ export function SystemClient({
 
             <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-6 text-xs text-amber-800"><InterfaceText source="Sensitive values are masked. Only edit a field if you want to change it." /></div>
 
-            <label htmlFor="text-ai-provider" className="mb-4 block text-sm font-medium text-stone-700"><InterfaceText source="Text AI provider" />
-              <select id="text-ai-provider" value="deepseek" onChange={event => update("ai_text_provider", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3">
-                <InterfaceOption value="deepseek">DeepSeek</InterfaceOption>
+            <label htmlFor="text-ai-provider" className="mb-4 block text-sm font-medium text-stone-700"><InterfaceText source="AI provider" />
+              <select id="text-ai-provider" value={values.ai_text_provider === "groq" ? "groq" : "deepseek"} onChange={event => update("ai_text_provider", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3">
+                <InterfaceOption value="deepseek">DeepSeek</InterfaceOption><InterfaceOption value="groq">Groq</InterfaceOption>
               </select>
             </label>
+            {values.ai_text_provider === "groq" ? <>
+              <Field values={values} update={update} label="Groq API Key" settingKey="groq_api_key" type="password" placeholder="Enter your Groq API key" helpText="Groq offers a free tier with usage limits. Create your own key at console.groq.com/keys. Keep it private." />
+              <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex min-h-11 items-center text-sm font-semibold text-amber-900 underline"><InterfaceText source="Create a Groq API key" /></a>
+              <Field values={values} update={update} label="Groq text model" settingKey="groq_model" placeholder="openai/gpt-oss-20b" />
+              <Field values={values} update={update} label="Groq image understanding model" settingKey="groq_vision_model" placeholder="qwen/qwen3.8-27b" />
+            </> : <>
             <Field values={values} update={update} label="DeepSeek API Key" settingKey="deepseek_api_key" type="password" placeholder="Enter your DeepSeek API key" helpText="Used for chat, tutor practice, translations, summaries and image understanding. The key stays on the server." />
             <Field values={values} update={update} label="DeepSeek model" settingKey="deepseek_model" placeholder="deepseek-flash" helpText="Use a model available to your DeepSeek API account. Environment configuration takes precedence over saved values." />
-            <p className="mb-4 text-xs text-stone-600"><InterfaceText source="Save your provider and key, then test the connection. DeepSeek chat searches public sources without a Gemini key. DeepSeek also reads and describes images. Audio transcription and image generation are unavailable." /></p>
+            </>}
+            <p className="mb-4 text-xs text-stone-600"><InterfaceText source="Save your provider and its own API key, then test the connection. Groq offers a free tier with usage limits; DeepSeek requires API credit. The saved provider selection takes precedence over the environment provider selection." /></p>
 
             <Field values={values} update={update}               label="Cloudinary Cloud Name"
               settingKey="cloudinary_cloud_name"
@@ -218,11 +225,11 @@ export function SystemClient({
             <button
               onClick={() =>
                 save([
-                  "ai_text_provider", "deepseek_api_key", "deepseek_model",
+                  "ai_text_provider", "deepseek_api_key", "deepseek_model", "groq_api_key", "groq_model", "groq_vision_model",
                   "cloudinary_cloud_name",
                   "cloudinary_api_key",
                   "cloudinary_api_secret",
-                ], { ai_text_provider: "deepseek" })
+                ], { ai_text_provider: values.ai_text_provider === "groq" ? "groq" : "deepseek" })
               }
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
@@ -233,7 +240,7 @@ export function SystemClient({
 
             <div className="mt-8 border-t border-stone-100 pt-6">
               <h3 className="text-sm font-semibold text-stone-700"><InterfaceText source="AI content index" /></h3>
-              <p className="mt-1 mb-3 text-xs text-stone-500"><InterfaceText source="DeepSeek uses public text search. No Gemini key or embedding rebuild is needed for chat." /></p>
+              <p className="mt-1 mb-3 text-xs text-stone-500"><InterfaceText source="Both providers use public text search. No embedding rebuild is needed for chat." /></p>
 
             </div>
 

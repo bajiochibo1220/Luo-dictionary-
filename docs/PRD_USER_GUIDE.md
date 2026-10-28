@@ -48,7 +48,7 @@ Sign in, choose a community and select conversation, translation, grammar, writi
 
 Speech controls depend on your browser and installed voices. A missing community voice is reported instead of substituting a different language. Browser dictation may use your browser provider's service. Personal recordings stop after one minute. They remain on your device unless you separately choose AI transcription; you can preview and download them. There is no calibrated pronunciation score.
 
-AI media tools use DeepSeek to read text from images and describe images from eligible published sources. Choose a source, give processing consent, and create a draft. Download the result and use the normal editorial process to add it to the repository. Audio transcription and AI illustration generation are currently unavailable. You can still record and play audio, upload illustrations, enter transcripts manually, and use browser dictation where supported.
+AI media tools use the selected AI provider to read text from images and describe images from eligible published sources. Choose a source, give processing consent, and create a draft. Download the result and use the normal editorial process to add it to the repository. Audio transcription and AI illustration generation are currently unavailable. You can still record and play audio, upload illustrations, enter transcripts manually, and use browser dictation where supported.
 
 ## Research and settings
 
@@ -67,3 +67,5 @@ To send a chat message, tick **Allow AI processing for this chat**, enter your q
 Use the play controls to listen or watch. Starting another player pauses the previous one. If playback fails, choose **Try again** or download the original file. Practice voice recordings stay on your device unless you explicitly request AI transcription; device voices and dictation languages depend on the browser. If a microphone is unavailable, type your practice or upload a recording instead.
 
 AI suggestions remain drafts. If an AI tool reports that its provider quota is reached, try later and notify an administrator. Image-generation quota is separate from text generation. Choosing a different page or repeatedly clicking Create AI draft does not restore exhausted provider quota.
+
+Complete item downloads: choose **Download complete item (ZIP)** on a collection item or its details page. The ZIP includes the full descriptions in available languages, transcript text, captions, original images, audio, videos and other public attachments. Extract the ZIP, then open **index.html** to read and view supported media offline. Use **descriptions.txt**, **metadata.json**, **transcripts/** and **media/** for individual material. Existing single-file and displayed-text downloads remain available. Large archives take longer; keep the download running until the browser finishes.

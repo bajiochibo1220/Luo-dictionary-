@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
@@ -24,6 +25,7 @@ export default async function ProverbDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto">
+      <CompleteItemDownload id={record.id} />
       <Link
         href={`/${language.code}/ngero`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"

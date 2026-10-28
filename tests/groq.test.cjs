@@ -1,0 +1,31 @@
+﻿const test=require('node:test'),assert=require('node:assert/strict'),{loader}=require('./load-ts.cjs');
+const response={choices:[{finish_reason:'stop',message:{content:'Completed answer',reasoning:'PRIVATE REASONING'}}]};
+const configured=(extra={})=>loader({'@/lib/settings':{getSystemSetting:async key=>({ai_text_provider:'groq',groq_api_key:'groq-fixture-key',deepseek_api_key:'deepseek-fixture-key',...extra}[key]||'')}});
+async function withFetch(mock,work){const previous=global.fetch;global.fetch=mock;try{return await work();}finally{global.fetch=previous;}}
+test('Groq routes text to its official endpoint with its own key and excludes reasoning',async()=>{
+ await withFetch(async(url,init)=>{assert.equal(url,'https://api.groq.com/openai/v1/chat/completions');assert.equal(init.headers.Authorization,'Bearer groq-fixture-key');assert.equal(init.redirect,'error');const body=JSON.parse(init.body);assert.equal(body.model,'openai/gpt-oss-20b');assert.equal(body.include_reasoning,false);assert.equal(body.reasoning_effort,'low');assert.equal(body.max_completion_tokens,2400);assert.equal(body.thinking,undefined);return Response.json(response);},async()=>{const result=await configured()('src/lib/ai/text-generation.ts').generateText('Question','Instruction');assert.deepEqual(result,{text:'Completed answer',model:'openai/gpt-oss-20b'});assert.doesNotMatch(JSON.stringify(result),/PRIVATE|fixture-key/);});
+});
+test('the admin provider selection overrides an old environment choice and refreshes other server instances',async()=>{
+ const previous=process.env.AI_TEXT_PROVIDER;process.env.AI_TEXT_PROVIDER='deepseek';let reads=0;
+ try{const load=loader({'@/lib/settings':{getSystemSetting:async(key,_fallback,options)=>{assert.equal(key,'ai_text_provider');assert.equal(options.fresh,true);reads++;return reads===1?'deepseek':'groq';}}});const config=load('src/lib/ai/provider-config.ts');assert.equal(await config.getTextAiProvider(),'deepseek');assert.equal(await config.getTextAiProvider(),'groq');}finally{if(previous===undefined)delete process.env.AI_TEXT_PROVIDER;else process.env.AI_TEXT_PROVIDER=previous;}
+});
+test('Groq vision uses its image model, inline source bytes and hidden reasoning',async()=>{
+ await withFetch(async(url,init)=>{assert.ok(url.startsWith('https://api.groq.com/'));const body=JSON.parse(init.body);assert.equal(body.model,'qwen/qwen3.8-27b');assert.equal(body.reasoning_format,'hidden');assert.equal(body.include_reasoning,undefined);assert.equal(body.messages[1].content[1].image_url.url,'data:image/png;base64,aW1hZ2U=');return Response.json(response);},async()=>{const result=await configured()('src/lib/ai/multimodal.ts').generateMediaAssistance('Read text',{type:'image',mime:'image/png',bytes:Buffer.from('image')});assert.equal(result.model,'qwen/qwen3.8-27b');});
+});
+test('Groq failures are safe and never retry with DeepSeek or Google credentials',async()=>{
+ for(const status of [401,402,403,422,429,503]){let calls=0;await withFetch(async url=>{calls++;assert.equal(url,'https://api.groq.com/openai/v1/chat/completions');return Response.json({error:'PRIVATE PROVIDER BODY'},{status});},async()=>{await assert.rejects(configured()('src/lib/ai/text-generation.ts').generateText('Q','I'),error=>error.status===(status===429?429:503)&&/Groq/.test(error.message)&&!error.message.includes('PRIVATE'));});assert.equal(calls,1);}
+});
+test('a Groq selection cannot borrow a DeepSeek key when its own key is absent',async()=>{
+ await withFetch(()=>assert.fail('No request without a Groq key'),async()=>{const load=configured({groq_api_key:''});assert.equal(await load('src/lib/ai/provider-config.ts').hasTextAi(),false);await assert.rejects(load('src/lib/ai/text-generation.ts').generateText('Q','I'),/Add your Groq API key/);});
+});
+test('super admin can save a masked Groq key and slash-containing model names without exposing credentials',async()=>{
+ let saved,audit;const route=loader({'@/lib/auth':{auth:async()=>({user:{id:'master',isMasterSuperAdmin:true}})},'@/lib/settings':{setSystemSettings:async value=>{saved=value;}},'@/lib/audit':{logAction:async value=>{audit=value;}}})('src/app/api/super-admin/settings/route.ts');const request=value=>new Request('https://app.test/api/super-admin/settings',{method:'PATCH',body:JSON.stringify(value)});
+ assert.equal((await route.PATCH(request({ai_text_provider:'groq',groq_api_key:'groq-fixture-key',groq_model:'openai/gpt-oss-20b',groq_vision_model:'qwen/qwen3.8-27b'}))).status,200);assert.equal(saved.groq_api_key,'groq-fixture-key');assert.doesNotMatch(JSON.stringify(audit),/groq-fixture-key/);
+ assert.equal((await route.PATCH(request({groq_api_key:'\u2022'.repeat(8)}))).status,200);assert.deepEqual(saved,{});assert.equal((await route.PATCH(request({groq_api_key:'gsk-...masked'}))).status,400);
+});
+test('Groq questions retrieve public text without requesting retired Gemini embeddings',async()=>{
+ const load=loader({'./provider-config':{getTextAiProvider:async()=> 'groq'},'./public-text-search':{searchPublicText:async()=>[]},'./embeddings':{embedText:()=>assert.fail('Groq must not use Gemini vectors')},'./text-generation':{generateText:async()=>({text:'No public matches',model:'openai/gpt-oss-20b'})},'@/lib/db':{prisma:{module:{findMany:async()=>[]},culturalRecord:{findMany:async()=>[]},dictionaryEntry:{findMany:async()=>[]}}},'@/lib/settings':{getSystemSetting:async()=>''}});assert.equal((await load('src/lib/ai/rag.ts').askQuestion('Tell me about fishing')).model,'openai/gpt-oss-20b');
+});
+test('the Groq admin screen shows its own password field and saves the actual selected provider',()=>{
+ const React=require('react'),{renderToStaticMarkup}=require('react-dom/server');const {SystemClient}=loader({react:{...React,useState:initial=>React.useState(initial==='general'?'api-keys':initial)},'next/navigation':{useRouter:()=>({refresh(){}})}})('src/app/(admin)/super-admin/system/system-client.tsx');const html=renderToStaticMarkup(React.createElement(SystemClient,{settings:{ai_text_provider:'groq'},languages:[],isMasterSuperAdmin:true}));assert.match(html,/<option value="groq" selected="">/);assert.match(html,/<input[^>]*id="setting-groq_api_key"[^>]*type="password"/);assert.doesNotMatch(html,/id="setting-deepseek_api_key"/);assert.match(html,/Test AI connection/);
+});

@@ -1,6 +1,7 @@
 "use client";
 import { MediaImage } from "@/components/shared/media-preview";
 
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import { useState } from "react";
@@ -80,6 +81,7 @@ export function ArtifactGrid({
                     {a.data.description}
                   </p>
                 )}
+                <CompleteItemDownload id={a.id} />
                 <Link
                   href={`/${langCode}/gik-luo/${a.id}`}
                   className="text-xs uppercase tracking-wider text-amber-600 hover:text-amber-700"

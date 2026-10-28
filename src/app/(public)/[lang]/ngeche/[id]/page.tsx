@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,6 +24,7 @@ export default async function RiddleDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto">
+      <CompleteItemDownload id={record.id} />
       <Link
         href={`/${language.code}/ngeche`}
         className="inline-flex items-center text-sm text-stone-500 hover:text-amber-600 mb-6"

@@ -1,4 +1,5 @@
 "use client";
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
 
 import { InterfaceText } from "@/components/shared/interface-language";
@@ -75,6 +76,7 @@ export function FolktaleDetail({ tale, langCode }: Props) {
           </button>
         )}
       </header>
+      <CompleteItemDownload id={tale.id} />
 
       {audio && (
         <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6 mb-8">

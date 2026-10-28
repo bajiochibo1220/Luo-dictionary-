@@ -66,5 +66,5 @@ export async function runAiTool(userId: string, input: unknown) {
 }
 
 function assertSupportedTask(task: string) {
-  if (task === "transcribe" || task === "illustrate") throw new TutorError(503, "This tool is unavailable with DeepSeek. Image reading and image descriptions are available.");
+  if (task === "transcribe" || task === "illustrate") throw new TutorError(503, "This tool is not enabled. Image reading and image descriptions are available.");
 }

@@ -1,3 +1,4 @@
+import { CompleteItemDownload } from "@/components/shared/complete-item-download";
 import { MediaAudio } from "@/components/shared/media-preview";
 import { InterfaceText } from "@/components/shared/interface-language";
 import Link from "next/link";
@@ -52,6 +53,7 @@ export default async function OralHistoryDetailPage({
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-3">
           {record.title}
         </h1>
+        <CompleteItemDownload id={record.id} />
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-500">
           {d.narrator && (

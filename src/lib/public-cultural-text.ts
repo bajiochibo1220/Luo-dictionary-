@@ -7,3 +7,10 @@ export function publicCulturalText(data: unknown): string {
     return text.trim() ? key.replaceAll("_", " ") + ": " + text : "";
   }).filter(Boolean).join("\n\n");
 }
+
+// Archive the same public presentation fields, retaining structured examples.
+export function publicCulturalData(data: unknown): Record<string, unknown> {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return {};
+  const legacyPresentationKeys = new Set(["origin", "clan", "notation", "community", "county", "recorded_date", "period", "significance", "answer_translation", "research_kind"]);
+  return Object.fromEntries(Object.entries(data).filter(([key]) => publicKeys.has(key) || legacyPresentationKeys.has(key)));
+}
