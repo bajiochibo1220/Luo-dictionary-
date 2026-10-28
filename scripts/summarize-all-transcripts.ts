@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { processTranscript } from "../src/lib/ai/summarize";
-import { hasGemini } from "../src/lib/ai/gemini";
+import { hasTextAi } from "../src/lib/ai/provider-config";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("\nBatch summarizing all transcripts...\n");
 
-  if (!hasGemini()) {
+  if (!(await hasTextAi())) {
     console.error(
-      "GEMINI_API_KEY is not configured. Add a real key to .env to run this script."
+      "DeepSeek is not configured. Save its key in System settings or set DEEPSEEK_API_KEY."
     );
     process.exit(1);
   }

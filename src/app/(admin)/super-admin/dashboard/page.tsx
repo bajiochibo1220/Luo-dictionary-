@@ -1,7 +1,7 @@
 import { InterfaceText } from "@/components/shared/interface-language";
 import fs from "fs";
 import { getSystemSettings } from "@/lib/settings";
-import { hasGemini } from "@/lib/ai/gemini";
+import { hasTextAi } from "@/lib/ai/provider-config";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -65,7 +65,7 @@ export default async function SuperAdminDashboardPage() {
   // The successful live statistics queries establish database connectivity.
   const dbHealthy = "healthy" as const;
   const storageHealthy = (settings.cloudinary_cloud_name || process.env.CLOUDINARY_CLOUD_NAME) && (settings.cloudinary_api_key || process.env.CLOUDINARY_API_KEY) && (settings.cloudinary_api_secret || process.env.CLOUDINARY_API_SECRET) ? "configured" as const : "warning" as const;
-  const aiHealthy = await hasGemini() ? "configured" as const : "warning" as const;
+  const aiHealthy = await hasTextAi() ? "configured" as const : "warning" as const;
   const backupHealthy = latestBackup?.fileUrl && fs.existsSync(latestBackup.fileUrl) && Date.now() - latestBackup.createdAt.getTime() < 7 * 86400000 ? "healthy" as const : "warning" as const;
 
   return (

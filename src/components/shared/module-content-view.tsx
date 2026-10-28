@@ -11,6 +11,7 @@ import { useState, useMemo, useEffect, useRef, type ComponentType, type ReactNod
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
 import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
 import { BottomMediaControls } from "./bottom-media-controls";
+import { CollectionToolbar } from "./collection-toolbar";
 import type { ContentItem, MediaItem } from "@/lib/app-content";
 
 const FILTER_ICONS = { all: LayoutGrid, image: Image, audio: Headphones, video: Video, transcript: FileText };
@@ -49,6 +50,7 @@ export function ModuleContentView({
   const [category, setCategory] = useState("all");
   const [view, setView] = useState("feed");
   const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
+  const [toolbarInMasthead, setToolbarInMasthead] = useState(false);
   useEffect(() => { setViewLanguageCode(languageCode); }, [languageCode]);
 
   const filteredItems = useMemo(() => {
@@ -74,20 +76,20 @@ export function ModuleContentView({
   };
 
   return (
-    <div className="library-page">
-      <div className="module-controls sticky top-0 z-20 mb-3 bg-[#eee5d5] px-3 py-2 shadow-sm" data-sticky-controls>
-      <div className="flex min-w-0 items-center gap-2" data-search-language-row>
+    <div className="library-page" data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
+      <div className="module-controls sticky top-0 z-20 mb-2 bg-[#eee5d5] px-2 py-1 shadow-sm" data-sticky-controls>
+      <CollectionToolbar onPlacementChange={setToolbarInMasthead}>
         {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
         <label className="shrink-0"><span className="sr-only"><InterfaceText source="Content language" /></span><InterfaceSelect aria-label="Content language" value={viewLanguageCode} onChange={event => setViewLanguageCode(event.target.value)} className="min-h-11 w-24 rounded-lg border border-stone-400 bg-white px-2 text-base sm:w-36">
           <InterfaceOption value={languageCode}>{languageName}</InterfaceOption>
           {languageCode !== "eng" && <InterfaceOption value="eng">English</InterfaceOption>}
         </InterfaceSelect></label>
-      </div>
-      <header className="mt-1 flex min-w-0 items-center justify-between gap-2">
+      </CollectionToolbar>
+      <header className="collection-title-row flex min-w-0 items-center justify-between gap-2">
         <div className="flex min-w-0 items-baseline gap-2"><h2 className="truncate font-serif text-lg text-stone-900 sm:text-2xl" title={title}><InterfaceText source={baseName} /></h2><span className="truncate text-xs text-stone-700" title={baseName}>{languageName}</span></div>
         {moduleCode !== "all" && canContribute && <NavigationLink href={contributionHref(moduleCode)} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-amber-950 hover:bg-white/60"><Plus size={18} aria-hidden="true" /><span><InterfaceText source="Contribute" /></span></NavigationLink>}
       </header>
-      {moduleCode === "all" && <div className="flex flex-nowrap gap-2 mb-3 overflow-x-auto">
+      {moduleCode === "all" && <div className="flex flex-nowrap gap-2 overflow-x-auto">
         {[{ key: "all", label: "All content" }, ...categories.map(([key, label]) => ({ key, label }))].map((item) => (
           <button key={item.key} aria-pressed={category === item.key} onClick={() => setCategory(item.key)} className={`shrink-0 min-h-11 text-xs font-semibold px-4 py-1.5 rounded-full border ${category === item.key ? "bg-amber-800 text-white border-amber-800" : "bg-white/60 text-stone-800 border-stone-800/20"}`}><InterfaceText source={item.label} /></button>
         ))}
@@ -128,7 +130,7 @@ export function ModuleContentView({
 
 function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
   return (
-      <div className="space-y-4 px-3 pb-24 md:px-6 md:space-y-8 max-w-6xl">
+      <div className="library-feed space-y-3 px-2">
       {items.map((item) => (
         <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
       ))}
@@ -137,17 +139,17 @@ function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave 
 }
 
 function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
   useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
   const description = showEnglish ? (expanded ? item.englishBodyText || item.englishSummary : item.englishSummary) : expanded && item.bodyText ? item.bodyText : item.summary;
   return (
-    <article className={`grid grid-cols-1 ${media.length ? "md:grid-cols-2" : ""} gap-4 items-start rounded-xl border border-stone-900/10 bg-white/85 p-4 shadow-sm`}>
+    <article className={`library-feed-card ${media.length ? "has-media" : ""} grid grid-cols-1 gap-3 items-start rounded-xl border border-stone-900/10 bg-white/85 p-3 shadow-sm`}>
       {media.length > 0 && <div className="min-w-0 space-y-2 md:space-y-4">
         {media.map((asset) => (
           <div key={asset.id} className="w-full flex items-center justify-center bg-black/5 overflow-hidden rounded-lg">
-            {asset.type === "image" && <MediaImage loading="lazy" src={asset.thumbnailUrl || asset.url} alt={item.title} className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
-            {asset.type === "video" && <MediaVideo onPlay={()=>emitActivity({eventType:"video_play",recordId:item.id})} preload="none" src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="w-full max-h-[65vh] md:max-h-[500px] object-contain" />}
+            {asset.type === "image" && <MediaImage loading="lazy" src={asset.thumbnailUrl || asset.url} alt={item.title} className="library-media-preview w-full object-contain" />}
+            {asset.type === "video" && <MediaVideo onPlay={()=>emitActivity({eventType:"video_play",recordId:item.id})} preload="none" src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="library-media-preview w-full object-contain" />}
             {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><MediaAudio onPlay={()=>emitActivity({eventType:"audio_play",recordId:item.id})} preload="none" src={asset.url} controls className="w-full" /></div>}
             {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline"><InterfaceText source="Open transcript or document" /></a>}
           </div>
@@ -180,7 +182,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
 }
 function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLanguageCode: string; items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; onOpen: (item: ContentItem) => void }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 px-3 pb-24 md:px-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 px-2">
       {items.map((item) => {
         const media = mediaForCard(item);
         const thumb = media.find((m) => m.type === "image" || m.type === "video");
@@ -227,7 +229,7 @@ function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLangu
 function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode }: { viewLanguageCode: string; item: ContentItem; languageCode: string; onClose: () => void; onSave?: (item: ContentItem) => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { const value = dialog.current; if (value && !value.open) value.showModal(); }, []);
-  return <dialog ref={dialog} onClose={onClose} className="max-h-[90dvh] w-[min(95vw,60rem)] overflow-auto rounded-xl bg-[#e6d8bf] p-5 text-stone-900 backdrop:bg-black/60">
+  return <dialog ref={dialog} onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(95vw,60rem)] overflow-auto rounded-xl bg-[#e6d8bf] p-5 text-stone-900 backdrop:bg-black/60">
     <button type="button" autoFocus onClick={() => dialog.current?.close()} className="mb-4 min-h-11 rounded-full bg-amber-900 px-5 py-2 text-white"><InterfaceText source="Close details" /></button>
     <FeedCard item={{ ...item, summary: item.bodyText || item.summary }} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
   </dialog>;

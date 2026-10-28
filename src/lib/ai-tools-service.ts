@@ -16,7 +16,7 @@ export async function aiToolSources(languageId: number) {
     prisma.mediaAsset.findMany({ where: { languageId, type: { in: ["image", "audio"] }, ...publicMediaWhere(), OR: [{ record: { is: publicRecordWhere() } }, { dictionary: { is: publicRecordWhere() } }] }, take: 100, orderBy: { createdAt: "desc" }, select: { id: true, type: true, caption: true, format: true, record: { select: { title: true } } } }),
     prisma.culturalRecord.findMany({ where: { languageId, module: { code: "folktales" }, ...publicRecordWhere() }, take: 100, orderBy: { title: "asc" }, select: { id: true, title: true } }),
   ]);
-  return { assets: assets.map(asset => ({ id: asset.id, type: asset.type, title: asset.caption || asset.record?.title || asset.format || "Reviewed media" })), stories };
+  return { capabilities: { ocr: true, describe: true, transcribe: false, illustrate: false }, assets: assets.map(asset => ({ id: asset.id, type: asset.type, title: asset.caption || asset.record?.title || asset.format || "Reviewed media" })), stories };
 }
 async function mediaBytes(address: string) {
   let response: Response | undefined;
@@ -36,7 +36,8 @@ async function mediaBytes(address: string) {
   return Buffer.concat(chunks);
 }
 export async function runAiTool(userId: string, input: unknown) {
-  const task = Task.parse(input); let result; let entityId: string; let languageId: number;
+  const task = Task.parse(input);
+  assertSupportedTask(task.task); let result; let entityId: string; let languageId: number;
   const started = Date.now();
   if (task.task === "illustrate") {
     const record = await prisma.culturalRecord.findFirst({ where: { id: task.recordId, module: { code: "folktales" }, ...publicRecordWhere() }, select: { id: true, title: true, summary: true, data: true, languageId: true } });
@@ -50,7 +51,7 @@ export async function runAiTool(userId: string, input: unknown) {
     const audio = task.task === "transcribe";
     if (audio ? asset.type !== "audio" : asset.type !== "image") throw new TutorError(400, "Choose the appropriate media type for this tool.");
     if (asset.sizeBytes > BigInt(8 * 1024 * 1024)) throw new TutorError(413, "Choose a source smaller than 8 MB.");
-    const mimeByFormat: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", mp4: "audio/mp4", flac: "audio/flac", webm: "audio/webm", aac: "audio/aac" };
+    const mimeByFormat: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", mp4: "audio/mp4", flac: "audio/flac", webm: "audio/webm", aac: "audio/aac" };
     const mime = mimeByFormat[asset.format.toLowerCase()];
     if (!mime || !mime.startsWith(audio ? "audio/" : "image/")) throw new TutorError(400, "Use a supported image or audio format.");
     await configureCloudinary();
@@ -62,4 +63,8 @@ export async function runAiTool(userId: string, input: unknown) {
   await prisma.aIResponse.create({ data: { userId, languageId, query: `Media tool: ${task.task}`, response: result.text || "AI-generated illustration (not an approved cultural record)", model: result.model, latencyMs: Date.now()-started, sources: [{ id: entityId, task: task.task }] } });
   await logAction({ userId, action: `ai.${task.task}`, entityType: task.task === "illustrate" ? "cultural_record" : "media_asset", entityId, newValue: { model: result.model, draftOnly: true } });
   return { ...result, draft: true };
+}
+
+function assertSupportedTask(task: string) {
+  if (task === "transcribe" || task === "illustrate") throw new TutorError(503, "This tool is unavailable with DeepSeek. Image reading and image descriptions are available.");
 }

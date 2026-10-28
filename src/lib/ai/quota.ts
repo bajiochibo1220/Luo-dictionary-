@@ -30,5 +30,5 @@ export async function assertAiQuota(request: Request, userId?: string) {
       const data = JSON.stringify({ ...value, count: value.count + 1 });
       await tx.systemSetting.upsert({ where: { key: bucket.key }, create: { key: bucket.key, value: data }, update: { value: data } });
     }
-  });
+  }, { maxWait: 5_000, timeout: 15_000 });
 }

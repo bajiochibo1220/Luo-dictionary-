@@ -2,6 +2,10 @@
 
 Updated 28 October 2026.
 
+## More room for collection content
+
+On wide screens, collection search and the content-language selector appear in the top masthead. On smaller screens they sit directly above the collection title. The compact bottom bar filters images, audio, videos and transcripts. Descriptions open in full; use **Read less** to collapse them. Images and videos fit their available space without cropping, and narrow content areas stack media above descriptions.
+
 ## Language and navigation
 
 The public interface starts in English. An editor can save approved Dholuo wording in **Edit system text**. Each saved label then shows Dholuo first and smaller English underneath; untranslated labels stay English. This includes login, sign out, navigation, settings and the in-app manual. Use the community selector to choose a community. The separate content-language control changes a record's displayed language without changing menus. Administrative workspaces always stay in English.
@@ -44,7 +48,7 @@ Sign in, choose a community and select conversation, translation, grammar, writi
 
 Speech controls depend on your browser and installed voices. A missing community voice is reported instead of substituting a different language. Browser dictation may use your browser provider's service. Personal recordings stop after one minute. They remain on your device unless you separately choose AI transcription; you can preview and download them. There is no calibrated pronunciation score.
 
-AI media tools offer OCR, transcription, image description and story illustration using eligible published sources. Choose a source, give processing consent and run the tool. Download the resulting draft. To add it to the repository, use the normal contribution and editorial process. An AI-generated illustration must be labelled as an illustration, never evidence of a historical appearance.
+AI media tools use DeepSeek to read text from images and describe images from eligible published sources. Choose a source, give processing consent, and create a draft. Download the result and use the normal editorial process to add it to the repository. Audio transcription and AI illustration generation are currently unavailable. You can still record and play audio, upload illustrations, enter transcripts manually, and use browser dictation where supported.
 
 ## Research and settings
 
@@ -57,6 +61,8 @@ Open the account menu for Settings & profile, saved conversations and sign out. 
 Offline saved content and compatible learning progress are available through the existing offline library. AI, new downloads, research exports, maps and multiplayer need a connection. Synchronize queued progress after reconnecting.
 
 ## Audio, video and AI troubleshooting
+
+To send a chat message, tick **Allow AI processing for this chat**, enter your question, then choose **Send**. The chatbot can switch to its fallback text model when the primary model reaches its quota. If a request fails, your question returns to the input so you can retry. An administrator must check the AI service configuration or quota if both models are unavailable.
 
 Use the play controls to listen or watch. Starting another player pauses the previous one. If playback fails, choose **Try again** or download the original file. Practice voice recordings stay on your device unless you explicitly request AI transcription; device voices and dictation languages depend on the browser. If a microphone is unavailable, type your practice or upload a recording instead.
 

@@ -7,7 +7,7 @@ import { nativeApiHeaders, nativePreflight, sameOriginBrowserPost } from "@/lib/
 import { assertServiceAvailable } from "@/lib/maintenance";
 import { assertAiQuota } from "@/lib/ai/quota";
 import { assertAccountRateLimit } from "@/lib/account-security";
-import { AiProviderError } from "@/lib/ai/gemini-text";
+import { AiProviderError } from "@/lib/ai/gemini-errors";
 import { tutor, TutorError } from "@/lib/tutor-service";
 export const dynamic = "force-dynamic";
 export const OPTIONS = nativePreflight;

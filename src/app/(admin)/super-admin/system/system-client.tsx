@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { PartnerBrandingSettings } from "@/components/shared/partner-branding";
 import { webFeatureRequest } from "@/lib/web-feature-request";
 import { SettingsTabs } from "@/components/admin/settings-tabs";
+import { isSecretSetting } from "@/lib/settings-policy";
 
 type Language = { id: number; code: string; name: string; nativeName: string };
 
@@ -31,11 +32,13 @@ function Field({
   }) {
     return (
       <div className="mb-4">
-        <label className="block text-sm font-medium text-stone-700 mb-1">
+        <label htmlFor={`setting-${settingKey}`} className="block text-sm font-medium text-stone-700 mb-1">
           {label}
         </label>
         <input
+          id={`setting-${settingKey}`}
           type={type}
+          autoComplete={type === "password" ? "off" : undefined}
           value={values[settingKey] ?? ""}
           onChange={(e) => update(settingKey, e.target.value)}
           placeholder={placeholder}
@@ -84,7 +87,7 @@ export function SystemClient({
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed");
       }
-      setValues(current => ({ ...current, ...overrides }));
+      setValues(current => ({ ...current, ...overrides, ...Object.fromEntries(keys.filter(isSecretSetting).map(key => [key, payload[key] ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" : ""])) }));
       toast.success(<InterfaceText source={"Settings saved"} />);
       router.refresh();
     } catch (e: any) {
@@ -105,26 +108,16 @@ export function SystemClient({
     finally { setBusy(false); }
   }
 
-  async function rebuildAiIndex() {
+  async function testAiConnection() {
     setBusy(true);
     try {
-      const res = await fetch("/api/ai/reembed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const result = await res.json();
-      if (!res.ok || !result.success) throw new Error(result.error || "AI indexing failed");
-      const { succeeded, skipped, failed } = result.data;
-      toast.success(<InterfaceText source={`AI index ready: ${succeeded} updated, ${skipped} already current, ${failed} failed`} />);
-      if (failed) console.error("AI reindex failures:", result.data.errors);
-    } catch (error: any) {
-      toast.error(<InterfaceText source={error.message || "AI indexing failed"} />);
-    } finally {
-      setBusy(false);
-    }
+      const response = await fetch("/api/super-admin/settings/test-ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || "AI connection test failed.");
+      toast.success(<InterfaceText source="AI connection successful." />);
+    } catch (error) { toast.error(<InterfaceText source={error instanceof Error ? error.message : "AI connection test failed."} />); }
+    finally { setBusy(false); }
   }
-
 
   return (
     <div>
@@ -197,15 +190,14 @@ export function SystemClient({
 
             <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-6 text-xs text-amber-800"><InterfaceText source="Sensitive values are masked. Only edit a field if you want to change it." /></div>
 
-            <Field values={values} update={update}               label="Gemini API Key"
-              settingKey="gemini_api_key"
-              placeholder="AIza..."
-              helpText="Used by the AI chatbot, semantic search, and content embeddings."
-            />
-
-            <Field values={values} update={update} label="Text model" settingKey="gemini_model" placeholder="gemini-3.6-flash" />
-            <Field values={values} update={update} label="Fallback text model" settingKey="gemini_fallback_model" placeholder="gemini-3.6-flash" />
-            <Field values={values} update={update} label="Illustration model" settingKey="gemini_image_model" placeholder="gemini-3.1-flash-image" />
+            <label htmlFor="text-ai-provider" className="mb-4 block text-sm font-medium text-stone-700"><InterfaceText source="Text AI provider" />
+              <select id="text-ai-provider" value="deepseek" onChange={event => update("ai_text_provider", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3">
+                <InterfaceOption value="deepseek">DeepSeek</InterfaceOption>
+              </select>
+            </label>
+            <Field values={values} update={update} label="DeepSeek API Key" settingKey="deepseek_api_key" type="password" placeholder="Enter your DeepSeek API key" helpText="Used for chat, tutor practice, translations, summaries and image understanding. The key stays on the server." />
+            <Field values={values} update={update} label="DeepSeek model" settingKey="deepseek_model" placeholder="deepseek-flash" helpText="Use a model available to your DeepSeek API account. Environment configuration takes precedence over saved values." />
+            <p className="mb-4 text-xs text-stone-600"><InterfaceText source="Save your provider and key, then test the connection. DeepSeek chat searches public sources without a Gemini key. DeepSeek also reads and describes images. Audio transcription and image generation are unavailable." /></p>
 
             <Field values={values} update={update}               label="Cloudinary Cloud Name"
               settingKey="cloudinary_cloud_name"
@@ -226,24 +218,23 @@ export function SystemClient({
             <button
               onClick={() =>
                 save([
-                  "gemini_api_key", "gemini_model", "gemini_fallback_model", "gemini_image_model",
+                  "ai_text_provider", "deepseek_api_key", "deepseek_model",
                   "cloudinary_cloud_name",
                   "cloudinary_api_key",
                   "cloudinary_api_secret",
-                ])
+                ], { ai_text_provider: "deepseek" })
               }
               disabled={busy}
               className="mt-4 px-6 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
             >
               <InterfaceText source={busy ? "Saving..." : "Save API Keys"} />
             </button>
+            <button type="button" onClick={testAiConnection} disabled={busy} className="ml-3 mt-4 min-h-11 rounded-lg border border-amber-700 px-5 py-2 text-sm font-medium text-amber-900 disabled:opacity-50"><InterfaceText source={busy ? "Working..." : "Test AI connection"} /></button>
 
             <div className="mt-8 border-t border-stone-100 pt-6">
               <h3 className="text-sm font-semibold text-stone-700"><InterfaceText source="AI content index" /></h3>
-              <p className="mt-1 mb-3 text-xs text-stone-500"><InterfaceText source="Rebuild missing language indexes for published records, dictionary entries, and transcripts after the database migration." /></p>
-              <button onClick={rebuildAiIndex} disabled={busy} className="px-5 py-2.5 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 disabled:opacity-50">
-                <InterfaceText source={busy ? "Working..." : "Rebuild AI Index"} />
-              </button>
+              <p className="mt-1 mb-3 text-xs text-stone-500"><InterfaceText source="DeepSeek uses public text search. No Gemini key or embedding rebuild is needed for chat." /></p>
+
             </div>
 
             <div className="mt-8 pt-6 border-t border-stone-100">

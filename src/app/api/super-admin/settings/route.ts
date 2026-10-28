@@ -38,6 +38,8 @@ export async function PATCH(req: NextRequest) {
     }
     if (["jooust_color", "nrf_color"].includes(key) && !/^#[0-9a-f]{6}$/i.test(value)) return NextResponse.json({ error: "Choose a valid six-digit colour." }, { status: 400 });
     if (key === "maintenance_mode" && value !== "on" && value !== "off") return NextResponse.json({ error: "Choose on or off for maintenance mode." }, { status: 400 });
+    if (key === "ai_text_provider" && value !== "deepseek") return NextResponse.json({ error: "This installation uses DeepSeek." }, { status: 400 });
+    if (key === "deepseek_model" && value && !/^[a-zA-Z0-9._-]{1,100}$/.test(value)) return NextResponse.json({ error: "Enter a valid DeepSeek model identifier." }, { status: 400 });
     // Skip masked values (user didn't change them)
     if (
       isSecretSetting(key) &&

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { appApiHeaders } from "@/lib/app-api-headers";
 import { answerChat, ChatRequestError } from "@/lib/chat-service";
 import { getConversation, updateConversation, deleteConversation } from "@/lib/conversation-data";
+import { AiProviderError } from "@/lib/ai/gemini-errors";
 
 function failure(request: Request, status: number, error: string, extra: Record<string, string> = {}) {
   return NextResponse.json({ success: false, error }, { status, headers: { ...nativeApiHeaders(request), ...extra } });
@@ -66,6 +67,7 @@ export async function postChat(request: Request) {
     return NextResponse.json({ success: true, data: await answerChat(request, account, input.data) }, { headers });
   } catch (error) {
     if (error instanceof ChatRequestError) return fail(error.status, error.message);
+    if (error instanceof AiProviderError) return fail(error.status, error.message);
     const controlled = error as { status?: number; retryAfter?: number };
     if (controlled?.status === 429) return fail(429, "AI request limit reached. Please try again later.",
       Number.isFinite(controlled.retryAfter) ? { "Retry-After": String(Math.max(1, Math.ceil(controlled.retryAfter!))) } : {});

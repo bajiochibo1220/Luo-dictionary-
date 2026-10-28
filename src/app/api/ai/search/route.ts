@@ -6,12 +6,15 @@ import { prisma } from "@/lib/db";
 import { embedText } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { getContentCultureLanguageId } from "@/lib/content-translations";
+import { getTextAiProvider } from "@/lib/ai/provider-config";
+import { searchPublicText } from "@/lib/ai/public-text-search";
 
 export async function POST(req: NextRequest) {
   try {
     await assertServiceAvailable();
     const session = await auth();
-    if (!(await hasGemini())) {
+    const provider = await getTextAiProvider();
+    if (provider === "gemini" && !(await hasGemini())) {
       return NextResponse.json(
         { success: false, error: "AI is not configured" },
         { status: 400 }
@@ -37,6 +40,11 @@ export async function POST(req: NextRequest) {
     }
 
     await assertAiQuota(req, session?.user?.id);
+    if (provider === "deepseek") {
+      const cultureLanguageId = languageId ? await getContentCultureLanguageId(languageId) : undefined;
+      const results = await searchPublicText(query, cultureLanguageId, limit);
+      return NextResponse.json({ success: true, data: results.map(result => ({ id: result.record_id, title: result.title, module: result.module, moduleCode: result.module_code, similarity: result.similarity, excerpt: result.content.slice(0, 240) })) });
+    }
     const queryVector = await embedText(query);
     const vectorStr = `[${queryVector.join(",")}]`;
     // Content has a source locale plus separate translation vectors. Filter on

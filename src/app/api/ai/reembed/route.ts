@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   if (!(await hasGemini())) {
     return NextResponse.json(
-      { error: "Gemini API key is not configured. Add it in Super Admin → System → API Credentials." },
+      { error: "Gemini indexing is not enabled. DeepSeek uses public text search without a vector index." },
       { status: 400 }
     );
   }

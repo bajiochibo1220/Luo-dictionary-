@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { processTranscript } from "@/lib/ai/summarize";
-import { hasGemini } from "@/lib/ai/gemini";
+import { hasTextAi } from "@/lib/ai/provider-config";
 import { isPubliclyEligible } from "@/lib/governance";
 import { canReviewContent } from "@/lib/permissions";
 
@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!(await hasGemini())) {
+  if (!(await hasTextAi())) {
     return NextResponse.json(
-      { error: "GEMINI_API_KEY not configured" },
+      { error: "Configure the selected text AI provider in System settings." },
       { status: 400 }
     );
   }

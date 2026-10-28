@@ -5,7 +5,7 @@ import { getCurrentAccount } from "@/lib/account-data";
 import { nativeApiHeaders, nativePreflight, sameOriginBrowserPost } from "@/lib/native-api-headers";
 import { assertServiceAvailable } from "@/lib/maintenance";
 import { assertAiQuota } from "@/lib/ai/quota";
-import { AiProviderError } from "@/lib/ai/gemini-text";
+import { AiProviderError } from "@/lib/ai/gemini-errors";
 import { TutorError } from "@/lib/tutor-service";
 import { aiToolSources, runAiTool } from "@/lib/ai-tools-service";
 export const dynamic = "force-dynamic";

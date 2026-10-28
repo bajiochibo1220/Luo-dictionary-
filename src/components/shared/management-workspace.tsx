@@ -20,7 +20,7 @@ const roleChoices = ["uploader", "content_editor", "publisher", "language_admin"
 const settingGroups = [
   { name: "General", fields: [["site_name", "Site name"], ["support_email", "Support email"]] },
   { name: "Account email", fields: [["smtp_provider", "Email provider (resend or sendgrid)"], ["smtp_from", "Verified sender email"], ["smtp_password", "Email service key"]] },
-  { name: "AI and media services", fields: [["gemini_api_key", "Gemini service key"], ["gemini_model", "Chat model"], ["gemini_image_model", "Illustration model"], ["gemini_fallback_model", "Fallback chat model"], ["cloudinary_cloud_name", "Cloudinary cloud name"], ["cloudinary_api_key", "Cloudinary API key"], ["cloudinary_api_secret", "Cloudinary secret"]] },
+  { name: "AI and media services", fields: [["deepseek_api_key", "DeepSeek API Key"], ["deepseek_model", "DeepSeek model"], ["cloudinary_cloud_name", "Cloudinary cloud name"], ["cloudinary_api_key", "Cloudinary API key"], ["cloudinary_api_secret", "Cloudinary secret"]] },
   { name: "Maintenance", fields: [["maintenance_mode", "Maintenance mode (on or off)"], ["maintenance_message", "Message to readers"]] },
 ] as const;
 

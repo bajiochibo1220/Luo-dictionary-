@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { transcribePractice } from "@/lib/tutor-client";
+
 import { TUTOR_MODES, type TutorResponse } from "@/lib/tutor-contract";
 import type { FeatureRequest } from "./learning-hub";
 import { InterfaceOption, InterfaceText } from "./interface-language";
@@ -40,6 +40,6 @@ export function TutorWorkspace({ request, languageId, languageCode = "luo" }: { 
     {error && <p role="alert" className="rounded-lg bg-red-50 p-4 text-red-900">{error}</p>}
     {response?.text && <article className="space-y-3 rounded-xl bg-white p-5"><h2 className="font-semibold"><InterfaceText source="Tutor feedback" /></h2><p className="whitespace-pre-wrap">{response.text}</p>{!!response.sources?.length && <div><h3 className="font-semibold"><InterfaceText source="Reviewed reference material" /></h3><ul>{response.sources.map(source => <li key={source.id}>{source.title}</li>)}</ul></div>}</article>}
     {response?.questions && <form className="space-y-4 rounded-xl bg-white p-5" onSubmit={event => { event.preventDefault(); void submit(true); }}>{response.questions.map(question => <fieldset key={question.id} className="space-y-2"><legend className="font-semibold">{question.prompt}</legend>{question.choices.map((choice, index) => <label key={index} className="flex min-h-11 items-center gap-3"><input type="radio" name={question.id} required checked={answers[question.id] === index} onChange={() => setAnswers(previous => ({ ...previous, [question.id]: index }))} />{choice}</label>)}{response.results?.find(item => item.id === question.id) && <p>{response.results.find(item => item.id === question.id)?.explanation}</p>}</fieldset>)}<button className={button} disabled={busy || !consent}><InterfaceText source="Check my answers" /></button>{response.score !== undefined && <p role="status"><InterfaceText source="Your score: " />{response.score}%</p>}</form>}
-    <SpeechPractice onTranscribeRecording={recording=>transcribePractice(request,languageId,recording)} languageCode={languageCode} playbackLanguageCode={response?.text && english ? "eng" : languageCode} text={response?.text || text} onTranscript={value => setText(previous => [previous, value].filter(Boolean).join(" ").slice(0, 4000))} />
+    <SpeechPractice languageCode={languageCode} playbackLanguageCode={response?.text && english ? "eng" : languageCode} text={response?.text || text} onTranscript={value => setText(previous => [previous, value].filter(Boolean).join(" ").slice(0, 4000))} />
   </section>;
 }

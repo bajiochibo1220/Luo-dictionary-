@@ -21,7 +21,8 @@ Open **Help & training** for the current manual selected for your assigned dutie
 - Tailwind CSS 4 + shadcn/ui (modern browsers)
 - Prisma + Neon PostgreSQL
 - NextAuth v5
-- Google Gemini (embeddings + retrieval grounded chat)
+- DeepSeek (chat, tutor, translations, summaries, OCR and image descriptions)
+- Public text retrieval without an external embedding service
 - Cloudinary (authenticated media through permission checked application routes)
 
 ## Setup
@@ -44,4 +45,4 @@ After applying database migrations and seeding the `luo` language and `oral_hist
 npm run corpus:import -- "path/to/corpus_validated.jsonl"
 ```
 
-The import is repeatable by source segment ID, preserves source/session IDs and SHA-256 values, and stores corpus records as `research_only` / `internal`. It does not publish the transcripts or send them to Gemini. Changing their access scope requires a separate curator decision and record update.
+The import is repeatable by source segment ID, preserves source/session IDs and SHA-256 values, and stores corpus records as `research_only` / `internal`. It does not publish the transcripts or send them to the AI provider. Changing their access scope requires a separate curator decision and record update.

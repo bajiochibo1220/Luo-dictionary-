@@ -1,8 +1,9 @@
 import { mediaThumbnail } from "@/lib/media-preview";
 import { publicCulturalText } from "@/lib/public-cultural-text";
 import { prisma } from "@/lib/db";
-import { getSystemSetting } from "@/lib/settings";
-import { generateGeminiText, getGeminiModelName } from "./gemini-text";
+import { generateText } from "./text-generation";
+import { getTextAiProvider } from "./provider-config";
+import { searchPublicText, type TextSearchResult } from "./public-text-search";
 import { embedText } from "./embeddings";
 import { CULTURAL_ASSISTANT_PROMPT } from "./prompts";
 import { publicRecordWhere, publicMediaWhere } from "@/lib/governance";
@@ -22,14 +23,7 @@ function detectMediaIntent(question: string): string | null {
 }
 
 async function generateWithRetry(prompt: string, systemInstruction: string): Promise<{ text: string; model: string }> {
-  const primary = await getGeminiModelName();
-  const fallback = (process.env.GEMINI_FALLBACK_MODEL || await getSystemSetting("gemini_fallback_model") || "gemini-3.6-flash").trim().replace(/^models\//, "");
-  try { return await generateGeminiText(prompt, systemInstruction, primary); }
-  catch (error) {
-    if ((error as { status?: number })?.status === 429) throw error;
-    if (!fallback || fallback === primary) throw error;
-    return generateGeminiText(prompt, systemInstruction, fallback, 25000);
-  }
+  return generateText(prompt, systemInstruction);
 }
 
 export type RAGSource = {
@@ -127,6 +121,10 @@ export async function askQuestion(
   }
 
   const retrievalQuestion = recentHistory ? `Recent conversation:\n${recentHistory}\nCurrent question: ${question}` : question;
+  let results: TextSearchResult[];
+  if (await getTextAiProvider() === "deepseek") {
+    results = await searchPublicText([question, ...history.filter(turn => turn.role === "user").slice(-1).map(turn => turn.content)].join(" "), cultureLanguageId ?? languageId);
+  } else {
   const queryVector = await embedText(retrievalQuestion);
   const vectorStr = `[${queryVector.join(",")}]`;
   const langFilter = languageId ? `AND e."languageId" = ${languageId}` : "";
@@ -136,7 +134,7 @@ export async function askQuestion(
         OR (e."transcriptId" IS NOT NULL AND cr."languageId" = ${cultureLanguageId}))`
     : "";
 
-  const results = await prisma.$queryRawUnsafe<
+  results = await prisma.$queryRawUnsafe<
     Array<{
       record_id: string;
       is_dictionary: boolean;
@@ -178,6 +176,7 @@ export async function askQuestion(
        LIMIT 10`,
     vectorStr
   );
+  }
 
   // Vector rows rank candidates only. Never send persisted embedding text to a
   // provider: it can be stale or have been created before privacy rules changed.
@@ -194,7 +193,7 @@ export async function askQuestion(
     const entry = currentEntries.find(item => result.is_dictionary && item.id === result.record_id);
     if (!record && !entry) return [];
     seen.add(key);
-    return [{ ...result, title: record?.title ?? entry!.dholuo, module: record?.module.baseName ?? "Dictionary", content: record ? [record.summary, publicCulturalText(record.data)].filter(Boolean).join("\n") : publicCulturalText(entry) }];
+    return [{ ...result, title: record?.title ?? entry!.dholuo, module: record?.module.baseName ?? "Dictionary", content: record ? [record.summary, publicCulturalText(record.data), result.transcript_text].filter(Boolean).join("\n") : publicCulturalText(entry) }];
   }).slice(0, 5);
 
   if (rankedResults.length === 0) {

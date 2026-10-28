@@ -64,6 +64,6 @@ export async function answerChat(request: Request, account: AppAccount | null, i
       model: result.model, latencyMs: result.latencyMs,
     } });
     return id;
-  });
+  }, { maxWait: 5_000, timeout: 15_000 });
   return { ...result, conversationId };
 }

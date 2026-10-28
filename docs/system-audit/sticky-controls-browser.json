@@ -2,66 +2,162 @@
   "fixture": true,
   "results": [
     {
+      "width": 320,
+      "first": 65,
+      "second": 65,
+      "filters": [
+        {
+          "label": "All",
+          "top": 855,
+          "width": 46.5625
+        },
+        {
+          "label": "Images",
+          "top": 855,
+          "width": 46.5625
+        },
+        {
+          "label": "Audio",
+          "top": 855,
+          "width": 46.5625
+        },
+        {
+          "label": "Video",
+          "top": 855,
+          "width": 46.5625
+        },
+        {
+          "label": "Transcripts",
+          "top": 855,
+          "width": 46.5625
+        }
+      ]
+    },
+    {
       "width": 360,
       "first": 65,
       "second": 65,
       "filters": [
         {
           "label": "All",
-          "top": 842,
-          "width": 55.0625
+          "top": 855,
+          "width": 55.71875
         },
         {
           "label": "Images",
-          "top": 842,
-          "width": 55.0625
+          "top": 855,
+          "width": 55.734375
         },
         {
           "label": "Audio",
-          "top": 842,
-          "width": 55.0625
+          "top": 855,
+          "width": 55.734375
         },
         {
           "label": "Video",
-          "top": 842,
-          "width": 55.0625
+          "top": 855,
+          "width": 55.734375
         },
         {
           "label": "Transcripts",
-          "top": 842,
-          "width": 55.0625
+          "top": 855,
+          "width": 55.734375
         }
       ]
     },
     {
-      "width": 1440,
+      "width": 768,
       "first": 73,
       "second": 73,
       "filters": [
         {
           "label": "All",
-          "top": 842,
-          "width": 185.890625
+          "top": 855,
+          "width": 74.5625
         },
         {
           "label": "Images",
-          "top": 842,
-          "width": 185.90625
+          "top": 855,
+          "width": 74.5625
         },
         {
           "label": "Audio",
-          "top": 842,
-          "width": 185.890625
+          "top": 855,
+          "width": 74.5625
         },
         {
           "label": "Video",
-          "top": 842,
-          "width": 185.90625
+          "top": 855,
+          "width": 74.5625
         },
         {
           "label": "Transcripts",
-          "top": 842,
-          "width": 185.890625
+          "top": 855,
+          "width": 74.578125
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "first": 53,
+      "second": 53,
+      "filters": [
+        {
+          "label": "All",
+          "top": 855,
+          "width": 117.21875
+        },
+        {
+          "label": "Images",
+          "top": 855,
+          "width": 117.234375
+        },
+        {
+          "label": "Audio",
+          "top": 855,
+          "width": 117.234375
+        },
+        {
+          "label": "Video",
+          "top": 855,
+          "width": 117.234375
+        },
+        {
+          "label": "Transcripts",
+          "top": 855,
+          "width": 117.21875
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "first": 53,
+      "second": 53,
+      "filters": [
+        {
+          "label": "All",
+          "top": 855,
+          "width": 186.5625
+        },
+        {
+          "label": "Images",
+          "top": 855,
+          "width": 186.5625
+        },
+        {
+          "label": "Audio",
+          "top": 855,
+          "width": 186.5625
+        },
+        {
+          "label": "Video",
+          "top": 855,
+          "width": 186.5625
+        },
+        {
+          "label": "Transcripts",
+          "top": 855,
+          "width": 186.578125
         }
       ]
     }
