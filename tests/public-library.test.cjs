@@ -18,7 +18,7 @@ test('shared library applies record and media governance, bounds queries and ret
   const result = await load('src/lib/public-library.ts').getPublicLibrary({ id: 1, code: 'luo', nativeName: 'Dholuo' }, 'dictionary');
   assert.equal(result.items[0].id, 'd');
   assert.equal(result.items[1].englishSummary, 'Translation');
-  assert.equal(result.title, 'Muma');
+  assert.equal(result.title, 'Dictionary');
   assert.equal(result.canContribute, true);
   assert.equal(JSON.stringify(result).includes('private'), false);
   assert.equal(calls[0].take, 50);

@@ -29,7 +29,7 @@ export const AppBootstrapSchema = z.object({
     href: navigationPath,
     contributionHref: navigationPath.nullable(),
   })),
-  routes: z.record(navigationPath),
+  routes: z.record(z.string(), navigationPath),
   contentFilters: z.array(z.object({ key: z.string(), label: z.string() })),
   contentViews: z.array(z.object({ key: z.string(), label: z.string(), icon: z.string() })),
 });

@@ -1,9 +1,12 @@
 "use client";
 import { InterfaceText } from "@/components/shared/interface-language";
 
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { AdminPasswordControl } from "./admin-password-control";
 
 type Admin = {
   id: string;
@@ -67,6 +70,17 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
     }
   }
 
+  async function setSuperAccess(admin: Admin) {
+    setBusy(admin.id);
+    try {
+      const response = await fetch(`/api/super-admin/admins/${admin.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isSuperAdmin: !admin.isSuperAdmin }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not change Super Admin access.");
+      toast.success(<InterfaceText source={"Super Admin access updated."} />); router.refresh();
+    } catch (error) { toast.error(<InterfaceText source={error instanceof Error ? error.message : "Update failed."} />); }
+    finally { setBusy(null); }
+  }
+
   if (admins.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-12 text-center text-stone-400"><InterfaceText source="No administrators yet" /></div>
@@ -120,7 +134,12 @@ export function AdminTable({ admins, isMasterSuperAdmin }: { admins: Admin[]; is
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
+                <div className="mb-2 flex flex-wrap justify-end gap-2">
+                  <Link href={`/admin/users/${a.id}`} className="inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-semibold text-teal-800"><InterfaceText source="Manage account" /></Link>
+                  {isMasterSuperAdmin && <AdminPasswordControl userId={a.id} email={a.email} own={a.isMasterSuperAdmin} />}
+                </div>
                 {isMasterSuperAdmin && !a.isMasterSuperAdmin && <div className="flex justify-end gap-3">
+                <button type="button" disabled={busy === a.id} onClick={() => void setSuperAccess(a)} className="min-h-11 text-xs text-teal-800 hover:underline disabled:opacity-50"><InterfaceText source={a.isSuperAdmin ? "Remove Super Admin access" : "Grant Super Admin access"} /></button>
                 <button onClick={() => setStatus(a)} disabled={busy === a.id} className="text-xs text-amber-700 hover:underline disabled:opacity-50">
                   <InterfaceText source={a.status === "suspended" ? "Activate" : "Deactivate"} />
                 </button>

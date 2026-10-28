@@ -11,7 +11,7 @@ export const registerSchema = z.object({
   }),
   interests: z.array(z.enum(["community_member", "student", "contributor", "researcher", "teacher"])).max(5).default([]),
   languageId: z.number().int().positive(),
-  acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Please accept the Terms and Privacy Policy" }) }),
+  acceptedTerms: z.literal(true, { error: "Please accept the Terms and Privacy Policy" }),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

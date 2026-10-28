@@ -1,17 +1,21 @@
 import { prisma } from "@/lib/db";
 import { AdminsClient } from "./admins-client";
 import { auth } from "@/lib/auth";
+import { isSuperAdmin } from "@/lib/permissions";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminsPage() {
   const session = await auth();
+  if (!isSuperAdmin(session)) redirect("/admin/dashboard");
   const isMasterSuperAdmin = session?.user?.isMasterSuperAdmin === true;
   const assignedLanguageIds = (session?.user?.languageRoles ?? []).map((role) => role.languageId);
   const [admins, languages] = await Promise.all([
     prisma.user.findMany({
       where: {
         OR: [
+          { isMasterSuperAdmin: true },
           { isSuperAdmin: true },
           {
             languageRoles: {

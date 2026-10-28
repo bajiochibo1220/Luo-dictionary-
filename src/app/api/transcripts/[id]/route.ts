@@ -68,6 +68,7 @@ export async function PATCH(
   }
 
   const body = await request.json().catch(() => ({}));
+  if (transcript.record.publicationOfId) return NextResponse.json({ error: "Edit the source upload in the review queue, then publish the reviewed version." }, { status: 409 });
   if (typeof body.text !== "string" || !body.text.trim() || body.text.length > 1_000_000) {
     return NextResponse.json({ error: "Transcript text is required and must be under 1 MB." }, { status: 400 });
   }
@@ -75,6 +76,8 @@ export async function PATCH(
 
   const userId = (session.user as any).id as string;
   const updated = await prisma.$transaction(async (tx) => {
+    // Serialize revisions of an early-publication source with package snapshots.
+    await tx.$queryRaw`SELECT id FROM cultural_records WHERE id = ${transcript.recordId} FOR UPDATE`;
     const saved = await tx.transcript.update({
       where: { id: transcript.id },
       data: { text: body.text.trim(), versionNo: { increment: 1 }, aiSummary: null, aiEntities: {} },

@@ -34,7 +34,7 @@ export default async function LangLayout({
 
   const moduleTitles: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
-    moduleTitles[mt.module.code] = mt.title;
+    moduleTitles[mt.module.code] = mt.module.baseName;
   }
 
   return (

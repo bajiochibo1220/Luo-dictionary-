@@ -60,7 +60,7 @@ export function ContentFormCore({
   const { t, local: localInterface } = useInterfaceLanguage();
   const fieldDefs = completeCollectionFields(moduleCode, configuredFields).map(field => {
     const label = t(field.baseLabel, isTranslation ? false : localInterface);
-    return { ...field, label: label === field.baseLabel && localInterface && !isTranslation ? field.label : label };
+    return { ...field, label };
   });
   const local = deviceDraft?.initial;
   const [deviceId] = useState(() => local?.id || (deviceDraft ? globalThis.crypto.randomUUID() : ""));
@@ -304,7 +304,7 @@ export function ContentFormCore({
       {fieldDefs.map((f) => (
         <div key={f.id} className="mb-5">
           <label className="block text-sm font-semibold text-stone-800 mb-1.5">
-            {f.label}
+            <InterfaceText source={f.baseLabel} />
             {f.isRequired && <span className="text-red-600 ml-1">*</span>}
           </label>
 

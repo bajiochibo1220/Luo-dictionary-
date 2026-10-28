@@ -111,7 +111,7 @@ export default async function ReviewDetailPage({
           {fieldDefs.map((f) => {
             const value = d?.[f.fieldCode];
             if (!value) return null;
-            const label = f.translations[0]?.label || f.baseLabel;
+            const label = f.baseLabel;
             return (
               <div key={f.id}>
                 <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">

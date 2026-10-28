@@ -1,5 +1,6 @@
 "use client";
-import { InterfaceOption, InterfaceSelect, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
+import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
+
 
 import { emitActivity } from "@/lib/activity-events";
 import { ObjViewer } from "./obj-viewer";
@@ -45,9 +46,8 @@ export function ModuleContentView({
   const [filter, setFilter] = useState("all");
   const [category, setCategory] = useState("all");
   const [view, setView] = useState("feed");
-  const interfaceLanguage = useInterfaceLanguage();
   const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
-  useEffect(() => { setViewLanguageCode(interfaceLanguage.local ? languageCode : "eng"); }, [interfaceLanguage.local, languageCode]);
+  useEffect(() => { setViewLanguageCode(languageCode); }, [languageCode]);
 
   const filteredItems = useMemo(() => {
     const byCategory = moduleCode !== "all" || category === "all"
@@ -76,7 +76,7 @@ export function ModuleContentView({
       <div className="module-controls sticky top-0 z-20 mb-3 bg-[#eee5d5] px-3 py-2 shadow-sm" data-sticky-controls>
       <div className="flex min-w-0 items-center gap-2" data-search-language-row>
         {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
-        <label className="shrink-0"><span className="sr-only"><InterfaceText source="Content language" /></span><InterfaceSelect aria-label="Content language" value={viewLanguageCode} onChange={event => { setViewLanguageCode(event.target.value); interfaceLanguage.select(languageCode, event.target.value !== "eng"); }} className="min-h-11 w-24 rounded-lg border border-stone-400 bg-white px-2 text-base sm:w-36">
+        <label className="shrink-0"><span className="sr-only"><InterfaceText source="Content language" /></span><InterfaceSelect aria-label="Content language" value={viewLanguageCode} onChange={event => setViewLanguageCode(event.target.value)} className="min-h-11 w-24 rounded-lg border border-stone-400 bg-white px-2 text-base sm:w-36">
           <InterfaceOption value={languageCode}>{languageName}</InterfaceOption>
           {languageCode !== "eng" && <InterfaceOption value="eng">English</InterfaceOption>}
         </InterfaceSelect></label>
@@ -154,6 +154,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
       <div className="min-w-0">
         {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
         <h3 className="font-serif text-2xl text-stone-900 mb-3 leading-snug ">{showEnglish ? item.englishTitle || item.title : item.title}</h3>
+        {item.isProvisional && <p className="mb-3 rounded-lg bg-amber-100 p-2 text-xs text-amber-950"><InterfaceText source="Published before review. Review and editing are in progress." /></p>}
         {languageCode !== "eng" && (
           <button type="button" onClick={() => { setShowEnglish((value) => !value); setExpanded(true); }} aria-pressed={showEnglish} className="mb-3 block text-sm font-semibold text-amber-900 underline underline-offset-2">
             <InterfaceText source={showEnglish ? "View in original language" : "See this in English"} />
@@ -161,9 +162,9 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
         )}
         {description && <div className="space-y-2"><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
         {!showEnglish && languageCode !== "eng" && <div lang="en" translate="no" contentEditable={false} className="mt-4 space-y-2 border-t border-stone-300 pt-3 text-sm text-stone-700">
-          <p className="text-xs font-semibold uppercase tracking-wide">English</p>
+          <p className="text-xs font-semibold uppercase tracking-wide"><InterfaceText source="English" /></p>
           {item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
-          {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic">An English description has not been added yet.</p>}
+          {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic"><InterfaceText source="An English description has not been added yet." /></p>}
         </div>}
         {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
         {description && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
@@ -211,6 +212,7 @@ function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLangu
             </div>
             <div className="p-3">
               <p className="font-serif text-sm text-stone-900 line-clamp-2 leading-tight">{viewLanguageCode === "eng" ? item.englishTitle || item.title : item.title}</p>
+              {item.isProvisional && <p className="mt-1 text-xs text-amber-900"><InterfaceText source="Review in progress" /></p>}
               {viewLanguageCode !== "eng" && item.englishTitle && <p lang="en" translate="no" contentEditable={false} className="mt-2 line-clamp-2 text-xs leading-relaxed text-stone-700">{item.englishTitle}</p>}
             </div>
           </button>

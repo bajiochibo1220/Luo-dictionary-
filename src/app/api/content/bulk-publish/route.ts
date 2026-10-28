@@ -9,6 +9,7 @@ import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/
 import { hasGemini } from "@/lib/ai/gemini";
 import { embedRecord, embedTranscript } from "@/lib/ai/embeddings";
 import { missingEnglishTranslation } from "@/lib/english-translation";
+import { finishPublication } from "@/lib/content-publication";
 
 async function handlePOST(req: NextRequest) {
   const session = await auth();
@@ -48,6 +49,7 @@ async function handlePOST(req: NextRequest) {
 
   const reviewerId = (session.user as any).id as string;
   const publishedAt = new Date();
+  const publicationIds = new Map<string, string>();
   await prisma.$transaction(async (tx) => {
     for (const record of records) {
       const moved = await tx.culturalRecord.updateMany({
@@ -119,8 +121,9 @@ async function handlePOST(req: NextRequest) {
           comments: "Published by an authorized editor or administrator after cultural and editorial review.",
         },
       });
+      publicationIds.set(record.id, await finishPublication(tx, record.id, reviewerId, true));
     }
-  });
+  }, { timeout: 60_000 });
 
   await Promise.all(records.map((record) => logAction({
     userId: reviewerId,
@@ -146,10 +149,14 @@ async function handlePOST(req: NextRequest) {
   })));
 
   if (await hasGemini()) {
-    await Promise.all(records.flatMap((record) => [
-      embedRecord(record.id, true).catch((error) => console.error(`[bulk publish] Record AI reindex failed for ${record.id}:`, error)),
-      ...record.transcripts.map((transcript) => embedTranscript(transcript.id, true).catch((error) => console.error(`[bulk publish] Transcript AI reindex failed for ${transcript.id}:`, error))),
-    ]));
+    await Promise.all(records.map(async record => {
+      const publicationId = publicationIds.get(record.id) ?? record.id;
+      const transcripts = publicationId === record.id ? record.transcripts : await prisma.transcript.findMany({ where: { recordId: publicationId }, select: { id: true } });
+      await Promise.all([
+        embedRecord(publicationId, true).catch((error) => console.error(`[bulk publish] Record AI reindex failed for ${publicationId}:`, error)),
+        ...transcripts.map(transcript => embedTranscript(transcript.id, true).catch((error) => console.error(`[bulk publish] Transcript AI reindex failed for ${transcript.id}:`, error))),
+      ]);
+    }));
   }
 
   return NextResponse.json({ success: true, count: records.length });

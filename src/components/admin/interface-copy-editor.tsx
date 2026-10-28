@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import type { InterfaceCatalog } from "@/lib/interface-copy";
-import { useInterfaceLanguage } from "@/components/shared/interface-language";
 
 type Language = { code: string; nativeName: string };
 export function InterfaceCopyEditor({ languages, transport = fetch }: { languages: Language[]; transport?: typeof fetch }) {
@@ -14,7 +13,6 @@ export function InterfaceCopyEditor({ languages, transport = fetch }: { language
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const { select } = useInterfaceLanguage();
   useEffect(() => {
     let active = true; setLoading(true); setMessage(""); setCatalog({}); setDirty([]); setPage(0);
     transport(`/api/interface-copy?community=${encodeURIComponent(community)}`).then(async response => {
@@ -56,11 +54,12 @@ export function InterfaceCopyEditor({ languages, transport = fetch }: { language
       <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={missingOnly} onChange={event => { setMissingOnly(event.target.checked); setPage(0); }} />Missing translations ({missing})</label>
       <button disabled={busy || loading || !dirty.length} onClick={() => void save()} className="min-h-11 rounded-lg bg-amber-900 px-4 text-white disabled:opacity-50">{busy ? "Saving…" : `Save changes (${dirty.length})`}</button>
     </div>
-    <div className="flex flex-wrap gap-3 text-sm"><span>{Object.keys(catalog).length - missing}/{Object.keys(catalog).length} community-language entries filled</span><button className="underline" onClick={() => select(community, true)}>Preview {languageName}</button><button className="underline" onClick={() => select(community, false)}>Preview English</button></div>
-    <p className="text-sm text-stone-700">Empty translations use the English source until an editor supplies the approved wording. Seed Dholuo wording also needs fluent-speaker review.</p>
+    <div className="flex flex-wrap gap-3 text-sm"><span>{Object.keys(catalog).length - missing}/{Object.keys(catalog).length} community-language entries filled</span><a className="underline" href="/application" target="_blank" rel="noopener noreferrer">Preview public interface</a></div>
+    <p className="text-sm text-stone-700">The public sees English until you save a translation. Saved community-language text appears first with smaller English underneath. Empty translations return that label to English. The admin workspace always stays in English.</p>
     {message && <p role="status" className="rounded-lg border bg-white p-3">{message}</p>}
     {loading ? <p role="status">Loading interface text…</p> : sources.slice(page * 25, (page + 1) * 25).map(source => <article key={source} className="space-y-3 rounded-xl border border-stone-200 bg-white p-4">
       <p className="break-words text-xs text-stone-500">Source: {source}</p>
+      <div className="rounded-lg bg-teal-50 p-3 text-teal-950" aria-label="Public text preview">{catalog[source].local.trim() ? <span className="interface-text-pair"><span>{catalog[source].local}</span><span className="interface-english">{catalog[source].english}</span></span> : catalog[source].english}</div>
       <div className="grid gap-3 md:grid-cols-2"><label className="min-w-0 text-sm">{languageName}<textarea value={catalog[source].local} onChange={event => update(source, "local", event.target.value)} rows={source.length > 100 ? 4 : 2} maxLength={8000} className="mt-1 block w-full rounded-lg border p-3" /></label><label className="min-w-0 text-sm">English<textarea value={catalog[source].english} onChange={event => update(source, "english", event.target.value)} rows={source.length > 100 ? 4 : 2} maxLength={8000} className="mt-1 block w-full rounded-lg border p-3" /></label></div>
     </article>)}
     <nav aria-label="Interface text pages" className="flex items-center gap-3"><button disabled={page === 0} onClick={() => setPage(value => value - 1)} className="min-h-11 rounded-lg border bg-white px-4 disabled:opacity-50">Previous</button><span>Page {page + 1} of {Math.max(1, Math.ceil(sources.length / 25))}</span><button disabled={(page + 1) * 25 >= sources.length} onClick={() => setPage(value => value + 1)} className="min-h-11 rounded-lg border bg-white px-4 disabled:opacity-50">Next</button></nav>

@@ -23,7 +23,7 @@ export default async function DictionaryPage({
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
-    titleMap[mt.module.code] = mt.title;
+    titleMap[mt.module.code] = mt.module.baseName;
   }
   const pageTitle = titleMap["dictionary"] || "Dictionary";
 
@@ -64,7 +64,7 @@ export default async function DictionaryPage({
     <div>
       <header className="mb-8">
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2">
-          {pageTitle}
+          <InterfaceText source={pageTitle} />
         </h1>
         <p className="text-stone-500">
           {publicEntries.length} <InterfaceText source={publicEntries.length === 1 ? "entry" : "entries"} />

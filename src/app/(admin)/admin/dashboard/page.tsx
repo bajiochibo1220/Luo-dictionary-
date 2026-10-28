@@ -113,8 +113,8 @@ export default async function AdminDashboardPage() {
     moduleTotals.set(group.moduleId, (moduleTotals.get(group.moduleId) ?? 0) + group._count._all);
     if (group.status === "submitted") modulePending.set(group.moduleId, (modulePending.get(group.moduleId) ?? 0) + group._count._all);
   }
-  const activeModules = modules.map((module) => ({ label: module.translations[0]?.title ?? module.baseName, count: moduleTotals.get(module.id) ?? 0 })).filter((module) => module.count > 0);
-  const pendingActive = modules.map((module) => ({ label: module.translations[0]?.title ?? module.baseName, count: modulePending.get(module.id) ?? 0 })).filter((module) => module.count > 0);
+  const activeModules = modules.map((module) => ({ label: module.baseName, count: moduleTotals.get(module.id) ?? 0 })).filter((module) => module.count > 0);
+  const pendingActive = modules.map((module) => ({ label: module.baseName, count: modulePending.get(module.id) ?? 0 })).filter((module) => module.count > 0);
   const contributorIds = contributorsRaw.map((group) => group.contributorId).filter(Boolean) as string[];
   const contributorUsers = contributorIds.length ? await prisma.user.findMany({
     where: { id: { in: contributorIds } },

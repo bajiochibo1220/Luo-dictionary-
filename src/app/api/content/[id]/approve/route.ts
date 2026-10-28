@@ -10,6 +10,7 @@ import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, isPubliclyEligible } from "@/lib/governance";
 import { hasPublicReleaseSourcePermission, validatePhaseOneSubmission } from "@/lib/phase-one-content";
 import { missingEnglishTranslation } from "@/lib/english-translation";
+import { finishPublication } from "@/lib/content-publication";
 
 async function handlePOST(
   req: NextRequest,
@@ -58,7 +59,7 @@ async function handlePOST(
   const nextStatus = publicRelease ? "published" : "curated";
   const decisionAt = new Date();
 
-  await prisma.$transaction(async (tx) => {
+  const publicationId = await prisma.$transaction(async (tx) => {
     const moved = await tx.culturalRecord.updateMany({
       where: { id: params.id, status: "under_review", updatedAt: record.updatedAt, validatorId: { not: null } },
       data: {
@@ -138,7 +139,8 @@ async function handlePOST(
         }
     }
 
-  });
+    return finishPublication(tx, record.id, session.user!.id!, publicRelease);
+  }, { timeout: 60_000 });
 
   await logAction({
     userId: (session.user as any).id,
@@ -165,11 +167,11 @@ async function handlePOST(
 
   if (publicRelease && await hasGemini()) {
     await Promise.all([
-      embedRecord(record.id, true).catch((error) => console.error("[content approve] record AI reindex failed:", error)),
-      ...record.transcripts.map((transcript) => embedTranscript(transcript.id, true).catch((error) => console.error(`[content approve] transcript AI reindex failed for ${transcript.id}:`, error))),
+      embedRecord(publicationId, true).catch((error) => console.error("[content approve] record AI reindex failed:", error)),
+      ...(publicationId === record.id ? record.transcripts : await prisma.transcript.findMany({ where: { recordId: publicationId }, select: { id: true } })).map((transcript) => embedTranscript(transcript.id, true).catch((error) => console.error(`[content approve] transcript AI reindex failed for ${transcript.id}:`, error))),
     ]);
   }
-  return NextResponse.json({ success: true, status: nextStatus, publicRelease });
+  return NextResponse.json({ success: true, status: nextStatus, publicRelease, publicationId });
 }
 
 export const POST = withApiErrors(handlePOST);

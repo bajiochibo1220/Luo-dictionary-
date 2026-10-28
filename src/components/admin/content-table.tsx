@@ -1,10 +1,12 @@
 "use client";
 import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 
+
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { EarlyPublishButton } from "@/components/admin/early-publish-button";
 
 type ContentRecord = {
   id: string;
@@ -21,6 +23,8 @@ type ContentRecord = {
   canForward: boolean;
   canFinalReview: boolean;
   canPublish: boolean;
+  canEarlyPublish: boolean;
+  hasPublicVersion: boolean;
   language: { code: string; nativeName: string };
   module: { code: string; baseName: string };
 };
@@ -42,6 +46,7 @@ const STATUS_STYLES: Record<string, string> = {
   needs_edit: "bg-purple-100 text-purple-700",
   curated: "bg-orange-100 text-orange-800",
   published: "bg-green-100 text-green-700",
+  published_source: "bg-green-100 text-green-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -159,6 +164,23 @@ export function ContentTable({
     }
   }
 
+  async function publishSelectedBeforeReview() {
+    if (!selected.length || !selectedRecords.every(record => record.canEarlyPublish)) return;
+    if (!confirm(`Publish ${selected.length} uploaded items while review continues? Confirm that their public consent and attached files allow public sharing. Reviewed versions will replace them when published.`)) return;
+    setBulkBusy(true);
+    let completed = 0;
+    try {
+      for (const id of selected) {
+        const response = await fetch(`/api/content/${id}/publish-before-review`, { method: "POST" });
+        const result = await readApiResponse(response);
+        if (!response.ok || !result.success) throw new Error(`${completed} published; ${result.error || "one item could not be published"}`);
+        completed += 1;
+      }
+      toast.success(<InterfaceText source={`Published ${completed} items. Review can continue.`} />);
+    } catch (error) { toast.error(<InterfaceText source={error instanceof Error ? error.message : "Publishing failed."} />); }
+    finally { setBulkBusy(false); setSelected([]); router.refresh(); }
+  }
+
   if (records.length === 0) {
     return <div className="rounded-xl border border-stone-100 bg-white p-12 text-center text-stone-500"><InterfaceText source="No content found in this selection." /></div>;
   }
@@ -173,6 +195,7 @@ export function ContentTable({
         </label>
         {canDelete && <button type="button" disabled={bulkBusy} onClick={() => setSelected(records.filter(record => record.canDelete).slice(0, 100).map(record => record.id))} className="min-h-11 rounded-lg border px-3 text-sm disabled:opacity-50"><InterfaceText source="Select deletable uploads" /></button>}
         {selected.length > 0 && <div className="flex flex-wrap gap-2">
+          {selectedRecords.every(record => record.canEarlyPublish) && <button type="button" disabled={bulkBusy} onClick={() => void publishSelectedBeforeReview()} className="min-h-11 rounded-lg border border-amber-700 px-3 text-xs font-semibold text-amber-900 disabled:opacity-50"><InterfaceText source={bulkBusy ? "Publishing…" : "Publish selected before review"} /></button>}
           {canBulkWorkflow && canAdvanceSelection && selectedStage && ["draft", "rejected", "curated", "submitted", "needs_edit", "under_review"].includes(selectedStage) && <button type="button" onClick={() => void advanceSelected()} disabled={bulkBusy} className="rounded-lg bg-amber-800 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50">
           {bulkBusy ? "Working…" : selectedStage === "under_review" ? "Publish selected" : selectedStage === "submitted" ? "Approve editor review" : "Send selected to cultural review"}
           </button>}
@@ -198,8 +221,10 @@ export function ContentTable({
                 <td className="px-4 py-3">{record.canEdit ? <Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="font-medium text-stone-800 hover:text-amber-700">{record.title}</Link> : <span className="font-medium text-stone-800">{record.title}</span>}</td>
                 <td className="px-4 py-3 text-stone-600">{record.module.baseName}</td>
                 <td className="px-4 py-3 text-stone-600">{record.language.nativeName}</td>
-                <td className="px-4 py-3"><span className={`inline-block rounded-full px-2 py-1 text-xs ${STATUS_STYLES[record.status] || STATUS_STYLES.draft}`}>{record.status.replaceAll("_", " ")}</span></td>
+                <td className="px-4 py-3"><span className={`inline-block rounded-full px-2 py-1 text-xs ${STATUS_STYLES[record.status] || STATUS_STYLES.draft}`}>{record.status === "published_source" ? "published" : record.status.replaceAll("_", " ")}</span></td>
                 <td className="space-x-3 px-4 py-3 text-right">
+                  {record.hasPublicVersion && <span className="text-xs text-green-800"><InterfaceText source="Public version available" /></span>}
+                  {record.canEarlyPublish && <EarlyPublishButton recordId={record.id} />}
                   {(record.status === "submitted" || (record.status === "under_review" && !record.validatorId)) && record.canCultureReview && <Link href={`/admin/validation-queue/${record.id}`} className="text-xs font-medium text-amber-700 hover:underline"><InterfaceText source="Assess authenticity" /></Link>}
                   {record.status === "needs_edit" && record.canEdit && <><Link href={`/admin/content/${record.id}/edit?languageId=${record.editLanguageId}`} className="text-xs text-stone-600 hover:underline"><InterfaceText source="Edit" /></Link>{record.canForward && <button type="button" onClick={() => void action(record.id, "send-to-final-review", "Sent back to cultural review")} disabled={busy === record.id} className="text-xs font-medium text-amber-700 hover:underline disabled:opacity-50"><InterfaceText source="Send to cultural review" /></button>}</>}
                   {record.englishLanguageId && record.englishLanguageId !== record.editLanguageId && (record.canModerate || record.canEdit) && ["draft", "needs_edit", "rejected", "curated"].includes(record.status) && <Link href={`/admin/content/${record.id}/edit?languageId=${record.englishLanguageId}`} className="text-xs text-blue-700 hover:underline"><InterfaceText source="English version" /></Link>}

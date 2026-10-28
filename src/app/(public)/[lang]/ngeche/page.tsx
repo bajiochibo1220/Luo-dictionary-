@@ -32,7 +32,7 @@ export default async function RiddlesPage({
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
-    titleMap[mt.module.code] = mt.title;
+    titleMap[mt.module.code] = mt.module.baseName;
   }
   const pageTitle = titleMap["riddles"] || "Riddles";
 
@@ -40,7 +40,7 @@ export default async function RiddlesPage({
     <div>
       <header className="mb-8">
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2">
-          {pageTitle}
+          <InterfaceText source={pageTitle} />
         </h1>
         <p className="text-stone-500">
           {records.length} <InterfaceText source={records.length === 1 ? "riddle" : "riddles"} /> ·{" "}<InterfaceText source="Traditional Luo riddling games" /></p>

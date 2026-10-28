@@ -30,7 +30,6 @@ const ROLE_ITEMS: Record<string, NavItem[]> = {
     { label: "Media", href: "/admin/media", icon: "M" },
     { label: "Users", href: "/admin/users", icon: "U" },
     { label: "Transcripts", href: "/admin/transcripts", icon: "T" },
-    { label: "Translations", href: "/admin/translations", icon: "T" },
     { label: "Edit system text", href: "/admin/interface", icon: "T" },
     { label: "Analytics", href: "/admin/analytics", icon: "A" },
     { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "AI" },
@@ -39,7 +38,7 @@ const ROLE_ITEMS: Record<string, NavItem[]> = {
 
 const SUPER_ADMIN_SECTIONS: NavSection[] = [
   { title: "Workflow", items: [DASHBOARD, { label: "Content", href: "/admin/content", icon: "▤" }, { label: "Review & edit", href: "/admin/validation-queue", icon: "C" }, { label: "Review History", href: "/admin/review-history", icon: "H" }, { label: "Publishing Queue", href: "/admin/review-queue", icon: "P" }, { label: "Published History", href: "/admin/published-history", icon: "H" }] },
-  { title: "Library", items: [{ label: "Edit system text", href: "/admin/interface", icon: "T" }, { label: "Media", href: "/admin/media", icon: "◉" }, { label: "Transcripts", href: "/admin/transcripts", icon: "T" }, { label: "Users", href: "/admin/users", icon: "●" }, { label: "Translations", href: "/admin/translations", icon: "⌘" }] },
+  { title: "Library", items: [{ label: "Edit system text", href: "/admin/interface", icon: "T" }, { label: "Media", href: "/admin/media", icon: "◉" }, { label: "Transcripts", href: "/admin/transcripts", icon: "T" }, { label: "Users", href: "/admin/users", icon: "●" },] },
   { title: "Insights", items: [{ label: "Analytics", href: "/admin/analytics", icon: "▲" }, { label: "AI Monitoring", href: "/admin/ai-monitoring", icon: "✦" }, { label: "Audit Logs", href: "/admin/audit-logs", icon: "◈" }] },
 ];
 

@@ -1,5 +1,17 @@
 # Using Luo Heritage
 
+Updated 28 October 2026.
+
+## Language and navigation
+
+The public interface starts in English. An editor can save approved Dholuo wording in **Edit system text**. Each saved label then shows Dholuo first and smaller English underneath; untranslated labels stay English. This includes login, sign out, navigation, settings and the in-app manual. Use the community selector to choose a community. The separate content-language control changes a record's displayed language without changing menus. Administrative workspaces always stay in English.
+
+## A simpler cultural assistant
+
+Open **AI cultural assistant**, enter a question, select **Allow AI processing for this chat**, and send. Suggested questions fill the input so you can edit them first. **Chat settings** contains answer-language and processing information. Expand **Sources** and **Related media** when needed. **Your chats** opens saved conversations after sign-in; **New chat** starts another conversation. Use **X** to close the assistant. Escape closes an open menu or history panel first, then closes the assistant. AI answers can be mistaken; check source material.
+
+Some public items are marked **Review in progress**. Authorized staff may publish an uploaded snapshot while review continues. Unfinished edits stay private; publishing the reviewed version automatically replaces the earlier public package at the same link.
+
 This guide describes the PRD implementation. Collections can be empty until approved material is published. No class membership is required to explore the public library.
 
 The dashboard has shortcuts for listening, learning, the tutor and **My manual**. Teachers and researchers also see entry cards relevant to their assigned duties. Navigation icons accompany labels; use the menu button on phones to open the sidebar. The same interface is shared with packaged mobile clients.

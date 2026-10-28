@@ -240,6 +240,8 @@ model CulturalRecord {
   reviewerId       String?
   validatorId      String?
   publishedAt      DateTime?
+  publicationOfId  String?   @unique
+  isProvisional    Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -256,6 +258,8 @@ model CulturalRecord {
   provenance     Provenance[]
   versions       VersionHistory[]
   consentRecords ConsentRecord[]
+  publicationOf  CulturalRecord? @relation("ContentPublication", fields: [publicationOfId], references: [id], onDelete: Restrict)
+  publication    CulturalRecord? @relation("ContentPublication")
 
   @@index([languageId, moduleId, status])
   @@index([status])

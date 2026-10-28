@@ -67,7 +67,7 @@ async function handlePATCH(
 
   let body: z.infer<typeof updateSchema>;
   try { body = updateSchema.parse(await req.json()); }
-  catch (error: any) { return NextResponse.json({ error: error.errors?.[0]?.message ?? "Invalid request" }, { status: 400 }); }
+  catch (error: any) { return NextResponse.json({ error: error.issues?.[0]?.message ?? "Invalid request" }, { status: 400 }); }
   const governance = parseGovernanceMetadata({
     consentScope: body.consentScope ?? existing.consentScope,
     restrictionLevel: body.restrictionLevel ?? existing.restrictionLevel,

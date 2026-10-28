@@ -1,7 +1,9 @@
 "use client";
-import { InterfaceButton, InterfaceInput, InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceButton, InterfaceOption, InterfaceText, InterfaceTextarea } from "@/components/shared/interface-language";
+
 
 import { useState, useRef, useEffect, useCallback, useMemo, type ComponentType, type ReactNode } from "react";
+import { X, History, Plus, MessageCircle, MoreHorizontal, Pin, ArrowUp, ArrowUpRight, LoaderCircle } from "lucide-react";
 import { publicSourceHref } from "@/lib/app-navigation";
 
 export type ChatTransport = (path: string, init?: RequestInit) => Promise<Response>;
@@ -48,10 +50,10 @@ const SUGGESTED = [
 
 function PlainSourceLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) { return <a href={href} className={className}>{children}</a>; }
 
-export function SharedChatInterface({ languageCode = "luo", cultureCode = languageCode, guest = false, request, BackLink, onSessionExpired, initialConversationId, Link = PlainSourceLink }: {
+export function SharedChatInterface({ languageCode = "luo", cultureCode = languageCode, guest = false, request, BackLink, onSessionExpired, initialConversationId, onClose, Link = PlainSourceLink }: {
   languageCode?: string; cultureCode?: string; guest?: boolean;
   request: ChatTransport; BackLink: ComponentType<BackLinkProps>;
-  onSessionExpired: () => void; initialConversationId?: string;
+  onSessionExpired: () => void; initialConversationId?: string; onClose?: () => void;
   Link?: ComponentType<{ href: string; children: ReactNode; className?: string }>;
 }) {
   const [answerLanguageCode, setAnswerLanguageCode] = useState(languageCode);
@@ -65,12 +67,14 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   const [mediaPanel, setMediaPanel] = useState<MediaItem[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [notice, setNotice] = useState<{ text: ReactNode; error: boolean } | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [conversationLoading, setConversationLoading] = useState(false);
   const [historyFailed, setHistoryFailed] = useState(false);
   const [beforeId, setBeforeId] = useState<string | null>(null);
   const [allowExternalAi, setAllowExternalAi] = useState(false);
+  const restoredScroll = useRef<{ height: number; top: number } | null>(null);
   const loadSequence = useRef(0);
   const historySequence = useRef(0);
   const disposed = useRef(false);
@@ -110,11 +114,27 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   }, [loadConversations]);
 
   useEffect(() => {
+    if (restoredScroll.current && scrollRef.current) {
+      scrollRef.current.scrollTop = restoredScroll.current.top + scrollRef.current.scrollHeight - restoredScroll.current.height;
+      restoredScroll.current = null;
+      return;
+    }
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
       behavior: "smooth",
     });
   }, [messages]);
+
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (openMenuId) setOpenMenuId(null);
+      else if (sidebarOpen) setSidebarOpen(false);
+      else onClose?.();
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [openMenuId, sidebarOpen, onClose]);
 
   useEffect(() => {
     const close = () => setOpenMenuId(null);
@@ -144,6 +164,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
           sources: m.sources ?? [],
         });
       }
+      if (before && scrollRef.current) restoredScroll.current = { height: scrollRef.current.scrollHeight, top: scrollRef.current.scrollTop };
       setMessages(previous => before ? [...loaded, ...previous] : loaded);
       setConversationId(id);
       setBeforeId(json.data.beforeId ?? null);
@@ -294,274 +315,47 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   }
 
   return (
-    <div className="h-full min-h-[28rem] flex bg-[#b89a68] relative overflow-hidden">
-      <aside
-          className={`${guest ? "hidden" : ""} ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 absolute md:relative inset-y-0 left-0 z-30 w-72 bg-[#6b4724] border-r border-black/20 transition-transform flex flex-col`}
-      >
-        <div className="p-3 border-b border-amber-100/15 space-y-2">
-          <div className="md:hidden mb-2">
-            <BackLink href={`/${cultureCode}`} label="Back to language home" variant="on-dark" />
+    <div className="chat-workspace relative flex h-full min-h-0 overflow-hidden">
+      {sidebarOpen && !guest && <>
+        <InterfaceButton type="button" className="absolute inset-0 z-20 bg-stone-950/35 md:hidden" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} />
+        <aside aria-label="Chat history" className="chat-history absolute inset-y-0 left-0 z-30 flex w-[min(20rem,85vw)] shrink-0 flex-col border-r md:relative md:w-72">
+          <div className="flex items-center justify-between gap-2 border-b border-white/15 p-3"><h2 className="font-semibold"><InterfaceText source="Your chats" /></h2><InterfaceButton type="button" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} className="chat-icon-button"><X size={20} /></InterfaceButton></div>
+          <div className="space-y-2 p-3"><button type="button" onClick={startNewChat} disabled={busy} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-semibold text-teal-950 disabled:opacity-50"><Plus size={18} /><InterfaceText source="New chat" /></button><button type="button" disabled={busy} onClick={() => setShowArchived(value => !value)} className="min-h-11 w-full rounded-lg text-sm text-teal-100 hover:bg-white/10"><InterfaceText source={showArchived ? "Show active chats" : "Show archived chats"} /></button></div>
+          <div className="min-h-0 flex-1 overflow-y-auto p-2">
+            {historyLoading ? <p role="status" className="p-3 text-sm"><InterfaceText source="Loading chats…" /></p> : historyFailed ? <div role="alert" className="space-y-2 p-3 text-sm"><p><InterfaceText source="Unable to load saved chats." /></p><button type="button" onClick={() => void loadConversations()} className="min-h-11 underline"><InterfaceText source="Try again" /></button></div> : !conversations.length ? <p className="p-3 text-sm text-teal-100"><InterfaceText source="No saved chats yet." /></p> : conversations.map(conversation => <div key={conversation.id} className={`relative mb-1 rounded-xl ${conversationId === conversation.id ? "bg-white/15" : "hover:bg-white/10"}`}>
+              <div className="flex items-center"><button type="button" disabled={busy || conversationLoading} onClick={() => void loadConversation(conversation.id)} className="min-h-12 min-w-0 flex-1 p-3 text-left text-sm disabled:opacity-50"><span className="block truncate">{conversation.pinned && <Pin size={12} className="mr-1 inline" />}{conversation.title}</span></button><InterfaceButton type="button" aria-label="Chat options" title="Chat options" disabled={busy} onClick={event => { event.stopPropagation(); setOpenMenuId(openMenuId === conversation.id ? null : conversation.id); }} className="chat-icon-button"><MoreHorizontal size={20} /></InterfaceButton></div>
+              {openMenuId === conversation.id && <div className="absolute right-2 top-11 z-40 w-44 rounded-xl border border-white/20 bg-teal-950 p-1 shadow-xl" onClick={event => event.stopPropagation()}><MenuItem icon="" label="Rename" onClick={() => void handleRename(conversation.id, conversation.title)} /><MenuItem icon="" label={conversation.pinned ? "Unpin" : "Pin"} onClick={() => void handlePin(conversation.id, conversation.pinned)} /><MenuItem icon="" label={conversation.archived ? "Unarchive" : "Archive"} onClick={() => void handleArchive(conversation.id, conversation.archived)} /><MenuItem icon="" label="Delete" danger onClick={() => void handleDelete(conversation.id)} /></div>}
+            </div>)}
           </div>
-          <button
-            onClick={startNewChat}
-            disabled={busy}
-            className="w-full flex items-center justify-center gap-2 bg-amber-400 text-stone-900 py-2.5 rounded-full font-semibold text-sm hover:bg-amber-300 transition shadow-sm"
-          >
-            <span className="text-base">+</span><InterfaceText source=" New chat" /></button>
-          <button
-            onClick={() => setShowArchived(!showArchived)}
-            className="w-full text-[11px] uppercase tracking-wider text-amber-100/60 hover:text-amber-50 py-1 transition"
-          >
-            <InterfaceText source={showArchived ? "← Back to chats" : "View archived"} />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto py-2">
-          {historyLoading ? <p role="status" className="px-4 py-3 text-sm text-amber-50"><InterfaceText source="Loading saved chats…" /></p> : historyFailed ? <div role="alert" className="px-4 py-3 text-sm text-amber-50"><p><InterfaceText source="Unable to load saved chats." /></p><button type="button" onClick={loadConversations} className="mt-2 underline"><InterfaceText source="Try again" /></button></div> : conversations.length === 0 ? (
-            <p className="text-xs text-amber-100/50 px-4 py-3">
-              <InterfaceText source={showArchived ? "No archived chats" : "No chats yet"} />
-            </p>
-          ) : (
-            conversations.map((c) => (
-              <div
-                key={c.id}
-                className={`group relative px-4 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-black/20 ${
-                  conversationId === c.id ? "bg-black/25" : ""
-                }`}
-              >
-                {c.pinned && (
-                  <span className="text-amber-300 text-xs shrink-0">📌</span>
-                )}
-                <button type="button" disabled={busy} aria-pressed={conversationId === c.id} onClick={() => { void loadConversation(c.id); }} className="min-w-0 flex-1 text-left">
-                  <p className="text-sm text-amber-50 truncate leading-tight">
-                    {c.title}
-                  </p>
-                  <p className="text-[10px] text-amber-200/50 mt-0.5">
-                    {c.messageCount}<InterfaceText source=" message" /><InterfaceText source={c.messageCount === 1 ? "" : "s"} />
-                  </p>
-                </button>
-
-                <InterfaceButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenMenuId(openMenuId === c.id ? null : c.id);
-                  }}
-                  disabled={busy}
-                  aria-label={`Options for ${c.title}`}
-                  className="md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 text-amber-100/70 hover:text-amber-50 transition px-2 py-2"
-                  title="Options"
-                >
-                  ⋯
-                </InterfaceButton>
-
-                {openMenuId === c.id && (
-                  <div
-                    className="absolute right-2 top-8 z-50 w-40 bg-stone-900 rounded-lg shadow-2xl border border-amber-100/10 py-1"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MenuItem
-                      icon="✎"
-                      label="Rename"
-                      onClick={() => handleRename(c.id, c.title)}
-                    />
-                    <MenuItem
-                      icon="📌"
-                      label={c.pinned ? "Unpin" : "Pin"}
-                      onClick={() => handlePin(c.id, c.pinned)}
-                    />
-                    <MenuItem
-                      icon="🗄"
-                      label={c.archived ? "Unarchive" : "Archive"}
-                      onClick={() => handleArchive(c.id, c.archived)}
-                    />
-                    <MenuItem
-                      icon="✕"
-                      label="Delete"
-                      danger
-                      onClick={() => handleDelete(c.id)}
-                    />
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-
-      </aside>
-
-      {sidebarOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/50 z-20"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <div className="flex-1 min-w-0 flex flex-col">
-        {conversationLoading && <p role="status" className="bg-amber-100 px-4 py-2 text-sm"><InterfaceText source="Loading chat…" /></p>}
-        {notice && <div role={notice.error ? "alert" : "status"} className={`flex items-center justify-between gap-3 px-4 py-3 text-sm ${notice.error ? "bg-red-50 text-red-900" : "bg-green-50 text-green-900"}`}><p>{notice.text}</p><InterfaceButton type="button" aria-label="Dismiss message" onClick={() => setNotice(null)}>×</InterfaceButton></div>}
-        <header className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-stone-900/15 bg-[#a9895a]">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden md:block">
-              <BackLink href={`/${cultureCode}`} label="Back to language home" variant="on-sand" />
-            </div>
-            <InterfaceButton
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className={`${guest ? "hidden" : ""} md:hidden text-stone-900 text-2xl leading-none`}
-              aria-label="Menu"
-            >
-              ☰
-            </InterfaceButton>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center">
-                <span className="text-white text-sm">💬</span>
-              </div>
-            <div>
-                <h1 className="font-serif text-base md:text-lg text-stone-900 leading-tight"><InterfaceText source="Chat with Luo Lingua" /></h1>
-                <p className="text-[10px] uppercase tracking-widest text-stone-800/60 hidden sm:block"><InterfaceText source="AI Cultural Assistant" /></p>
-              </div>
-            </div>
-            </div>
-            {cultureCode !== "eng" && <label className="text-xs font-semibold text-stone-800"><InterfaceText source="Answer language " /><select value={answerLanguageCode} onChange={(event) => setAnswerLanguageCode(event.target.value)} className="ml-2 rounded-md border border-stone-800/20 bg-white/70 px-2 py-1"><InterfaceOption value={cultureCode}>Original language</InterfaceOption><InterfaceOption value="eng">English — {cultureCode} culture</InterfaceOption></select></label>}
+        </aside>
+      </>}
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="AI cultural assistant">
+        <header className="chat-header flex shrink-0 items-center justify-between gap-3 border-b px-3 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">{!guest && <InterfaceButton type="button" aria-label="Open chat history" title="Your chats" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(value => !value)} className="chat-icon-button"><History size={20} /></InterfaceButton>}<span className="hidden rounded-xl bg-teal-50 p-2 text-teal-800 sm:inline-flex"><MessageCircle size={22} /></span><div className="min-w-0"><h1 className="text-base font-semibold text-teal-950 sm:text-lg"><InterfaceText source="AI cultural assistant" /></h1><p className="text-xs text-stone-500"><InterfaceText source="Language, stories & living knowledge" /></p></div></div>
+          <div className="flex shrink-0 items-center gap-1"><InterfaceButton type="button" aria-label="New chat" title="New chat" disabled={busy} onClick={startNewChat} className="chat-icon-button"><Plus size={20} /></InterfaceButton>{onClose ? <InterfaceButton type="button" aria-label="Close chat" title="Close chat" onClick={onClose} className="chat-icon-button"><X size={22} /></InterfaceButton> : <Link href="/dashboard" className="chat-icon-button"><X size={22} /><span className="sr-only"><InterfaceText source="Close chat" /></span></Link>}</div>
         </header>
-
-        <div className="flex-1 flex min-h-0 flex-col lg:flex-row">
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto overscroll-contain px-4 md:px-8 py-6"
-          >
-            {beforeId && conversationId && <button type="button" disabled={busy} onClick={() => loadConversation(conversationId, beforeId)} className="mx-auto mb-4 block rounded-full bg-white/70 px-4 py-2 text-sm"><InterfaceText source="Load earlier messages" /></button>}
-            {messages.length === 0 ? (
-              <div className="max-w-2xl mx-auto text-center pt-8">
-                <div className="text-5xl mb-4">💬</div>
-                <h2 className="text-2xl font-serif text-stone-900 mb-2"><InterfaceText source="Ask about Luo Culture" /></h2>
-                <p className="text-sm text-stone-800/70 mb-8"><InterfaceText source="I answer questions using our curated cultural knowledge base. Ask for videos, images, audio, or specific topics." /></p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {SUGGESTED.map((q) => (
-                    <button
-                      key={q}
-                      disabled={busy || !allowExternalAi}
-                      onClick={() => send(q)}
-                      className="text-left p-4 bg-black/5 hover:bg-black/10 border border-stone-900/15 hover:border-amber-800/50 rounded-xl text-sm text-stone-900 transition shadow-xs"
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="max-w-2xl mx-auto space-y-5">
-                {messages.map((m, i) => (
-                  <div key={i}>
-                    {m.role === "user" ? (
-                      <div className="flex justify-end">
-                        <div className="max-w-md bg-stone-900 text-amber-50 rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm">
-                          <p className="text-sm whitespace-pre-line">
-                            {m.content}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-start">
-                        <div className="max-w-xl">
-                          <div className="bg-black/5 backdrop-blur-sm rounded-2xl rounded-tl-sm px-4 py-3 shadow-xs border border-stone-900/10">
-                            <p className="text-sm text-stone-900 whitespace-pre-line leading-relaxed">
-                              {m.content}
-                            </p>
-                          </div>
-                          {m.sources && m.sources.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {m.sources.map((s, j) => {
-                                const href = publicSourceHref(cultureCode, s);
-                                const text = `[${j + 1}] ${s.title.slice(0, 40)}${s.title.length > 40 ? "…" : ""}`;
-                                const className = "text-xs px-2 py-1 bg-black/5 text-amber-900 border border-amber-800/20 rounded-full";
-                                return href ? <Link key={`${s.id}:${j}`} href={href} className={className}>{text}</Link> : <span key={`${s.id}:${j}`} className={className}>{text}</span>;
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {busy && (
-                  <div className="flex justify-start">
-                    <div className="bg-black/5 rounded-2xl px-4 py-3 shadow-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-amber-600 rounded-full animate-bounce" />
-                        <span
-                          className="w-2 h-2 bg-amber-600 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.15s" }}
-                        />
-                        <span
-                          className="w-2 h-2 bg-amber-600 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.3s" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+        {notice && <div role={notice.error ? "alert" : "status"} className={`flex shrink-0 items-start justify-between gap-3 px-4 py-3 text-sm ${notice.error ? "bg-red-50 text-red-900" : "bg-teal-50 text-teal-950"}`}><p>{notice.text}</p><InterfaceButton type="button" aria-label="Dismiss message" onClick={() => setNotice(null)} className="shrink-0 p-1"><X size={18} /></InterfaceButton></div>}
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-8" role="log" aria-label="Conversation" aria-live="polite" aria-busy={busy || conversationLoading}>
+          {conversationLoading && <p role="status" className="mx-auto mb-4 max-w-2xl text-sm text-teal-800"><InterfaceText source="Loading chat…" /></p>}
+          {beforeId && conversationId && <button type="button" disabled={busy || conversationLoading} onClick={() => void loadConversation(conversationId, beforeId)} className="mx-auto mb-5 block min-h-11 rounded-full border bg-white px-4 text-sm"><InterfaceText source="Load earlier messages" /></button>}
+          {!messages.length ? <div className="mx-auto flex min-h-full max-w-xl flex-col justify-center py-4"><div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-100 text-teal-800"><MessageCircle size={28} /></div><h2 className="font-serif text-3xl leading-tight text-teal-950"><InterfaceText source="What would you like to explore?" /></h2><p className="mt-3 text-sm leading-7 text-stone-600"><InterfaceText source="Ask about words, traditions, stories or the public collections. Answers include source links when available." /></p><div className="mt-6 grid gap-3 sm:grid-cols-2">{SUGGESTED.slice(0, 2).map(question => <button key={question} type="button" disabled={busy || conversationLoading} onClick={() => { setInput(question); inputRef.current?.focus(); }} className="chat-suggestion"><InterfaceText source={question} /><ArrowUpRight size={16} className="ml-auto shrink-0" /></button>)}</div></div> : <div className="mx-auto max-w-2xl space-y-6">{messages.map((message, index) => <article key={index} className={message.role === "user" ? "flex justify-end" : ""}><div className={message.role === "user" ? "chat-user-message" : "chat-assistant-message"}><p className="whitespace-pre-wrap break-words text-sm leading-7">{message.content}</p></div>{message.role === "assistant" && !!message.sources?.length && <details className="mt-2 text-xs text-teal-900"><summary className="min-h-11 cursor-pointer py-3 font-semibold"><InterfaceText source="Sources" /> ({message.sources.length})</summary><div className="flex flex-wrap gap-2 pb-2">{message.sources.map((source, sourceIndex) => { const href = publicSourceHref(cultureCode, source); return href ? <Link key={`${source.id}:${sourceIndex}`} href={href} className="rounded-lg border border-teal-200 bg-white px-3 py-2">{source.title}</Link> : <span key={`${source.id}:${sourceIndex}`} className="px-3 py-2">{source.title}</span>; })}</div></details>}</article>)}{busy && <p role="status" className="flex items-center gap-2 text-sm text-teal-800"><LoaderCircle size={18} className="animate-spin" /><InterfaceText source="Thinking…" /></p>}</div>}
+          {!!mediaPanel.length && <details className="mx-auto mt-6 max-w-2xl rounded-xl border border-teal-200 bg-white p-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-teal-900"><InterfaceText source="Related media" /> ({mediaPanel.length})</summary><div className="grid gap-3 sm:grid-cols-2">{mediaPanel.map((media, index) => <MediaCard key={`${media.recordId}:${index}`} media={media} />)}</div></details>}
+        </div>
+        <div className="chat-composer shrink-0 border-t px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
+          <div className="mx-auto max-w-2xl">
+            <details className="mb-2 text-xs text-stone-600"><summary className="w-fit cursor-pointer rounded-lg py-2 font-medium text-teal-900"><InterfaceText source="Chat settings" /></summary><div className="space-y-3 rounded-xl bg-stone-50 p-3">{cultureCode !== "eng" && <label className="flex flex-wrap items-center gap-2"><InterfaceText source="Answer language" /><select value={answerLanguageCode} disabled={busy} onChange={event => setAnswerLanguageCode(event.target.value)} className="min-h-11 rounded-lg border bg-white px-3"><InterfaceOption value={cultureCode}>Community language</InterfaceOption><InterfaceOption value="eng">English</InterfaceOption></select></label>}<p className="leading-6"><InterfaceText source="Google AI processes your question and recent chat messages. Avoid sharing private or sensitive information. AI answers can be mistaken; check the sources." /></p></div></details>
+            <label className="mb-3 flex min-h-8 items-start gap-2 text-xs leading-5 text-stone-600"><input type="checkbox" checked={allowExternalAi} onChange={event => setAllowExternalAi(event.target.checked)} disabled={busy} className="mt-1 h-4 w-4 shrink-0 accent-teal-800" /><span><InterfaceText source="Allow AI processing for this chat" /></span></label>
+            <form onSubmit={event => { event.preventDefault(); void send(input); }} className="flex items-end gap-2 rounded-2xl border border-stone-300 bg-white p-2 shadow-sm focus-within:border-teal-600 focus-within:ring-2 focus-within:ring-teal-100">
+              <InterfaceTextarea ref={inputRef} aria-label="Your question" rows={2} maxLength={2000} value={input} onChange={event => setInput(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(input); } }} placeholder="Ask a question…" disabled={busy || conversationLoading} className="max-h-36 min-h-12 min-w-0 flex-1 resize-y rounded-xl border-0 bg-transparent px-3 py-2 text-base text-stone-900 outline-none placeholder:text-stone-400 disabled:opacity-50" />
+              <InterfaceButton type="submit" aria-label="Send question" title="Send" disabled={busy || conversationLoading || !allowExternalAi || input.trim().length < 2} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl bg-teal-800 text-white hover:bg-teal-900 disabled:opacity-40">{busy ? <LoaderCircle size={19} className="animate-spin" /> : <ArrowUp size={20} />}</InterfaceButton>
+            </form>
           </div>
-
-          {mediaPanel.length > 0 && (
-            <div className="flex w-full max-h-56 lg:max-h-none lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-stone-900/15 bg-[#a9895a] flex-col">
-              <div className="px-4 py-3 border-b border-stone-900/15 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-stone-800/60"><InterfaceText source="Results" /></p>
-                  <p className="font-serif text-base text-stone-900">
-                    {mediaPanel.length}<InterfaceText source=" item" /><InterfaceText source={mediaPanel.length === 1 ? "" : "s"} />
-                  </p>
-                </div>
-                <button
-                  onClick={() => setMediaPanel([])}
-                  className="text-stone-800/60 hover:text-stone-900 text-sm"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto overscroll-contain p-3 space-y-3">
-                {mediaPanel.map((m, i) => (
-                  <MediaCard key={`${m.recordId}-${i}`} media={m} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
-
-        <div className="border-t border-stone-900/15 bg-[#a9895a] p-3 md:p-4">
-          <label className="mx-auto mb-3 flex max-w-2xl items-start gap-2 text-xs text-stone-900"><input type="checkbox" checked={allowExternalAi} onChange={event => setAllowExternalAi(event.target.checked)} disabled={busy} className="mt-0.5" /><span><InterfaceText source="Allow Google AI to process my question and recent chat messages to produce an answer. Avoid sending private or sensitive information." /></span></label>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
-            }}
-            className="max-w-2xl mx-auto flex gap-2"
-          >
-            <InterfaceInput
-              type="text"
-              value={input}
-              aria-label="Your question"
-              maxLength={2000}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about Luo culture, songs, artifact videos..."
-              disabled={busy || conversationLoading}
-              className="min-w-0 flex-1 px-4 py-3 bg-white border border-stone-900/20 rounded-full focus:outline-hidden focus:ring-2 focus:ring-amber-800 text-sm text-stone-900 placeholder:text-stone-800/40 disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={busy || conversationLoading || !allowExternalAi || input.trim().length < 2}
-              className="px-6 py-3 bg-stone-900 text-amber-50 rounded-full text-sm font-semibold hover:bg-amber-900 disabled:opacity-40 transition shadow-sm"
-            ><InterfaceText source="Send" /></button>
-          </form>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
+
 
 function MenuItem({
   icon,
@@ -583,8 +377,8 @@ function MenuItem({
           : "text-amber-50 hover:bg-amber-100/10"
       }`}
     >
-      <span className="w-4 text-center">{icon}</span>
-      {label}
+      {icon && <span className="w-4 text-center">{icon}</span>}
+      <InterfaceText source={label} />
     </button>
   );
 }

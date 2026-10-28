@@ -36,7 +36,7 @@ export const ResourceInput = z.object({
 export const ProgressInput = z.object({
   ownerId: z.string().uuid(),
   operationId: z.string().uuid(), resourceId: z.string().uuid(), version: z.number().int().positive(),
-  answers: z.record(z.number().int().min(-1).max(7)).default({}), position: z.number().int().min(0).max(100000).default(0),
+  answers: z.record(z.string(), z.number().int().min(-1).max(7)).default({}), position: z.number().int().min(0).max(100000).default(0),
   complete: z.boolean().default(false),
 }).strict();
 export type ResourceBody = z.infer<typeof ResourceInput>["body"];

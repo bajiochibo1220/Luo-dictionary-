@@ -24,7 +24,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
       ...(page.records ? { cursor: { id: page.records }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 50,
       select: {
-        id: true, title: true, summary: true, data: true, languageId: true, createdAt: true,
+        id: true, title: true, summary: true, data: true, languageId: true, createdAt: true, isProvisional: true,
         module: { select: { code: true, baseName: true } }, media,
         translations: { where: { languageId: { in: Array.from(new Set([language.id, ...(englishLanguage ? [englishLanguage.id] : [])])) } }, select: { languageId: true, title: true, summary: true, data: true } },
       },
@@ -44,6 +44,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
   const items: ContentItem[] = [
     ...records.map(record => ({
       id: record.id,
+      isProvisional: record.isProvisional,
       kind: "cultural" as const,
       title: record.languageId === language.id ? record.title : record.translations.find(item => item.languageId === language.id)?.title || record.title,
       englishTitle: record.translations.find(item => item.languageId === englishLanguage?.id)?.title ?? null,
@@ -65,7 +66,7 @@ export async function getPublicLibrary(language: { id: number; code: string; nat
     })),
   ].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
   return {
-    title: mod.translations[0]?.title ?? mod.baseName, baseName: mod.baseName,
+    title: mod.baseName, baseName: mod.baseName,
     languageName: language.nativeName, languageCode: language.code, languageId: language.id,
     moduleCode: isMediaLibrary ? "all" : mod.code,
     ...(isSubjectLibrary ? { subject: page.subject } : {}),

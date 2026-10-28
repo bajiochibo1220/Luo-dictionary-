@@ -8,7 +8,7 @@ const Request = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), resourceId: z.string().uuid() }).strict(),
   z.object({ action: z.literal("join"), code: z.string().trim().toUpperCase().regex(/^[A-F0-9]{10}$/), resourceId: z.string().uuid() }).strict(),
   z.object({ action: z.literal("start"), roomId: z.string().uuid() }).strict(),
-  z.object({ action: z.literal("submit"), roomId: z.string().uuid(), answers: z.record(z.number().int().min(-1).max(7)) }).strict(),
+  z.object({ action: z.literal("submit"), roomId: z.string().uuid(), answers: z.record(z.string(), z.number().int().min(-1).max(7)) }).strict(),
 ]);
 export async function mutateGame(userId: string, input: unknown) {
   const data = Request.parse(input);

@@ -1,6 +1,7 @@
 import { withApiErrors } from "@/lib/content-workflow";
 import { mayReviewRecord } from "@/lib/governance";
 import { NextRequest, NextResponse } from "next/server";
+import { withdrawPublication } from "@/lib/content-publication";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { canValidateCulture } from "@/lib/permissions";
@@ -110,6 +111,7 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
     let result: "open" | "rejected" | "cleared" = "open";
     if (invalidVotes >= threshold) {
       result = "rejected";
+      await withdrawPublication(tx, record.id);
       await tx.culturalRecord.updateMany({ where: { id: record.id, status: "rejection_review" }, data: { status: "rejected", publishedAt: null } });
       await tx.reviewHistory.create({ data: { recordId: record.id, reviewerId: userId, action: "rejection_confirmed", stage, comments: `${invalidVotes} of ${eligibleIds.length} eligible independent reviewers voted culturally invalid; threshold ${threshold} reached.` } });
     } else if (distinctVotes.size >= eligibleIds.length) {
@@ -172,6 +174,7 @@ async function handlePOST(request: NextRequest, { params: promisedParams }: { pa
         },
       });
       if (!deletionFailed) {
+        await tx.culturalRecord.deleteMany({ where: { publicationOfId: record.id } });
         await tx.culturalRecord.deleteMany({ where: { id: record.id, status: "rejected" } });
       }
     });

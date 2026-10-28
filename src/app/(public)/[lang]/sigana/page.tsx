@@ -32,7 +32,7 @@ export default async function OralHistoriesPage({
 
   const titleMap: Record<string, string> = {};
   for (const mt of language.moduleTranslations) {
-    titleMap[mt.module.code] = mt.title;
+    titleMap[mt.module.code] = mt.module.baseName;
   }
   const pageTitle = titleMap["oral_histories"] || "Oral Histories";
 
@@ -48,7 +48,7 @@ export default async function OralHistoriesPage({
     <div>
       <header className="mb-8">
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-2">
-          {pageTitle}
+          <InterfaceText source={pageTitle} />
         </h1>
         <p className="text-stone-500"><InterfaceText source="Stories from Luo elders · " />{records.length}{" "}
           <InterfaceText source={records.length === 1 ? "story" : "stories"} />

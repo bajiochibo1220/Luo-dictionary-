@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ContentTable } from "@/components/admin/content-table";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
-import { canEditContent, canFinalizeContent, canReviewContent, canSendToFinalReview, canUploadContent, canValidateCulture } from "@/lib/permissions";
+import { canEditContent, canFinalizeContent, canPublishBeforeReview, canReviewContent, canSendToFinalReview, canUploadContent, canValidateCulture } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 
 type SearchParams = { status?: string; module?: string; languageId?: string };
@@ -18,19 +18,19 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
   const isSuperAdmin = !!(user.isSuperAdmin || user.isMasterSuperAdmin);
   const isMasterSuperAdmin = !!user.isMasterSuperAdmin;
   const roles = (user.languageRoles ?? []) as any[];
-  if (!isSuperAdmin && !roles.some((role) => ["language_admin", "uploader"].includes(role.role))) redirect("/admin/dashboard");
+  if (!isSuperAdmin && !roles.some((role) => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role))) redirect("/admin/dashboard");
   const uploaderOnly = !isSuperAdmin && roles.length > 0 && roles.every((role) => role.role === "uploader");
   const languageRoles = roles.filter((role) => ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role));
   const managedLanguageIds = [...new Set(languageRoles.map((role) => role.languageId))];
 
   const modules = await prisma.module.findMany({ orderBy: { displayOrder: "asc" } });
   const englishLanguage = await prisma.language.findUnique({ where: { code: "eng" }, select: { id: true } });
-  const where: any = {};
+  const where: any = { publicationOfId: null };
   if (uploaderOnly) where.contributorId = user.id;
   else if (!isSuperAdmin) where.languageId = { in: managedLanguageIds };
   else if (searchParams.languageId && Number.isInteger(Number(searchParams.languageId))) where.languageId = Number(searchParams.languageId);
 
-  if (searchParams.status) where.status = searchParams.status;
+  if (searchParams.status) where.status = searchParams.status === "published" ? { in: ["published", "published_source"] } : searchParams.status;
   if (searchParams.module) {
     const contentModule = modules.find((item) => item.code === searchParams.module);
     if (contentModule) where.moduleId = contentModule.id;
@@ -43,6 +43,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     include: {
       language: { select: { code: true, nativeName: true } },
       module: { select: { code: true, baseName: true } },
+      publication: { select: { id: true, status: true, isProvisional: true } },
     },
   });
   const records = candidates.filter((record) => canReadRecord(session!.user, record));
@@ -52,6 +53,8 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     contributorId: record.contributorId,
     title: record.title,
     status: record.status,
+    hasPublicVersion: record.publication?.status === "published",
+    canEarlyPublish: !record.publication && record.contributorId !== user.id && ["draft", "submitted", "under_review", "needs_edit"].includes(record.status) && canPublishBeforeReview(session, record.languageId),
     validatorId: record.validatorId,
     createdAt: record.createdAt.toISOString(),
     editLanguageId: record.languageId,
@@ -60,7 +63,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     module: record.module,
     canModerate: canUploadContent(session, record.languageId),
     canEdit: canEditContent(session, record.languageId),
-    canDelete: record.status !== "published" && (
+    canDelete: !record.publication && !["published", "published_source"].includes(record.status) && (
       canEditContent(session, record.languageId) ||
       roles.some((role) => role.languageId === record.languageId && role.role === "language_admin") ||
       (record.contributorId === user.id && canUploadContent(session, record.languageId))

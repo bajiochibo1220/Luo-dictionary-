@@ -1,9 +1,11 @@
 "use client";
 import { InterfaceOption, InterfaceText } from "@/components/shared/interface-language";
 
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { AdminPasswordControl } from "./admin-password-control";
 
 type UserRole = {
   id: number;
@@ -30,7 +32,6 @@ const ROLES = [
   "researcher",
   "uploader",
   "content_editor",
-  "content_editor",
   "publisher",
   "language_admin",
 ];
@@ -46,6 +47,7 @@ export function UserDetailPanel({
 }) {
   const router = useRouter();
   const [name, setName] = useState(user.name ?? "");
+  const [email, setEmail] = useState(user.email);
   const [status, setStatus] = useState(user.status);
   const [newRole, setNewRole] = useState("teacher");
   const [newLang, setNewLang] = useState(languages[0]?.id ?? 0);
@@ -57,7 +59,7 @@ export function UserDetailPanel({
       const res = await fetch(`/api/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(isMasterSuperAdmin ? { name, status } : { name }),
+        body: JSON.stringify(isMasterSuperAdmin ? { name, email, ...(!user.isMasterSuperAdmin ? { status } : {}) } : { name }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -128,6 +130,7 @@ export function UserDetailPanel({
 
   return (
     <div className="space-y-6">
+      {isMasterSuperAdmin && <section className="rounded-xl border border-teal-200 bg-white p-6"><h2 className="mb-2 text-lg font-semibold text-teal-950"><InterfaceText source="Password & sign-in" /></h2><p className="mb-4 text-sm text-stone-600"><InterfaceText source="Change this account's password and end its existing sessions." /></p><AdminPasswordControl userId={user.id} email={user.email} own={user.isMasterSuperAdmin} /></section>}
       {/* Profile */}
       <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
         <h2 className="text-xs uppercase tracking-wider text-stone-400 mb-4"><InterfaceText source="Profile" /></h2>
@@ -142,7 +145,8 @@ export function UserDetailPanel({
               className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm"
             />
           </div>
-          {isMasterSuperAdmin && <div>
+          {isMasterSuperAdmin && <div><label className="block text-xs uppercase tracking-wider text-stone-500"><InterfaceText source="Email" /><input type="email" required maxLength={254} value={email} onChange={event => setEmail(event.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border p-3 text-sm normal-case tracking-normal" /></label></div>}
+          {isMasterSuperAdmin && !user.isMasterSuperAdmin && <div>
             <label className="block text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Status" /></label>
             <select
               value={status}
@@ -151,12 +155,11 @@ export function UserDetailPanel({
             >
               <InterfaceOption value="active">Active</InterfaceOption>
               <InterfaceOption value="suspended">Suspended</InterfaceOption>
-              <InterfaceOption value="pending">Pending</InterfaceOption>
             </select>
           </div>}
         </div>
 
-        {!user.isMasterSuperAdmin && <button
+        {(!user.isMasterSuperAdmin || isMasterSuperAdmin) && <button
           onClick={saveProfile}
           disabled={busy}
           className="mt-4 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 disabled:opacity-50"

@@ -41,8 +41,8 @@ export function AddAdminModal({
       toast.error(<InterfaceText source={"Email and password are required"} />);
       return;
     }
-    if (password.length < 8) {
-      toast.error(<InterfaceText source={"Password must be at least 8 characters"} />);
+    if (password.length < 12) {
+      toast.error(<InterfaceText source={"Password must be at least 12 characters"} />);
       return;
     }
 
@@ -109,12 +109,12 @@ export function AddAdminModal({
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-stone-500 mb-1"><InterfaceText source="Password * (min 8 characters)" /></label>
+            <label className="block text-xs uppercase tracking-wider text-stone-500 mb-1"><InterfaceText source="Password * (min 12 characters)" /></label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                minLength={8}
+                minLength={12}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2.5 border border-stone-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500 text-sm pr-14"

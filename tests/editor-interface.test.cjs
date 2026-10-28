@@ -135,6 +135,6 @@ test('database collection titles and contribution-field labels join the paired i
     fieldDefinition: { findMany: async query => { assert.equal(query.select.translations.where.languageId, 1); return [{ baseLabel: 'Meaning', translations: [{ label: 'Tiend wach' }] }]; } },
   } } })('src/lib/interface-catalog.ts');
   const catalog = await getInterfaceCatalog('luo', 1, JSON.stringify({ Meaning: { local: 'Tiend wach', english: 'Meaning in this collection' } }));
-  assert.deepEqual(catalog.Dictionary, { local: 'Muma', english: 'Dictionary' });
+  assert.deepEqual(catalog.Dictionary, { local: '', english: 'Dictionary' });
   assert.deepEqual(catalog.Meaning, { local: 'Tiend wach', english: 'Meaning in this collection' });
 });

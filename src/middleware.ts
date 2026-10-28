@@ -62,7 +62,7 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/luo" || pathname === "/eng") {
     return NextResponse.redirect(new URL("/", req.url));
   }
-  const isAuthEntry = pathname === "/login" || pathname === "/register";
+  const isAuthEntry = pathname === "/login" || pathname === "/register" || pathname === "/admin-login";
 
   // Login pages verify the current account on the server. A stale JWT must
   // never bounce a suspended account between login and its old dashboard.

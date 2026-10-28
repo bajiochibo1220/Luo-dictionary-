@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ValidationActions } from "@/components/admin/validation-actions";
-import { canValidateCulture } from "@/lib/permissions";
+import { canValidateCulture, canPublishBeforeReview } from "@/lib/permissions";
+import { EarlyPublishButton } from "@/components/admin/early-publish-button";
 import { missingEnglishTranslation } from "@/lib/english-translation";
 
 export default async function ValidationDetailPage({
@@ -23,6 +24,7 @@ export default async function ValidationDetailPage({
       language: true,
       translations: englishLanguage ? { where: { languageId: englishLanguage.id } } : false,
       module: true,
+      publication: { select: { id: true, status: true } },
       media: true,
       contributor: { select: { name: true, email: true } },
       provenance: { orderBy: { createdAt: "desc" }, take: 1 },
@@ -90,6 +92,13 @@ export default async function ValidationDetailPage({
         <h1 className="text-3xl font-serif text-stone-800">{record.title}</h1>
       </header>
 
+      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        {record.publication?.status === "published" ? <p className="text-sm"><InterfaceText source="The uploaded version is public. Continue reviewing and editing here; publishing the reviewed version will replace it automatically." /></p> : <>
+          <p className="mb-2 text-sm"><InterfaceText source="You can publish the uploaded version while review continues. Publishing the reviewed version later will replace it at the same public link." /></p>
+          {!record.publication && record.status !== "rejection_review" && record.contributorId !== user.id && canPublishBeforeReview(session, record.languageId) && <EarlyPublishButton recordId={record.id} />}
+        </>}
+      </div>
+
       {record.status === "needs_edit" && canAct ? <Link href={`/admin/content/${record.id}/edit`} className="mb-4 inline-flex min-h-11 items-center rounded-lg bg-stone-800 px-4 text-white"><InterfaceText source="Edit both versions" /></Link> : <ValidationActions editOnly recordId={record.id} canAct={canAct} canStartEdit={record.status === "submitted" || record.status === "under_review" && !record.validatorId} />}
       <section className="mb-6 grid gap-4 rounded-xl border border-amber-200 bg-amber-50 p-5 sm:grid-cols-2">
         <div>
@@ -132,7 +141,7 @@ export default async function ValidationDetailPage({
           {fieldDefs.map((f) => {
             const value = d?.[f.fieldCode];
             if (!value) return null;
-            const label = f.translations[0]?.label || f.baseLabel;
+            const label = f.baseLabel;
             return (
               <div key={f.id}>
                 <dt className="text-xs uppercase tracking-wider text-stone-400 mb-1">

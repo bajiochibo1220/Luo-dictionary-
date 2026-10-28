@@ -95,6 +95,11 @@ export function canFinalizeContent(session: Session | null, languageId: number):
   return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "publisher");
 }
 
+export function canPublishBeforeReview(session: Session | null, languageId: number): boolean {
+  return isSuperAdmin(session) || hasRole(session, languageId, "language_admin") ||
+    hasRole(session, languageId, "content_editor") || hasRole(session, languageId, "publisher");
+}
+
 export function canUploadContent(session: Session | null, languageId: number): boolean {
   return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "uploader");
 }

@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     if (err.name === "ZodError") {
       return NextResponse.json(
-        { success: false, error: err.errors[0].message },
+        { success: false, error: err.issues[0].message },
         { status: 400 }
       );
     }

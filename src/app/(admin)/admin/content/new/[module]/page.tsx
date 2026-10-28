@@ -56,7 +56,7 @@ export default async function NewContentPage({
     fieldType: f.fieldType,
     isRequired: f.isRequired,
     displayOrder: f.displayOrder,
-    label: f.translations[0]?.label || f.baseLabel,
+    label: f.baseLabel,
   }));
 
   return (

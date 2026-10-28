@@ -2,7 +2,6 @@ import { InterfaceText } from "@/components/shared/interface-language";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import Link from "next/link";
 import { LoginForm } from "@/components/forms/login-form";
 import { nativeLoginReturn } from "@/lib/native-auth-contract";
 
@@ -27,15 +26,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <LoginForm />
       </Suspense>
 
-      <div className="mt-12 pt-6 border-t border-stone-300/50 text-center">
-        <div className="flex items-center justify-center gap-3 mt-2 text-xs text-stone-500">
-          <Link href="/" className="hover:text-amber-800 transition"><InterfaceText source="Home" /></Link>
-          <span className="text-stone-400">·</span>
-          <Link href="/help" className="hover:text-amber-800 transition"><InterfaceText source="Help" /></Link>
-          <span className="text-stone-400">·</span>
-          <Link href="/privacy" className="hover:text-amber-800 transition"><InterfaceText source="Privacy" /></Link>
-        </div>
-      </div>
     </div>
   );
 }

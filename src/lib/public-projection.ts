@@ -10,6 +10,6 @@ export function publicFields<T>(value: T, named = false): T {
   const media = typeof record.id === "string" && typeof record.url === "string" && typeof record.type === "string";
   return Object.fromEntries(Object.entries(record).filter(([key]) => {
     const normalized = key.replaceAll("_", "").toLowerCase();
-    return !key.startsWith("__") && !privateKeys.has(normalized) && (allowName || !["speaker", "narrator", "speakername", "collector"].includes(normalized));
+    return !["publicationofid", "publicationof", "publication"].includes(normalized) && !key.startsWith("__") && !privateKeys.has(normalized) && (allowName || !["speaker", "narrator", "speakername", "collector"].includes(normalized));
   }).map(([key, item]) => [key, media && key === "url" ? `/api/media/${encodeURIComponent(String(record.id))}/file` : media && key === "thumbnailUrl" ? record.type === "image" ? `/api/media/${encodeURIComponent(String(record.id))}/file` : null : publicFields(item, allowName)])) as T;
 }

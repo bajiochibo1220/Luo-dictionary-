@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       languages,
       modules: modules.map(item => ({
         code: item.code,
-        title: item.translations[0]?.title ?? item.baseName,
+        title: item.baseName,
         baseName: item.baseName,
         href: moduleHref(item.code),
         contributionHref: item.code !== "audio_visual" && item.code !== "chatbot" && item._count.fieldDefinitions > 0 ? contributionHref(item.code) : null,

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
-import { canManageUsers, userManagementWhere } from "@/lib/permissions";
+import { canManageUsers, userManagementWhere, isSuperAdmin } from "@/lib/permissions";
+import { z } from "zod";
+import { withApiErrors } from "@/lib/content-workflow";
 
 export async function GET(
   _req: NextRequest,
@@ -43,7 +45,7 @@ export async function GET(
   return NextResponse.json({ success: true, data: user });
 }
 
-export async function PATCH(
+async function handlePATCH(
   req: NextRequest,
   { params: promisedParams }: { params: Promise<{ id: string }> }
 ) {
@@ -70,13 +72,17 @@ export async function PATCH(
       return NextResponse.json({ success: true, data: updated });
     }
   }
-  if (!user.isSuperAdmin) {
+  if (!isSuperAdmin(session)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const target = await prisma.user.findFirst({ where: { id: params.id, ...userManagementWhere(session) }, select: { isMasterSuperAdmin: true } });
   if (!target) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (target.isMasterSuperAdmin) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
+  if (target.isMasterSuperAdmin && !(user.isMasterSuperAdmin && user.id === params.id)) return NextResponse.json({ error: "The Master Super Admin account is protected" }, { status: 403 });
+  if (body.isSuperAdmin !== undefined) return NextResponse.json({ error: "Change Super Admin access from the administrator management page." }, { status: 403 });
+  const parsed = z.object({ name: z.string().trim().min(1).max(100).optional(), email: z.string().trim().email().max(254).optional(), status: z.enum(["active", "suspended"]).optional() }).strict().safeParse(body);
+  if (!parsed.success || !Object.keys(parsed.data).length) return NextResponse.json({ error: "Enter a valid name, email or account status." }, { status: 400 });
+  if (body.email !== undefined && !user.isMasterSuperAdmin) return NextResponse.json({ error: "Only the Master Super Admin can change account email addresses." }, { status: 403 });
   if (body.isSuperAdmin !== undefined) {
     return NextResponse.json({ error: "Create Super Admin accounts from the administrator management page" }, { status: 403 });
   }
@@ -85,13 +91,19 @@ export async function PATCH(
   }
   if (user.id === params.id && body.status === "suspended") return NextResponse.json({ error: "You cannot deactivate your own account" }, { status: 400 });
   const update: any = {};
-  if (body.name !== undefined) update.name = body.name;
+  if (body.name !== undefined) update.name = parsed.data.name;
+  if (body.email !== undefined) {
+    update.email = parsed.data.email!.toLowerCase();
+    const duplicate = await prisma.user.findFirst({ where: { email: { equals: update.email, mode: "insensitive" }, id: { not: params.id } }, select: { id: true } });
+    if (duplicate) return NextResponse.json({ error: "This email address is already in use." }, { status: 409 });
+  }
   if (body.status !== undefined) update.status = body.status;
   if (body.status !== undefined && !["active", "suspended"].includes(body.status)) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
 
-  const updated = await prisma.user.update({
-    where: { id: params.id },
-    data: update,
+  const updated = await prisma.$transaction(async tx => {
+    const saved = await tx.user.update({ where: { id: params.id }, data: update });
+    await tx.auditLog.create({ data: { userId: user.id, action: "user.profile_updated", entityType: "user", entityId: params.id, newValue: update } });
+    return saved;
   });
 
   return NextResponse.json({
@@ -105,6 +117,8 @@ export async function PATCH(
     },
   });
 }
+
+export const PATCH = withApiErrors(handlePATCH);
 
 export async function DELETE(
   _req: NextRequest,

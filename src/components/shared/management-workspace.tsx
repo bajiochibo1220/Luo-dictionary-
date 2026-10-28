@@ -7,10 +7,11 @@ import { canManageUsers, canViewAnalytics, hasAnyAdminRole } from "@/lib/permiss
 import type { FeatureRequest } from "./learning-hub";
 import { PartnerBrandingSettings } from "./partner-branding";
 import { StaffWorkspace } from "./staff-workspace";
+import { SharedAdminPasswordControl } from "./admin-password-control";
 import { InterfaceCopyEditor } from "@/components/admin/interface-copy-editor";
 
 type Language = { id: number; code: string; nativeName: string; name?: string; isActive?: boolean };
-type Props = { request: FeatureRequest; transport: typeof fetch; account: AppAccount | null; languageId: number; englishLanguageId?: number; languages?: Language[] };
+type Props = { request: FeatureRequest; transport: typeof fetch; account: AppAccount | null; languageId: number; englishLanguageId?: number; languages?: Language[]; onPasswordChanged?: () => void };
 const primary = "min-h-11 rounded-full bg-amber-900 px-5 py-2 font-semibold text-white disabled:opacity-50";
 const secondary = "min-h-11 rounded-full border border-stone-500 px-4 py-2 text-sm disabled:opacity-50";
 const field = "mt-1 block min-h-11 w-full rounded-lg border border-stone-400 bg-white p-3 text-stone-900";
@@ -42,7 +43,7 @@ export function managementTabs(account: AppAccount | null, languageId?: number) 
 }
 
 export function ManagementWorkspace(props: Props) {
-  const { request, transport, account, languageId, languages = [] } = props;
+  const { onPasswordChanged, request, transport, account, languageId, languages = [] } = props;
   const tabs = managementTabs(account, languageId);
   const access = JSON.stringify({ id: account?.id, super: account?.isSuperAdmin, master: account?.isMasterSuperAdmin, roles: account?.languageRoles });
   const [tab, setTab] = useState("content"), [rows, setRows] = useState<any>(null);
@@ -100,6 +101,7 @@ export function ManagementWorkspace(props: Props) {
       {tab === "people" && <form className="flex items-end gap-3" onSubmit={event => { event.preventDefault(); setPage(1); setSearch(query); }}><label className="flex-1"><InterfaceText source="Find a user" /><InterfaceInput className={field} value={query} onChange={event => setQuery(event.target.value)} maxLength={200} placeholder="Name or email" /></label><button className={primary}><InterfaceText source="Search" /></button></form>}
       {tab === "staff" && <><p><InterfaceText source="Create only the role and language the person needs. Super Admin authority is reserved for the Master Super Admin." /></p><button className={primary} disabled={busy} onClick={() => setForm(value => !value)}><InterfaceText source={form ? "Close staff form" : "Add staff account"} /></button>{form && <StaffForm busy={busy} master={account.isMasterSuperAdmin} languages={account.isMasterSuperAdmin ? languages : languages.filter(language => account.languageRoles.some(role => role.languageId === language.id))} onSave={body => act("/api/super-admin/admins", "POST", body, "Staff account created. Share the temporary access details privately.")} />}</>}
       {(tab === "people" || tab === "staff") && Array.isArray(rows) && <div className="space-y-3">{!rows.length && <p className={panel}><InterfaceText source="No matching accounts." /></p>}{rows.map((person: any) => <article key={person.id} className={panel}><h3 className="text-lg font-semibold">{person.name || person.email}</h3><p className="break-all">{person.email}</p><p>{person.status}{person.isMasterSuperAdmin ? " · Master Super Admin" : person.isSuperAdmin ? " · Super Admin" : ""}</p><ul>{person.languageRoles?.map((role: any) => <li key={role.id}>{role.language?.nativeName}: {role.role.replaceAll("_", " ")}</li>)}</ul>
+        {account.isMasterSuperAdmin && <SharedAdminPasswordControl userId={person.id} email={person.email} own={person.id === account.id} transport={transport} onSignInAgain={onPasswordChanged} />}
         {tab === "staff" && account.isMasterSuperAdmin && !person.isMasterSuperAdmin && person.id !== account.id && <div className="flex flex-wrap gap-3"><button className={secondary} disabled={busy} onClick={() => { if (confirm(`${person.status === "suspended" ? "Activate" : "Deactivate"} ${person.email}?`)) void act(`/api/super-admin/admins/${person.id}`, "PATCH", { status: person.status === "suspended" ? "active" : "suspended" }); }}><InterfaceText source={person.status === "suspended" ? "Activate account" : "Deactivate account"} /></button><button className={secondary} disabled={busy} onClick={() => { if (confirm(`Remove all staff duties from ${person.email}? Their account will remain.`)) void act(`/api/super-admin/admins/${person.id}`, "DELETE"); }}><InterfaceText source="Revoke staff duties" /></button></div>}
         {tab === "people" && account.isMasterSuperAdmin && !person.isMasterSuperAdmin && <ResearchAccessForm person={person} languages={languages} busy={busy} onGrant={body => act(`/api/users/${person.id}/roles`, "POST", body, "Assigned access saved. The person can refresh their account to use it.")} onRemove={id => act(`/api/users/${person.id}/roles?roleId=${id}`, "DELETE", undefined, "Assigned access removed.")} />}
       </article>)}</div>}

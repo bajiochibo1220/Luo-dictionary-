@@ -9,7 +9,7 @@ export const TutorRequest = z.discriminatedUnion("mode", [
   }).strict(),
   z.object({ mode: z.literal("vocabulary"), languageId: z.number().int().positive(), consent: z.literal(true) }).strict(),
   z.object({ mode: z.literal("transcribe_recording"), languageId: z.number().int().positive(), consent: z.literal(true), mime: z.enum(["audio/webm","audio/mp4","audio/wav","audio/ogg","audio/mpeg","audio/aac"]), audio: z.string().min(4).max(2800000).regex(/^[A-Za-z0-9+/]+={0,2}$/) }).strict(),
-  z.object({ mode: z.literal("grade"), attemptId: z.string().uuid(), answers: z.record(z.number().int().min(0).max(7)), consent: z.literal(true) }).strict(),
+  z.object({ mode: z.literal("grade"), attemptId: z.string().uuid(), answers: z.record(z.string(), z.number().int().min(0).max(7)), consent: z.literal(true) }).strict(),
 ]);
 export type TutorResponse = {
   text?: string; model?: string; attemptId?: string; score?: number;

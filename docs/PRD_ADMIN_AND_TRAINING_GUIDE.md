@@ -1,5 +1,27 @@
 # Administration and training
 
+Updated 28 October 2026.
+
+## Master account and administrator passwords
+
+Open **Admins → Add Admin**, enter the name, email and a password of 12–128 characters, and choose the role and communities. **Manage account** opens name, email and assigned duties. The administrators table also controls activation, Super Admin access and revocation.
+
+The Master Super Admin can use **Change password** for a created account and **Change my password** for their own account. Enter and confirm the new password. A self-change also requires the current password if the account already has one. Saving invalidates existing web/mobile sessions and password-reset credentials. A self-change signs the Master out; sign in again using the new password. Audits record who changed which account without storing passwords. The Master cannot deactivate or revoke their own ownership account.
+
+## Public translations and the English admin workspace
+
+Administrative interfaces remain English. In **Edit system text**, select the community, find a label, enter the approved Dholuo text and retain its English meaning, then save. Only saved translations affect public controls. Public labels begin in English; after translation they show Dholuo above smaller English. Blank translations restore English. Use the inline preview and open the public interface to check login, sign out, menus, settings and help. Content-language switches do not change interface labels.
+
+## Publish while review continues
+
+An independent assigned editor, publisher or administrator can use **Publish before review** from Content or an item's review page. Content also supports **Publish selected before review**. Public consent, public restrictions, source permission and embargo checks remain in force. The public package is separate from the source being edited; restricted attachments are excluded from an early release.
+
+Continue the normal review and paired editing workflow. Final publication replaces the public package at the same link, including its text, translations and eligible files. Rejection or removal of public/source permission withdraws the early public version. Sources with an existing public package cannot be deleted through ordinary queue deletion.
+
+## Chatbot checks
+
+History starts closed, and sources, media and settings expand on demand. **X** closes the assistant; Escape closes an open menu or history before closing chat. Check a question with explicit AI-processing consent, a saved conversation, an unavailable-provider response and the mobile layout. Provider availability depends on the configured key, model and quota; do not expose provider credentials in screenshots or manuals.
+
 Read [the PRD tracker](../PRD_IMPLEMENTATION_TRACKER.md) for acceptance boundaries. This guide supersedes older training wording that separates cultural reviewers from content editors.
 
 ## Assign only necessary access

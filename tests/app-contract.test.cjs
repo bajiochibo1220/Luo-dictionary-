@@ -47,7 +47,7 @@ test('public bootstrap uses current active language/module data and omits accoun
   assert.equal(result.data.app.name, 'Luo Heritage');
   assert.equal(result.data.selectedLanguage.code, 'luo');
   assert.equal(result.data.languages.some(item => item.code === 'eng'), false);
-  assert.equal(result.data.modules[0].title, 'Muma');
+  assert.equal(result.data.modules[0].title, 'Dictionary');
   assert.equal(result.data.modules[0].href, moduleHref('dictionary'));
   assert.equal(result.data.modules[0].contributionHref, contributionHref('dictionary'));
   for (const code of ['audio_visual', 'chatbot', 'research']) assert.equal(result.data.modules.find(item => item.code === code).contributionHref, null);

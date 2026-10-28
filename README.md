@@ -10,13 +10,13 @@ Installed apps and browser tabs check for a new release after initial loading, o
 
 For the common web/Android/iOS interface, open `/application`. See the [current full-system implementation status](docs/FULL_SYSTEM_IMPLEMENTATION_STATUS.md) and [Sunday trainer quick start](docs/TRAINER_QUICK_START.md) for delivered workflows, configuration, verification and remaining requirements. The reference documents do not define separate runtime phases.
 
-The [user manual](docs/LUO_HERITAGE_WEB_USER_MANUAL.md) explains the web application in simple steps for readers, contributors, reviewers and administrators. Download the [PDF](docs/LUO_HERITAGE_WEB_USER_MANUAL.pdf) or editable [Word document](docs/LUO_HERITAGE_WEB_USER_MANUAL.docx), or open the [HTML copy](docs/LUO_HERITAGE_WEB_USER_MANUAL.html).
+Open **Help & training** for the current manual selected for your assigned duties; **Download my guide** exports the current wording. The [public user guide](docs/PRD_USER_GUIDE.md) and [administrator/training guide](docs/PRD_ADMIN_AND_TRAINING_GUIDE.md) include password management, English/Dholuo interface behavior and publication during review. The older [web manual](docs/LUO_HERITAGE_WEB_USER_MANUAL.md) and its PDF/Word/HTML exports are retained as historical editions.
 
 **This manual is for the web application only. Android and iOS applications are still in development.** It identifies unfinished features and does not certify that the full project is complete.
 
 ## Stack
 
-- Next.js 15.5.28 (App Router), React 18; Node.js 20.19+ (validated on Node.js 24)
+- Next.js 15.5.28 (App Router), React 18; Node.js 22+ (validated on Node.js 24)
 - TypeScript
 - Tailwind CSS 4 + shadcn/ui (modern browsers)
 - Prisma + Neon PostgreSQL

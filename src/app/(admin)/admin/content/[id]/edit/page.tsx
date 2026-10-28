@@ -58,7 +58,7 @@ export default async function EditContentPage({
     fieldType: f.fieldType,
     isRequired: f.isRequired,
     displayOrder: f.displayOrder,
-    label: f.translations[0]?.label || f.baseLabel,
+    label: f.baseLabel,
   }));
 
   const initialData = {

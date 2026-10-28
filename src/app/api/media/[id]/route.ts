@@ -153,7 +153,8 @@ export async function DELETE(
         const parent = await tx.dictionaryEntry.findUnique({ where: { id: asset.dictionaryId } });
         if (parent && !["draft", "needs_edit", "rejected", "curated"].includes(parent.status)) throw Object.assign(new Error("Reviewed media cannot be deleted."), { status: 409 });
       }
-      await deleteFromCloudinary(asset.publicId, (asset.resourceType as "image" | "video" | "raw") || "image", asset.deliveryType === "authenticated" ? "authenticated" : "upload");
+      const shared = await tx.mediaAsset.count({ where: { publicId: asset.publicId, id: { not: asset.id } } });
+      if (!shared) await deleteFromCloudinary(asset.publicId, (asset.resourceType as "image" | "video" | "raw") || "image", asset.deliveryType === "authenticated" ? "authenticated" : "upload");
       await tx.mediaAsset.delete({ where: { id: params.id } });
     }, { timeout: 30_000 });
   } catch (error: any) {

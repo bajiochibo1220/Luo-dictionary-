@@ -146,6 +146,7 @@ export function LoginForm() {
         ><InterfaceText source="Create new account" /></Link>
       </div>
       <nav aria-label="Legal and help links" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-600 pt-2">
+        <Link href="/help" className="hover:underline"><InterfaceText source="Help" /></Link>
         <Link href="/terms" className="hover:underline"><InterfaceText source="Terms" /></Link><Link href="/privacy" className="hover:underline"><InterfaceText source="Privacy" /></Link><Link href="/about" className="hover:underline"><InterfaceText source="About" /></Link><Link href="/" className="hover:underline"><InterfaceText source="Home" /></Link>
       </nav>
     </div>
