@@ -71,6 +71,10 @@ Open **Admin ? Content**. Tick individual rows, use the header checkbox (up to 1
 
 Master administrators can see the selection controls even without separate language-role assignments. An independent authorized person must publish each upload; users cannot publish their own contributions.
 
-### When publishing before review reports missing sharing permissions
+### Approve public sharing while content review continues
 
-Content review and sharing permission are separate. Uploads start with pending consent and internal access. Expand **Public sharing settings need attention** under the item title to see the exact blocker. For editable items, choose **Set source and access**. Once the source or rights holder has authorized public sharing, set **Source permission ? Permission confirmed**, **Consent scope ? public excerpt**, and **Restriction level ? public**. Save, then publish before review. An active embargo must expire first. Items already in review must be returned for editing before those settings can be changed. The bulk early-publication shortcut selects only items whose sharing settings are ready.
+Use **Publish before review**, or select up to 100 uploads and choose **Publish selected before review**. In the dialog, tick **I have confirmed that the source or rights holder permits public sharing of every selected item and its ordinary attachments**, then choose **Approve sharing and publish**. Confirm this only when the source or rights holder has authorized public sharing.
+
+This works for every content area. It records an audited permission confirmation and changes pending consent/internal access to public sharing inside the same publication transaction. Content already in review stays in review; it does not need to be returned for content editing merely to approve public sharing. Ordinary pending attachments are included. Restricted attachments stay private. Explicit non-public consent, denied source permission and active embargoes must be resolved separately. A batch is rolled back if any selected item fails.
+
+Continue editing and reviewing the source. Final publication replaces its earlier public version at the same public link.

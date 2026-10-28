@@ -101,15 +101,15 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
           <h1 className="mb-1 text-3xl font-serif text-stone-800"><InterfaceText source="Content" /></h1>
           <p className="text-sm text-stone-500"><InterfaceText source="Items are grouped by language and content area. Select several items at the same stage to move them together." /></p>
         </div>
-        {!!createLanguageId && canUploadContent(session, createLanguageId) && <details className="relative shrink-0">
-          <summary className="flex min-h-11 cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white"><InterfaceText source="+ New upload" /></summary>
-          <div className="absolute right-0 z-30 mt-2 grid max-h-[60dvh] w-64 max-w-[calc(100vw-2rem)] gap-1 overflow-y-auto rounded-xl border border-stone-300 bg-white p-2 shadow-xl">
+        {!!createLanguageId && canUploadContent(session, createLanguageId) && <details className="upload-picker">
+          <summary className="flex min-h-11 w-fit max-w-full cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white"><InterfaceText source="+ New upload" /></summary>
+          <nav aria-label="Choose a content area for your upload" className="upload-picker-options mt-3 rounded-xl border border-stone-300 bg-white p-3 shadow-sm">
           {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub && !!createLanguageId && canUploadContent(session, createLanguageId)).map((contentModule) => (
-            <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-stone-900 hover:bg-amber-50">
+            <Link key={contentModule.code} href={`/admin/content/new/${contentModule.code}${createLanguageId ? `?languageId=${createLanguageId}` : ""}`} className="flex min-h-11 min-w-0 items-center whitespace-normal break-words rounded-lg border border-stone-200 px-3 py-3 text-sm font-medium text-stone-900 hover:bg-amber-50">
               + {contentModule.baseName}
             </Link>
           ))}
-          </div>
+          </nav>
         </details>}
       </header>
 

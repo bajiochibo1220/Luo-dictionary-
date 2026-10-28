@@ -5,7 +5,7 @@ function render(records, selected = []) {
   react: {...React, useState: initial => [Array.isArray(initial) ? selected : initial, () => {}]},
   'next/navigation': {useRouter: () => ({refresh(){}})},
   '@/components/shared/interface-language': {InterfaceText: ({source}) => source, InterfaceInput: props => React.createElement('input', props)},
-  '@/components/admin/early-publish-button': {EarlyPublishButton: () => null},
+  '@/components/admin/early-publish-button': {EarlyPublishButton: ({recordIds}) => recordIds ? React.createElement('button', null, 'Publish selected before review') : null},
  })('src/components/admin/content-table.tsx');
  return renderToStaticMarkup(React.createElement(ContentTable, {records, canDelete: false, canBulkWorkflow: false}));
 }
@@ -41,5 +41,5 @@ test('reviewed batch rejects an unassigned language before any item is published
 test('blocked public sharing displays the missing setting and a direct correction link',()=>{
  const html=render([{...record,status:'draft',canEdit:true,earlyPublicationIssues:['Set Source permission to Permission confirmed.']}],['a']);
  assert.match(html,/Public sharing settings need attention/); assert.match(html,/Set Source permission to Permission confirmed/);
- assert.match(html,/#source-and-access/); assert.doesNotMatch(html,/>Publish selected before review</);
+ assert.match(html,/#source-and-access/); assert.match(html,/>Publish selected before review</);
 });

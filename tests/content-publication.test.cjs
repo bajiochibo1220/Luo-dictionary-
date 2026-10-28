@@ -145,7 +145,7 @@ function batchEarlyRoute(contexts, session = actor('publisher')) {
     const snapshots = contexts.map(c => ({ source: structuredClone(c.source), state: structuredClone(c.state) }));
     try { return await callback(tx); } catch (error) { rolledBack = true; contexts.forEach((c, i) => { Object.assign(c.source, snapshots[i].source); Object.assign(c.state, snapshots[i].state); }); throw error; }
   } } } })('src/app/api/content/bulk-publish-before-review/route.ts').POST;
-  return { post: ids => post(new Request('http://localhost/api/content/bulk-publish-before-review', { method: 'POST', body: JSON.stringify({ recordIds: ids }) })), stats: () => ({ transactions, rolledBack }) };
+  return { post: (ids, confirmPublicSharing) => post(new Request('http://localhost/api/content/bulk-publish-before-review', { method: 'POST', body: JSON.stringify({ recordIds: ids, confirmPublicSharing }) })), stats: () => ({ transactions, rolledBack }) };
 }
 test('a single early-publication batch releases multiple uploads across stages and content areas', async () => {
   const a = fixture(), b = fixture(); a.source.id = 'a'; a.source.status = 'draft'; b.source.id = 'b'; b.source.status = 'needs_edit'; b.source.moduleId = 3;
@@ -180,4 +180,46 @@ test('public release readiness lists pending permission, private access and an a
   Object.assign(context.source,{title:' ',consentScope:'pending',restrictionLevel:'internal',embargoUntil:new Date('2099-01-01'),data:{}});
   const issues=publicReleaseIssues(context.source); assert.equal(issues.length,5);
   assert.match(issues.join(' '),/Add a title|Consent scope|Restriction level|2099-01-01|Source permission/);
+});
+
+function pendingPermissionFixture() {
+  const c=fixture(); c.source.status='under_review'; c.source.consentScope='pending'; c.source.restrictionLevel='internal'; c.source.data.sourcePermission='needs_review';
+  c.source.media[0].consentScope='pending'; c.source.media[0].restrictionLevel='internal';
+  c.approvals=[];
+  c.tx.mediaAsset.updateMany=async()=>{for(const m of c.source.media) if(['pending','public_excerpt'].includes(m.consentScope) && ['internal','public'].includes(m.restrictionLevel) && (!m.embargoUntil||m.embargoUntil<=new Date())) Object.assign(m,{consentScope:'public_excerpt',restrictionLevel:'public'});};
+  c.tx.mediaAsset.findMany=async()=>c.source.media.filter(m=>m.consentScope==='public_excerpt'&&m.restrictionLevel==='public').map(m=>({id:m.id}));
+  c.tx.consentRecord={create:async({data})=>{c.approvals.push(data);return {id:'consent'};}};
+  c.tx.consentRecordAsset={createMany:async()=>{}};
+  return c;
+}
+test('explicit public-sharing approval releases pending uploads of every content type while their review continues',async()=>{
+ for(const code of ['oral_histories','proverbs','riddles','songs','artifacts','folktales','research','dictionary']) {
+  const c=pendingPermissionFixture();c.source.module.code=code;
+  const res=await earlyRoute(c,actor('publisher'))(new Request('http://localhost',{method:'POST',body:JSON.stringify({confirmPublicSharing:true})}),{params:Promise.resolve({id:'upload'})});
+  assert.equal(res.status,200,code);assert.equal(c.source.status,'under_review');assert.equal(c.state.publication.isProvisional,true);
+  assert.equal(c.source.consentScope,'public_excerpt');assert.equal(c.source.restrictionLevel,'public');assert.equal(c.source.data.sourcePermission,'confirmed');
+  assert.equal(c.state.media.length,1);assert.equal(c.approvals[0].reviewedById,'reviewer');assert.equal(c.state.audits[0].action,'content.public_sharing_confirmed');
+ }
+});
+test('public-sharing approval preserves explicit restrictions, denial and active embargoes',async()=>{
+ for(const changes of [{consentScope:'research_only'},{consentScope:'community_only'},{restrictionLevel:'sacred'},{restrictionLevel:'restricted'},{embargoUntil:new Date('2099-01-01')},{data:{sourcePermission:'not_granted'}}]) {
+  const c=pendingPermissionFixture();Object.assign(c.source,changes);
+  const res=await earlyRoute(c,actor('publisher'))(new Request('http://localhost',{method:'POST',body:JSON.stringify({confirmPublicSharing:true})}),{params:Promise.resolve({id:'upload'})});
+  assert.ok([400,403].includes(res.status));assert.equal(c.state.publication,null);assert.equal(c.approvals.length,0);
+ }
+});
+test('explicit approval keeps restricted attachments private',async()=>{
+ const c=pendingPermissionFixture();c.source.media.push({...c.source.media[0],id:'sacred',restrictionLevel:'sacred'});
+ const res=await earlyRoute(c,actor('publisher'))(new Request('http://localhost',{method:'POST',body:JSON.stringify({confirmPublicSharing:true})}),{params:Promise.resolve({id:'upload'})});
+ assert.equal(res.status,200);assert.equal(c.source.media[1].restrictionLevel,'sacred');assert.equal(c.state.media.length,1);
+});
+test('bulk explicit approval covers all selected uploads in a single transaction',async()=>{
+ const a=pendingPermissionFixture(),b=pendingPermissionFixture();a.source.id='a';b.source.id='b';b.source.module.code='proverbs';
+ const batch=batchEarlyRoute([a,b]);const res=await batch.post(['b','a'],true);
+ assert.equal(res.status,200);assert.equal((await res.json()).count,2);assert.equal(batch.stats().transactions,1);
+ assert.equal(a.state.publication.isProvisional,true);assert.equal(b.state.publication.isProvisional,true);
+});
+test('a string approval does not count as explicit consent',async()=>{
+ const c=pendingPermissionFixture();const res=await earlyRoute(c,actor('publisher'))(new Request('http://localhost',{method:'POST',body:JSON.stringify({confirmPublicSharing:'true'})}),{params:Promise.resolve({id:'upload'})});
+ assert.equal(res.status,400);assert.equal(c.approvals.length,0);assert.equal(c.source.consentScope,'pending');
 });

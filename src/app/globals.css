@@ -102,6 +102,9 @@
 /* App mastheads are outside the content scroller. Page controls stick below them. */
 .workspace-heading { position: relative; padding-top: .5rem; padding-bottom: .75rem; }
 .workspace-heading button, .workspace-heading a { flex-shrink: 0; }
+.upload-picker { flex-basis: 100%; width: 100%; min-width: 0; }
+.upload-picker-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .75rem; }
+.upload-picker-options a { min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 639px) { .workspace-heading h1 { font-size: 1.5rem; } }
 
 /* JOOUST appearance is configured through System > General. */
