@@ -1,0 +1,232 @@
+{
+  "checkedAt": "2026-10-29T14:03:40.397Z",
+  "databaseWrites": 0,
+  "privateDenied": true,
+  "checks": [
+    {
+      "id": "ed205229-bc24-4a3f-b17f-b5d7f72e41fa",
+      "title": "Oral history KIS_026",
+      "pass": true,
+      "expectedSegments": 2,
+      "readableSegments": 2,
+      "characters": 311,
+      "englishAvailable": false
+    },
+    {
+      "id": "5f2f7b0a-c3cc-4a0e-b231-b458eec60697",
+      "title": "Oral history SIA_022",
+      "pass": true,
+      "expectedSegments": 38,
+      "readableSegments": 38,
+      "characters": 9494,
+      "englishAvailable": false
+    },
+    {
+      "id": "f00ad664-6a99-4cce-b9ef-263909800509",
+      "title": "Oral history SIA_021",
+      "pass": true,
+      "expectedSegments": 11,
+      "readableSegments": 11,
+      "characters": 6965,
+      "englishAvailable": false
+    },
+    {
+      "id": "a6254ebf-2f6c-455d-b3d6-7935d33519f7",
+      "title": "Oral history SIA_020",
+      "pass": true,
+      "expectedSegments": 67,
+      "readableSegments": 67,
+      "characters": 4954,
+      "englishAvailable": false
+    },
+    {
+      "id": "586b6b40-1e2a-458e-971e-4f439bf33a77",
+      "title": "Oral history KIS_019",
+      "pass": true,
+      "expectedSegments": 49,
+      "readableSegments": 49,
+      "characters": 42024,
+      "englishAvailable": false
+    },
+    {
+      "id": "24126963-5b21-4078-bad2-67bbb1595339",
+      "title": "Oral history KIS_025",
+      "pass": true,
+      "expectedSegments": 281,
+      "readableSegments": 281,
+      "characters": 38372,
+      "englishAvailable": false
+    },
+    {
+      "id": "bd414839-09fb-47c3-add1-eb17534ff707",
+      "title": "Oral history KIS_024",
+      "pass": true,
+      "expectedSegments": 17,
+      "readableSegments": 17,
+      "characters": 12379,
+      "englishAvailable": false
+    },
+    {
+      "id": "59b27397-1157-476e-9044-7c64ef3b6fcf",
+      "title": "Oral history NYA_008",
+      "pass": true,
+      "expectedSegments": 9,
+      "readableSegments": 9,
+      "characters": 9432,
+      "englishAvailable": false
+    },
+    {
+      "id": "1978aef8-a19d-41b6-ad1d-982d651d6382",
+      "title": "Oral history NYA_007",
+      "pass": true,
+      "expectedSegments": 146,
+      "readableSegments": 146,
+      "characters": 18844,
+      "englishAvailable": false
+    },
+    {
+      "id": "288a2a91-115f-476c-9450-cd447f344673",
+      "title": "Oral history HOM_018",
+      "pass": true,
+      "expectedSegments": 52,
+      "readableSegments": 52,
+      "characters": 38994,
+      "englishAvailable": false
+    },
+    {
+      "id": "abac421d-f85e-4f3b-8473-f794675fb215",
+      "title": "Oral history XCT_017",
+      "pass": true,
+      "expectedSegments": 107,
+      "readableSegments": 107,
+      "characters": 56912,
+      "englishAvailable": false
+    },
+    {
+      "id": "270ef381-faa1-448d-8767-f7d0d6e11a8b",
+      "title": "Oral history SIA_016",
+      "pass": true,
+      "expectedSegments": 28,
+      "readableSegments": 28,
+      "characters": 22394,
+      "englishAvailable": false
+    },
+    {
+      "id": "e73b72d8-a54a-4f65-abaf-cdfbdd4bbdfe",
+      "title": "Oral history SIA_015",
+      "pass": true,
+      "expectedSegments": 37,
+      "readableSegments": 37,
+      "characters": 32258,
+      "englishAvailable": false
+    },
+    {
+      "id": "7d15b895-060c-47c4-866c-7e64d0b45823",
+      "title": "Oral history KIS_014",
+      "pass": true,
+      "expectedSegments": 26,
+      "readableSegments": 26,
+      "characters": 23249,
+      "englishAvailable": false
+    },
+    {
+      "id": "e20ecaac-9dd2-4b29-8037-c337c554ad15",
+      "title": "Oral history KIS_013",
+      "pass": true,
+      "expectedSegments": 29,
+      "readableSegments": 29,
+      "characters": 25953,
+      "englishAvailable": false
+    },
+    {
+      "id": "90a37bab-588d-4202-ac39-cbdb6385d074",
+      "title": "Oral history HOM_012",
+      "pass": true,
+      "expectedSegments": 27,
+      "readableSegments": 27,
+      "characters": 23195,
+      "englishAvailable": false
+    },
+    {
+      "id": "ed9bb4cb-2786-4b17-883b-935f452b0262",
+      "title": "Oral history HOM_011",
+      "pass": true,
+      "expectedSegments": 29,
+      "readableSegments": 29,
+      "characters": 24653,
+      "englishAvailable": false
+    },
+    {
+      "id": "28521c9e-05e3-414d-82b8-649cb3270a60",
+      "title": "Oral history KIS_010",
+      "pass": true,
+      "expectedSegments": 292,
+      "readableSegments": 292,
+      "characters": 42493,
+      "englishAvailable": false
+    },
+    {
+      "id": "0e2d722a-529c-43e9-aeaf-4bcaaf28cfa6",
+      "title": "Oral history HOM_009",
+      "pass": true,
+      "expectedSegments": 133,
+      "readableSegments": 133,
+      "characters": 17856,
+      "englishAvailable": false
+    },
+    {
+      "id": "e681bda5-e4d7-4460-95dd-e891dc0e210f",
+      "title": "Oral history HOM_006",
+      "pass": true,
+      "expectedSegments": 120,
+      "readableSegments": 120,
+      "characters": 39538,
+      "englishAvailable": false
+    },
+    {
+      "id": "5bfedb42-aac5-4316-b93b-3e38fec18dbe",
+      "title": "Oral history NYA_005",
+      "pass": true,
+      "expectedSegments": 296,
+      "readableSegments": 296,
+      "characters": 41239,
+      "englishAvailable": false
+    },
+    {
+      "id": "16f3ee5e-e508-42c1-839d-94a20d37f4af",
+      "title": "Oral history HOM_004",
+      "pass": true,
+      "expectedSegments": 491,
+      "readableSegments": 491,
+      "characters": 67976,
+      "englishAvailable": false
+    },
+    {
+      "id": "e87407cb-fd6b-4e8e-8d9f-14427ea473f5",
+      "title": "Oral history HOM_003",
+      "pass": true,
+      "expectedSegments": 135,
+      "readableSegments": 135,
+      "characters": 20626,
+      "englishAvailable": false
+    },
+    {
+      "id": "ed3f3294-450a-4dc7-a75f-e2d0f25df672",
+      "title": "Oral history HOM_002",
+      "pass": true,
+      "expectedSegments": 216,
+      "readableSegments": 216,
+      "characters": 62606,
+      "englishAvailable": false
+    },
+    {
+      "id": "7d1e1001-034c-46e7-b77e-33cd824be2af",
+      "title": "Oral history SIA_023",
+      "pass": true,
+      "expectedSegments": 37,
+      "readableSegments": 37,
+      "characters": 14260,
+      "englishAvailable": false
+    }
+  ]
+}

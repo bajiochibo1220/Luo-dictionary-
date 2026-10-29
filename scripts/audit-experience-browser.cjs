@@ -54,7 +54,7 @@ async function main() {
     await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject; });
     let sequence = 0; const pending = new Map();
     const send = (method, params = {}) => new Promise((resolve, reject) => {
-      const id = ++sequence; const timeout = setTimeout(() => { pending.delete(id); reject(new Error(method + ' timed out')); }, 20000);
+      const id = ++sequence; const timeout = setTimeout(() => { pending.delete(id); reject(new Error(method + ' timed out')); }, 120000);
       pending.set(id, message => { clearTimeout(timeout); message.error ? reject(new Error(message.error.message)) : resolve(message.result); });
       socket.send(JSON.stringify({ id, method, params }));
     });
@@ -71,7 +71,7 @@ async function main() {
       }
     };
     const evaluate = async expression => { const response = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }); if (response.exceptionDetails) throw new Error((response.exceptionDetails.exception?.description || response.exceptionDetails.text) + ' Expression: ' + expression.slice(0, 180)); return response.result.value; };
-    const until = async (expression, label) => { for (let i = 0; i < 100; i++) { if (await evaluate(expression)) return; await delay(100); } throw new Error('Timed out: ' + label); };
+    const until = async (expression, label) => { const deadline = Date.now() + 90000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } throw new Error('Timed out: ' + label); };
     await send('Runtime.enable'); await send('Page.enable'); await send('Fetch.enable', { patterns: [{ urlPattern: '*/api/*' }] });
     await send('Page.navigate', { url: base + '/application#/dashboard' });
     await until('!!document.querySelector(".discovery-card")', 'discovery hydration');

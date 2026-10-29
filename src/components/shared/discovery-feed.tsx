@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Bookmark, BookOpen, Headphones, Search } from "lucide-react";
+import { ArrowUpRight, Bookmark, BookOpen, Search } from "lucide-react";
 import type { AppLibrary } from "@/lib/app-contract";
 import type { ContentItem } from "@/lib/app-content";
 import { moduleHref } from "@/lib/app-navigation";
 import { emitActivity } from "@/lib/activity-events";
 import { InterfaceText } from "./interface-language";
 import { LibraryItemDialog, type AppLink } from "./module-content-view";
-import { MediaAudio, MediaImage, MediaVideo } from "./media-preview";
+import { LibraryMediaGallery } from "./library-media-gallery";
+import { CompleteItemDownload } from "./complete-item-download";
 import { NavigationIcon } from "./navigation-icon";
 import type { FeatureRequest } from "./learning-hub";
 
@@ -100,7 +101,7 @@ export function DiscoveryFeed({ request, languageCode, languageName = "Dholuo", 
       {saveError && <p role="alert" className="discovery-message">{saveError}</p>}
       {loading && <div role="status" aria-label="Loading cultural content" className="discovery-loading"><div className="discovery-placeholder" /><p><InterfaceText source="Bringing the collection to you..." /></p></div>}
       {!loading && library?.items.length === 0 && <div className="discovery-message"><BookOpen size={28} aria-hidden="true" /><h2><InterfaceText source="There is more to discover." /></h2><p><InterfaceText source="No published items match this selection yet. Try another content area or clear your search." /></p><button type="button" onClick={() => { setCategory("all"); setQuery(""); setSearch(""); }}><InterfaceText source="Show all heritage" /></button><Link href="/explore" className="discovery-browse"><InterfaceText source="Browse the library" /></Link></div>}
-      {library?.items.map(item => <DiscoveryCard key={item.id} item={item} saved={saved.includes(item.id)} saveBusy={saveBusy === item.id} Link={Link} onOpen={() => { emitActivity({ eventType: "view", recordId: item.id }); setSelected(item); }} onSave={() => void save(item)} joinPrompt={joinItem === item.id ? <div className="discovery-save-prompt"><p><InterfaceText source="Keep your favourites with a free account." /></p>{join}</div> : undefined} />)}
+      {library?.items.map(item => <DiscoveryCard key={item.id} item={item} downloadOrigin={downloadOrigin} saved={saved.includes(item.id)} saveBusy={saveBusy === item.id} Link={Link} onOpen={() => { emitActivity({ eventType: "view", recordId: item.id }); setSelected(item); }} onSave={() => void save(item)} joinPrompt={joinItem === item.id ? <div className="discovery-save-prompt"><p><InterfaceText source="Keep your favourites with a free account." /></p>{join}</div> : undefined} />)}
       {(library?.continuation?.records || library?.continuation?.dictionary) && <button type="button" className="discovery-more" disabled={loading || moreBusy} onClick={() => void loadMore()}><InterfaceText source={moreBusy ? "Loading more..." : "Discover more"} /></button>}
     </div><aside className="discovery-aside" aria-label="Continue exploring">
       {!signedIn && <div className="discovery-welcome"><Bookmark size={23} aria-hidden="true" /><h2><InterfaceText source="A place for your favourites." /></h2><p><InterfaceText source="Browse freely. Create a free account to save what you love and come back to it." /></p>{join}</div>}
@@ -110,18 +111,15 @@ export function DiscoveryFeed({ request, languageCode, languageName = "Dholuo", 
   </section>;
 }
 
-export function DiscoveryCard({ item, onOpen, onSave, saved, saveBusy, Link, joinPrompt }: { item: ContentItem; onOpen: () => void; onSave: () => void; saved: boolean; saveBusy: boolean; Link: AppLink; joinPrompt?: React.ReactNode }) {
-  const video = item.media.find(asset => asset.type === "video");
-  const image = item.media.find(asset => asset.type === "image");
-  const audio = item.media.find(asset => asset.type === "audio");
+export function DiscoveryCard({ item, onOpen, onSave, saved, saveBusy, Link, joinPrompt, downloadOrigin }: { item: ContentItem; onOpen: () => void; onSave: () => void; saved: boolean; saveBusy: boolean; Link: AppLink; joinPrompt?: React.ReactNode; downloadOrigin?: string }) {
   const description = item.summary || item.bodyText || item.englishSummary || "";
-  return <article className="discovery-card">
-    {video ? <div className="discovery-visual"><MediaVideo src={video.url} poster={video.thumbnailUrl || image?.thumbnailUrl || image?.url || undefined} controls aria-label={item.title} onPlay={() => emitActivity({ eventType: "video_play", recordId: item.id })} /></div> : image ? <button type="button" onClick={onOpen} className="discovery-image" aria-label={`Open ${item.title}`}><MediaImage src={image.thumbnailUrl || image.url} alt={item.title} sizes="(max-width: 767px) 100vw, 680px" /></button> : null}
-    <div className="discovery-card-body"><div className="discovery-card-meta"><span className="discovery-category-icon"><NavigationIcon href={moduleHref(item.moduleCode || "")} size={18} /></span><Link href={moduleHref(item.moduleCode || "")}><InterfaceText source={item.moduleName || "Community heritage"} /></Link>{item.isProvisional && <span className="discovery-review-label"><InterfaceText source="Review in progress" /></span>}</div>
-      <h2><button type="button" onClick={onOpen}>{item.title}</button></h2>{item.englishTitle && item.englishTitle !== item.title && <p className="discovery-english-title" lang="en">{item.englishTitle}</p>}
+  return <article className={`discovery-card ${item.media.length ? "has-media" : ""}`}>
+    <LibraryMediaGallery item={item} onOpen={onOpen} />
+    <div className="discovery-card-body"><div className="discovery-card-heading"><h2><button type="button" title={item.title} onClick={onOpen}>{item.title}</button></h2><Link href={moduleHref(item.moduleCode || "")} className="discovery-card-category"><NavigationIcon href={moduleHref(item.moduleCode || "")} size={14} /><InterfaceText source={item.moduleName || "Community heritage"} /></Link></div>
+      <div className="discovery-card-actions"><button type="button" onClick={onOpen}><InterfaceText source="Explore this item" /><ArrowUpRight size={14} aria-hidden="true" /></button><button type="button" disabled={saveBusy || saved} aria-label={`${saved ? "Saved" : "Save"} ${item.title}`} onClick={onSave}><Bookmark size={16} aria-hidden="true" fill={saved ? "currentColor" : "none"} /><InterfaceText source={saved ? "Saved" : saveBusy ? "Saving..." : "Save"} /></button>{item.isProvisional && <span className="discovery-review-label"><InterfaceText source="Review in progress" /></span>}<CompleteItemDownload id={item.id} kind={item.kind} origin={downloadOrigin} compact /></div>
+      {item.englishTitle && item.englishTitle !== item.title && <p className="discovery-english-title" lang="en" contentEditable={false}>{item.englishTitle}</p>}
       {description && <p className="discovery-excerpt">{description.slice(0, 260)}{description.length > 260 ? "..." : ""}</p>}
-      {audio && !video && <div className="discovery-audio"><p><Headphones size={17} aria-hidden="true" /><InterfaceText source="Listen to the recording" /></p><MediaAudio src={audio.url} controls aria-label={item.title} preload="none" onPlay={() => emitActivity({ eventType: "audio_play", recordId: item.id })} /></div>}
-      <div className="discovery-card-actions"><button type="button" onClick={onOpen}><InterfaceText source="Explore this item" /><ArrowUpRight size={16} aria-hidden="true" /></button><button type="button" disabled={saveBusy || saved} aria-label={`${saved ? "Saved" : "Save"} ${item.title}`} onClick={onSave}><Bookmark size={17} aria-hidden="true" fill={saved ? "currentColor" : "none"} /><InterfaceText source={saved ? "Saved" : saveBusy ? "Saving..." : "Save"} /></button></div>{joinPrompt}
+      {joinPrompt}
     </div>
   </article>;
 }

@@ -1,5 +1,6 @@
 "use client";
-import { MediaAudio, MediaImage, MediaVideo } from "@/components/shared/media-preview";
+import { MediaImage } from "@/components/shared/media-preview";
+import { LibraryMediaGallery } from "./library-media-gallery";
 
 import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
 
@@ -129,7 +130,7 @@ export function ModuleContentView({
 
         </div>
       ) : view === "feed" ? (
-        <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
+        <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} onOpen={item => { emitActivity({ eventType: "view", recordId: item.id }); setSelectedItem(item); }} />
       ) : (
         <GridView viewLanguageCode={viewLanguageCode} items={filteredItems} mediaForCard={mediaForCard} onOpen={item => { emitActivity({eventType:"view",recordId:item.id}); setSelectedItem(item); }} />
       )}
@@ -139,57 +140,53 @@ export function ModuleContentView({
   );
 }
 
-function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
+function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave, onOpen }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void; onOpen: (item: ContentItem) => void }) {
   return (
       <div className="library-feed space-y-3 px-2">
       {items.map((item) => (
-        <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
+        <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} onOpen={() => onOpen(item)} />
       ))}
     </div>
   );
 }
 
-function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
+function FeedCard({ item, media, languageCode, viewLanguageCode, onSave, onOpen, detail = false }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void; onOpen?: () => void; detail?: boolean }) {
   const downloadOrigin = useContext(DownloadOrigin);
   const hasLinkedTranscripts = (item.transcriptCount || 0) > 0;
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(detail);
   const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
   useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
-  const description = showEnglish ? (expanded ? item.englishBodyText || item.englishSummary : item.englishSummary) : expanded && item.bodyText ? item.bodyText : item.summary;
+  const description = showEnglish ? (expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText) : expanded ? item.bodyText || item.summary : item.summary || item.bodyText;
   return (
-    <article className={`library-feed-card ${media.length ? "has-media" : ""} grid grid-cols-1 gap-3 items-start rounded-xl border border-stone-900/10 bg-white/85 p-3 shadow-sm`}>
-      {media.length > 0 && <div className="min-w-0 space-y-2 md:space-y-4">
-        {media.map((asset) => (
-          <div key={asset.id} className="w-full flex items-center justify-center bg-black/5 overflow-hidden rounded-lg">
-            {asset.type === "image" && <MediaImage loading="lazy" src={asset.thumbnailUrl || asset.url} alt={item.title} className="library-media-preview w-full object-contain" />}
-            {asset.type === "video" && <MediaVideo onPlay={()=>emitActivity({eventType:"video_play",recordId:item.id})} preload="none" src={asset.url} poster={asset.thumbnailUrl || undefined} controls className="library-media-preview w-full object-contain" />}
-            {asset.type === "audio" && <div className="w-full p-6"><p className="text-sm text-stone-800 mb-3"><InterfaceText source="Audio recording" />{asset.format ? ` - ${asset.format}` : ""}</p><MediaAudio onPlay={()=>emitActivity({eventType:"audio_play",recordId:item.id})} preload="none" src={asset.url} controls className="w-full" /></div>}
-            {(asset.type === "document" || asset.type === "transcript") && <a href={asset.url} target="_blank" rel="noreferrer" className="text-stone-900 underline"><InterfaceText source="Open transcript or document" /></a>}
-          </div>
-        ))}
-      </div>}
-      <div className="min-w-0">
-        {item.moduleName && <p className="text-[10px] uppercase tracking-[0.2em] text-amber-800 mb-2">{item.moduleName}</p>}
-        <h3 className="font-serif text-2xl text-stone-900 mb-3 leading-snug ">{showEnglish ? item.englishTitle || item.title : item.title}</h3>
-        {item.isProvisional && <p className="mb-3 rounded-lg bg-amber-100 p-2 text-xs text-amber-950"><InterfaceText source="Published before review. Review and editing are in progress." /></p>}
-        {languageCode !== "eng" && (
-          <button type="button" onClick={() => { setShowEnglish((value) => !value); setExpanded(true); }} aria-pressed={showEnglish} className="mb-3 block text-sm font-semibold text-amber-900 underline underline-offset-2">
+    <article className={`library-feed-card ${media.length ? "has-media" : ""} ${detail ? "is-detail" : ""}`}>
+      <LibraryMediaGallery item={item} media={media} onOpen={onOpen} />
+      <div className="library-item-details">
+        <div className="library-item-heading"><h3 title={showEnglish ? item.englishTitle || item.title : item.title}>{onOpen ? <button type="button" onClick={onOpen}>{showEnglish ? item.englishTitle || item.title : item.title}</button> : showEnglish ? item.englishTitle || item.title : item.title}</h3>{item.moduleName && <span className="library-item-category"><InterfaceText source={item.moduleName} /></span>}</div>
+        <div className="library-item-actions">
+          {onOpen && <button type="button" onClick={onOpen}><InterfaceText source="Explore this item" /></button>}
+          {onSave && <button type="button" onClick={() => onSave(item)}><InterfaceText source="Save item" /></button>}
+          {item.isProvisional && <span className="discovery-review-label" title="Published before review. Review and editing are in progress."><InterfaceText source="Review in progress" /></span>}
+          {!detail && <CompleteItemDownload id={item.id} kind={item.kind || "cultural"} origin={downloadOrigin} compact />}
+          {languageCode !== "eng" && (detail || item.englishBodyText || item.englishSummary) && <button type="button" onClick={() => { setShowEnglish((value) => !value); }} aria-pressed={showEnglish}>
             <InterfaceText source={showEnglish ? "View in original language" : "See this in English"} />
-          </button>
-        )}
-        {description && <div className="space-y-2"><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
-        {!showEnglish && languageCode !== "eng" && (!hasLinkedTranscripts || item.englishBodyText || item.englishSummary) && <div lang="en" translate="no" contentEditable={false} className="mt-4 space-y-2 border-t border-stone-300 pt-3 text-sm text-stone-700">
+          </button>}
+        </div>
+        {!showEnglish && !detail && item.englishTitle && <p className="discovery-english-title" lang="en" contentEditable={false}>{item.englishTitle}</p>}
+        {description && <div className={`library-item-description ${expanded ? "is-expanded" : ""} space-y-2`}><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{detail && (description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
+        {!showEnglish && languageCode !== "eng" && (detail || item.englishBodyText || item.englishSummary) && (!hasLinkedTranscripts || item.englishBodyText || item.englishSummary) && <div lang="en" translate="no" contentEditable={false} className="library-english-preview space-y-1 border-t border-stone-200 pt-2 text-xs text-stone-700">
           <p className="text-xs font-semibold uppercase tracking-wide"><InterfaceText source="English" /></p>
-          {item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
+          {detail && item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
           {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic"><InterfaceText source="An English description has not been added yet." /></p>}
         </div>}
-        {hasLinkedTranscripts && <PublicTranscriptReader key={item.id} recordId={item.id} languageCode={showEnglish ? "eng" : languageCode} origin={downloadOrigin} />}
-        <CompleteItemDownload id={item.id} kind={item.kind || "cultural"} origin={downloadOrigin} />
-        {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
-        {description && !hasLinkedTranscripts && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
-        {(item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}
-        {item.moduleCode === "artifacts" && item.media.filter(asset => asset.format === "obj").map(asset => <ObjViewer key={asset.id} address={asset.url} />)}
-        {onSave && <button type="button" className="mt-3 min-h-11 rounded-lg bg-amber-900 px-4 py-2 text-sm text-white" onClick={() => onSave(item)}><InterfaceText source="Save item" /></button>}
+        <div className="library-item-resources">
+        {hasLinkedTranscripts && <PublicTranscriptReader key={item.id} recordId={item.id} languageCode={showEnglish ? "eng" : languageCode} origin={downloadOrigin} defaultOpen={detail} />}
+        {(media.length > 0 || description && !hasLinkedTranscripts) && <details className="library-file-downloads"><summary><InterfaceText source="Download files" /> ({media.length + (description && !hasLinkedTranscripts ? 1 : 0)})</summary><div>{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>
+        {description && !hasLinkedTranscripts && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download text / transcript" /></a>}
+        </details>}
+        </div>
+        {detail && <CompleteItemDownload id={item.id} kind={item.kind || "cultural"} origin={downloadOrigin} />}
+        {detail && (item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}
+        {detail && item.moduleCode === "artifacts" && item.media.filter(asset => asset.format === "obj").map(asset => <ObjViewer key={asset.id} address={asset.url} />)}
         {showEnglish && !hasLinkedTranscripts && !item.englishBodyText && !item.englishSummary && <p className="text-sm text-stone-700 italic"><InterfaceText source="An English description has not been added yet." /></p>}
       </div>
     </article>
@@ -248,8 +245,8 @@ export function LibraryItemDialog({ downloadOrigin, ...props }: Parameters<typeo
 function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode }: { viewLanguageCode: string; item: ContentItem; languageCode: string; onClose: () => void; onSave?: (item: ContentItem) => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { const value = dialog.current; if (value && !value.open) value.showModal(); }, []);
-  return <dialog ref={dialog} onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(95vw,60rem)] overflow-auto rounded-xl bg-[#e6d8bf] p-5 text-stone-900 backdrop:bg-black/60">
+  return <dialog ref={dialog} onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(96vw,90rem)] overflow-auto rounded-xl bg-[#f4f7f8] p-3 text-stone-900 backdrop:bg-black/60">
     <button type="button" autoFocus onClick={() => dialog.current?.close()} className="mb-4 min-h-11 rounded-full bg-amber-900 px-5 py-2 text-white"><InterfaceText source="Close details" /></button>
-    <FeedCard item={{ ...item, summary: item.bodyText || item.summary }} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} />
+    <FeedCard item={{ ...item, summary: item.bodyText || item.summary }} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} detail />
   </dialog>;
 }

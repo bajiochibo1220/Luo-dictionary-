@@ -61,6 +61,14 @@ test('all 216 conversation turns are readable before using any download link', (
   assert.match(html, /Respondent/); assert.match(html, /Interviewer/);
 });
 
+test('a collection preview can keep the conversation closed without truncating the full reader', () => {
+  const { PublicTranscriptReader } = loader()('src/components/shared/public-transcript-reader.tsx');
+  const html = renderToStaticMarkup(React.createElement(PublicTranscriptReader, { recordId: 'record', languageCode: 'luo', initial: reading, defaultOpen: false }));
+  assert.match(html, /aria-expanded="false"/);
+  assert.match(html, /Read full transcript/);
+  assert.doesNotMatch(html, /Conversation turn 1|Download full transcript text/);
+});
+
 test('English view displays an uploaded translation and never relabels the original conversation as English', () => {
   const { PublicTranscriptReader } = loader()('src/components/shared/public-transcript-reader.tsx');
   const render = initial => renderToStaticMarkup(React.createElement(PublicTranscriptReader, { recordId: 'record', languageCode: 'eng', initial }));

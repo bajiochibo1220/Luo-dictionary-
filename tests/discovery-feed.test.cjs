@@ -70,6 +70,16 @@ test('recordings use explicit playback controls and published-before-review labe
   assert.match(html, /Review in progress/); assert.match(html, /aria-label="Save A community story"/);
 });
 
+test('discovery retains every attached recording beside videos and exposes the native-safe item download', () => {
+  const { DiscoveryCard } = loader()('src/components/shared/discovery-feed.tsx');
+  const html = renderToStaticMarkup(React.createElement(DiscoveryCard, { item: { ...item, media: [{ id: 'video', type: 'video', url: '/api/media/video/file' }, { id: 'audio1', type: 'audio', url: '/api/media/audio1/file' }, { id: 'audio2', type: 'audio', url: '/api/media/audio2/file' }, { id: 'document', type: 'document', url: '/api/media/document/file' }] }, downloadOrigin: 'https://heritage.test', onOpen() {}, onSave() {}, saved: false, saveBusy: false, Link }));
+  assert.equal((html.match(/<audio\b/g) || []).length, 2);
+  assert.match(html, /<video[^>]*controls=""/);
+  assert.match(html, /href="\/api\/media\/document\/file"/);
+  assert.match(html, /href="https:\/\/heritage.test\/api\/v1\/download\?id=story&amp;kind=cultural"/);
+  assert.match(html, /aria-label="Download complete item \(ZIP\)"/);
+});
+
 function harness() {
   const values = []; const effects = []; const jobs = []; let cursor = 0;
   const load = loader({ react: { ...React,

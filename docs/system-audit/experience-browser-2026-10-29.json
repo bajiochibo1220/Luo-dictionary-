@@ -161,7 +161,7 @@
       "viewport": 320,
       "content": 320,
       "available": 320,
-      "heading": "AI cultural assistant"
+      "heading": "AI assistant"
     },
     {
       "route": "/workspace",
@@ -332,7 +332,7 @@
       "viewport": 390,
       "content": 390,
       "available": 390,
-      "heading": "AI cultural assistant"
+      "heading": "AI assistant"
     },
     {
       "route": "/workspace",
@@ -503,7 +503,7 @@
       "viewport": 768,
       "content": 768,
       "available": 768,
-      "heading": "AI cultural assistant"
+      "heading": "AI assistant"
     },
     {
       "route": "/workspace",
@@ -674,7 +674,7 @@
       "viewport": 1024,
       "content": 1024,
       "available": 1024,
-      "heading": "AI cultural assistant"
+      "heading": "AI assistant"
     },
     {
       "route": "/workspace",
@@ -845,7 +845,7 @@
       "viewport": 1440,
       "content": 1440,
       "available": 1440,
-      "heading": "AI cultural assistant"
+      "heading": "AI assistant"
     },
     {
       "route": "/workspace",
@@ -1221,7 +1221,6 @@
   "runtimeErrors": [],
   "unknownApi": [],
   "interactions": [
-    "Installation prompt can be dismissed while browsing",
     "Mobile navigation opens and closes with Escape",
     "AI image tools submit an approved source and display a draft",
     "Tutor submits and displays feedback",
@@ -1237,5 +1236,5 @@
   ],
   "sourceLinkWorks": true,
   "invalidNavigation": [],
-  "completedAt": "2026-10-29T07:25:34.384Z"
+  "completedAt": "2026-10-29T14:11:20.575Z"
 }
