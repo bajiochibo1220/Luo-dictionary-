@@ -2,13 +2,13 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loader } = require('./load-ts.cjs');
 
-function fixture({ references = false } = {}) {
+function fixture({ references = false, outputs = [] } = {}) {
   const calls = [];
   const { askQuestion } = loader({
     './provider-config': { getTextAiProvider: async () => 'deepseek' },
     './embeddings': { embedText: () => assert.fail('DeepSeek must not depend on another embedding provider') },
     './public-text-search': { searchPublicText: async () => references ? [{ record_id: 'approved', is_dictionary: false, similarity: 1 }] : [] },
-    './text-generation': { generateText: async (prompt, instruction) => { calls.push({ prompt, instruction }); return { text: JSON.stringify({languageCode:'eng',answer:'A natural model answer',translation:'Mock Dholuo translation'}), model: 'deepseek-flash' }; } },
+    './text-generation': { generateText: async (prompt, instruction) => { calls.push({ prompt, instruction }); return { text: JSON.stringify(outputs[calls.length - 1] || {languageCode:'eng',answer:'A natural model answer',translation:'Mock Dholuo translation'}), model: 'deepseek-flash' }; } },
     '@/lib/db': { prisma: {
       language: { findUnique: async () => ({ nativeName: 'English' }) },
       module: { findMany: async () => [{ id: 1, code: 'proverbs', baseName: 'Proverbs' }] },
@@ -80,5 +80,19 @@ test('every generation keeps cultural boundaries and automatic bilingual output 
     assert.match(instruction, /Detect the language of the current question independently/);
     assert.match(instruction, /quoted Dholuo term inside an English question/);
     assert.match(instruction, /faithful translation/);
+  }
+});
+
+
+test('retrieval and catalog answers accept real citations and repair citations beyond the supplied list', async () => {
+  const valid={languageCode:'eng',answer:'Supported cultural answer [Source 1]',translation:'Mock translation [Source 1]'};
+  const invalid={languageCode:'eng',answer:'Invented citation [Source 2]',translation:'Invented citation [Source 2]'};
+  for(const question of ['Explain this Luo proverb.','Show all proverbs']) {
+    const f=fixture({references:true,outputs:[invalid,valid]});
+    const result=await f.askQuestion(question,2);
+    assert.equal(result.answer,valid.answer);assert.equal(result.sources.length,1);assert.equal(f.calls.length,2);
+    assert.match(f.calls[1].prompt,/Cite only supplied sources numbered 1 through 1/);
+    const validOnly=fixture({references:true,outputs:[valid]});
+    assert.equal((await validOnly.askQuestion(question,2)).answer,valid.answer);assert.equal(validOnly.calls.length,1);
   }
 });

@@ -124,8 +124,8 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
       return;
     }
     scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: "smooth",
+      top: messages.length ? scrollRef.current.scrollHeight : 0,
+      behavior: !messages.length || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
     });
   }, [messages]);
 
@@ -149,6 +149,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
   }, [openMenuId]);
 
   const loadConversation = useCallback(async (id: string, before?: string) => {
+    setNotice(null);
     const sequence = ++loadSequence.current;
     setConversationLoading(true);
     try {
@@ -264,6 +265,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
     if (!question.trim() || busy || conversationLoading) return;
     if (!allowExternalAi) { toast.error(<InterfaceText source={"Please allow AI processing before sending a question."} />); return; }
     if (question.trim().length < 2 || question.trim().length > 2000) { toast.error(<InterfaceText source={"Enter a question between 2 and 2000 characters."} />); return; }
+    setNotice(null);
     ++loadSequence.current;
 
     const userMessage: Message = { role: "user", content: question };
@@ -326,7 +328,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
         <InterfaceButton type="button" className="absolute inset-0 z-20 bg-black/70 md:hidden" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} />
         <aside aria-label="Chat history" className="chat-history absolute inset-y-0 left-0 z-30 flex w-[min(20rem,85vw)] shrink-0 flex-col border-r md:relative md:w-72">
           <div className="flex items-center justify-between gap-2 border-b border-white/15 p-3"><h2 className="font-semibold"><InterfaceText source="Your chats" /></h2><InterfaceButton type="button" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} className="chat-icon-button"><X size={20} /></InterfaceButton></div>
-          <div className="space-y-2 p-3"><button type="button" onClick={startNewChat} disabled={busy} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-900 px-3 text-sm font-semibold text-stone-100 disabled:opacity-50"><Plus size={18} /><InterfaceText source="New chat" /></button><button type="button" disabled={busy} onClick={() => setShowArchived(value => !value)} className="min-h-11 w-full rounded-lg text-sm text-teal-100 hover:bg-white/10"><InterfaceText source={showArchived ? "Show active chats" : "Show archived chats"} /></button></div>
+          <div className="space-y-2 p-3"><button type="button" onClick={startNewChat} disabled={busy} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-teal-800 px-3 text-sm font-semibold text-white disabled:opacity-50"><Plus size={18} /><InterfaceText source="New chat" /></button><button type="button" disabled={busy} onClick={() => setShowArchived(value => !value)} className="min-h-11 w-full rounded-lg text-sm text-teal-100 hover:bg-white/10"><InterfaceText source={showArchived ? "Show active chats" : "Show archived chats"} /></button></div>
           <div className="min-h-0 flex-1 overflow-y-auto p-2">
             {historyLoading ? <p role="status" className="p-3 text-sm"><InterfaceText source="Loading chats…" /></p> : historyFailed ? <div role="alert" className="space-y-2 p-3 text-sm"><p><InterfaceText source="Unable to load saved chats." /></p><button type="button" onClick={() => void loadConversations()} className="min-h-11 underline"><InterfaceText source="Try again" /></button></div> : !conversations.length ? <p className="p-3 text-sm text-teal-100"><InterfaceText source="No saved chats yet." /></p> : conversations.map(conversation => <div key={conversation.id} className={`relative mb-1 rounded-xl ${conversationId === conversation.id ? "bg-white/15" : "hover:bg-white/10"}`}>
               <div className="flex items-center"><button type="button" disabled={busy || conversationLoading} onClick={() => void loadConversation(conversation.id)} className="min-h-12 min-w-0 flex-1 p-3 text-left text-sm disabled:opacity-50"><span className="block truncate">{conversation.pinned && <Pin size={12} className="mr-1 inline" />}{conversation.title}</span></button><InterfaceButton type="button" aria-label="Chat options" title="Chat options" disabled={busy} onClick={event => { event.stopPropagation(); setOpenMenuId(openMenuId === conversation.id ? null : conversation.id); }} className="chat-icon-button"><MoreHorizontal size={20} /></InterfaceButton></div>

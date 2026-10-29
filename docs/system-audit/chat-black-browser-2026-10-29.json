@@ -1,0 +1,185 @@
+{
+  "apiTransport": "synthetic; all intercepted",
+  "viewports": [
+    {
+      "width": 320,
+      "page": 320,
+      "chat": 320,
+      "available": 320,
+      "background": "rgb(0, 0, 0)",
+      "header": "rgb(0, 0, 0)",
+      "composer": "rgb(0, 0, 0)",
+      "logTop": 0,
+      "inputVisible": true
+    },
+    {
+      "width": 390,
+      "page": 390,
+      "chat": 390,
+      "available": 390,
+      "background": "rgb(0, 0, 0)",
+      "header": "rgb(0, 0, 0)",
+      "composer": "rgb(0, 0, 0)",
+      "logTop": 0,
+      "inputVisible": true
+    },
+    {
+      "width": 768,
+      "page": 768,
+      "chat": 768,
+      "available": 768,
+      "background": "rgb(0, 0, 0)",
+      "header": "rgb(0, 0, 0)",
+      "composer": "rgb(0, 0, 0)",
+      "logTop": 0,
+      "inputVisible": true
+    },
+    {
+      "width": 1440,
+      "page": 1440,
+      "chat": 1440,
+      "available": 1440,
+      "background": "rgb(0, 0, 0)",
+      "header": "rgb(0, 0, 0)",
+      "composer": "rgb(0, 0, 0)",
+      "logTop": 0,
+      "inputVisible": true
+    }
+  ],
+  "contrast": [
+    {
+      "selector": ".chat-header h1",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-header p",
+      "ratio": 8.326822782983248
+    },
+    {
+      "selector": "[role=log] h2",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-suggestion",
+      "ratio": 15.411315928872186
+    },
+    {
+      "selector": ".chat-composer textarea",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": ".chat-composer label",
+      "ratio": 12.035236127426339
+    },
+    {
+      "selector": ".chat-header h1",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-header p",
+      "ratio": 8.326822782983248
+    },
+    {
+      "selector": "[role=log] h2",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-suggestion",
+      "ratio": 15.411315928872186
+    },
+    {
+      "selector": ".chat-composer textarea",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": ".chat-composer label",
+      "ratio": 12.035236127426339
+    },
+    {
+      "selector": ".chat-header h1",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-header p",
+      "ratio": 8.326822782983248
+    },
+    {
+      "selector": "[role=log] h2",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-suggestion",
+      "ratio": 15.411315928872186
+    },
+    {
+      "selector": ".chat-composer textarea",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": ".chat-composer label",
+      "ratio": 12.035236127426339
+    },
+    {
+      "selector": ".chat-header h1",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-header p",
+      "ratio": 8.326822782983248
+    },
+    {
+      "selector": "[role=log] h2",
+      "ratio": 19.249789318499506
+    },
+    {
+      "selector": ".chat-suggestion",
+      "ratio": 15.411315928872186
+    },
+    {
+      "selector": ".chat-composer textarea",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": ".chat-composer label",
+      "ratio": 12.035236127426339
+    },
+    {
+      "selector": ".chat-history h2",
+      "ratio": 18.05363062478689
+    },
+    {
+      "selector": ".chat-history [role=alert] p",
+      "ratio": 18.05363062478689
+    },
+    {
+      "selector": ".chat-user-message p",
+      "ratio": 10.685145311995983
+    },
+    {
+      "selector": ".chat-assistant-message p",
+      "ratio": 16.56974426914681
+    },
+    {
+      "selector": ".chat-translation summary",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": ".chat-translation p",
+      "ratio": 16.433673705071246
+    },
+    {
+      "selector": "[role=log] details a",
+      "ratio": 14.017671462222879
+    },
+    {
+      "selector": ".chat-workspace [role=alert] p",
+      "ratio": 11.123170472466263
+    }
+  ],
+  "runtimeErrors": [],
+  "unknownApi": [],
+  "interactions": [
+    "History retry, message send, translation/source expansion, readable provider error, restored draft and successful resend"
+  ],
+  "completedAt": "2026-10-29T16:34:05.312Z"
+}
