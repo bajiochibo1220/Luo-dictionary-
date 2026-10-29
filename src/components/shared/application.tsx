@@ -1,4 +1,5 @@
 "use client";
+import { ArrowLeft } from "lucide-react";
 import { AppInstallationProvider } from "@/components/pwa/app-installation";
 import { EnglishInterface, InterfaceButton, InterfaceLanguageProvider, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
 import { ActivityTelemetry } from "./activity-telemetry";
@@ -52,8 +53,10 @@ function Link({ href, className, children, onClick }: { href: string; className?
   return <a href={screen ? `#${screen}` : new URL(href, apiOrigin).href} className={className} onClick={() => { if (!nativeSession.isNative && ["/login", "/register"].includes(href)) { try { sessionStorage.setItem("application-return", "/application" + (location.hash || "")); } catch {} } onClick?.(); }} target={screen || !nativeSession.isNative ? undefined : "_blank"} rel={screen ? undefined : "noopener noreferrer"}>{children}</a>;
 }
 
-function MobileBackLink({ label = "Back", variant }: { href?: string; label?: string; variant?: "default" | "on-dark" | "on-sand" }) {
-  return <Link href="/dashboard" className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${variant === "on-dark" ? "text-amber-50" : "text-stone-900"}`}>← {label}</Link>;
+function MobileBackLink({ href, label = "Back", variant }: { href?: string; label?: string; variant?: "default" | "on-dark" | "on-sand" }) {
+  const className = `inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full px-2 text-sm font-medium ${variant === "on-dark" ? "text-amber-50" : "text-stone-900"}`;
+  const content = <><ArrowLeft size={18} aria-hidden="true" /><span className="sr-only sm:not-sr-only"><InterfaceText source={label} /></span></>;
+  return href ? <Link href={href} className={className}>{content}</Link> : <button type="button" aria-label={label} className={className} onClick={() => { if (window.history.length > 1) window.history.back(); else location.hash = "/dashboard"; }}>{content}</button>;
 }
 
 function App() {
@@ -213,7 +216,7 @@ function App() {
   return <EnglishInterface enabled={isWorkspace || isChat && isStaff}><div className="heritage-app flex h-dvh overflow-hidden flex-col bg-[#b89a68]">
     {nativeSession.isNative && <Toaster richColors />}
     <header className="institution-masthead relative z-30 flex shrink-0 items-center gap-2 border-b border-amber-100/15 bg-[#5c3a1c] px-3 py-2 text-amber-50 pt-safe">
-      <SidebarToggle />
+      <SidebarToggle /><MobileBackLink variant="on-dark" />
       <Link href="/dashboard" className="masthead-brand flex min-w-0 flex-1 items-center gap-2"><BrandMark src={artwork} /><span title={APP_NAME} className="min-w-0 truncate font-serif text-base md:text-xl">{APP_NAME}</span></Link><div data-collection-toolbar-host />
       {session ? <DismissiblePopover className="relative shrink-0" open={accountMenuOpen} onClose={() => setAccountMenuOpen(false)}><InterfaceButton type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</InterfaceButton>
         {accountMenuOpen && <div className="absolute right-0 z-50 mt-2 max-h-[75dvh] max-w-[calc(100vw-1rem)] overflow-y-auto w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><PopoverClose onClose={() => setAccountMenuOpen(false)} />{isStaff && <Link href={dashboardHref} onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold"><InterfaceText source="Admin dashboard" /></Link>}<Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Saved conversations" /></Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Settings & profile" /></Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700"><InterfaceText source="Sign out" /></button></div>}

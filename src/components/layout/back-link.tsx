@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { InterfaceText } from "@/components/shared/interface-language";
 import { useRouter } from "next/navigation";
 
 export function BackLink({
@@ -15,7 +16,7 @@ export function BackLink({
   const router = useRouter();
 
   const baseClasses =
-    "inline-flex items-center gap-2 text-sm font-medium transition rounded-full px-3 py-1.5";
+    "inline-flex items-center gap-2 text-sm font-medium transition rounded-full min-h-11 min-w-11 px-2 py-1.5";
 
   const variants: Record<string, string> = {
     default: "text-stone-700 hover:text-amber-800 hover:bg-black/5",
@@ -43,17 +44,17 @@ export function BackLink({
 
   if (href) {
     return (
-      <Link href={href} className={className}>
+      <Link href={href} aria-label={label} className={className}>
         {Arrow}
-        {label}
+        <span className="hidden sm:inline"><InterfaceText source={label} /></span>
       </Link>
     );
   }
 
   return (
-    <button onClick={() => router.back()} className={className}>
+    <button type="button" aria-label={label} title={label} onClick={() => { if (window.history.length > 1) router.back(); else router.replace("/application#/dashboard"); }} className={className}>
       {Arrow}
-      {label}
+      <span className="hidden sm:inline"><InterfaceText source={label} /></span>
     </button>
   );
 }

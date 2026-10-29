@@ -1,18 +1,24 @@
 # Using Luo Heritage
 
-Updated 28 October 2026.
+Updated 30 October 2026.
 
-## More room for collection content
+## Find and browse content
 
-On wide screens, collection search and the content-language selector appear in the top masthead. On smaller screens they sit directly above the collection title. The compact bottom bar filters images, audio, videos and transcripts. Descriptions open in full; use **Read less** to collapse them. Images and videos fit their available space without cropping, and narrow content areas stack media above descriptions.
+The app opens **Log in** first. **Create account** is below it; **Browse the public library** opens public content without registration. Choose your community language during registration. The public navigation has no language selector. Approved Dholuo labels show their smaller, read-only English meaning underneath; untranslated controls remain English. Admin workspaces remain English.
 
-## Language and navigation
+The sidebar starts with **Install app**, then **Explore**, **Discover**, **Collections**, **Browse the library** and **Saved words and items**. Use the header **Back** control to return to the preceding screen. The Explore menu opens above the feed in a scrollable dialog, with **Back** and **X** at the top. All options remain reachable on small phones and in landscape. Escape closes the menu.
 
-The public interface starts in English. An editor can save approved Dholuo wording in **Edit system text**. Each saved label then shows Dholuo first and smaller English underneath; untranslated labels stay English. This includes login, sign out, navigation, settings and the in-app manual. Use the community selector to choose a community. The separate content-language control changes a record's displayed language without changing menus. Administrative workspaces always stay in English.
+Search stays pinned above a collection. The small black bottom bar stays in place with **All**, **Images**, **Audio**, **Video** and **Transcripts**. Cards reserve room above it. The feed loads further published items as you scroll, until the available collection ends. **Follow your curiosity** is in Explore, away from the feed's bottom.
+
+Images and videos fit their frame without cropping; unused space is black. Use the attachment arrows for additional files. Audio/video controls appear for uploaded recordings; an empty media type means no matching recording is published. A card's description is compact: **more** expands it in place and **less** collapses it. **Explore this item** shows the full description, available English content, media, transcripts and related items. Its sticky **Back** and **X** controls return to the feed. Use **Contribute** above any collection to open that collection's submission form, signing in if needed.
+
+## Account recovery
+
+**Forgotten password?** requests an email code and then asks for that code, a new password and confirmation. Registration, account deletion and other account actions are separate. Delivery requires the administrator's configured email provider; an unavailable-service message means no reset email was confirmed. Email verification and account deletion start in account settings, and deletion requires its own email confirmation.
 
 ## A simpler cultural assistant
 
-Open **AI cultural assistant**, enter a question, select **Allow AI processing for this chat**, and send. Suggested questions fill the input so you can edit them first. **Chat settings** contains answer-language and processing information. Expand **Sources** and **Related media** when needed. **Your chats** opens saved conversations after sign-in; **New chat** starts another conversation. Use **X** to close the assistant. Escape closes an open menu or history panel first, then closes the assistant. AI answers can be mistaken; check source material.
+Open **CULTURAL HERITAGE**, ask about Luo culture, history, songs, traditions or Dholuo language, select **Allow AI processing for this chat**, and send. Suggested questions fill the input so you can edit them first. **See translation in English** or **See translation in Dholuo** expands the answer in the other language. The assistant can use general Luo knowledge as well as available library sources. **Chat settings** explains processing and the fallback answer language. Expand **Sources** and **Related media** when needed. **Your chats** opens saved conversations after sign-in; **New chat** starts another conversation. Use **X** to close the assistant. Escape closes an open menu or history panel first, then closes the assistant. AI answers can be mistaken; check source material.
 
 Some public items are marked **Review in progress**. Authorized staff may publish an uploaded snapshot while review continues. Unfinished edits stay private; publishing the reviewed version automatically replaces the earlier public package at the same link.
 
@@ -56,7 +62,7 @@ Open **Help & training** in the navigation menu for your account's manual. Publi
 
 Public research publications, reports and datasets can be explored without privileged access. Assigned researchers and teachers see additional material only where its consent and restrictions permit. Private exports require research or curation permissions and must stay in approved storage.
 
-Open the account menu for Settings & profile, saved conversations and sign out. The menu closes using its trigger, outside click or Escape. Interface language is separate from your assigned roles. Missing reviewed translations fall back to English; report missing wording to an editor through the project's support process.
+Open the account menu for Settings & profile, saved conversations and sign out. The menu closes using its trigger, outside click or Escape. The community selected at registration does not grant staff roles. Missing reviewed translations fall back to English; report missing wording to an editor through the project's support process.
 
 Offline saved content and compatible learning progress are available through the existing offline library. AI, new downloads, research exports, maps and multiplayer need a connection. Synchronize queued progress after reconnecting.
 
@@ -69,3 +75,9 @@ Use the play controls to listen or watch. Starting another player pauses the pre
 AI suggestions remain drafts. If an AI tool reports that its provider quota is reached, try later and notify an administrator. Image-generation quota is separate from text generation. Choosing a different page or repeatedly clicking Create AI draft does not restore exhausted provider quota.
 
 Complete item downloads: choose **Download complete item (ZIP)** on a collection item or its details page. The ZIP includes the full descriptions in available languages, transcript text, captions, original images, audio, videos and other public attachments. Extract the ZIP, then open **index.html** to read and view supported media offline. Use **descriptions.txt**, **metadata.json**, **transcripts/** and **media/** for individual material. Existing single-file and displayed-text downloads remain available. Large archives take longer; keep the download running until the browser finishes.
+
+## Installation and legal documents
+
+Choose **Install app** at the top of the sidebar. A supported browser shows its native offer when installation is eligible; accept it to install. Safari on iPhone uses **Share**, then **Add to Home Screen**. If the browser does not offer installation, follow its displayed instructions or keep using the browser. Installing does not enable every feature offline.
+
+Terms and Conditions and Privacy Policy describe the current cultural assistant, recovery codes, account deletion, media access, registration language, activity records and local/offline storage. Private downloads may remain on a device after sign-out. The institution must complete its operator, contact, provider, retention and transfer details in the editable policies.

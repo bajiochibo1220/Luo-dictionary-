@@ -1,18 +1,18 @@
 # Luo Heritage
 
-Historical edition: use the [current PRD user guide](PRD_USER_GUIDE.md) and [administrator/training guide](PRD_ADMIN_AND_TRAINING_GUIDE.md) for the merged editor role, new features and current workflows. Older PDF/DOCX/HTML exports require regeneration before redistribution.
+Current companion guides: **PRD_USER_GUIDE.md** and **PRD_ADMIN_AND_TRAINING_GUIDE.md** in the docs folder. HTML, Word and PDF copies are regenerated from this edition.
 
 ## Web Application User Manual
 
-**Edition 1.0 · 14 October 2026**
+**Edition 2.0 - 30 October 2026**
 
 **Purpose:** help people use the Luo Heritage website, from their first login to their assigned daily tasks.
 
 > **THIS MANUAL IS FOR THE WEB APPLICATION ONLY.**
 >
-> **The Android and iOS applications are still in development.** This manual does not explain how to use, install or publish those applications.
+> **Packaged Android and iOS clients share the main application interface.** Android and iOS distribution, store release and physical-device acceptance remain separate deployment tasks. This manual explains the browser interface and browser installation; it does not certify native release readiness.
 >
-> You can use the website in a browser on a computer, tablet or phone. A website shortcut on a phone is still the web application. It is not a finished Android or iOS application.
+> You can use the website in a browser on a computer, tablet or phone. A website shortcut on a phone is still the web application. It is separate from a packaged Android or iOS application.
 
 This guide explains the current web interface reviewed in the project. Your administrator decides which version is available on your website. Some pages depend on your account permissions, approved content and connected services. If a described option is missing, use the help steps in Section 16. A feature marked **Coming soon** is not ready to use.
 
@@ -53,7 +53,7 @@ Choose a section below to go directly to it. In Word, you may need to hold Ctrl 
 2. If the login screen appears, enter your email and password. Click **Log in**.
 3. On the dashboard, choose a subject from the left menu, such as Dictionary or Proverbs.
 4. Choose **All** to see all available items. Use **Images**, **Audio**, **Video** or **Transcripts** to narrow the list.
-5. Use **Feed view** to read descriptions. Open an available audio, video or document using its controls.
+5. Use **more** for the compact description or **Explore this item** for full details. Open an available audio, video or document using its controls.
 
 **What you should see:** content that has been approved for public access. An empty subject means no matching public content is available there yet.
 
@@ -148,7 +148,12 @@ If the website says it cannot find that Google account, use **Create an account 
 
 ### If you forget your password
 
-The reviewed version's **Forgotten password?** button is not a completed password-reset service. Contact your administrator for the available account-recovery process. Do not expect an automatic reset email from that button yet.
+1. Choose **Forgotten password?** on Log in.
+2. Enter your account email and request the code.
+3. When the code arrives, enter it with your new password and confirmation.
+4. Submit once, wait for confirmation, then return to sign in.
+
+The reset screen contains only reset steps. Registration, login choices and account deletion do not appear during the request/confirmation steps. Email verification and deletion are separate actions in account settings. Code delivery requires a configured email service; if delivery is unavailable, contact the administrator and do not assume a password was changed. Never share a recovery code.
 
 ### If the website asks you to log in again
 
@@ -164,169 +169,85 @@ Sign out after using a shared computer. Closing a browser window is not a substi
 
 ## 4. Find your way around
 
-| Part of the screen | What it does |
-|---|---|
-| Logo and app name | Return to the web dashboard. |
-| Left menu, also called the sidebar | Choose a cultural subject or a staff task. |
-| Menu button with three lines | Open the left menu on a small screen. |
-| Collapse/expand sidebar control | Hide or show the left menu on a computer. |
-| Search | Find content related to a word, phrase or topic. |
-| Chat or the floating speech-bubble button | Open the AI chat screen. |
-| Round account button | Open your account and dashboard choices. |
-| Back link | Return to the named previous page. |
+### Sidebar and Back
 
-### Open or close the left menu
+The public sidebar begins with **Install app**, followed by **Explore**, **Discover**, **Collections**, **Browse the library** and **Saved words and items**. Additional tools depend on your account and permissions.
 
-- **On a computer:** click the sidebar control to collapse it. Click again to expand it. The public and admin areas can remember separate sidebar choices.
-- **On a phone or narrow browser window:** click the three-line menu button. Choose a page. The drawer normally closes after you choose it. You can also use its close control or click outside it.
+On a computer, the sidebar toggle collapses or expands the navigation. On a phone, it opens a drawer. Scroll inside the drawer to reach more entries; use X or choose a destination to close it. The header Back control returns to the previous screen. With no previous screen, it opens the public library.
 
-If a menu item is lower down, scroll inside the menu. This is separate from scrolling the main page.
+### Explore and close controls
 
-### Open your account menu
+Choose **Explore** beside the pinned feed search. A dialog lists Discover, available collections and **Follow your curiosity** links. Scroll inside the dialog to reach its last option, even on a small phone or landscape display. Back, X or Escape closes it. Selecting a collection closes the list and applies that selection.
 
-Click the round button containing your initial or picture. Depending on your permissions and website version, it can show:
+**Explore this item** opens an item's complete details. Back and X stay at the top while you scroll; either closes the details and returns to the feed. Closing a panel does not save, delete or submit a contribution.
 
-- **My dashboard** — the public cultural-library dashboard.
-- **My account & saved chats** — your account access and chat-history screen.
-- **Profile options** — your interests and account-use choices.
-- **App updates & installation** — website update and shortcut instructions.
-- **Admin dashboard** — staff work, if assigned.
-- **Super Admin dashboard** — platform management, if assigned.
-- **Sign out** — leave your account.
+### Language and account menu
 
-The website hides some controls on small screens. Use the account menu or left menu if a top-bar button is not visible. Missing staff menus usually mean that your account does not have that role.
+Choose the community language during registration. Public sidebars and mastheads do not repeat that selector. Approved Dholuo interface labels show smaller, read-only English beneath them. Untranslated labels remain English. Content may have paired original/English versions where an editor supplied them; absent translations are not invented.
+
+Open the round account button for Settings & profile, saved conversations, the assigned staff dashboard and Sign out. Use its Close control, press the trigger again, click outside or press Escape to dismiss it. Administrative editing controls stay in English.
 
 ## 5. Read, search and view cultural content
 
-### Choose a subject
+### Search and filter
 
-Subject names may appear in Dholuo or English. Use the smaller English description under a menu title to identify it.
+1. Open Discover or a collection.
+2. Enter your words in the pinned search field and submit.
+3. Use **All**, **Images**, **Audio**, **Video** or **Transcripts** in the small fixed black bottom bar.
+4. Scroll the feed. Further published records load automatically when available; a retry or manual loading control helps recover from an interrupted request.
 
-| Subject | Names you may see | What to look for |
-|---|---|---|
-| Dictionary | Muma / Dictionary | Words, meanings and other available word details. |
-| Proverbs | Ngero / Proverbs | Proverbs and explanations. |
-| Riddles | Ngeche / Riddles | Riddles and available answers. |
-| Oral histories | Sigana / Oral Histories | Approved accounts of people, places or events. |
-| Folktales | Sigana / Folktales | Approved traditional stories. |
-| Traditional songs | Wende / Wende Joluo Machon / Traditional Songs | Available song information and permitted recordings. |
-| Cultural artifacts | Gik Luo / Cultural Artifacts | Information and images about cultural objects. |
-| Heritage sites | Piny Luo / Heritage Sites | Information about cultural places and available location details. |
-| Audio/video library | Audio-Visual Library | Available public media grouped across subjects. |
+The dock remains visible while cards occupy the space above it. No matching audio or video means that type has no published item in the selected results. Text-only entries remain valid cultural records. The feed ends when the available collection ends; it does not invent additional content.
 
-**Sigana can appear twice.** Check whether its English description says Oral Histories or Folktales.
+### Read a card and open details
 
-Only content cleared for public access appears in the public library. A collection may be empty even when staff hold private research records for that subject.
+A card contains its title, category, publication/review status and a short description. On phones the description starts as one compact line; wide screens allow more room. Underlined **more** expands the text within the card; **less** returns to the compact preview. **Explore this item** opens the complete description, usage, meaning or place information where supplied, media, available English content, transcripts and related items.
 
-### Use the content filters
+A **Review in progress** badge identifies an uploaded version authorized for public display while editing continues. It is different from a completed reviewed publication. The reviewed version later replaces it at the same public link.
 
-1. Open a subject.
-2. Choose **All**, **Images**, **Audio**, **Video** or **Transcripts**.
-3. If the list becomes empty, select **All** again.
+### View media and transcripts
 
-**Transcripts** includes written items and available transcript/document attachments. It does not mean that every recording has been automatically turned into text.
+Images and videos fit fully inside their frame; unused space is black. Use attachment arrows to move between files. Play and pause recordings using their visible controls. Offscreen feed playback pauses so recordings do not compete. If a file fails, use the displayed retry or permitted download and report the item link if the problem continues.
 
-The Audio-Visual Library may also show subject-category buttons. Choose a category to narrow its results.
+Open full transcripts in the item details. The original text remains available; choose an existing English version when offered. A missing translation is reported honestly. Do not treat an automatic translation as an approved transcript.
 
-### Change how items are displayed
+### Save, download and contribute
 
-- **Feed view** shows items with descriptions and available media controls. Use it when you want to read or play content.
-- **Grid view** gives a compact view of thumbnails and titles. Return to Feed view for descriptions and playback details.
+Sign in to save an item to your account. Download controls are available only for eligible content and files. **Download complete item (ZIP)** includes available descriptions, translations, transcripts and original attachments; extract it and open index.html for the offline record. Public access is not unrestricted reuse: retain attribution, source permission and any displayed rights conditions.
 
-Do not assume that every thumbnail is a link to a separate page. Use the displayed reading or media controls.
-
-### Read a description or translation
-
-1. In Feed view, find an item.
-2. On a phone, click **See description**. On a computer, a long description may offer **See more**.
-3. To view an available English description, use **See this in English** or the **View language** selector.
-4. Use **View in original language** to return.
-
-If the website says an English description has not been added, that translation is missing. Choosing English does not automatically create a translation.
-
-### View or play attached files
-
-- Use an audio player's play/pause and volume controls.
-- Use the video's displayed playback controls.
-- Click **Open transcript or document** when offered.
-- If an image or file will not open, check your connection and ask support. A private file may require permission that your account does not have.
-
-An empty audio or video filter means no matching public recording is available. It does not mean your speakers are broken.
-
-### Search by topic
-
-1. Open **Search**. The page may be titled **Semantic Search**.
-2. Type a word or short phrase, for example **respect for elders** or **fishing traditions**.
-3. Wait for **Searching…** to finish. The search runs as you type; this screen does not require a separate Search button.
-4. Read the result title and short description.
-5. Click a result title to open its available content page.
-
-Use at least two characters. You can also click one of the suggested topics. If nothing matches, try simpler words or a different phrase.
-
-The search's percentage shows how closely an item matches your topic. It is not a score proving that an item or an AI answer is correct. AI search also needs the website's AI service and search collection to be available.
+Use **Contribute** directly above the collection feed to open its form. Sign in if requested; the selected collection is retained. For drafting, review and publication, follow Sections 8?12.
 
 ## 6. Use Chat and saved conversations
 
-### Ask a question
+### Ask CULTURAL HERITAGE
 
-1. Open **Chat**, the chatbot subject, or the floating speech-bubble button.
-2. Choose an **Answer language**, if that selector is shown.
-3. Read the checkbox explaining Google AI processing of your question and recent chat messages. Tick it only if you agree.
-4. Type a clear question in **Your question**. For example: **Explain a Luo proverb about respect.**
-5. Click **Send** and wait for the answer.
-6. Read any source links under the answer. Open them to check the supporting content.
+1. Open the floating **CULTURAL HERITAGE** shortcut or its navigation entry.
+2. Ask about Luo culture, history, traditions, songs, artifacts, places or Dholuo language.
+3. Read and select **Allow AI processing for this chat** before sending.
+4. Send once and wait. If a request fails, read the error and retry after correcting it.
 
-The Send button stays disabled before processing permission is given, while a reply is being generated, or when the question is too short. The box accepts questions up to 2,000 characters.
+The assistant focuses on Luo heritage. It can use general model knowledge as well as retrieved library sources; every answer is not necessarily backed by a repository record. Check sources and community knowledge holders for important cultural claims. Do not enter secrets, private recordings or sensitive personal information.
 
-Keep private interviews, passwords and other sensitive information out of your question. The chatbot can make mistakes. Check important cultural information with the sources and an authorised cultural reviewer.
+### Translation and sources
 
-If the request fails, read the message and try again when the service is available. Do not keep clicking Send while a reply is still loading. A quota message means you need to wait before making more AI requests.
+Ask in English or Dholuo. **See translation in Dholuo** or **See translation in English** expands the answer in the other language. Collapse it when finished. **Chat settings** explains AI processing and the fallback language for ambiguous questions. Expand **Sources** and **Related media** when present. An AI translation can be inaccurate and needs fluent-speaker checking before publication.
 
-### Start or reopen a conversation
+### Conversations and closing
 
-- Click **New chat** to start another topic.
-- Choose a saved conversation from the chat list to continue it.
-- On a small screen, use the chat's own **Menu** button to show the conversation list.
-- Click **Load earlier messages** when offered to read older parts of the selected conversation.
+**Your chats** opens saved conversations after sign-in. Choose **New chat** for a separate topic. Saved chat actions may include rename, pin, archive, restore and deletion; read confirmations before deleting. **Load earlier messages** retrieves older turns when offered. Guest interactions should not be relied on as saved account history.
 
-Saved conversations belong to your account. If you are using a guest session, do not rely on it as saved account history.
+Use X to close the assistant. Escape closes an open chat menu or history panel first, then closes the assistant. Back returns to the preceding screen. Your account menu also opens Saved conversations; use the same account that created them.
 
-### Rename, pin, archive or delete a chat
-
-1. Open the options button beside a saved chat.
-2. Choose the action you need.
-3. Read any confirmation before continuing.
-
-| Action | Meaning |
-|---|---|
-| Rename | Change the chat's title. |
-| Pin / Unpin | Keep a chat near the top, or remove that preference. |
-| Archive | Move it out of the normal chat list without permanently deleting it. |
-| View archived | Show archived chats. |
-| Unarchive | Put a chat back into the normal list. |
-| Delete | Permanently remove that conversation after confirmation. |
-
-### Use My account & saved chats
-
-1. Open your account menu.
-2. Click **My account & saved chats**.
-3. Check **My access** to see your assigned role information.
-4. Choose **Recent** or **Archived** under Saved chats.
-5. Click a chat title to open it.
-
-If that menu option is absent in an older website version, open Chat and use its conversation list, or ask your administrator whether the newer screen has been published. If history cannot load, use **Try again** when shown. Make sure you are logged in with the same email used for the original chats.
+If the provider is unavailable or its quota is exhausted, wait or report the message. A successful interface load does not guarantee provider availability.
 
 ## 7. Change your profile options
 
-1. Open the round account menu.
-2. Choose **Profile options**.
-3. Tick or untick Community member, Student, Researcher, Contributor or Teacher.
-4. Click **Save profile options**.
-5. Wait for **Profile options saved**.
+1. Open the round account menu and choose **Settings & profile**.
+2. Update your name and supported profile interests.
+3. Save once and wait for confirmation.
 
-These choices describe how you use the website. They do not make you an administrator, reviewer or publisher. Staff access must be assigned through the approved staff-account process.
+Community member, Student, Researcher, Contributor and Teacher interests describe your use; they do not grant administrative, editorial or publication permissions. Staff roles require an authorized assignment.
 
-This profile screen is not a password-change, account-deletion or full personal-details editor. Ask your administrator about those requests.
+Account security contains separate **Reset password** and **Verify email** links. **Request account deletion** is separate and requires its own email confirmation. Email delivery must be configured for those code-based actions. Governed cultural contributions and required audit/consent evidence may be retained with restricted access; deletion is not an immediate erasure of every repository record, backup or downloaded third-party copy.
 
 ## 8. Add a contribution
 
@@ -339,7 +260,7 @@ You must be logged in to submit your own content. You do not need an administrat
 3. Alternatively, open the contribution page and choose the subject under **What would you like to share?**
 4. Check the language and subject shown at the top of the form.
 
-If the language is wrong, ask an administrator before submitting. The contribution language can follow your account assignment or the website's default language; changing a display-language selector does not necessarily change where your contribution is stored.
+If the language is wrong, ask an administrator before submitting. The contribution language can follow your account assignment or the website's default language; the registration language and assigned administrative target determine the relevant community; verify the form before submitting.
 
 If you see **This module has no fields yet**, that form is not ready. Contact an administrator.
 
@@ -395,7 +316,7 @@ The form may also offer location, source reference and collection details. Use a
 ### Save now or submit for review
 
 - **Save private draft:** keep your work for later. This is not public publication.
-- **Submit for reviewer:** send the completed item to Cultural Review.
+- **Submit for reviewer:** send the completed item to Review & edit.
 
 The contribution form is not a continuous autosave service. Click a save button and wait for confirmation before closing the page.
 
@@ -435,7 +356,7 @@ You should see your own items, their dates, status labels and available reviewer
 | draft | Saved but not submitted for review. |
 | submitted | Waiting for Cultural Review. |
 | needs edit | A reviewer has asked for corrections. |
-| under review | The item is in review. After cultural approval, this is normally the publisher's review stage. Ask the reviewer if its next step is unclear. |
+| under review | The item is in review. Check its current Review & edit or Publishing queue stage before making further changes. |
 | rejection review | Independent reviewers are considering a proposed rejection. Read the available feedback and wait for the decision. |
 | curated | Approved to keep internally; not released publicly. |
 | published | Publication stage completed. Public access still depends on the permission and restriction settings. |
@@ -457,122 +378,53 @@ If an item is not visible publicly, check its status and permission settings wit
 
 ## 10. Staff accounts and switching dashboards
 
-### Understand your role
+Staff access is assigned by an authorized administrator; choosing profile interests during registration does not grant it. Open the round account menu and choose the administrative dashboard available to your account. Public browsing remains available separately.
 
-| Account or role | Main purpose |
+| Assigned duty | Main work |
 |---|---|
-| Public user | Read public content, use available chat and contribute their own work. |
-| Uploader | Prepare assigned-language content and file drafts. |
-| Cultural Expert | Check cultural accuracy and take part in the assigned review process. |
-| Content Editor | Correct items returned by cultural reviewers. |
-| Publisher | Complete the publication decision for assigned-language items. |
-| Language Admin | Manage the assigned language and its permitted content, people and review work. |
-| Super Admin | Oversee platform administration within the permissions assigned to that account. |
-| Master Super Admin | Manage the highest-level administration, global controls and protected management actions. |
+| Uploader | Prepare contributions, attach permitted files, save drafts and submit work. |
+| Content editor | Review cultural accuracy and permissions; edit source and English versions together; return or approve work. Cultural review is part of this role. |
+| Publisher | Check eligible reviewed work and publish it; use authorized early-publication controls where offered. |
+| Language administrator | Manage assigned communities, content and people within granted scope. |
+| Super Admin | Oversee assigned administration; additional editorial duties depend on assignments. |
+| Master Super Admin | Manage institutional ownership, privileged appointments and restricted system/backup controls. |
+| Teacher or researcher | Use assigned learning or research tools, respecting record restrictions. |
 
-One person can have more than one assigned role. A role may apply to one language rather than the whole website.
+Legacy cultural-expert assignments use the content-editor guide. An account with several duties can choose among its guides in Help & training. Administrative workspaces stay English. Administrative target-language selectors choose the material being managed; they are separate from the community preference selected by public users at registration.
 
-A Super Admin can see many management pages but does not automatically have every cultural-review, editing or publishing permission. Some actions require an assigned language role. The Master account has broader authority, but release and consent rules still apply.
-
-### Move from admin work to the public site
-
-1. Open the round account button in the admin header.
-2. Click **View public site**.
-3. Browse the public dashboard without signing out.
-4. To return, open the public account menu and choose **Admin dashboard**.
-5. If assigned, choose **Super Admin dashboard** for platform management.
-
-Switching a dashboard changes the page you are viewing. It does not turn an ordinary account into an administrator or grant a new role.
-
-### Check the selected language or culture
-
-Where available, the admin header offers **Language** and, for Super Admins, **Culture**. Language controls the administration's language context; Culture narrows which cultural collection you are working with. **All cultures** removes that collection filter where permitted.
-
-Before reviewing, editing or publishing, check the item's own language and the selected collection. On a small screen some selectors may be hidden; use a wider window or ask your administrator how to change the selection.
-
-### Read notifications
-
-1. Click the bell in the admin header.
-2. Read the messages.
-3. Click a linked message to open its related page.
-
-Opening a message can mark it as read. A number on the bell shows unread messages. These are website notifications; do not assume that an email, SMS or phone push notification was also sent.
+Use the header Back control for the previous screen, or the sidebar to choose another workspace. Read confirmations before deleting records, changing access or publishing. A close button only dismisses its panel.
 
 ## 11. Review, edit and publish content
 
-**The normal path:** draft → Cultural Review → Publishing Queue → public publication or private curation.
+### Prepare and review
 
-**If corrections are needed:** Cultural Review → Editor Queue → Cultural Review again.
+1. The contributor saves a draft or submits the completed source material.
+2. An assigned editor opens **Review & edit** and checks cultural accuracy, source consent, attribution, restrictions, files and both language versions.
+3. Correct the source-language and English text together, or return work with a clear explanation.
+4. Send suitable reviewed content to **Publishing queue**.
+5. An authorized publisher checks eligibility and publishes the reviewed version.
 
-An item does not have to visit an editor if the cultural reviewer can approve it without corrections.
+Review permissions and workflow stages are enforced by the server. Use available rejection/history controls when needed; do not create duplicate records to bypass a locked stage. Content editing is not a licence to publish private, sacred or unauthorized knowledge.
 
-### Prepare an administrative draft
+### Publish an uploaded version while editing continues
 
-1. Open **Content** or **Upload Content**.
-2. Choose the offered add-content action and the correct subject.
-3. Complete the title, details, source permission and access settings.
-4. Add permitted files.
-5. Click **Save draft**. For an existing item, click **Save changes**.
-6. From the Content list, use **Send to cultural review** when available. If your role cannot forward the item, ask the assigned Language Admin to do so.
+Authorized staff may use **Publish before review** on eligible uploads, including their own uploads where permitted. **Publish selected before review** handles a selection when the account is authorized for every item. Read the selected titles and confirm **Publish now**.
 
-Administrative saving creates or updates a draft. It is not a direct Publish button.
+This publishes a separate snapshot of the upload and its attachments while the source remains in review. It overrides saved access restrictions and embargoes for that public release, and records the staff decision and previous settings. It does not manufacture rights-holder permission: check actual source authority before using it. On the public feed it is marked **Review in progress**.
 
-### Carry out Cultural Review
+Continue editing privately. Final publication from Publishing queue replaces the earlier snapshot at the same public link. Rejection or removal of the public/source permission can withdraw the early version. Existing published packages have their own withdrawal rules and cannot be removed by ordinary queue deletion.
 
-1. Open **Cultural Review**.
-2. Open the item to assess its authenticity.
-3. Read the content, its source/access information, attachments and previous feedback.
-4. Work through the **Validation Checklist**. Check spelling, translation, grammar classification, pronunciation, examples and cultural context where applicable.
-5. Enter clear comments.
-6. Choose the decision that matches your findings.
+### Check the public result
 
-| Decision button | Result |
-|---|---|
-| Approve & Send to Publisher | Sends the item to the publisher's queue after cultural review. |
-| Request Editor Changes | Returns the item for corrections. |
-| Propose rejection for reviewer vote | Starts the independent reviewer-vote process. It is not an immediate one-person rejection. |
+After publication, open the public collection on a phone and desktop. Confirm title, category, status, compact description, complete item details, English wording, visible image/audio/video attachments, transcripts and permitted downloads. Check linked related records and separately approved public map coordinates. Private collection GPS must not become public merely because a file is attached.
 
-Tick a check only after verifying it. For example, if an English version is missing or inaccurate, explain the correction needed instead of ticking that it matches.
+### Edit interface wording
 
-### Vote on a proposed cultural rejection
+Use **Edit system text** for approved Dholuo interface labels beside their English meaning. Save a small batch and preview public navigation, login, search, recovery messages and Help & training. Blank translations fall back to English. Do not enter machine-generated cultural wording without fluent review.
 
-1. Open the item with a **Proposed cultural rejection** notice.
-2. Read the reason and the vote information shown.
-3. If you are an eligible independent reviewer, choose **Vote that this is culturally invalid** or **Vote that this is valid**.
-4. Add the required reason for an invalid vote and wait for confirmation.
+### History, corrections and removal
 
-The screen shows the number of votes needed. The person who proposed rejection cannot independently vote on that same proposal. Do not use another account to work around a review restriction.
-
-### Make editor corrections
-
-1. Open **Editor Queue**.
-2. Choose **Edit details** on an assigned item.
-3. Read the reviewer comments and make the requested corrections.
-4. Click **Save changes**.
-5. Return to the queue and click **Send to cultural review**.
-
-Saving editor changes does not itself finish Cultural Review. The item returns to a cultural reviewer.
-
-### Complete a publication decision
-
-1. Open **Publishing Queue**.
-2. Open the item's **Final review** page.
-3. Check the culturally approved text, source permission, access rules and attached files.
-4. Add an optional publishing note.
-5. Click **Publish** if your assigned role allows it.
-6. Read the result carefully.
-
-The result can be **Published**, or **Approved for internal curation** when public-release conditions are not met. Internal curation keeps the item private. Do not assume that pressing Publish made a restricted item public.
-
-For a public release, open **View public site**, find the subject and check the item and its permitted files. Do not use staff-only visibility as proof that ordinary readers can see it.
-
-### Use history and bulk actions
-
-- **Review History** shows recorded review activity.
-- **Published History** shows the recorded publication history available to your account.
-- **Content** may offer filters, an **English version** link and bulk actions.
-
-For a bulk action, check every selected item, its language and its status first. If the action is rejected, read the message and correct the selection. Do not use bulk actions to skip Cultural Review or permission checks.
+Use Review history, Published history and Audit Logs to follow responsible actions. Delete or withdraw only using the controls and authority available for the item's stage. Read confirmation for single or batch actions. Retained audit history is separate from what public users can browse. Report consent, privacy or culturally sensitive publication errors promptly through the institution's support route.
 
 ## 12. Manage media, transcripts and translations
 
@@ -609,7 +461,7 @@ If an unattached file offers **Attach to content**, choose the correct published
 3. Click a segment heading to expand its text.
 4. Use **Expand all segments** or **Collapse all segments** when helpful.
 
-A transcript is written text from collected material. The presence of a transcript does not prove there is an audio recording available to play. The reviewed transcript screen is a reading screen; do not expect an edit, export or download button where none is shown.
+A transcript is written text from collected material. The presence of a transcript does not prove there is an audio recording available to play. Public item details offer the available transcript and text-download controls. Research transcript tools remain permission-controlled; use only the segment, translation and download controls actually offered for your account.
 
 Research-only, restricted and sacred material is not the public library. Being a registered user, choosing Researcher in your profile, or seeing a session title does not by itself grant access. Request the required permission from the custodian.
 
@@ -674,7 +526,7 @@ Only permitted senior accounts can do this. A successful role change affects acc
 
 On Admins, **Deactivate**, **Activate** and **Revoke** have different purposes. Deactivation changes account availability; revocation removes administrative access. Read the confirmation before choosing either.
 
-**Delete User** permanently removes the account through the allowed management process. It is not the same as suspension. Ordinary users do not have a completed self-service account-deletion button in the reviewed interface; they should request help.
+**Delete User** permanently removes the account through the allowed management process. It is not the same as suspension. Ordinary users request deletion separately in Settings & profile and confirm by email. Governed contributions and required consent/audit evidence can be retained with restricted access.
 
 ## 14. Manage languages, settings and backups
 
@@ -731,35 +583,23 @@ The web page offers backup creation, download and deletion. It does not provide 
 
 ## 15. Use a website shortcut and web updates
 
-> **These instructions are still for the web application.** Adding the website to a home screen or taskbar does not install the Android or iOS applications under development.
+### Install the browser application
 
-### Add a shortcut or installed website
+1. Open **Install app**, the first sidebar action.
+2. If your browser offers native installation, confirm its prompt.
+3. Open the installed icon after installation completes.
 
-1. Open the correct website in your browser.
-2. Use the browser's install or home-screen option if it is offered.
-3. Confirm the website name and open the new shortcut.
+Some browsers only offer installation when their eligibility requirements are met. Safari on iPhone uses **Share**, then **Add to Home Screen**. If installation is unavailable, follow the displayed platform instructions or continue in a browser tab. A browser installation is separate from the packaged Android/iOS release.
 
-The account menu's **App updates & installation** page contains the instructions supplied by this website. On a computer, you may see **Install**, **Install page as app** or an Apps menu. On a phone, you may see **Install app** or **Add to Home Screen**. The wording varies by browser; if the option is absent, continue using a normal browser tab.
+### Offline use and shared devices
 
-A shortcut still needs the website's services and an internet connection for online actions. It does not promise offline lessons, offline submissions or automatic later synchronisation.
+An installed app still needs online services for authentication, AI, new media, submissions and other connected actions. Previously saved offline resources and compatible learning progress are available through the offline library; some progress synchronizes after reconnecting. Do not assume every page is cached or every form is queued.
 
-### Apply a web update
+Sign out on shared devices. Downloaded files and offline copies may remain until removed. Save or synchronize progress before clearing site/device storage, as unsynchronized local work can be lost.
 
-1. If **Update available** appears, save unfinished contributions or other form work.
-2. Choose **Update now** to reload the newer website.
-3. Choose **Later** if you need to finish first.
-4. To check manually, open **App updates & installation** and click **Check for updates**.
+### Updates
 
-If the check cannot connect, try again when your internet connection is working. The website does not automatically reload your unfinished work when it detects an update.
-
-### If a shortcut still shows the old L icon
-
-1. First follow any browser request to review the website's new name or icon.
-2. Read the old-icon instructions on App updates & installation.
-3. If reinstallation is needed, save unfinished work first. Keep website data when the browser offers that choice.
-4. On a computer, replace the old pinned shortcut with the new one.
-
-Your submitted records are held by your website account, not by the desktop shortcut. Unsaved form text is different and may be lost when a page is closed or reloaded.
+When **Update available** appears, save unfinished work before choosing **Update now**. Choose **Later** to finish first. App updates & installation also offers a manual update check. If a check cannot connect, retry when online. A renamed icon or updated shortcut does not change your account's submitted records.
 
 ## 16. Solve common problems and get help
 
@@ -774,7 +614,7 @@ Your submitted records are held by your website account, not by the desktop shor
 | Incorrect email or password | Check the correct email, typing and Caps Lock. Use the available support recovery process if needed. |
 | Account suspended or awaiting approval | Ask an administrator to check account status. Repeated registration is not the solution. |
 | Google sign-in fails | Check the Google account you chose. Try your existing email/password login or contact support. |
-| Forgotten password? shows Coming soon | Password reset is unfinished in this version. Request administrator help. |
+| A recovery code cannot be sent | Ask the administrator to configure the verified email sender and provider credentials. The reset flow is separate from registration and deletion. |
 | Upload failed | Read the error and check whether a draft was already saved. Keep the original file. Retry the existing draft or batch rather than duplicating it. |
 | Microphone will not start | Confirm source permission, then check your browser's microphone permission. Use a permitted audio file if recording is unsupported. |
 | My contribution is not public | Check My Submissions and reviewer feedback. It may still be in review or approved only for private use. |
@@ -819,6 +659,10 @@ The reviewed project also has unfinished or service-dependent web features. Do n
 | Native Android/iOS apps | Not covered. Development, device acceptance and store release work are ongoing. |
 
 Your administrator should confirm any newly released feature before this manual is used as its instructions. This guide is not a statement that the whole Phase Two project is complete or that every live website journey has passed acceptance testing.
+
+### Current terms and privacy
+
+Read **Terms and Conditions** and **Privacy Policy** from registration or the linked legal pages. The 30 October 2026 feature notices explain public feeds, cultural AI and translation, recovery/deletion, activity records and local/offline storage. Institutional operator/contact/provider/retention details remain the Operator's responsibility. Existing consent records are preserved when wording changes.
 
 ## 18. Useful page addresses and simple word meanings
 

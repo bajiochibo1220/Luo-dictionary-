@@ -122,7 +122,7 @@ async function main() {
     const sections = await evaluate('Array.from(document.querySelectorAll("h2")).filter(e => /^\\d+\\./.test(e.textContent)).length');
     assert.equal(sections, 18, 'Expected all eighteen manual sections');
     assert.equal(await evaluate('Array.from(document.querySelectorAll("a")).filter(e => e.hash).every(e => document.getElementById(e.hash.slice(1)))'), true, 'Contents links must work');
-    assert.equal(await evaluate('document.body.innerText.includes("THIS MANUAL IS FOR THE WEB APPLICATION ONLY.") && document.body.innerText.includes("The Android and iOS applications are still in development.")'), true);
+    assert.equal(await evaluate('document.body.innerText.includes("THIS MANUAL IS FOR THE WEB APPLICATION ONLY.") && document.body.innerText.includes("Packaged Android and iOS clients share the main application interface.")'), true);
     for (const width of [360, 794, 1200]) {
       await send('Emulation.setDeviceMetricsOverride', { width, height: 1123, deviceScaleFactor: 1, mobile: false });
       assert.equal(await evaluate('document.documentElement.scrollWidth <= innerWidth'), true, 'Manual must fit at ' + width + 'px');

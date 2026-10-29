@@ -11,7 +11,7 @@ import { ObjViewer } from "./obj-viewer";
 import { StoryTour } from "./story-tour";
 import { useState, useMemo, useEffect, useRef, useContext, createContext, type ComponentType, type ReactNode } from "react";
 import { CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
-import { LayoutGrid, List, Plus } from "lucide-react";
+import { ArrowLeft, X, LayoutGrid, List, Plus } from "lucide-react";
 import { FeedMediaFilters } from "./feed-media-filters";
 import { BottomMediaControls } from "./bottom-media-controls";
 import { PublicTranscriptReader } from "./public-transcript-reader";
@@ -234,8 +234,8 @@ function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode, 
   const dialog = useRef<HTMLDialogElement>(null);
   const related = items.filter(candidate => candidate.id !== item.id && candidate.moduleCode === item.moduleCode).slice(0, 4);
   useEffect(() => { const value = dialog.current; if (value && !value.open) value.showModal(); }, []);
-  return <dialog ref={dialog} onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(96vw,90rem)] overflow-auto rounded-xl bg-[#f4f7f8] p-3 text-stone-900 backdrop:bg-black/60">
-    <button type="button" autoFocus onClick={() => dialog.current?.close()} className="mb-4 min-h-11 rounded-full bg-amber-900 px-5 py-2 text-white"><InterfaceText source="Close details" /></button>
+  return <dialog ref={dialog} aria-label="Item details" onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(96vw,90rem)] overflow-auto rounded-xl bg-[#f4f7f8] p-3 text-stone-900 backdrop:bg-black/60">
+    <header className="overlay-navigation item-dialog-navigation"><button type="button" onClick={() => dialog.current?.close()}><ArrowLeft size={18} aria-hidden="true" /><InterfaceText source="Back" /></button><span><InterfaceText source="Item details" /></span><button type="button" autoFocus aria-label="Close details" onClick={() => dialog.current?.close()}><X size={22} aria-hidden="true" /><span className="sr-only"><InterfaceText source="Close details" /></span></button></header>
     <FeedCard item={item} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} detail />
     {onRelated && related.length > 0 && <nav aria-label="More from this collection" className="mt-4 rounded-xl border border-stone-300 bg-white p-4"><h3 className="font-semibold"><InterfaceText source="More from this collection" /></h3><div className="mt-2 grid gap-2 sm:grid-cols-2">{related.map(candidate => <button type="button" key={candidate.id} onClick={() => onRelated(candidate)} className="min-h-11 rounded-lg border border-stone-200 p-3 text-left underline">{viewLanguageCode === "eng" ? candidate.englishTitle || candidate.title : candidate.title}</button>)}</div></nav>}
   </dialog>;

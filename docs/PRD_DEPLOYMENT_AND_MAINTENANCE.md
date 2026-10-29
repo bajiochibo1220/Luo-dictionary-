@@ -1,5 +1,17 @@
 # Deployment and maintenance
 
+
+## Current interface and policy update - 30 October 2026
+
+The current public assistant is **CULTURAL HERITAGE**, scoped to Luo cultural knowledge, history, songs, traditions and Dholuo. It may combine general model knowledge with retrieved public sources. Test English/Dholuo question handling and the expandable translation into the other language, source accuracy, processing consent, provider errors and saved-history permissions. Older examples implying an unrestricted general-purpose assistant are superseded.
+
+Language preference is selected during registration. Approved public Dholuo interface text shows read-only English below; public sidebar/masthead language selectors are removed. Admin target-language controls remain for assigned editing work. Login opens first; public browsing is an explicit option. Forgotten password contains only the reset sequence, and email delivery requires a configured verified sender and provider key. Account deletion is a separate confirmed action.
+
+Explore uses a top-layer scrollable dialog with Back/X, including short landscape screens. Item-details Back/X remain visible while scrolling. Header Back controls cover web and shared packaged-client views. Search is pinned above the feed; media filters are fixed in the compact black bottom dock. More/less expands the short description inline; Explore this item shows complete information. Contribute opens the active collection's form and preserves it through sign-in. Browser installation uses native eligibility and Safari's Add to Home Screen fallback.
+
+Current operational notices are applied consistently to customized legal text, public legal pages and registration consent fingerprints. They do not alter historical acceptance records or fill unknown institutional details. Complete operator/contact/provider/retention/transfer fields before treating the policy drafts as finalized. See the current user and administration guides in docs, and docs/legal/CURRENT_PLATFORM_NOTICES_2026-10-30.md (paths are relative to the repository root).
+
+
 ## Before release
 
 Use the approved environment and current lockfile. Never commit `.env`, database exports, credentials, private media or signing material. Confirm PostgreSQL, Cloudinary, authentication origins and AI settings. Validate native API origins and CORS allowlists separately from a local browser build.

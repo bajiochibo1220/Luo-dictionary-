@@ -5,6 +5,7 @@ import { NavigationLink as Link } from "./navigation-link";
 import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissible-popover";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { BackLink } from "./back-link";
 import { SidebarToggle } from "./sidebar-controls";
 import { accountDashboardHref } from "@/lib/app-navigation";
 import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
@@ -36,7 +37,7 @@ export function AppTopbar({
     <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 flex shrink-0 items-center justify-between gap-3 px-3 md:px-6 py-2 shadow-sm relative z-30">
       {/* Left: Logo */}
       <div className="masthead-brand flex flex-1 items-center gap-2.5 md:gap-3 min-w-0">
-        <SidebarToggle />
+        <SidebarToggle /><BackLink variant="on-dark" />
         <Link href={dashboardHref} aria-label={`${APP_NAME} home`} className="flex min-w-0 items-center gap-2.5 md:gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-amber-300">
         <BrandMark />
         <div className="min-w-0">

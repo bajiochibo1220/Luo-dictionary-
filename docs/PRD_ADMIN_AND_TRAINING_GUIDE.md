@@ -1,6 +1,6 @@
 # Administration and training
 
-Updated 28 October 2026.
+Updated 30 October 2026.
 
 ## Master account and administrator passwords
 
@@ -10,7 +10,7 @@ The Master Super Admin can use **Change password** for a created account and **C
 
 ## Public translations and the English admin workspace
 
-Administrative interfaces remain English. In **Edit system text**, select the community, find a label, enter the approved Dholuo text and retain its English meaning, then save. Only saved translations affect public controls. Public labels begin in English; after translation they show Dholuo above smaller English. Blank translations restore English. Use the inline preview and open the public interface to check login, sign out, menus, settings and help. Content-language switches do not change interface labels.
+Administrative interfaces remain English. In **Edit system text**, select the community, find a label, enter the approved Dholuo text and retain its English meaning, then save. Only saved translations affect public controls. Public labels begin in English; after translation they show Dholuo above smaller English. Blank translations restore English. Use the inline preview and open the public interface to check login, sign out, menus, settings and help. The public community preference is selected at registration; sidebar and masthead selectors are removed. Administrative target-language controls remain available for editing assigned content.
 
 ## Publish while review continues
 
@@ -96,3 +96,15 @@ Vocabulary practice uses reviewed, published words from both current dictionary 
 Complete public downloads use the current published record, its available translations, permitted transcripts and original permitted attachments. They work for items published before review and show that review is in progress. Downloads always read the current public version. Operational identities, consent evidence, private collection coordinates and unknown internal JSON fields are excluded. The archive streams in ZIP64 format without buffering original media in server memory. An attachment failure fails the download rather than reporting a complete ZIP with missing files. Cancelling stops upstream transfers. Hosting request-duration and bandwidth limits still apply; individual original-file downloads remain available for large items.
 
 AI provider alternative: select **Groq** under **System > API Credentials**, enter a complete Groq key from https://console.groq.com/keys, save, and select **Test AI connection**. Groq has a free tier subject to provider limits; it uses a different key from DeepSeek. Default text model: `openai/gpt-oss-20b`; image understanding: `qwen/qwen3.8-27b` (availability may change). Saved provider selection takes priority over `AI_TEXT_PROVIDER`, and provider selection is refreshed for every request to avoid stale choices across server instances. Usable provider-specific environment credentials and models still take precedence over their saved equivalents. Groq and DeepSeek use the same governed public retrieval and source checks. The application does not silently switch providers or reuse one provider's key for another. Audio transcription and illustration generation remain disabled in this integration. Deploy the updated server and web client before selecting the new option.
+
+## Current navigation, recovery and policies
+
+The public Explore list is a scrollable dialog with Back and X. Item details keep those controls visible during scrolling. Header Back controls are available in public, admin and packaged-client views. Verify the full list on a narrow phone and landscape screen, keyboard Escape and focus return to the Explore trigger.
+
+Collection search stays pinned; media filters stay in the small fixed black bottom bar. Public cards use contained media, compact more/less descriptions and automatic next-page loading. Contribute appears within each collection and preserves its selected form through sign-in. Keep public descriptions, usage, place, English meanings, attachments and related items accurate. A missing media type is not a playback failure when no file of that type is published.
+
+Login is the first entry screen. Test Forgot password as a reset-only sequence: email, then code and matching new passwords. Configure EMAIL_PROVIDER (resend or sendgrid), EMAIL_FROM (verified sender) and EMAIL_API_KEY in the local environment, or the equivalent email settings, before expecting delivery. Never put credentials in manuals or screenshots. The project's local delivery configuration remains deferred by the owner; do not report live email delivery as tested.
+
+The Master Super Admin edits Terms and Privacy under System. Current implementation notices supplement saved institutional text and are included in the same text fingerprinted during registration. Existing consent evidence is retained. Fill all institution/contact/provider/retention/transfer fields using the actual deployment, and obtain the institution's legal review. Preview both public pages and new registration after changes. Do not overwrite earlier consent evidence or claim that existing accounts accepted a newly revised notice.
+
+Install app remains the first sidebar action. Browser installation depends on eligibility and platform support; iPhone Safari requires Share, then Add to Home Screen. A successful web build or Android APK does not establish physical iOS acceptance.

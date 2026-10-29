@@ -1,0 +1,23 @@
+{
+  "uniqueTestsPassed": 28,
+  "groups": {
+    "account-help-and-branding": 8,
+    "current-legal-notices": 2,
+    "discovery-feed": 13,
+    "navigation": 5
+  },
+  "initialFocusedRun": {
+    "passed": 27,
+    "failed": 1,
+    "cause": "SSR test renderer lacked Next router context after adding BackLink"
+  },
+  "navigationRerun": {
+    "passed": 5,
+    "failed": 0
+  },
+  "mobileBuild": "passed including TypeScript",
+  "webBuild": "passed including TypeScript and 57 generated pages",
+  "lint": "zero errors; nine pre-existing img warnings",
+  "nativeProjects": "all 31 bundle files match Android and iOS",
+  "productionOrStoreDeployment": false
+}

@@ -1,5 +1,35 @@
+export const CURRENT_TERMS_NOTICE = `## 23. Current platform features and controls
+**Platform update: 30 October 2026.**
+
+Visitors start at Log in and may choose Create account or Browse the public library. Public browsing does not require an account; saving personal items, contribution submission and account history require sign-in. Choose your community language during registration. Approved public interface translations display Dholuo with a smaller read-only English meaning beneath; labels without reviewed translations remain English. Administrators edit only within their assigned permissions. English assistance is not a guarantee that every cultural record has a completed translation.
+
+Discover and collection feeds display permitted published material, including uploaded versions explicitly released while review continues. A Review in progress label means editorial review is unfinished. Media filters and automatic paging help browse the available collection; reaching the end means no further matching records are currently available. More and less only expand a card description. Explore this item opens the full record, its available attachments, translations, transcripts and related records. Public visibility or an available download does not grant reuse beyond the record's licence and source permissions.
+
+The CULTURAL HERITAGE assistant is intended for Luo cultural knowledge, history, songs, traditions and Dholuo language. It can draw on general model knowledge as well as available library sources; an answer without a source is not a verified repository record. English and Dholuo translations are optional expansions of an answer and may contain mistakes. AI processing requires the consent presented in the chat. Do not treat a generated answer or translation as a fluent-speaker endorsement or permission to publish restricted knowledge.
+
+Forgotten password is a separate recovery flow: request an email code, then supply the code and a new password with confirmation. Account deletion is requested separately from account settings and requires email confirmation. Delivery depends on the configured email service. Keep codes private. An error sending a code is not confirmation that a password changed or an account was deleted.
+
+Install app uses the browser's installation offer where supported. Some browsers, including Safari on iPhone, require their own Add to Home Screen steps. Installation does not grant access to private material, remove provider dependencies or make every feature available offline. Packaged Android and iOS clients use the same permission rules; availability and distribution depend on the Operator's release process. Back returns to the previous screen, and X closes the displayed panel; neither submits nor deletes content.
+`;
+
+export const CURRENT_PRIVACY_NOTICE = `## 17. Current platform features and controls
+**Platform update: 30 October 2026.**
+
+Registration records the selected community language and the consent evidence for the terms and privacy notice presented to you. The service also processes saved items, contribution and review history, learning progress and chat history where those account features are used. Public feed searches and content views may generate first-party activity records for repository analytics; they are not a promise of anonymous browsing. The search or view context and account identity, where available, are used subject to the access controls and purposes described above.
+
+Password recovery processes the email address, short-lived verification challenge, attempt/rate-limit information and the new password securely. The configured email provider receives the recipient and message needed to deliver a recovery code. Never include a code in a contribution or chat. Email verification and account deletion are separate actions; opening Forgot password does not request either of them. Deletion requires its own email confirmation. Governed cultural contributions and required audit/consent evidence may be retained with restricted access where there is a documented lawful reason; account deletion is not a guarantee that every archival record or backup is immediately erased.
+
+The CULTURAL HERITAGE assistant processes the submitted question and relevant conversation/source context with the configured provider after the displayed AI consent. Asking in English or Dholuo can produce an answer with an expandable translation in the other language; generating translations also involves AI processing. General model knowledge may supplement retrieved public sources. Signed-in conversation history is available through your account; do not submit sensitive information merely because the chat uses a private-looking display.
+
+The browser or packaged app stores preferences such as the registration community, sidebar state, installation dismissal and return navigation. Service-worker caches and the offline library can retain application files and resources you download; compatible learning tools may queue progress locally for later synchronization. Native authentication also uses device-side session storage. Signing out does not necessarily remove every downloaded file or offline copy. On a shared device, sign out, remove private downloads and clear the application's site/device storage when appropriate; clearing local data may remove unsynchronized progress.
+
+Playback or download requests transmit normal connection information to the application and, where applicable, the configured media/storage provider. Browser microphone or dictation tools request device permission when used; browser speech services can involve the browser provider. A recording intended for local practice stays local unless you explicitly upload it or choose an enabled processing action. Installing the app does not itself authorize microphone, camera or location access. No page design, installation status, or translation control changes the access restrictions attached to a record.
+
+These operational descriptions apply to the current implementation. The Operator must still complete the provider, contact, retention and transfer details elsewhere in this notice. Data-rights information and complaint routes are available from the [Office of the Data Protection Commissioner](https://www.odpc.go.ke/rights-of-a-data-subject/) and its [complaint service](https://www.odpc.go.ke/file-a-complaint/).
+`;
+
 ﻿export const DEFAULT_TERMS = `# Luo Heritage Terms and Conditions
-**Effective date:** 29 September 2026  
+**Effective date:** 30 October 2026
 **Document status:** Default draft. The Master Super Admin must complete every bracketed field and obtain legal review before treating this as the Operatorâ€™s final terms.
 
 ## 1. Important information and agreement
@@ -63,7 +93,7 @@ The Operator may label content with attribution, consent, access, or sensitivity
 ## 10. Review, moderation, removal and preservation
 The Operator may, but is not obligated to, review Contributions before or after publication. To protect users, rights holders, cultural protocols, quality, legal compliance, and system integrity, the Operator or its authorized administrators may label, correct formatting, request evidence or clarification, limit visibility, disable sharing, reject, unpublish, remove, preserve relevant records, restrict features, suspend accounts, or terminate access. A review or publication decision does not certify factual accuracy, legal ownership, complete consent, or cultural authority.
 
-Where practicable, the Operator may notify the affected user and explain the reason, subject to safety, confidentiality, security, legal restrictions, and the risk of evidence destruction. The Operator may preserve relevant logs or copies for security, legal claims, safeguarding, or compliance, with access limited as appropriate. Content removal from the Platform does not automatically remove third-party copies, search caches, backups, or records lawfully retained for a defined purpose. See the [Privacy Policy](/privacy#8-retention-and-deletion).
+Where practicable, the Operator may notify the affected user and explain the reason, subject to safety, confidentiality, security, legal restrictions, and the risk of evidence destruction. The Operator may preserve relevant logs or copies for security, legal claims, safeguarding, or compliance, with access limited as appropriate. Content removal from the Platform does not automatically remove third-party copies, search caches, backups, or records lawfully retained for a defined purpose. See the [Privacy Policy](/privacy#9-retention-and-deletion).
 
 ## 11. Intellectual property and infringement notices
 The Platform software, layout, marks, logos, documentation, and Operator-created content are owned by or licensed to the Operator and protected by applicable law. Except for access and use expressly allowed by the Platform, no right in that material is granted. You must not use the Luo Heritage name, marks, or institutional identity to imply endorsement without written permission.
@@ -73,7 +103,7 @@ If you believe a Contribution infringes your rights or was published without aut
 ## 12. AI assistant, search and generated content
 The chatbot and search tools may use automated models, embeddings, and content supplied by the Platform or third-party providers. Answers can be wrong, incomplete, outdated, biased, or generated without a matching Platform source. A source citation indicates material retrieved for a response; it is not a warranty that the response accurately represents the source. Images, recordings, translations, and titles returned by search may also be mismatched.
 
-Use AI output as a starting point for learning, not as a substitute for a qualified professional, legal advice, medical care, financial advice, emergency service, or community knowledge holder. Verify important claims against primary sources and knowledgeable people. Do not make decisions that determine a personâ€™s legal status, eligibility, health care, employment, education, credit, safety, or access to essential services solely from AI output. Do not enter secrets, passwords, payment information, or sensitive personal information into the chatbot. Data processing details are in the [Privacy Policy](/privacy#6-ai-and-third-party-services).
+Use AI output as a starting point for learning, not as a substitute for a qualified professional, legal advice, medical care, financial advice, emergency service, or community knowledge holder. Verify important claims against primary sources and knowledgeable people. Do not make decisions that determine a personâ€™s legal status, eligibility, health care, employment, education, credit, safety, or access to essential services solely from AI output. Do not enter secrets, passwords, payment information, or sensitive personal information into the chatbot. Data processing details are in the [Privacy Policy](/privacy#6-ai-search-and-third-party-providers).
 
 ## 13. Third-party services and external links
 The Platform may rely on external identity, hosting, database, media, analytics, email, AI, payment, or other providers and may link to external websites. Those providers and sites are not controlled by the Operator. Their own terms, privacy notices, availability, security, and content apply to their services. The Operator does not endorse a third-party statement merely by linking to it. Your use of a third-party service remains subject to its terms and applicable law.
@@ -86,7 +116,7 @@ The Operator may add, change, suspend, or discontinue a feature, record, or part
 The Operator may revise these Terms. The current version and effective date will be published here. If a change materially affects users or renewed consent is required by law, the Operator will take reasonable steps to provide notice and request acceptance before continued use of the affected feature. Continued use after the effective date may indicate acceptance only where applicable law permits that method. If you reject a material change, stop using the affected feature and contact **[TERMS CONTACT EMAIL]** about account closure or content removal.
 
 ## 15. Reporting, complaints and appeals
-Report security incidents, harmful material, copyright concerns, privacy issues, inaccurate data, safeguarding concerns, or cultural access concerns to **[SUPPORT AND SAFEGUARDING EMAIL]**. Include the page or record URL, a description of the issue, and the action requested. Do not send unnecessary sensitive information or passwords. For personal-data rights requests, use **[DATA PROTECTION CONTACT EMAIL]** as described in the [Privacy Policy](/privacy#10-your-rights-and-requests).
+Report security incidents, harmful material, copyright concerns, privacy issues, inaccurate data, safeguarding concerns, or cultural access concerns to **[SUPPORT AND SAFEGUARDING EMAIL]**. Include the page or record URL, a description of the issue, and the action requested. Do not send unnecessary sensitive information or passwords. For personal-data rights requests, use **[DATA PROTECTION CONTACT EMAIL]** as described in the [Privacy Policy](/privacy#10-your-rights-and-how-to-exercise-them).
 
 The Operator will assess reports in a manner appropriate to their seriousness and applicable obligations. It may ask for enough information to verify identity or locate the record, take interim protective action, or refer a matter to an appropriate authority. If your content or account is restricted, you may request review by writing to **[APPEALS EMAIL]** and explaining why the decision should be reconsidered. An appeal does not guarantee restoration or delay urgent safety action. Nothing in this process prevents a report to a regulator, law-enforcement body, court, or other competent authority.
 
@@ -127,10 +157,12 @@ These Terms, the Privacy Policy, and any clearly identified feature-specific ter
 **Security and safeguarding:** [SECURITY CONTACT EMAIL]  
 **Disputes and appeals:** [DISPUTE / APPEALS CONTACT]
 
-Read the [Privacy Policy](/privacy) for personal-data practices, or visit the [About page](/about). These default Terms are a drafting aid, not a guarantee against claims and not a substitute for advice from Kenyan counsel who has reviewed the Operator, actual service, funding, users, and data flows.`;
+Read the [Privacy Policy](/privacy) for personal-data practices, or visit the [About page](/about). These default Terms are a drafting aid, not a guarantee against claims and not a substitute for advice from Kenyan counsel who has reviewed the Operator, actual service, funding, users, and data flows.
+
+${CURRENT_TERMS_NOTICE}`;
 
 export const DEFAULT_PRIVACY = `# Luo Heritage Privacy Policy
-**Effective date:** 29 September 2026  
+**Effective date:** 30 October 2026
 **Document status:** Default draft. The Master Super Admin must complete every bracketed field and verify that this notice matches the live service before publication.
 
 ## 1. Who is responsible for your information
@@ -217,4 +249,13 @@ The Terms editor and Privacy editor are controlled by the Master Super Admin. Th
 **Security and incident reports:** [SECURITY EMAIL]  
 **General support:** [SUPPORT EMAIL]
 
-If you are not satisfied with our response, you may contact the Office of the Data Protection Commissioner of Kenya through its [official website](https://www.odpc.go.ke/). You may also exercise any complaint or remedy available under applicable law. This notice is a comprehensive starting draft, not a certification of compliance or a substitute for legal and data-protection review of the actual Platform, providers, and institutional responsibilities.`;
+If you are not satisfied with our response, you may contact the Office of the Data Protection Commissioner of Kenya through its [official website](https://www.odpc.go.ke/). You may also exercise any complaint or remedy available under applicable law. This notice is a comprehensive starting draft, not a certification of compliance or a substitute for legal and data-protection review of the actual Platform, providers, and institutional responsibilities.
+
+${CURRENT_PRIVACY_NOTICE}`;
+
+/** Preserve institution-authored policies while keeping displayed and accepted text identical. */
+export function currentLegalContent(key: string, content: string): string {
+  const notice = key === "terms_content" ? CURRENT_TERMS_NOTICE : key === "privacy_content" ? CURRENT_PRIVACY_NOTICE : "";
+  if (!notice || /^## \d+\. Current platform features and controls$/m.test(content)) return content;
+  return `${content.trim()}\n\n${notice}`;
+}

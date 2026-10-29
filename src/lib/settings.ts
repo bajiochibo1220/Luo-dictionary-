@@ -1,3 +1,4 @@
+import { currentLegalContent } from "./legal-content";
 import { prisma } from "@/lib/db";
 
 const CACHE_TTL_MS = 60_000;
@@ -13,7 +14,7 @@ export async function getSystemSettings({ fresh = false }: { fresh?: boolean } =
   `;
 
   const map: Record<string, string> = {};
-  for (const r of rows) map[r.key] = r.value;
+  for (const r of rows) map[r.key] = currentLegalContent(r.key, r.value);
 
   cache = { data: map, ts: Date.now() };
   return map;

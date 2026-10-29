@@ -1,0 +1,31 @@
+{
+  "mobilePreview": true,
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "stickyBackAndX": true,
+      "completeTranscript": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "stickyBackAndX": true,
+      "completeTranscript": true
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "stickyBackAndX": true,
+      "completeTranscript": true
+    }
+  ],
+  "interactions": [
+    "Item details preserve full descriptions and all 216 transcript turns; sticky Back/X close at phone, landscape and desktop sizes"
+  ],
+  "runtimeErrors": [],
+  "unexpectedApis": [],
+  "liveWrites": 0,
+  "apiOrigin": "http://localhost:3000",
+  "completedAt": "2026-10-29T23:02:39.175Z"
+}

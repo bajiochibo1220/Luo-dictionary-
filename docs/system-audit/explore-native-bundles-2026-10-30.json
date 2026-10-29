@@ -1,0 +1,14 @@
+{
+  "files": 31,
+  "targets": {
+    "android": {
+      "matched": 31,
+      "mismatches": []
+    },
+    "ios": {
+      "matched": 31,
+      "mismatches": []
+    }
+  },
+  "deviceAcceptance": "Not performed; iOS compilation requires Mac/Xcode."
+}

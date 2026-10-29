@@ -6,6 +6,7 @@ import { DismissiblePopover, PopoverClose } from "@/components/shared/dismissibl
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { BackLink } from "./back-link";
 import { SidebarToggle } from "./sidebar-controls";
 import { accountDashboardHref } from "@/lib/app-navigation";
 import { Bell } from "lucide-react";
@@ -100,7 +101,7 @@ export function AdminTopbar({
   return (
     <header className="institution-masthead bg-[#5c3a1c] border-b border-black/30 min-h-18 py-2 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 relative z-30 shadow-lg">
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
-        <SidebarToggle />
+        <SidebarToggle /><BackLink variant="on-dark" />
         <div className="min-w-0"><Link
           href={dashboardHref}
           aria-label={`${APP_NAME} administration`}

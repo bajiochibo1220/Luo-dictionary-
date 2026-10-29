@@ -33,7 +33,7 @@ test('modules without a configured form do not invite contributions to a dead en
 });
 
 test('public account menus expose working destinations according to privileges', () => {
-  const { AppTopbar } = loader({ react: { ...React, useState: () => [true, () => {}] }, './navigation-link': link, 'next-auth/react': { signOut: () => {} } })('src/components/layout/app-topbar.tsx');
+  const { AppTopbar } = loader({ react: { ...React, useState: () => [true, () => {}] }, './navigation-link': link, 'next-auth/react': { signOut: () => {} }, 'next/navigation': { useRouter: () => ({ back() {}, replace() {} }) } })('src/components/layout/app-topbar.tsx');
   for (const [isAdmin, isSuperAdmin] of [[false, false], [true, false], [true, true]]) {
     const html = renderToStaticMarkup(React.createElement(AppTopbar, { userInitial: 'T', userName: 'Test', userEmail: 'test@example.test', userImage: null, isAdmin, isSuperAdmin, languageCode: 'luo', stats: { uploads: 0, approved: 0, pending: 0 } }));
     assert.ok(html.includes('href="' + (isSuperAdmin ? '/super-admin/dashboard' : isAdmin ? '/admin/dashboard' : '/dashboard') + '"'));

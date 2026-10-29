@@ -8,7 +8,8 @@ const base = process.env.SMOKE_BASE_URL || 'http://127.0.0.1:3100';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const layoutOnly = process.argv.includes('--layout-only');
 const playersOnly = process.argv.includes('--players-only');
-const report = { mobilePreview: layoutOnly, viewports: [], interactions: [], runtimeErrors: [], unexpectedApis: [], liveWrites: 0 };
+const detailsOnly = process.argv.includes('--details-only');
+const report = { mobilePreview: layoutOnly || process.argv.includes('--mobile-preview'), viewports: [], interactions: [], runtimeErrors: [], unexpectedApis: [], liveWrites: 0 };
 const languages = [{ id: 1, code: 'luo', name: 'Luo', nativeName: 'Dholuo' }, { id: 2, code: 'eng', name: 'English', nativeName: 'English' }];
 const modules = ['oral_histories', 'songs', 'folktales'].map(code => ({ code, baseName: code === 'songs' ? 'Traditional Songs' : code === 'folktales' ? 'Folktales' : 'Oral Histories', title: code, href: `/dashboard?module=${code}`, contributionHref: `/contribute/${code}` }));
 const account = { id: 'layout-reader', name: 'Layout reader', email: 'reader@example.invalid', image: null, profileTypes: [], isSuperAdmin: false, isMasterSuperAdmin: false, languageRoles: [] };
@@ -25,7 +26,7 @@ wav.write('RIFF'); wav.writeUInt32LE(wav.length - 8, 4); wav.write('WAVEfmt ', 8
 async function main() {
   assert.ok(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(base), 'Use a local app');
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'luo-media-layout-'));
-  const browser = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--no-first-run', '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=0', `--user-data-dir=${directory}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
+  const browser = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new','--disable-background-timer-throttling','--disable-renderer-backgrounding', '--disable-gpu', '--no-first-run', '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=0', `--user-data-dir=${directory}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
   let socket;
   try {
     let port;
@@ -40,12 +41,13 @@ async function main() {
     const evaluate = async expression => { const r = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; };
     const until = async (expression, label) => { const deadline = Date.now() + 90000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } report.failureContext=await evaluate(`(()=>{const v=document.querySelector('video');return {hash:location.hash,count:document.querySelector('.social-media-count')?.textContent,video:v?{ready:v.readyState,network:v.networkState,error:v.error?.code,errorMessage:v.error?.message,source:!!v.currentSrc,bounds:JSON.stringify(v.getBoundingClientRect())}:null};})()`);report.fixtureVideoBytes=Buffer.from(videoBytes,'base64').length;throw new Error('Timed out: ' + label); };
     async function payload(url, method) {
+      if (url.pathname === '/api/v1/bootstrap') report.apiOrigin = url.origin;
       if (url.pathname === '/api/v1/bootstrap') return { apiVersion: 1, app: { name: 'Luo Heritage', tagline: 'Heritage', version: 'audit', icon: '/icons/luo-heritage-512.png', manifest: '/application.webmanifest' }, selectedLanguage: languages[0], languages, modules, routes: {}, contentFilters: [], contentViews: [] };
       if (url.pathname === '/api/v1/library') {
-        if (!videoBytes) { videoPromise ??= evaluate(`new Promise(resolve=>{const c=document.createElement('canvas');c.width=640;c.height=360;const ctx=c.getContext('2d');const paint=()=>{ctx.fillStyle='#164e49';ctx.fillRect(0,0,640,360);ctx.fillStyle='#f1d393';ctx.font='24px Arial';ctx.fillText('FICTIONAL VIDEO — LAYOUT CHECK',40,180);};paint();const stream=c.captureStream(5),r=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'}),chunks=[];r.ondataavailable=e=>chunks.push(e.data);r.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));};r.start();const timer=setInterval(paint,100);setTimeout(()=>{clearInterval(timer);r.stop();},800);})`); videoBytes = await videoPromise; }
+        if (!videoBytes) { videoPromise ??= evaluate(`new Promise(resolve=>{const c=document.createElement('canvas');c.width=640;c.height=360;const ctx=c.getContext('2d');const paint=()=>{ctx.fillStyle='#164e49';ctx.fillRect(0,0,640,360);ctx.fillStyle='#f1d393';ctx.font='24px Arial';ctx.fillText('FICTIONAL VIDEO — LAYOUT CHECK',40,180);};paint();const stream=c.captureStream(5),r=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'}),chunks=[];r.ondataavailable=e=>chunks.push(e.data);r.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));};r.start();let paints=0;const timer=setInterval(()=>{paint();stream.getVideoTracks()[0].requestFrame?.();if(++paints===12){clearInterval(timer);r.stop();}},100);})`); videoBytes = await videoPromise; }
         const code = url.searchParams.get('module') || 'discover';
         if (paginateMode && url.searchParams.has('records')) pageCalls++;
-        return { title: 'Community collection', baseName: 'Community collection', moduleCode: code, languageCode: 'luo', languageName: 'Dholuo', languageId: 1, canContribute: true, items: paginateMode && url.searchParams.has('records') ? [{...items()[1], id:'next-page', title:'Automatically loaded recording'}] : items(), categories: modules.map(m => ({ code: m.code, name: m.baseName })), limits: { records: 12, dictionaryEntries: 6 }, continuation: { records: paginateMode && !url.searchParams.has('records') ? 'mixed' : null, dictionary: null } };
+        return { title: 'Community collection', baseName: 'Community collection', moduleCode: code, languageCode: 'luo', languageName: 'Dholuo', languageId: 1, canContribute: true, items: paginateMode && url.searchParams.has('records') ? [{...items()[1], id:'next-page', title:'Automatically loaded recording'}] : items(), categories: [...modules.map(m => ({ code: m.code, name: m.baseName })), ...Array.from({length: 18}, (_,i) => ({code:'sample_'+i,name:'Fictional category '+(i+1)}))], limits: { records: 12, dictionaryEntries: 6 }, continuation: { records: paginateMode && !url.searchParams.has('records') ? 'mixed' : null, dictionary: null } };
       }
       if (url.pathname === '/api/auth/session') return { user: account, expires: new Date(Date.now() + 3600000).toISOString() };
       if (url.pathname === '/api/v1/account') return account;
@@ -76,6 +78,29 @@ async function main() {
     await until('document.querySelectorAll(".discovery-card").length===3', 'discovery');
     assert.equal(readingCalls, 0, 'Browsing cards must not load every conversation');
     fs.mkdirSync('docs/system-audit/screenshots', { recursive: true });
+    if (detailsOnly) {
+      for (const [width,height] of [[390,844],[844,390],[1440,950]]) {
+        await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<768});
+        await evaluate(`document.querySelector('.discovery-card').scrollIntoView({block:'start',behavior:'instant'})`);
+        await evaluate(`document.querySelector('.discovery-card .social-card-actions button[aria-label="Explore this item"]').click()`);
+        await until(`!!document.querySelector('dialog .public-transcript-reader')`, 'item details');
+        await evaluate(`document.querySelector('dialog .public-transcript-reader').scrollIntoView({block:'center',behavior:'instant'})`);
+        await until(`document.querySelectorAll('dialog .public-transcript-text > div').length===216`, 'complete transcript');
+        await evaluate(`document.querySelector('dialog .public-transcript-reader').scrollIntoView({block:'center',behavior:'instant'})`);
+        assert.equal(await evaluate(`(()=>{const d=document.querySelector('dialog'),r=d.getBoundingClientRect(),buttons=[...d.querySelectorAll('.item-dialog-navigation button')];return r.top>=0&&r.bottom<=innerHeight&&d.scrollWidth<=d.clientWidth&&buttons.every(b=>{const p=b.getBoundingClientRect();return p.top>=r.top&&p.bottom<=r.bottom&&document.elementFromPoint(p.left+p.width/2,p.top+p.height/2)?.closest('button')===b;});})()`),true,'Back and X stay visible and clickable after scrolling at '+width+'x'+height);
+        assert.equal(await evaluate(`document.querySelector('dialog').textContent.includes('Complete detail marker.')`),true);
+        if(width===390)fs.writeFileSync('docs/system-audit/screenshots/item-details-close-390.png',Buffer.from((await send('Page.captureScreenshot',{format:'png'})).data,'base64'));
+        await evaluate(`document.querySelector('.item-dialog-navigation button:first-child').click()`);
+        await until(`!document.querySelector('dialog')`, 'Back closes item details');
+        await evaluate(`document.querySelector('.discovery-card .social-card-actions button[aria-label="Explore this item"]').click()`);
+        await until(`!!document.querySelector('dialog[open]')`, 'reopen item');
+        await evaluate(`document.querySelector('dialog button[aria-label="Close details"]').click()`);
+        await until(`!document.querySelector('dialog')`, 'X closes item details');
+        report.viewports.push({width,height,stickyBackAndX:true,completeTranscript:true});
+      }
+      report.interactions.push('Item details preserve full descriptions and all 216 transcript turns; sticky Back/X close at phone, landscape and desktop sizes');
+      assert.deepEqual(report.runtimeErrors,[]);assert.deepEqual(report.unexpectedApis,[]);report.completedAt=new Date().toISOString();closing=true;await send('Browser.close').catch(()=>{});return;
+    }
     for (const [width, height] of (playersOnly?[]:[[1440,950], [1366,950], [1024,950], [768,950], [390,844], [320,568], [844,390]])) {
       await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 768 });
       for (const route of ['/dashboard', '/dashboard?module=oral_histories']) {
@@ -86,6 +111,24 @@ async function main() {
         for (const state of states) {
           if (state !== 'responsive') { const button = state === 'collapsed' ? 'Collapse sidebar' : 'Expand sidebar'; await evaluate(`document.querySelector('button[aria-label=${JSON.stringify(button)}]')?.click()`); }
           await delay(400); await evaluate('document.querySelector("main").scrollTop=0');
+          if (!route.includes('?')) {
+            await evaluate(`document.querySelector('.feed-explore-menu > button').click()`);
+            await until(`!!document.querySelector('.feed-explore-dialog[open]')`, 'Explore opens');
+            assert.equal(await evaluate(`(()=>{const d=document.querySelector('.feed-explore-dialog'),r=d.getBoundingClientRect();return d.matches(':modal')&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight&&d.scrollWidth<=d.clientWidth;})()`),true,'Explore fits fully in viewport, outside clipping containers');
+            assert.equal(await evaluate(`document.querySelectorAll('.feed-explore-dialog nav[aria-label="Discover content areas"] button').length`),22,'Explore contains every collection');
+            if (width === 390) fs.writeFileSync('docs/system-audit/screenshots/explore-menu-390.png',Buffer.from((await send('Page.captureScreenshot',{format:'png'})).data,'base64'));
+            await evaluate(`(()=>{const area=document.querySelector('.explore-dialog-content');area.scrollTop=area.scrollHeight;})()`);
+            assert.equal(await evaluate(`(()=>{const a=document.querySelector('.feed-explore-dialog nav:last-child a:last-child'),r=a.getBoundingClientRect(),s=document.querySelector('.explore-dialog-content').getBoundingClientRect();return r.top>=s.top-1&&r.bottom<=s.bottom+1&&document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('a')===a;})()`),true,'Last Explore option is reachable and clickable');
+            assert.equal(await evaluate(`(()=>{const b=document.querySelector('[aria-label="Close Explore"]'),r=b.getBoundingClientRect();return document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('button')===b;})()`),true,'X stays visible while menu scrolls');
+            await evaluate(`document.querySelector('[aria-label="Close Explore"]').click()`);
+            await until(`!document.querySelector('.feed-explore-dialog')`, 'Explore closes using X');
+            assert.equal(await evaluate(`document.activeElement===document.querySelector('.feed-explore-menu > button')`),true,'Closing returns focus to Explore');
+            await evaluate(`document.querySelector('.feed-explore-menu > button').click()`);
+            await until(`!!document.querySelector('.feed-explore-dialog[open]')`, 'Explore reopens');
+            await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+            await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+            await until(`!document.querySelector('.feed-explore-dialog')`, 'Escape dismisses Explore');
+          }
           const metrics = await evaluate(`(()=>{const main=document.querySelector('main'),card=document.querySelector(${JSON.stringify(cardSelector)}),media=card.querySelector('.immersive-media'),caption=card.querySelector('.social-card-caption'),actions=card.querySelector('.social-card-actions');const a=media.getBoundingClientRect(),b=caption.getBoundingClientRect(),c=card.getBoundingClientRect(),d=actions.getBoundingClientRect();return{viewport:innerWidth,page:document.documentElement.scrollWidth,content:main.scrollWidth,available:main.clientWidth,paneHeight:main.clientHeight-parseFloat(getComputedStyle(main).paddingBottom)-document.querySelector('.feed-search-bar').getBoundingClientRect().height,cardWidth:c.width,cardHeight:c.height,mediaWidth:a.width,mediaHeight:a.height,captionInside:b.left>=c.left&&b.right<=c.right&&b.top>=c.top&&b.bottom<=c.bottom,actionsInside:d.left>=c.left&&d.right<=c.right&&d.top>=c.top&&d.bottom<=c.bottom,audio:card.querySelectorAll('audio').length,video:card.querySelectorAll('video').length,images:card.querySelectorAll('.public-media-gallery img').length,players:card.querySelectorAll('audio,video').length};})()`);
           report.viewports.push({ route, width, height, state, ...metrics });
           assert.ok(metrics.page <= metrics.viewport + 1 && metrics.content <= metrics.available + 2, 'No overflow: ' + JSON.stringify(metrics));
@@ -113,6 +156,15 @@ async function main() {
       }
     }
     console.log('PASS '+report.viewports.length+' full-height layouts');
+    await evaluate(`location.hash='/dashboard'`);
+    await until(`!!document.querySelector('.feed-explore-menu > button')`, 'discovery navigation');
+    await evaluate(`document.querySelector('.feed-explore-menu > button').click()`);
+    await until(`!!document.querySelector('.feed-explore-dialog[open]')`, 'Explore link navigation');
+    await evaluate(`document.querySelector('.feed-explore-dialog a[href="#/explore"]').click()`);
+    await until(`!!document.querySelector('#explore-title')&&!document.querySelector('.feed-explore-dialog')`, 'Explore navigates and closes');
+    await evaluate(`document.querySelector('.institution-masthead button[aria-label="Back"]').click()`);
+    await until(`!!document.querySelector('.discovery-card')`, 'Header Back returns to previous screen');
+    report.interactions.push('Explore all options, scrolling, X, Escape, focus return, navigation and header Back');
     for (const collectionCode of (playersOnly?[]:['dictionary','proverbs','riddles','oral_histories','folktales','songs','artifacts','heritage_sites'])) {
       await evaluate(`location.hash='/dashboard?module=${collectionCode}'`);await until(`document.querySelector('.collection-title-row a')?.getAttribute('href')==='#/contribute/${collectionCode}'`,'collection '+collectionCode);
       assert.equal(await evaluate(`document.querySelector('.collection-title-row a').getAttribute('href')`),'#/contribute/'+collectionCode);
@@ -143,7 +195,7 @@ async function main() {
     report.interactions.push('Portrait and panoramic images and video keep their full frames with black unused space');
 
     const itemDownload = await evaluate('document.querySelector(".discovery-card .public-item-download").href');
-    assert.equal(new URL(itemDownload).origin, base); assert.equal(new URL(itemDownload).searchParams.get('id'), 'mixed');
+    assert.equal(new URL(itemDownload).origin, report.apiOrigin || base); assert.equal(new URL(itemDownload).searchParams.get('id'), 'mixed');
     await evaluate(`document.querySelector('.social-card-actions button[aria-label^="Save "]').click()`); await until(`!!document.querySelector('.social-card-actions button[aria-label^="Saved "]')`, 'saved feedback'); assert.equal(saveCalls, 1);
     report.interactions.push('Save uses one API request and confirms the saved state');
     await evaluate('document.querySelector("video").play()');
@@ -152,6 +204,7 @@ async function main() {
     await evaluate(`document.querySelector('dialog .public-transcript-reader').scrollIntoView({block:'center',behavior:'instant'})`);
     await until('document.querySelectorAll("dialog .public-transcript-text > div").length===216', 'all conversation turns');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), true);
+    assert.equal(await evaluate(`(()=>{const b=document.querySelector('dialog button[aria-label="Close details"]'),r=b.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('button')===b;})()`),true,'Item details X remains visible after scrolling a full transcript');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Complete detail marker.") && document.querySelector("dialog").textContent.includes("Fictional layout sample:")'),true,'Explore retains the full body and overview');
     assert.equal(await evaluate(`document.querySelectorAll('dialog nav[aria-label="More from this collection"] button').length`),1);
     assert.equal(await evaluate('document.querySelector("video").paused'),true,'Explore pauses background playback');
@@ -162,12 +215,12 @@ async function main() {
     await until(`document.querySelector('dialog').textContent.includes('An English transcript has not been uploaded')`, 'missing English wording');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), false);
     const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync('docs/system-audit/screenshots/social-transcript-mobile.png', Buffer.from(shot.data, 'base64'));
-    await evaluate('document.querySelector("dialog > button").click()'); await until('!document.querySelector("dialog")', 'close item');
+    await evaluate(`document.querySelector('dialog button[aria-label="Close details"]').click()`); await until('!document.querySelector("dialog")', 'close item');
     await evaluate(`document.querySelector('.discovery-card .social-card-actions button[aria-label="Explore this item"]').click()`);
     await until('!!document.querySelector("dialog nav button")','related collection item');
     await evaluate('document.querySelector("dialog nav button").click()');
     await until('!!document.querySelector("dialog[open]") && document.querySelector("dialog").textContent.includes("A text-only item")','related details open');
-    await evaluate('document.querySelector("dialog > button").click()'); await until('!document.querySelector("dialog")','close related details');
+    await evaluate(`document.querySelector('dialog button[aria-label="Close details"]').click()`); await until('!document.querySelector("dialog")','close related details');
     report.interactions.push('Explore preserves usage, meaning, place and overview; related collection buttons open complete details');
     report.interactions.push('Full 216-turn reader, complete text download, honest English fallback and dialog dismissal');
     await evaluate('document.querySelector("video").play()'); assert.equal(await evaluate('document.querySelector("video").paused'), false);
@@ -201,7 +254,7 @@ async function main() {
     console.log(JSON.stringify({ checkedLayouts: report.viewports.length, interactions: report.interactions, runtimeErrors: report.runtimeErrors, liveWrites: 0 }));
     closing=true;await send('Browser.close').catch(() => {});
   } finally {
-    fs.writeFileSync('docs/system-audit/'+(layoutOnly?'mobile-feed-browser':playersOnly?'social-players-browser':'social-feed-browser')+'-2026-10-30.json', JSON.stringify(report, null, 2));
+    fs.writeFileSync('docs/system-audit/'+(detailsOnly?'explore-details-browser':layoutOnly?'explore-mobile-browser':playersOnly?'explore-players-browser':'explore-web-browser')+'-2026-10-30.json', JSON.stringify(report, null, 2));
     socket?.close(); browser.kill();
   }
 }
