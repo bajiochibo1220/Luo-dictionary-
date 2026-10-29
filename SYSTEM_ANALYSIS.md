@@ -8,6 +8,8 @@
 
 > Latest authentication and media follow-up: [compact feed descriptions, account checks and media verification](docs/system-audit/auth-media-feed-2026-10-29.md).
 
+> Latest navigation follow-up: [fixed filters, pinned search, login-first startup and reset-only recovery](docs/system-audit/final-navigation-2026-10-30.md).
+
 Review date: 11 October 2026. Scope: local source review, TypeScript checking, lint/build checks, and isolated route checks with mocked sessions and database records. This is not a live production penetration test. Application source and database records were not changed.
 
 ## What the system does

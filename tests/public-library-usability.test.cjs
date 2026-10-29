@@ -42,17 +42,15 @@ test('collection search belongs inside the sticky toolbar and empty state has on
   const html = renderToStaticMarkup(React.createElement(PaginatedLibrary, { initial: { title: 'Muma', baseName: 'Dictionary', languageName: 'Dholuo', languageCode: 'luo', languageId: 1, moduleCode: 'dictionary', items: [] }, request: async () => {}, Link }));
   assert.ok(html.indexOf('data-sticky-controls') < html.indexOf('role="search"'));
   assert.equal(html.split('href="/contribute/dictionary"').length - 1, 1);
-  assert.match(html, /aria-label="Content language"/);
-  assert.match(html, /<option value="eng">English<\/option>/);
+  assert.doesNotMatch(html, /aria-label="Content language"|Community language/);
   assert.match(html, /data-bottom-controls/);
 });
 
 test('English feed displays the paired English title and complete-item download', () => {
-  const actual = React.useState;
-  const load = loader({ react: { ...React, useState: initial => actual(initial === 'luo' ? 'eng' : initial) } });
+  const load = loader();
   const { ModuleContentView } = load('src/components/shared/module-content-view.tsx');
   const Link = ({ href, children }) => React.createElement('a', { href }, children);
-  const html = renderToStaticMarkup(React.createElement(ModuleContentView, { title: 'Stories', baseName: 'Stories', languageName: 'Dholuo', languageCode: 'luo', languageId: 1, moduleCode: 'folktales', items: [{ id: 'story', title: 'Local title', englishTitle: 'English title', summary: 'Local summary', englishSummary: 'English summary', englishBodyText: 'The complete English story', media: [{ id: 'audio', type: 'audio', url: '/api/media/audio/file' }] }], Link }));
+  const html = renderToStaticMarkup(React.createElement(ModuleContentView, { title: 'Stories', baseName: 'Stories', languageName: 'English', languageCode: 'eng', languageId: 1, moduleCode: 'folktales', items: [{ id: 'story', title: 'Local title', englishTitle: 'English title', summary: 'Local summary', englishSummary: 'English summary', englishBodyText: 'The complete English story', media: [{ id: 'audio', type: 'audio', url: '/api/media/audio/file' }] }], Link }));
   assert.match(html, /<h2><button[^>]*>English title<\/button><\/h2>/);
   assert.match(html, /English summary/);
   assert.match(html, /href="\/api\/v1\/download\?id=story&amp;kind=cultural"/);

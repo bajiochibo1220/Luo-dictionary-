@@ -63,7 +63,7 @@ test('audio-visual library includes eligible media across modules without relaxi
   assert.equal(element.props.canContribute, false);
 });
 
-test('the entry opens registration, which offers explicit public library browsing', () => {
+test('the entry opens login before account creation or explicit public library browsing', () => {
   const load = loader({ 'next/navigation': { redirect: destination => { throw Object.assign(new Error('redirect'), { destination }); } } });
-  assert.throws(() => load('src/app/page.tsx').default(), error => error.destination === '/register');
+  assert.throws(() => load('src/app/page.tsx').default(), error => error.destination === '/login');
 });

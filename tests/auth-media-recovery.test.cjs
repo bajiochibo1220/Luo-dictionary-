@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),React=require('react');
 const {loader}=require('./load-ts.cjs');const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function harness(mocks={}){const state=[],effects=[],jobs=[];let cursor=0;const load=loader({react:{...React,useId:()=> 'description-test',useState(initial){const i=cursor++;if(!(i in state))state[i]=initial;return[state[i],v=>{state[i]=typeof v==='function'?v(state[i]):v;}];},useRef(initial){const i=cursor++;return state[i]??={current:initial};},useEffect(fn,deps){const i=cursor++;if(!effects[i]||deps.some((v,j)=>v!==effects[i].deps[j]))jobs.push(()=>{effects[i]?.cleanup?.();effects[i]={deps,cleanup:fn()};});}},...mocks});return{load,render(fn){cursor=0;const tree=fn();jobs.splice(0).forEach(fn=>fn());return tree;}};}
+function harness(mocks={}){const {react:reactMocks,...otherMocks}=mocks;const state=[],effects=[],jobs=[];let cursor=0;const load=loader({react:{...React,useId:()=> 'description-test',useState(initial){const i=cursor++;if(!(i in state))state[i]=initial;return[state[i],v=>{state[i]=typeof v==='function'?v(state[i]):v;}];},useRef(initial){const i=cursor++;return state[i]??={current:initial};},useEffect(fn,deps){const i=cursor++;if(!effects[i]||deps.some((v,j)=>v!==effects[i].deps[j]))jobs.push(()=>{effects[i]?.cleanup?.();effects[i]={deps,cleanup:fn()};});},...reactMocks},...otherMocks});return{load,render(fn){cursor=0;const tree=fn();jobs.splice(0).forEach(fn=>fn());return tree;}};}
 function find(node,predicate){if(!node||typeof node!=='object')return;if(predicate(node))return node;for(const child of React.Children.toArray(node.props?.children)){const found=find(child,predicate);if(found)return found;}}
 const fakeForm=class {get(key){return {email:' EXAMPLE@example.invalid ',password:'Temporary-password',name:'Temporary learner',languageId:'1',acceptedTerms:'on'}[key];}getAll(){return[];}};
 test('login rejects same-tick duplicate sends and releases its lock after rejected credentials',async()=>{
@@ -46,4 +46,25 @@ test('full public descriptions retain usage, meaning and place without internal 
  const text=publicCulturalText({meaning:'Public meaning',traditional_use:'Public usage',county:'Public county',origin:'Public origin',contributorId:'PRIVATE',storageKey:'PRIVATE',consent_document:'PRIVATE'});
  for(const value of ['Public meaning','Public usage','Public county','Public origin'])assert.ok(text.includes(value));
  assert.equal(text.includes('PRIVATE'),false);
+});
+
+test('automatic pagination ignores repeated visibility callbacks while a page is loading',async()=>{
+ const previous=global.IntersectionObserver;let intersect,finish,calls=0,refs=0;
+ global.IntersectionObserver=class {constructor(callback){intersect=callback;}observe(){}disconnect(){}};
+ const load=loader({react:{...React,useRef:initial=>({current:refs++===0?{}:initial}),useEffect:fn=>fn()}});
+ try{const {AutoLoadMore}=load('src/components/shared/auto-load-more.tsx');AutoLoadMore({onLoad:async()=>{calls++;await new Promise(resolve=>{finish=resolve;});},busy:false});
+ intersect([{isIntersecting:true}]);intersect([{isIntersecting:true}]);assert.equal(calls,1);finish();await tick();intersect([{isIntersecting:true}]);assert.equal(calls,2);finish();await tick();
+ }finally{global.IntersectionObserver=previous;}
+});
+
+test('native sign-in continues the selected contribution form instead of replacing it with discovery',async()=>{
+ const oldWindow=global.window,oldLocation=global.location;let receive;
+ global.location=new URL('https://client.local/application#/contribute/artifacts');
+ global.window=Object.assign(new EventTarget(),{location:global.location,setTimeout:()=>0,clearTimeout(){},matchMedia:()=>({matches:false})});
+ const adapters={apiOrigin:'https://client.local',artwork:'/logo.png',bootstrap:async()=>({modules:[],languages:[],selectedLanguage:{id:1,code:'luo',nativeName:'Dholuo'}}),library:async()=>null,account:async()=>({id:'reader',languageRoles:[],isSuperAdmin:false,isMasterSuperAdmin:false}),conversations:async()=>[],nativeSession:{isNative:true,subscribe(fn){receive=fn;return()=>{};},connect:async()=>()=>{},resume:async()=>{}},featureRequest:async()=>{},featureFetch:async()=>{},chatRequest:async()=>{}};
+ const h=harness({react:{useContext:()=>adapters,useCallback:fn=>fn},'@/components/layout/sidebar-controls':{...loader()('src/components/layout/sidebar-controls.tsx'),useSidebar:()=>null},'@/components/shared/interface-language':{...loader()('src/components/shared/interface-language.tsx'),useInterfaceLanguage:()=>({community:'luo',local:true,select(){}})}});
+ try{const {SharedApplication}=h.load('src/components/shared/application.tsx');const App=find(SharedApplication({adapters}),node=>node.type?.name==='App').type;
+ h.render(()=>App());receive({accountId:'reader',expiresAt:new Date(Date.now()+3600000).toISOString()},'sign-in');
+ h.render(()=>App());await tick();h.render(()=>App());assert.equal(location.hash,'#/contribute/artifacts');
+ }finally{global.window=oldWindow;global.location=oldLocation;}
 });

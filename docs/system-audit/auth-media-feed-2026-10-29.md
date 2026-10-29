@@ -16,3 +16,5 @@ Verification:
 - The mobile production build passed. Android and iOS projects received the same bundle; Android debug assembly passed. All 31 bundle files match both projects and the APK byte for byte. [Bundle evidence](auth-media-native-bundles-2026-10-29.json).
 
 Changes remain local; this is not a deployment or physical-device acceptance. iOS compilation still requires macOS/Xcode; an iOS binary and physical device behavior were not tested here.
+
+Final navigation, complete production browser checks and the user-deferred email setup are recorded in [the 30 October follow-up](final-navigation-2026-10-30.md).

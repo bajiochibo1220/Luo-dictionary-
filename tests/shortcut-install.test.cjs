@@ -43,7 +43,7 @@ test('manual iPhone installation is visible and can be dismissed when no browser
 });
 test('failed prompts recover, a new offer retries, and installation hides the control',async()=>{
   const h=setup();try{h.render();h.host.dispatchEvent(offer({fail:true}));await h.render().install();assert.match(h.render().notice,/could not open/);
-    let calls=0;h.host.dispatchEvent(offer({outcome:'accepted',onPrompt:()=>calls++}));await h.render().install();assert.equal(calls,1);assert.match(h.render().notice,/requested/);
+    let calls=0;h.host.dispatchEvent(offer({outcome:'accepted',onPrompt:()=>calls++}));await h.render().install();assert.equal(calls,1);assert.equal(h.render().notice,'');assert.equal(h.render().help,false);
     h.host.dispatchEvent(new Event('appinstalled'));h.render();assert.equal(h.button(),null);
   }finally{h.restore();}
 });

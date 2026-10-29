@@ -10,10 +10,12 @@ export function BottomMediaControls({ children, className = "", inline = false }
       const bounds = marker.current.getBoundingClientRect(), left = Math.max(0, bounds.left);
       dock.current.style.left = `${left}px`;
       dock.current.style.width = `${Math.max(0, Math.min(bounds.width, window.innerWidth - left))}px`;
+      document.documentElement.style.setProperty("--media-dock-height", `${dock.current.getBoundingClientRect().height}px`);
     };
     position();
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(position);
     if (marker.current) observer?.observe(marker.current);
+    if (dock.current) observer?.observe(dock.current);
     window.addEventListener("resize", position);
     return () => { observer?.disconnect(); window.removeEventListener("resize", position); };
   }, [inline]);

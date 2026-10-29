@@ -12,7 +12,7 @@ export type ModuleItem = {
   baseName: string;
 };
 
-export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Link, staffHref, communityControls }: {
+export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Link, staffHref }: {
   staffHref?: string;
   communityControls?: ReactNode;
   modules: ModuleItem[];
@@ -42,10 +42,9 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
         <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/70 font-medium"><InterfaceText source="Explore" /></p>
       </div>
 
-      {communityControls}
       {/* Module list */}
       <nav aria-label="Public navigation" className="flex-1 overflow-y-auto py-2">
-        {primary.map(([href, label]) => {
+        {primary.slice(0, 1).map(([href, label]) => {
           const active = pathname === href && !(href === "/dashboard" && activeModule);
           return <Link key={href} href={href} onClick={onNavigate} className={`${linkClass} ${active ? "border-amber-400 bg-black/25 font-semibold" : "border-transparent"}`}><NavigationIcon href={href} /><span aria-current={active ? "page" : undefined}><InterfaceText source={label} /></span></Link>;
         })}
@@ -56,6 +55,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
             return <Link key={item.code} href={moduleHref(item.code)} onClick={onNavigate} className={`${linkClass} ${active ? "border-amber-400 bg-black/25 font-semibold" : "border-transparent"}`}><NavigationIcon href={moduleHref(item.code)} /><span aria-current={active ? "page" : undefined}><InterfaceText source={item.baseName} /></span></Link>;
           })}
         </details>
+        {primary.slice(1).map(([href, label]) => <Link key={href} href={href} onClick={onNavigate} className={`${linkClass} ${pathname === href ? "border-amber-400 bg-black/25 font-semibold" : "border-transparent"}`}><NavigationIcon href={href} /><span aria-current={pathname === href ? "page" : undefined}><InterfaceText source={label} /></span></Link>)}
         <details key={`more:${pathname}`} open={more.some(([href]) => pathname === href) || !!staffHref && pathname === staffHref} className="border-t border-amber-100/15">
           <summary className="min-h-12 cursor-pointer px-5 py-3 font-semibold text-amber-50"><InterfaceText source="More & settings" /></summary>
           {staffHref && <Link href={staffHref} onClick={onNavigate} className={`${linkClass} border-transparent`}><InterfaceText source="Staff content workspace" /></Link>}

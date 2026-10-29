@@ -28,17 +28,23 @@ export function SocialFeed({ children, className = "" }: { children: ReactNode; 
     while (pane && !/(auto|scroll)/.test(getComputedStyle(pane).overflowY)) pane = pane.parentElement;
     const scroller = pane || document.documentElement;
     const previous = scroller.style.scrollSnapType;
+    const previousPadding = scroller.style.scrollPaddingTop;
     scroller.style.scrollSnapType = "y proximity";
     const resize = () => {
-      const height = pane?.clientHeight || window.visualViewport?.height || window.innerHeight;
+      const chrome = feed.closest(".discovery-page,.library-page")?.querySelector(".feed-search-bar")?.getBoundingClientRect().height || 0;
+      const reserved = pane ? parseFloat(getComputedStyle(pane).paddingBottom) || 0 : 0;
+      const height = Math.max(160, (pane?.clientHeight || window.visualViewport?.height || window.innerHeight) - reserved - chrome);
+      scroller.style.scrollPaddingTop = `${chrome}px`;
       feed.style.setProperty("--social-feed-height", `${height}px`);
     };
     resize();
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(resize);
     observer?.observe(scroller);
+    const toolbar = feed.closest(".discovery-page,.library-page")?.querySelector(".feed-search-bar");
+    if (toolbar) observer?.observe(toolbar);
     window.visualViewport?.addEventListener("resize", resize);
     window.addEventListener("resize", resize);
-    return () => { observer?.disconnect(); scroller.style.scrollSnapType = previous; window.visualViewport?.removeEventListener("resize", resize); window.removeEventListener("resize", resize); };
+    return () => { observer?.disconnect(); scroller.style.scrollSnapType = previous; scroller.style.scrollPaddingTop = previousPadding; window.visualViewport?.removeEventListener("resize", resize); window.removeEventListener("resize", resize); };
   }, []);
   return <div ref={ref} className={`social-feed ${className}`}>{children}</div>;
 }

@@ -1,0 +1,12 @@
+{
+  "completedAt": "2026-10-29T22:04:30.479878+00:00",
+  "viewportWidth": 360,
+  "loginFirst": true,
+  "registrationLinksPreserveNativeReturn": true,
+  "externalReturnRejected": true,
+  "passwordResetOnly": true,
+  "resetCodeAndPasswordConfirmation": true,
+  "deliveryIntercepted": true,
+  "emailsSent": 0,
+  "accountOrContentWrites": 0
+}

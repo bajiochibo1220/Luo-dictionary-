@@ -3,23 +3,23 @@ import { MediaImage } from "@/components/shared/media-preview";
 import { SocialFeed, SocialFeedCard } from "./social-feed";
 import { LibraryMediaGallery } from "./library-media-gallery";
 
-import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
+import { InterfaceText } from "@/components/shared/interface-language";
 
 
 import { emitActivity } from "@/lib/activity-events";
 import { ObjViewer } from "./obj-viewer";
 import { StoryTour } from "./story-tour";
 import { useState, useMemo, useEffect, useRef, useContext, createContext, type ComponentType, type ReactNode } from "react";
-import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
-import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus, SlidersHorizontal } from "lucide-react";
+import { CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
+import { LayoutGrid, List, Plus } from "lucide-react";
+import { FeedMediaFilters } from "./feed-media-filters";
 import { BottomMediaControls } from "./bottom-media-controls";
 import { PublicTranscriptReader } from "./public-transcript-reader";
 import { CompleteItemDownload } from "./complete-item-download";
-import { CollectionToolbar } from "./collection-toolbar";
 import type { ContentItem, MediaItem } from "@/lib/app-content";
 
 const DownloadOrigin = createContext("");
-const FILTER_ICONS = { all: LayoutGrid, image: Image, audio: Headphones, video: Video, transcript: FileText };
+
 
 export type ModuleContentProps = {
   title: string;
@@ -62,9 +62,7 @@ export function ModuleContentView({
   const [localCategory, setCategory] = useState("all");
   const category = selectedCategory ?? localCategory;
   const [view, setView] = useState("feed");
-  const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
-  const [toolbarInMasthead, setToolbarInMasthead] = useState(false);
-  useEffect(() => { setViewLanguageCode(languageCode); }, [languageCode]);
+  const viewLanguageCode = languageCode;
 
   const filteredItems = useMemo(() => {
     const byCategory = moduleCode !== "all" || category === "all"
@@ -89,19 +87,12 @@ export function ModuleContentView({
   };
 
   return (
-    <DownloadOrigin.Provider value={downloadOrigin || ""}><div className="library-page" data-social-feed={view === "feed"} data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
-      <details className="collection-feed-tools" open={view !== "feed"}><summary><SlidersHorizontal size={18} aria-hidden="true" /><InterfaceText source="Browse & search" /></summary><div className="collection-control-panel">
-      <div className="module-controls sticky top-0 z-20 mb-2 bg-[#eee5d5] px-2 py-1 shadow-sm" data-sticky-controls>
-      <CollectionToolbar onPlacementChange={setToolbarInMasthead}>
-        {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
-        <label className="shrink-0"><span className="sr-only"><InterfaceText source="Content language" /></span><InterfaceSelect aria-label="Content language" value={viewLanguageCode} onChange={event => setViewLanguageCode(event.target.value)} className="min-h-11 w-24 rounded-lg border border-stone-400 bg-white px-2 text-base sm:w-36">
-          <InterfaceOption value={languageCode}>{languageName}</InterfaceOption>
-          {languageCode !== "eng" && <InterfaceOption value="eng">English</InterfaceOption>}
-        </InterfaceSelect></label>
-      </CollectionToolbar>
+    <DownloadOrigin.Provider value={downloadOrigin || ""}><div className="library-page" data-social-feed={view === "feed"} data-all-content={moduleCode === "all"}>
+      <div className="feed-search-bar collection-search-bar" data-sticky-controls>
+        {searchControls && <div className="collection-search-controls">{searchControls}</div>}
       <header className="collection-title-row flex min-w-0 items-center justify-between gap-2">
         <div className="flex min-w-0 items-baseline gap-2"><h2 className="truncate font-serif text-lg text-stone-900 sm:text-2xl" title={title}><InterfaceText source={baseName} /></h2><span className="truncate text-xs text-stone-700" title={baseName}>{languageName}</span></div>
-        {moduleCode !== "all" && canContribute && <NavigationLink href={contributionHref(moduleCode)} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-amber-950 hover:bg-white/60"><Plus size={18} aria-hidden="true" /><span><InterfaceText source="Contribute" /></span></NavigationLink>}
+        <NavigationLink href={moduleCode !== "all" && canContribute ? contributionHref(moduleCode) : "/contribute"} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-amber-950 hover:bg-white/60"><Plus size={18} aria-hidden="true" /><span><InterfaceText source="Contribute" /></span></NavigationLink>
       </header>
       {moduleCode === "all" && <div aria-label="Content areas" className="flex flex-nowrap gap-2 overflow-x-auto">
         {[{ key: "all", label: "All content" }, ...categories.map(([key, label]) => ({ key, label }))].map((item) => (
@@ -110,13 +101,10 @@ export function ModuleContentView({
       </div>}
 
       </div>
-      <BottomMediaControls inline={view === "feed"}>
-        <div className="media-filter-buttons" role="group" aria-label="Content type">
-          {FILTERS.map(f => { const Icon = FILTER_ICONS[f.key]; return <button key={f.key} type="button" title={f.label} aria-label={f.label} aria-pressed={filter === f.key} onClick={() => setFilter(f.key)} className={`media-filter-button ${filter === f.key ? "is-active" : ""}`}><Icon size={20} aria-hidden="true" /><span>{f.label}</span></button>; })}
-        </div>
+      <BottomMediaControls>
+        <FeedMediaFilters value={filter} onChange={setFilter} />
         {VIEW_MODES.filter(mode => mode.key !== view).map(mode => <button key={mode.key} type="button" title={mode.label} aria-label={`${mode.label} view`} onClick={() => setView(mode.key)} className="media-filter-button">{mode.key === "grid" ? <LayoutGrid size={20} aria-hidden="true" /> : <List size={20} aria-hidden="true" />}<span><InterfaceText source={mode.label} /></span></button>)}
       </BottomMediaControls>
-      </div></details>
 
       {filteredItems.length === 0 ? (
         <div className="px-4 py-8 md:py-14 text-center max-w-xl mx-auto">

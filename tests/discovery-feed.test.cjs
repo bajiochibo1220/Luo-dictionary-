@@ -57,7 +57,8 @@ test('first impressions show actual content before account prompts and retain fu
   let index = 0;
   const { DiscoveryFeed } = loader({ react: { ...React, useState: initial => { const current = index++; return [current === 4 ? library : current === 5 ? false : current === 13 ? library.categories : initial, () => {}]; } } })('src/components/shared/discovery-feed.tsx');
   const html = renderToStaticMarkup(React.createElement(DiscoveryFeed, { request: async () => {}, languageCode: 'luo', Link }));
-  assert.ok(html.indexOf('A community story') < html.indexOf('Create an account'));
+  assert.ok(html.includes('A community story'));
+  assert.doesNotMatch(html, /A place for your favourites/);
   assert.match(html, /Explore this item/); assert.match(html, /Browse the library/);
   assert.doesNotMatch(html, /Choose an audience|sign in to (?:view|browse)/i);
   assert.match(html, /href="\/dashboard\?module=oral_histories"/);
@@ -114,9 +115,9 @@ test('changing category cancels pagination and discards a late response from the
   };
   const render = () => h.render(() => DiscoveryFeed({ request, languageCode: 'luo', Link }));
   render(); await tick();
-  const more = find(render(), node => node.type === 'button' && node.props.children.props?.source === 'Discover more');
-  const pending = more.props.onClick();
-  find(render(), node => node.type === 'button' && node.props.children.props?.source === 'Riddles').props.onClick();
+  const more = find(render(), node => node.type?.name === 'AutoLoadMore');
+  const pending = more.props.onLoad();
+  find(render(), node => node.type === 'button' && node.props.children.props?.source === 'Riddles').props.onClick({currentTarget:{closest:()=>null}});
   render(); await tick();
   assert.equal(calls[1].signal.aborted, true); assert.equal(calls[1].params.get('records'), 'story');
   finishMore({ ...library, items: [{ ...item, id: 'late-old-item' }] }); await pending; await tick();

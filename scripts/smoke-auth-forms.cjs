@@ -71,9 +71,10 @@ async function main() {
       return;
     }
     await send('Emulation.setDeviceMetricsOverride', { width: 360, height: 800, deviceScaleFactor: 1, mobile: true });
+    await send('Page.navigate', {url:base+'/'});
+    await until(()=>evaluate('location.pathname==="/login" && !!document.querySelector("input[name=password]")'),'fresh startup opens login');
     await send('Page.navigate', { url: base + '/login?' + new URLSearchParams({ callbackUrl: approval }) });
     await until(() => evaluate('document.querySelector("h1")?.textContent.includes("Welcome back")&&!!document.querySelector("input[name=password]")'), 'login form');
-    await evaluate('localStorage.setItem("heritage-interface", JSON.stringify({community:"luo",local:false})); const selector=document.querySelector("select[aria-label=\\"Interface language\\"]"); selector.value="luo:eng"; selector.dispatchEvent(new Event("change",{bubbles:true}));');
     assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'), true);
     const loginButtons = await evaluate('Array.from(document.querySelectorAll("button")).map(button=>button.textContent).join(" ")');
     assert.match(loginButtons,/Google/);assert.doesNotMatch(loginButtons,/Microsoft|Apple|phone|OTP/i);
@@ -92,12 +93,12 @@ async function main() {
     await until(() => evaluate('document.querySelector("h1")?.textContent.includes("Welcome back")&&!!document.querySelector("input[name=password]")'), 'return to login');
     assert.equal(await evaluate('new URL(location.href).searchParams.get("callbackUrl")'), approval);
     await send('Page.navigate', { url: base + '/login?' + new URLSearchParams({ callbackUrl: 'https://example.invalid/redirect' }) });
-    await until(() => evaluate('location.search.includes("example.invalid")&&document.querySelector("h1")?.textContent.includes("Welcome back")&&!!document.querySelector("input[name=password]")&&!!document.querySelector("a[href=\\"/register\\"]")'), 'unsafe callback login');
+    await until(() => evaluate(`location.search.includes("example.invalid")&&document.querySelector("h1")?.textContent.includes("Welcome back")&&!!document.querySelector("input[name=password]")&&!!document.querySelector('a[href="/register"]')`), 'unsafe callback login');
     assert.equal(await evaluate('Array.from(document.querySelectorAll("a")).find(e=>e.textContent.includes("Create new account"))?.getAttribute("href")'), '/register');
     await send('Page.navigate',{url:base+'/forgot-password'});
     await until(()=>evaluate('document.querySelector("h1")?.textContent.includes("Reset password")&&!!document.querySelector("input[name=email]")'),'password recovery screen');
     assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
-    assert.equal(await evaluate('!!document.querySelector("select:not([aria-label=\\"Interface language\\"]),a[href=\\"/login\\"],a[href=\\"/register\\"]")'),false);
+    assert.equal(await evaluate(`!!document.querySelector('select,a[href="/login"],a[href="/register"]')`),false);
     assert.doesNotMatch(await evaluate('document.querySelector(".auth-form-content").textContent'),/Delete account|Verify email/);
     await until(()=>evaluate(`(()=>{const form=document.querySelector('.auth-form-content form');return !!form&&Object.keys(form).some(key=>key.startsWith('__reactProps$')&&typeof form[key]?.onSubmit==='function');})()`),'reset form hydration');
     const resetScreen=await send('Page.captureScreenshot',{format:'png'});await fs.writeFile(path.join(process.cwd(),'docs/system-audit/screenshots/password-reset-email-mobile.png'),Buffer.from(resetScreen.data,'base64'));
@@ -112,7 +113,7 @@ async function main() {
     await until(()=>evaluate('document.querySelector("[role=alert]")?.textContent.includes("passwords do not match")'),'password confirmation mismatch');
     assert.equal(await evaluate('window.resetCalls.length'),1);
     await evaluate(`document.querySelector('input[name=confirmation]').value='browser-password-123';document.querySelector('.auth-form-content form').requestSubmit();`);
-    await until(()=>evaluate('!document.querySelector("input[name=code]")&&!!document.querySelector("a[href=\\"/login\\"]")'),'reset success');
+    await until(()=>evaluate(`!document.querySelector('input[name="code"]')&&!!document.querySelector('a[href="/login"]')`),'reset success');
     assert.deepEqual(await evaluate('window.resetCalls.map(call=>call.action)'),['request','complete']);
     await evaluate('window.fetch=window.realFetch');
     assert.deepEqual(failures, []);

@@ -46,11 +46,8 @@ export function InterfaceText({ source }: { source: string }) {
   return <>{leading}<span className="interface-text-pair" translate="no"><span lang={community}>{translated.trim()}</span><span lang="en" className="interface-english" contentEditable={false}>{english.trim()}</span></span>{trailing}</>;
 }
 export function InterfaceLanguageSelector() {
-  const { community, lockedEnglish, languages, select } = useInterfaceLanguage();
-  if (lockedEnglish) return <span className="px-2 text-xs font-medium">English</span>;
-  return <label className="inline-flex min-w-0 items-center"><span className="sr-only"><InterfaceText source="Community language" /></span><select aria-label="Community language" value={community} onChange={event => select(event.target.value, true)} className="min-h-11 max-w-36 rounded-lg border border-stone-400 bg-white px-2 text-sm text-stone-900">
-    {languages.map(language => <option key={language.code} value={language.code}>{language.nativeName}</option>)}
-  </select></label>;
+  // Community selection belongs to registration; public labels stay bilingual.
+  return null;
 }
 
 // Only authored interface strings are passed to these controls. Input values,

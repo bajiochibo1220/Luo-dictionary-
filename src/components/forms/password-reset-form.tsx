@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { InterfaceText } from "@/components/shared/interface-language";
 
@@ -10,14 +10,16 @@ export function PasswordResetForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const submitting = useRef(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || submitting.current) return;
     const fields = new FormData(event.currentTarget);
     setError(""); setMessage("");
     if (step === "code" && fields.get("password") !== fields.get("confirmation")) {
       setError("The passwords do not match."); return;
     }
+    submitting.current = true;
     setBusy(true);
     try {
       const response = await fetch("/api/auth/password-reset", {
@@ -26,11 +28,11 @@ export function PasswordResetForm() {
         signal: AbortSignal.timeout(25000),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unable to reset your password. Please try again.");
+      if (!response.ok || !result || typeof result.message !== "string") throw new Error(typeof result?.error === "string" ? result.error : "Unable to reset your password. Please try again.");
       setMessage(result.message); setStep(step === "email" ? "code" : "done");
     } catch (reason) {
       setError(reason instanceof Error && reason.name !== "TimeoutError" ? reason.message : "The request timed out. Please try again.");
-    } finally { setBusy(false); }
+    } finally { submitting.current = false; setBusy(false); }
   }
   return <section className="space-y-5 text-stone-900">
     <header><h1 className="font-serif text-3xl"><InterfaceText source="Reset password" /></h1><p className="mt-2 text-sm"><InterfaceText source={step === "email" ? "Enter your account email to receive a password reset code." : step === "code" ? "Enter the six-digit code from your email, then choose a new password." : "Your password has been reset."} /></p></header>

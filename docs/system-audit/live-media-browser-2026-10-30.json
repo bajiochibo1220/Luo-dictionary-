@@ -1,0 +1,61 @@
+{
+  "realPublicApi": true,
+  "accountOrContentWrites": 0,
+  "viewports": [
+    {
+      "viewport": 390,
+      "page": 390,
+      "naturalWidth": 390,
+      "naturalHeight": 260,
+      "width": 390,
+      "height": 674,
+      "cardWidth": 390,
+      "cardHeight": 675,
+      "fit": "contain",
+      "background": "rgb(0, 0, 0)"
+    },
+    {
+      "viewport": 1440,
+      "page": 1440,
+      "naturalWidth": 1440,
+      "naturalHeight": 959,
+      "width": 1425,
+      "height": 662,
+      "cardWidth": 1425,
+      "cardHeight": 663,
+      "fit": "contain",
+      "background": "rgb(0, 0, 0)"
+    }
+  ],
+  "mediaResponses": [
+    {
+      "path": "/api/media/e4dd2d37-f9be-4de1-8b03-4b011aeb75d6/file",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/api/media/e133822a-49b8-40fd-b89a-6e85759df3e6/file",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/api/media/78d5d728-141a-4e6e-beb6-b1ab4a8e1a54/file",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/api/media/e4dd2d37-f9be-4de1-8b03-4b011aeb75d6/file",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/api/media/e133822a-49b8-40fd-b89a-6e85759df3e6/file",
+      "status": 200,
+      "mime": "application/octet-stream"
+    }
+  ],
+  "runtimeErrors": [],
+  "firstCardHasMedia": false,
+  "orderingNote": "Text-only records remain in discovery; image decoding is checked on the first published media card.",
+  "completedAt": "2026-10-29T22:00:13.887Z"
+}

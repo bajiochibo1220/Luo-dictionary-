@@ -1,6 +1,6 @@
 "use client";
 import { AppInstallationProvider } from "@/components/pwa/app-installation";
-import { EnglishInterface, InterfaceButton, InterfaceLanguageProvider, InterfaceLanguageSelector, InterfaceOption, InterfaceSelect, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
+import { EnglishInterface, InterfaceButton, InterfaceLanguageProvider, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
 import { ActivityTelemetry } from "./activity-telemetry";
 import { lazy, Suspense, createContext, useContext, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AppSidebarView } from "@/components/shared/app-sidebar-view";
@@ -110,16 +110,17 @@ function App() {
     const unsubscribe = nativeSession.subscribe((value, reason) => {
       if (!active) return;
       identityEpoch.current++;
-      if (reason !== "renew") pendingNativeLanding.current = !!value && nativeSession.isNative && (reason === "sign-in" || reason === "restore" && !location.hash);
+      const continuingContribution = /^#\/contribute(?:\/[a-z0-9_-]+)?(?:\?.*)?$/.test(location.hash);
+      if (reason !== "renew") pendingNativeLanding.current = !!value && nativeSession.isNative && !continuingContribution && (reason === "sign-in" || reason === "restore" && !location.hash);
       setSession(value);
-      if (value || location.hash || !nativeSession.isNative && !window.matchMedia("(max-width: 767px)").matches) setEntry("content");
+      if (value || location.hash) setEntry("content");
       else {
         setEntry("registration");
-        if (!nativeSession.isNative) location.replace("/register");
+        if (!nativeSession.isNative && navigator.onLine) location.replace("/login");
       }
       if (reason !== "renew") { setProfile(null); setHistory([]); setPersonalLoading(false); setHistoryError(""); setArchived(false); }
       setPersonalError("");
-      if (value && (reason === "sign-in" || reason === "restore" && !location.hash)) location.hash = "/dashboard";
+      if (value && !continuingContribution && (reason === "sign-in" || reason === "restore" && !location.hash)) location.hash = "/dashboard";
     });
     let disconnect: (() => void) | undefined;
     nativeSession.connect(message => { if (active) setPersonalError(message); }).then(stop => {
@@ -181,7 +182,7 @@ function App() {
   }
 
   useEffect(() => {
-    const update = () => { if (location.hash || !nativeSession.isNative && !window.matchMedia("(max-width: 767px)").matches) setEntry("content"); const target = location.hash.slice(1) || "/dashboard"; setRoute(applicationScreenHref(target) || "/not-found"); };
+    const update = () => { if (location.hash) setEntry("content"); const target = location.hash.slice(1) || "/dashboard"; setRoute(applicationScreenHref(target) || "/not-found"); };
     update();
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
@@ -202,10 +203,10 @@ function App() {
   if (entry === "checking") return <p role="status" className="p-8"><InterfaceText source="Opening Luo Heritage?" /></p>;
   if (entry === "registration") return <><ChatbotShortcut href="#/chatbot" /><main className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-stone-50 p-6 text-center text-teal-950">
     <img src={artwork} alt="Luo Heritage" className="h-40 w-40 object-contain" />
-    <h1 className="font-serif text-3xl"><InterfaceText source="Get started" /></h1>
-    <p><InterfaceText source="Create an account to join the community" /></p>
-    <button type="button" disabled={signingIn} onClick={() => void signIn("register")} className="min-h-12 rounded-full bg-teal-800 px-8 py-3 font-semibold text-white"><InterfaceText source="Create account" /></button>
-    <button type="button" onClick={() => void signIn("login")} className="min-h-11 underline"><InterfaceText source="Log in" /></button>
+    <h1 className="font-serif text-3xl"><InterfaceText source="Welcome back" /></h1>
+    <p><InterfaceText source="Log in to continue your cultural journey" /></p>
+    <button type="button" disabled={signingIn} onClick={() => void signIn("login")} className="min-h-12 rounded-full bg-teal-800 px-8 py-3 font-semibold text-white"><InterfaceText source="Log in" /></button>
+    <button type="button" onClick={() => void signIn("register")} className="min-h-11 underline"><InterfaceText source="Create account" /></button>
     <a href="#/dashboard" className="min-h-11 py-3 font-semibold underline"><InterfaceText source="Browse the public library" /></a>
     {personalError && <p role="alert">{personalError}</p>}
   </main></>;
@@ -213,7 +214,7 @@ function App() {
     {nativeSession.isNative && <Toaster richColors />}
     <header className="institution-masthead relative z-30 flex shrink-0 items-center gap-2 border-b border-amber-100/15 bg-[#5c3a1c] px-3 py-2 text-amber-50 pt-safe">
       <SidebarToggle />
-      <Link href="/dashboard" className="masthead-brand flex min-w-0 flex-1 items-center gap-2"><BrandMark src={artwork} /><span title={APP_NAME} className="min-w-0 truncate font-serif text-base md:text-xl">{APP_NAME}</span></Link><div data-collection-toolbar-host /><InterfaceLanguageSelector />
+      <Link href="/dashboard" className="masthead-brand flex min-w-0 flex-1 items-center gap-2"><BrandMark src={artwork} /><span title={APP_NAME} className="min-w-0 truncate font-serif text-base md:text-xl">{APP_NAME}</span></Link><div data-collection-toolbar-host />
       {session ? <DismissiblePopover className="relative shrink-0" open={accountMenuOpen} onClose={() => setAccountMenuOpen(false)}><InterfaceButton type="button" aria-label="Open account menu" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen(value => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 font-serif font-bold text-stone-900">{(profile?.name || profile?.email || "U").charAt(0).toUpperCase()}</InterfaceButton>
         {accountMenuOpen && <div className="absolute right-0 z-50 mt-2 max-h-[75dvh] max-w-[calc(100vw-1rem)] overflow-y-auto w-56 rounded-xl border border-stone-200 bg-white py-2 text-stone-800 shadow-xl"><PopoverClose onClose={() => setAccountMenuOpen(false)} />{isStaff && <Link href={dashboardHref} onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold"><InterfaceText source="Admin dashboard" /></Link>}<Link href="/account" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Saved conversations" /></Link><Link href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-4 py-3 text-sm"><InterfaceText source="Settings & profile" /></Link><button type="button" onClick={signOut} className="w-full px-4 py-3 text-left text-sm text-red-700"><InterfaceText source="Sign out" /></button></div>}
       </DismissiblePopover>
@@ -223,7 +224,7 @@ function App() {
     {personalError && !isAccount && <div role="alert" className="flex shrink-0 items-start gap-3 bg-red-50 px-4 py-3 text-sm text-red-900"><p className="flex-1">{personalError}</p><InterfaceButton type="button" aria-label="Dismiss sign-in message" onClick={() => setPersonalError("")} className="font-semibold underline"><InterfaceText source="Dismiss" /></InterfaceButton></div>}
     <div className="relative flex min-h-0 flex-1">
       <PartnerBranding request={featureRequest}/>
-      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? dashboardHref : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} communityControls={<label className="block px-5 py-3 text-sm text-amber-50"><InterfaceText source="Community" /><InterfaceSelect aria-label="Choose community" value={language} onChange={event => { setLanguage(event.target.value); sidebar?.closeMobile(); }} className="mt-2 min-h-11 w-full rounded-lg border border-amber-100/20 bg-[#6b4724] px-3">{(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).filter(item => item.code !== "eng").map(item => <InterfaceOption key={item.code} value={item.code}>{item.nativeName}</InterfaceOption>)}</InterfaceSelect></label>} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
+      <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? dashboardHref : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
       <ActivityTelemetry request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} route={route} />
       <main ref={contentPanel} className={`heritage-canvas relative min-h-0 min-w-0 flex-1 pb-safe ${isChat ? "overflow-hidden" : "overflow-y-auto heritage-pattern"}`}>
         <ScreenBoundary key={route}><Suspense fallback={<p role="status" className="p-5"><InterfaceText source="Loading…" /></p>}>

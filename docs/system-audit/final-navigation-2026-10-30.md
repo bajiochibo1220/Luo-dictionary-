@@ -1,0 +1,29 @@
+# Final navigation and authentication follow-up ? 30 October 2026
+
+**Live email configuration is deferred by the user.** The read-only transport check returned 503: configure `EMAIL_PROVIDER` (`resend` or `sendgrid`), `EMAIL_FROM` (a verified sender) and `EMAIL_API_KEY` in `.env` or the admin email settings. No message was sent. The form/code tests use an intercepted delivery response; they do not establish real inbox delivery. [Configuration evidence](email-configuration-2026-10-30.json).
+
+Every public collection and the discovery feed now has a fixed black media-filter dock. Its measured height is reserved below the cards; the feed also reserves space for the pinned search bar above it. Sidebar resizing, safe-area insets and phone landscape layouts use the same shared components. All, Images, Audio, Video and Transcripts stay accessible while scrolling. Grid/feed switching remains available inside collections.
+
+Search is visible at the top instead of hidden under Browse & search. Discovery's Explore menu contains collection choices and Follow your curiosity links, so these links no longer interrupt the bottom of the feed. A contribution link remains visible beside search or the collection name and opens that collection's configured form. Signing in from a native contribution screen preserves the selected form instead of replacing it with discovery. Collections without a form lead to the contribution chooser. Public navigation is ordered Install the app, Explore, Discover, Collections, Browse the library, Saved words & items.
+
+Discovery and collection feeds fetch their next page automatically near the end, retaining a manual load/retry button. Existing pagination cursors, category scopes and duplicate filtering are preserved. The feed ends honestly when no more published records exist.
+
+Fresh startup now opens login first, with account creation below it. Native startup offers login as the primary action and public browsing remains explicit. Offline startup retains the shared entry screen rather than redirecting to an unavailable login page. Public community/interface/content-language selectors have been removed. Registration stores the chosen community locally, including Google account completion. Dholuo interface labels retain their read-only English line; item details and transcript readers retain English translation access. Administrative controls for editing content in different languages remain available to authorized staff.
+
+Forgot password only requests a code and then accepts that code with the new password and confirmation. Account registration, account deletion and verification choices are absent. Duplicate same-tick submissions and malformed responses are handled without leaving the form stuck.
+
+Install the app invokes a captured browser install offer directly from the click gesture. Accepting the native prompt closes the instructions panel. Browsers decide whether they provide this offer; Safari requires Share ? Add to Home Screen, and an app cannot bypass that browser-controlled step. Unsupported/unavailable offers retain concise browser instructions. No OS installation was approved during automated checks.
+
+Verification:
+
+- All 421 tests in the full suite passed. Eight focused authentication/media/pagination tests also passed after the final native contribution continuation fix, including the new sign-in-to-form case.
+- The compiled mobile bundle passed 20 phone, tablet, landscape and desktop layouts, plus fixed-filter, pinned-search and direct-contribution checks across all eight public collections. Collapsed more/less controls remain visible in the caption, including landscape; search text has explicit contrast on its light field. No unexpected APIs or runtime errors were observed. [Mobile browser evidence](mobile-feed-browser-2026-10-30.json).
+
+- Android debug assembly passed. All 31 bundled files match the Android project, iOS project and APK byte for byte. [Bundle evidence](final-navigation-native-bundles-2026-10-30.json).
+
+- Website production build passed, including type checking and all 57 generated pages; lint has no errors. The final mobile TypeScript check and production bundle also passed. Existing image/bundle/module-format warnings remain.
+- The production web browser passed all 20 layouts and all eight collection controls, plus full-frame image/video display, save feedback, inline more/less, complete item details, related-item navigation, the full 216-turn transcript/download, attachment switching, offscreen playback pausing and automatic next-page loading. No runtime errors, unexpected APIs or live writes occurred. [Web feed evidence](social-feed-browser-2026-10-30.json).
+- Real public APIs and image decoding passed at 390 and 1440 pixels. Text-first discovery ordering is retained; the image check scrolls to the first actual media card. [Real-content browser evidence](live-media-browser-2026-10-30.json). All 41 images exposed by the public media library delivered valid image bytes with no failures. [Image delivery evidence](published-images-2026-10-30.json).
+- The production authentication browser check passed at 360 pixels: fresh startup opens login, registration links preserve native approval returns, external return targets are rejected, and password recovery only sends a code then accepts code/new password/confirmation. The reset delivery response was intercepted; no real email or account mutation occurred. [Authentication browser evidence](auth-forms-browser-2026-10-30.json).
+
+Real registration, bcrypt credential verification, duplicate-email rejection, suspended-account rejection and session callbacks were also verified in a transaction that retained no test account or consent record. [Transaction evidence](auth-transaction-2026-10-29.json). Changes are local and have not been deployed. iOS compilation and physical Android/iPhone acceptance require their respective devices/toolchains.

@@ -1,4 +1,3 @@
-import { InterfaceLanguageSelector } from "@/components/shared/interface-language";
 import { APP_NAME } from "@/lib/brand";
 import { AuthLogoBackground } from "@/components/shared/auth-logo-background";
 import { BrandMark } from "@/components/shared/brand-mark";
@@ -28,7 +27,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         <div className="auth-form-surface relative z-10 w-full max-w-md rounded-3xl p-5 sm:p-7">
           <div className="auth-form-content relative z-10">
-            <div className="mb-4 flex justify-end"><InterfaceLanguageSelector /></div>
             {children}
           </div>
         </div>

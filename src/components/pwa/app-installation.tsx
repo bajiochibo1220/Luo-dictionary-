@@ -52,8 +52,8 @@ function InstallationOwner({ children }: { children: ReactNode }) {
       const result = pending.prompt();
       await result;
       const choice = await pending.userChoice;
-      setNotice(choice.outcome === "accepted" ? "Installation requested. Follow your browser to finish." : "Installation was cancelled. You can try again from your browser menu.");
-      setHelp(true);
+      setNotice(choice.outcome === "accepted" ? "" : "Installation was cancelled. You can try again from your browser menu.");
+      setHelp(choice.outcome !== "accepted");
     } catch {
       setNotice("The install window could not open. Use your browser menu to install the app.");
       setHelp(true);

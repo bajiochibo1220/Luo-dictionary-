@@ -99,6 +99,9 @@ export function RegisterForm() {
       return;
     }
 
+    const community = languages.find(language => language.id === body.languageId)?.code;
+    if (community) { try { localStorage.setItem("heritage-interface", JSON.stringify({ community, local: true })); } catch {} }
+
     if (data.data?.status === "pending") {
       toast.success(<InterfaceText source={"Account created. It is awaiting approval before you can continue."} />);
       router.push(nativeAuthHref("login", nativeReturn, { registered: "pending" }));

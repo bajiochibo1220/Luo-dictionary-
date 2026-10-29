@@ -35,6 +35,8 @@ export function GoogleProfileForm({ initialName, nativeReturn }: { initialName: 
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || "Could not finish account setup");
+      const community = languages.find(language => language.id === Number(languageId))?.code;
+      if (community) { try { localStorage.setItem("heritage-interface", JSON.stringify({ community, local: true })); } catch {} }
       await fetch("/api/auth/session", { cache: "no-store" }).catch(() => null);
       toast.success(<InterfaceText source={"Your account is ready."} />);
       document.cookie = nativeReturnCookie(null, window.location.protocol === "https:");

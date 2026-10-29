@@ -6,12 +6,14 @@ const os = require('node:os');
 const { spawn } = require('node:child_process');
 const base = process.env.SMOKE_BASE_URL || 'http://127.0.0.1:3100';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-const report = { viewports: [], interactions: [], runtimeErrors: [], unexpectedApis: [], liveWrites: 0 };
+const layoutOnly = process.argv.includes('--layout-only');
+const playersOnly = process.argv.includes('--players-only');
+const report = { mobilePreview: layoutOnly, viewports: [], interactions: [], runtimeErrors: [], unexpectedApis: [], liveWrites: 0 };
 const languages = [{ id: 1, code: 'luo', name: 'Luo', nativeName: 'Dholuo' }, { id: 2, code: 'eng', name: 'English', nativeName: 'English' }];
 const modules = ['oral_histories', 'songs', 'folktales'].map(code => ({ code, baseName: code === 'songs' ? 'Traditional Songs' : code === 'folktales' ? 'Folktales' : 'Oral Histories', title: code, href: `/dashboard?module=${code}`, contributionHref: `/contribute/${code}` }));
 const account = { id: 'layout-reader', name: 'Layout reader', email: 'reader@example.invalid', image: null, profileTypes: [], isSuperAdmin: false, isMasterSuperAdmin: false, languageRoles: [] };
 const illustration = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600"><rect width="960" height="600" fill="#e0ebdf"/><circle cx="760" cy="130" r="70" fill="#f0c777"/><path d="M0 360Q250 160 500 360T960 260V600H0" fill="#5c8f7c"/><path d="M0 450Q400 340 960 490V600H0" fill="#184f4b"/><text x="50" y="550" fill="white" font-family="Arial" font-size="28">FICTIONAL MEDIA — LAYOUT CHECK</text></svg>');
-let videoBytes = '', videoPromise, saveCalls = 0, readingCalls = 0;
+let videoBytes = '', videoPromise, saveCalls = 0, readingCalls = 0, paginateMode = false, pageCalls = 0;
 const items = () => [
   { id: 'mixed', title: 'Wach mar oganda', englishTitle: 'Community voices', summary: 'Fictional layout sample: original media stays together, with the item description and actions beside it.', bodyText: 'meaning: Fictional full meaning.\n\ncounty: Fictional place.\n\nusage: Complete detail marker.', moduleCode: 'oral_histories', moduleName: 'Oral Histories', transcriptCount: 216, isProvisional: true, media: [{ id: 'image', type: 'image', url: base + '/api/media/image/file' }, { id: 'video', type: 'video', url: base + '/api/media/video/file', thumbnailUrl: base + '/api/media/image/file' }, { id: 'audio', type: 'audio', url: base + '/api/media/audio/file' }, { id: 'document', type: 'document', url: base + '/api/media/document/file' }] },
   { id: 'recording', title: 'Wende mag oganda', englishTitle: 'Community song', summary: 'Another fictional recording card, kept close to the previous item.', moduleCode: 'songs', moduleName: 'Traditional Songs', transcriptCount: 0, media: [{ id: 'audio2', type: 'audio', url: base + '/api/media/audio2/file' }] },
@@ -26,21 +28,24 @@ async function main() {
   const browser = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--no-first-run', '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=0', `--user-data-dir=${directory}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
   let socket;
   try {
-    for (let i = 0; i < 150 && !fs.existsSync(path.join(directory, 'DevToolsActivePort')); i++) await delay(100);
-    const port = fs.readFileSync(path.join(directory, 'DevToolsActivePort'), 'utf8').split('\n')[0];
+    let port;
+    for(let i=0;i<300;i++){try{const value=fs.readFileSync(path.join(directory,'DevToolsActivePort'),'utf8').split('\n')[0];if(/^\d+$/.test(value)){port=value;break;}}catch{}await delay(100);}
+    assert.ok(port,'Audit browser starts');
     const target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json();
     socket = new WebSocket(target.webSocketDebuggerUrl);
     await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject; });
-    let sequence = 0; const pending = new Map();
+    let sequence = 0, closing = false; const pending = new Map();
     const send = (method, params = {}) => new Promise((resolve, reject) => { const id = ++sequence; const timeout = setTimeout(() => { pending.delete(id); reject(new Error(method + ' timed out')); }, 120000); pending.set(id, message => { clearTimeout(timeout); message.error ? reject(new Error(message.error.message)) : resolve(message.result); }); socket.send(JSON.stringify({ id, method, params })); });
+    socket.onclose=()=>{for(const resolve of pending.values())resolve({error:{message:'Browser closed'}});pending.clear();};
     const evaluate = async expression => { const r = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; };
-    const until = async (expression, label) => { const deadline = Date.now() + 90000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } throw new Error('Timed out: ' + label); };
+    const until = async (expression, label) => { const deadline = Date.now() + 90000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } report.failureContext=await evaluate(`(()=>{const v=document.querySelector('video');return {hash:location.hash,count:document.querySelector('.social-media-count')?.textContent,video:v?{ready:v.readyState,network:v.networkState,error:v.error?.code,errorMessage:v.error?.message,source:!!v.currentSrc,bounds:JSON.stringify(v.getBoundingClientRect())}:null};})()`);report.fixtureVideoBytes=Buffer.from(videoBytes,'base64').length;throw new Error('Timed out: ' + label); };
     async function payload(url, method) {
       if (url.pathname === '/api/v1/bootstrap') return { apiVersion: 1, app: { name: 'Luo Heritage', tagline: 'Heritage', version: 'audit', icon: '/icons/luo-heritage-512.png', manifest: '/application.webmanifest' }, selectedLanguage: languages[0], languages, modules, routes: {}, contentFilters: [], contentViews: [] };
       if (url.pathname === '/api/v1/library') {
         if (!videoBytes) { videoPromise ??= evaluate(`new Promise(resolve=>{const c=document.createElement('canvas');c.width=640;c.height=360;const ctx=c.getContext('2d');const paint=()=>{ctx.fillStyle='#164e49';ctx.fillRect(0,0,640,360);ctx.fillStyle='#f1d393';ctx.font='24px Arial';ctx.fillText('FICTIONAL VIDEO — LAYOUT CHECK',40,180);};paint();const stream=c.captureStream(5),r=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'}),chunks=[];r.ondataavailable=e=>chunks.push(e.data);r.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));};r.start();const timer=setInterval(paint,100);setTimeout(()=>{clearInterval(timer);r.stop();},800);})`); videoBytes = await videoPromise; }
         const code = url.searchParams.get('module') || 'discover';
-        return { title: 'Community collection', baseName: 'Community collection', moduleCode: code, languageCode: 'luo', languageName: 'Dholuo', languageId: 1, canContribute: false, items: items(), categories: modules.map(m => ({ code: m.code, name: m.baseName })), limits: { records: 12, dictionaryEntries: 6 }, continuation: { records: null, dictionary: null } };
+        if (paginateMode && url.searchParams.has('records')) pageCalls++;
+        return { title: 'Community collection', baseName: 'Community collection', moduleCode: code, languageCode: 'luo', languageName: 'Dholuo', languageId: 1, canContribute: true, items: paginateMode && url.searchParams.has('records') ? [{...items()[1], id:'next-page', title:'Automatically loaded recording'}] : items(), categories: modules.map(m => ({ code: m.code, name: m.baseName })), limits: { records: 12, dictionaryEntries: 6 }, continuation: { records: paginateMode && !url.searchParams.has('records') ? 'mixed' : null, dictionary: null } };
       }
       if (url.pathname === '/api/auth/session') return { user: account, expires: new Date(Date.now() + 3600000).toISOString() };
       if (url.pathname === '/api/v1/account') return account;
@@ -63,15 +68,15 @@ async function main() {
         if (url.pathname === '/api/media/video/file') return send('Fetch.fulfillRequest', { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'video/webm' }], body: videoBytes });
         if (url.pathname === '/api/media/image/file') return send('Fetch.fulfillRequest', { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'image/svg+xml' }], body: Buffer.from(decodeURIComponent(illustration.slice(illustration.indexOf(',') + 1))).toString('base64') });
         const data = await payload(url, p.request.method), raw = ['/api/auth/session', '/api/app-version'].includes(url.pathname);
-        await send('Fetch.fulfillRequest', { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Cache-Control', value: 'no-store' }], body: Buffer.from(JSON.stringify(raw ? data : { success: true, data })).toString('base64') });
-      })().catch(error => { if (!/Invalid InterceptionId/.test(error.message)) report.runtimeErrors.push(error.message); });
+        await send('Fetch.fulfillRequest', { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Cache-Control', value: 'no-store' }, {name:'Access-Control-Allow-Origin',value:'*'}, {name:'Access-Control-Allow-Headers',value:'*'}, {name:'Access-Control-Allow-Methods',value:'GET,POST,OPTIONS'}], body: Buffer.from(JSON.stringify(raw ? data : { success: true, data })).toString('base64') });
+      })().catch(error => { if (!closing && !/Invalid InterceptionId/.test(error.message)) report.runtimeErrors.push(error.message); });
     };
     await send('Runtime.enable'); await send('Page.enable'); await send('Fetch.enable', { patterns: [{ urlPattern: '*/api/*' }] });
     await send('Page.navigate', { url: base + '/application#/dashboard' });
     await until('document.querySelectorAll(".discovery-card").length===3', 'discovery');
     assert.equal(readingCalls, 0, 'Browsing cards must not load every conversation');
     fs.mkdirSync('docs/system-audit/screenshots', { recursive: true });
-    for (const [width, height] of [[1440,950], [1366,950], [1024,950], [768,950], [390,844], [320,568], [844,390]]) {
+    for (const [width, height] of (playersOnly?[]:[[1440,950], [1366,950], [1024,950], [768,950], [390,844], [320,568], [844,390]])) {
       await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 768 });
       for (const route of ['/dashboard', '/dashboard?module=oral_histories']) {
         await evaluate(`location.hash=${JSON.stringify(route)}`);
@@ -81,14 +86,21 @@ async function main() {
         for (const state of states) {
           if (state !== 'responsive') { const button = state === 'collapsed' ? 'Collapse sidebar' : 'Expand sidebar'; await evaluate(`document.querySelector('button[aria-label=${JSON.stringify(button)}]')?.click()`); }
           await delay(400); await evaluate('document.querySelector("main").scrollTop=0');
-          const metrics = await evaluate(`(()=>{const main=document.querySelector('main'),card=document.querySelector(${JSON.stringify(cardSelector)}),media=card.querySelector('.immersive-media'),caption=card.querySelector('.social-card-caption'),actions=card.querySelector('.social-card-actions');const a=media.getBoundingClientRect(),b=caption.getBoundingClientRect(),c=card.getBoundingClientRect(),d=actions.getBoundingClientRect();return{viewport:innerWidth,page:document.documentElement.scrollWidth,content:main.scrollWidth,available:main.clientWidth,paneHeight:main.clientHeight,cardWidth:c.width,cardHeight:c.height,mediaWidth:a.width,mediaHeight:a.height,captionInside:b.left>=c.left&&b.right<=c.right&&b.top>=c.top&&b.bottom<=c.bottom,actionsInside:d.left>=c.left&&d.right<=c.right&&d.top>=c.top&&d.bottom<=c.bottom,audio:card.querySelectorAll('audio').length,video:card.querySelectorAll('video').length,images:card.querySelectorAll('.public-media-gallery img').length,players:card.querySelectorAll('audio,video').length};})()`);
+          const metrics = await evaluate(`(()=>{const main=document.querySelector('main'),card=document.querySelector(${JSON.stringify(cardSelector)}),media=card.querySelector('.immersive-media'),caption=card.querySelector('.social-card-caption'),actions=card.querySelector('.social-card-actions');const a=media.getBoundingClientRect(),b=caption.getBoundingClientRect(),c=card.getBoundingClientRect(),d=actions.getBoundingClientRect();return{viewport:innerWidth,page:document.documentElement.scrollWidth,content:main.scrollWidth,available:main.clientWidth,paneHeight:main.clientHeight-parseFloat(getComputedStyle(main).paddingBottom)-document.querySelector('.feed-search-bar').getBoundingClientRect().height,cardWidth:c.width,cardHeight:c.height,mediaWidth:a.width,mediaHeight:a.height,captionInside:b.left>=c.left&&b.right<=c.right&&b.top>=c.top&&b.bottom<=c.bottom,actionsInside:d.left>=c.left&&d.right<=c.right&&d.top>=c.top&&d.bottom<=c.bottom,audio:card.querySelectorAll('audio').length,video:card.querySelectorAll('video').length,images:card.querySelectorAll('.public-media-gallery img').length,players:card.querySelectorAll('audio,video').length};})()`);
           report.viewports.push({ route, width, height, state, ...metrics });
           assert.ok(metrics.page <= metrics.viewport + 1 && metrics.content <= metrics.available + 2, 'No overflow: ' + JSON.stringify(metrics));
           assert.equal(metrics.players, 2); assert.equal(metrics.images, 1);
           assert.ok(Math.abs(metrics.cardHeight-metrics.paneHeight)<=2, 'Card fills the reading pane: '+JSON.stringify(metrics));
           assert.ok(Math.abs(metrics.mediaWidth-metrics.cardWidth)<=2 && Math.abs(metrics.mediaHeight-metrics.cardHeight)<=2,'Media fills its entire card');
           assert.equal(metrics.captionInside,true); assert.equal(metrics.actionsInside,true);
+          const dock = await evaluate(`(()=>{const dock=document.querySelector('.library-media-dock'),r=dock.getBoundingClientRect();return {position:getComputedStyle(dock).position,background:getComputedStyle(dock).backgroundColor,bottom:r.bottom,height:r.height,filters:dock.querySelectorAll('.media-filter-buttons button').length};})()`);
+          assert.equal(await evaluate(`getComputedStyle(document.querySelector('.feed-search-bar input')).color`),'rgb(23, 62, 54)','Search text remains readable on its light field');
+          assert.equal(dock.position,'fixed');assert.equal(dock.background,'rgb(8, 12, 11)');assert.ok(Math.abs(dock.bottom-height)<=1);assert.equal(dock.filters,5);
+          assert.equal(await evaluate(`!!document.querySelector('select[aria-label="Community language"],select[aria-label="Choose community"],select[aria-label="Content language"]')`),false);
+
           const preview = cardSelector + ' .social-card-description';
+          assert.equal(await evaluate(`(()=>{const caption=document.querySelector(${JSON.stringify(cardSelector)}).querySelector('.social-card-caption'),button=caption.querySelector('.social-description-toggle'),a=caption.getBoundingClientRect(),b=button.getBoundingClientRect();return b.top>=a.top-1&&b.bottom<=a.bottom+1;})()`),true,'Collapsed more control stays visible in the caption');
+
           assert.equal(await evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(preview + ' .social-description-text')})).webkitLineClamp`), width < 768 || height < 500 ? '1' : '2');
           await evaluate(`document.querySelector(${JSON.stringify(preview + ' button')}).click()`);
           assert.equal(await evaluate(`document.querySelector(${JSON.stringify(preview)}).dataset.expanded==='true'&&!document.querySelector('dialog')`), true, 'More expands inside the card');
@@ -101,9 +113,22 @@ async function main() {
       }
     }
     console.log('PASS '+report.viewports.length+' full-height layouts');
-    report.interactions.push('Inline underlined more/less controls expand and restore one-line phone and two-line desktop previews across every tested layout');
+    for (const collectionCode of (playersOnly?[]:['dictionary','proverbs','riddles','oral_histories','folktales','songs','artifacts','heritage_sites'])) {
+      await evaluate(`location.hash='/dashboard?module=${collectionCode}'`);await until(`document.querySelector('.collection-title-row a')?.getAttribute('href')==='#/contribute/${collectionCode}'`,'collection '+collectionCode);
+      assert.equal(await evaluate(`document.querySelector('.collection-title-row a').getAttribute('href')`),'#/contribute/'+collectionCode);
+      await evaluate(`document.querySelectorAll('.library-feed-card')[1].scrollIntoView({block:'start',behavior:'instant'})`);await delay(150);
+      assert.equal(await evaluate(`(()=>{const a=document.querySelector('.feed-search-bar').getBoundingClientRect(),b=document.querySelector('main').getBoundingClientRect();return Math.abs(a.top-b.top)<=1;})()`),true,'Search stays pinned in '+collectionCode);
+      await evaluate(`document.querySelector('.media-filter-buttons button[aria-label="Audio"]').click()`);await delay(100);
+      assert.equal(await evaluate('document.querySelectorAll(".library-feed-card").length'),2);
+      await evaluate(`document.querySelector('.media-filter-buttons button[aria-label="All"]').click()`);
+    }
+    if (!playersOnly) report.interactions.push('Fixed black filter dock, pinned search and direct contribution links work across all eight collections; public language selectors are absent');
+
+    if (layoutOnly) { assert.deepEqual(report.runtimeErrors,[]);assert.deepEqual(report.unexpectedApis,[]);report.completedAt=new Date().toISOString();closing=true;await send('Browser.close').catch(()=>{});return; }
+    if (!playersOnly) report.interactions.push('Inline underlined more/less controls expand and restore one-line phone and two-line desktop previews across every tested layout');
     await send('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:true});
     await evaluate('location.hash="/dashboard"'); await until('!!document.querySelector(".discovery-card")', 'return to discovery');
+    await evaluate(`document.querySelector('.discovery-card').scrollIntoView({block:'start',behavior:'instant'})`);
     await until('document.querySelector(".public-media-gallery img").complete', 'media dimensions loaded');
     for (const shape of [{width:360,height:960},{width:1280,height:360}]) {
       const dimensions = await evaluate(`new Promise(resolve=>{const image=document.querySelector('.public-media-gallery img');image.removeAttribute('srcset');image.onload=()=>{const style=getComputedStyle(image);resolve({naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,fit:style.objectFit,background:style.backgroundColor,width:image.clientWidth,height:image.clientHeight,frameWidth:image.closest('.public-media-asset').clientWidth});};image.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="${shape.width}" height="${shape.height}"><rect width="100%" height="100%" fill="#d9b968"/><text x="8" y="28">FULL FRAME</text></svg>');})`);
@@ -164,12 +189,19 @@ async function main() {
     await evaluate(`document.querySelector('.discovery-card button[aria-label="Show details"]').click()`);
     await until('!!document.querySelector(".discovery-card").querySelector(".social-card-caption")','details restore');
     report.interactions.push('Horizontal attachment paging preserves video/audio/document access; sliding or scrolling away pauses playback; details toggle restores overlays');
+    paginateMode = true;
+    await evaluate('location.hash="/dashboard?module=songs"');await until('!!document.querySelector(".library-feed-card")','leave discovery before pagination check');
+    await evaluate('location.hash="/dashboard"');await until('!!document.querySelector(".feed-load-more")','automatic pagination marker');
+    await evaluate(`document.querySelectorAll('.discovery-card')[2].scrollIntoView({block:'end',behavior:'instant'})`);
+    await until('document.querySelectorAll(".discovery-card").length===4','automatic next page');
+    assert.equal(pageCalls,1);assert.equal(await evaluate('!!document.querySelector(".discovery-aside")'),false);
+    report.interactions.push('Scrolling loads the next page once without a button click; curiosity links stay outside the feed');
     assert.deepEqual(report.unexpectedApis, []); assert.deepEqual(report.runtimeErrors, []);
     report.readingRequests = readingCalls; report.completedAt = new Date().toISOString();
     console.log(JSON.stringify({ checkedLayouts: report.viewports.length, interactions: report.interactions, runtimeErrors: report.runtimeErrors, liveWrites: 0 }));
-    await send('Browser.close').catch(() => {});
+    closing=true;await send('Browser.close').catch(() => {});
   } finally {
-    fs.writeFileSync('docs/system-audit/social-feed-browser-2026-10-29.json', JSON.stringify(report, null, 2));
+    fs.writeFileSync('docs/system-audit/'+(layoutOnly?'mobile-feed-browser':playersOnly?'social-players-browser':'social-feed-browser')+'-2026-10-30.json', JSON.stringify(report, null, 2));
     socket?.close(); browser.kill();
   }
 }

@@ -1,0 +1,12 @@
+{
+  "emailsSent": 0,
+  "providerDeliveryTested": false,
+  "checks": {
+    "providerSupported": true,
+    "senderPresent": false,
+    "senderFormatValid": false,
+    "apiKeyPresent": false
+  },
+  "configured": false,
+  "status": 503
+}

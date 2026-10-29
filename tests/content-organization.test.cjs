@@ -56,8 +56,8 @@ test('public categories fetch across the collection and continue within the sele
   assert.equal(moduleView.props.selectedCategory, 'artifacts');
   assert.equal(calls[0].searchParams.get('category'), 'artifacts');
   assert.equal(calls[0].searchParams.get('module'), 'audio_visual');
-  const more = find(tree, node => node.type === 'button' && node.props.children.props?.source === 'Load more');
-  await more.props.onClick();
+  const more = find(tree, node => node.type?.name === 'AutoLoadMore');
+  await more.props.onLoad();
   assert.equal(calls[1].searchParams.get('category'), 'artifacts');
   assert.equal(calls[1].searchParams.get('records'), 'cursor');
 });

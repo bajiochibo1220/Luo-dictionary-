@@ -1,6 +1,7 @@
 "use client";
 import { InterfaceInput, InterfaceText } from "@/components/shared/interface-language";
 import { emitActivity } from "@/lib/activity-events";
+import { AutoLoadMore } from "./auto-load-more";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ModuleContentView, type ModuleContentProps, type AppLink } from "./module-content-view";
@@ -33,6 +34,6 @@ export function PaginatedLibrary({ initial, request, Link, downloadOrigin }: { d
     {error && <p role="alert" className="library-action-notice px-6 py-3 text-red-900">{error}</p>}
     {notice && <p role="status" className="library-action-notice px-6 py-3">{notice}</p>}
     <ModuleContentView downloadOrigin={downloadOrigin} selectedCategory={category} onCategoryChange={value => void load(false, value)} categoryBusy={busy} searchControls={<form className="flex min-w-0 items-center gap-1" role="search" onSubmit={event => { event.preventDefault(); void load(false); }}><label className="min-w-0 flex-1"><span className="sr-only"><InterfaceText source="Search this collection" /></span><InterfaceInput type="search" placeholder="Search collection" className="h-11 w-full rounded-lg border border-stone-400 bg-white px-3 text-base" value={query} onChange={event => setQuery(event.target.value)} maxLength={200} /></label><button disabled={busy} className="min-h-11 w-11 shrink-0 inline-flex items-center justify-center rounded-lg bg-amber-900 text-sm text-white disabled:opacity-50"><Search size={18} aria-hidden="true" /><span className="sr-only"><InterfaceText source="Search" /></span></button></form>} {...content} Link={Link} onSave={item => { void request("/api/v1/saved", { method: "POST", body: JSON.stringify({ action: "save", kind: item.kind || "cultural", resourceId: item.id }) }).then(() => setNotice("Item saved across your devices.")).catch(reason => setError(reason instanceof Error ? reason.message : "Could not save item.")); }} />
-    {(content.continuation?.records || content.continuation?.dictionary) && <button type="button" disabled={busy} onClick={() => void load(true)} className="mx-6 mb-6 min-h-11 rounded-full bg-amber-900 px-6 py-3 text-white disabled:opacity-50"><InterfaceText source={busy ? "Loading…" : "Load more"} /></button>}
+    {(content.continuation?.records || content.continuation?.dictionary) && <AutoLoadMore onLoad={() => load(true)} busy={busy} error={!!error} />}
   </>;
 }
