@@ -1,0 +1,11 @@
+{
+  "bundleFiles": 31,
+  "platforms": [
+    "android",
+    "ios"
+  ],
+  "mismatches": [],
+  "apkMismatches": [],
+  "apkBytes": 5422098,
+  "apkSha256": "e327c4be0b2f2de1e4410c88eaa11117666e3be97528ec23159ef1d48b9bdc9c"
+}

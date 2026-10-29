@@ -36,7 +36,11 @@ export function createNativeSession(origin: string) {
     onSession: (session, reason) => listeners.forEach(listener => listener(session, reason)),
   });
   async function connect(onError: (message: string) => void) {
-    if (!Capacitor.isNativePlatform()) return () => {};
+    if (!Capacitor.isNativePlatform()) {
+      // Preview has no native credential store, but must still finish startup.
+      listeners.forEach(listener => listener(null, "restore"));
+      return () => {};
+    }
     async function handle(url: string) {
       try { if (await login.acceptCallback(url)) await Browser.close().catch(() => {}); }
       catch (error) { onError(error instanceof Error ? error.message : "Sign-in could not be completed."); }
@@ -55,8 +59,14 @@ export function createNativeSession(origin: string) {
       const launch = await App.getLaunchUrl();
       if (launch?.url) await handle(launch.url);
       await login.resume();
-    } catch (error) { onError(error instanceof Error ? error.message : "The app return link could not be read. Please sign in again."); }
-    return () => { void listener.remove(); void lifecycle.remove(); window.removeEventListener("online", reconnect); clearInterval(interval); };
+      if (!login.accessToken()) listeners.forEach(listener => listener(null, "restore"));
+    } catch (error) {
+      // An unavailable origin/store must not leave a fresh install on Opening.
+      // Keep an existing valid session during a temporary reconnection failure.
+      if (!login.accessToken()) listeners.forEach(listener => listener(null, "restore"));
+      onError(error instanceof Error ? error.message : "The app return link could not be read. Please sign in again.");
+    }
+    return () => { void listener.remove(); void lifecycle.remove(); window.removeEventListener("online", reconnect); window.clearInterval(interval); };
   }
   return { ...login, connect, isNative: Capacitor.isNativePlatform(), subscribe: (listener: (session: NativeSession | null, reason: NativeSessionReason) => void) => {
     listeners.add(listener); return () => { listeners.delete(listener); };

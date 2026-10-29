@@ -11,7 +11,9 @@ const modules = ['dictionary', 'oral_histories', 'riddles', 'folktales', 'songs'
 const account = { id: 'synthetic-audit-user', name: 'Synthetic audit account', email: 'audit@example.invalid', image: null, profileTypes: [], isSuperAdmin: true, isMasterSuperAdmin: true, languageRoles: [] };
 const languages = [{ id: 1, code: 'luo', name: 'Luo', nativeName: 'Dholuo' }, { id: 2, code: 'eng', name: 'English', nativeName: 'English' }];
 const item = { id: '11111111-1111-4111-8111-111111111111', title: 'Synthetic published story for responsive auditing', summary: 'Synthetic content. A long source reference: https://example.invalid/' + 'a'.repeat(180), bodyText: 'Synthetic complete story for interface checks only.', englishTitle: 'Synthetic English title', englishSummary: 'Synthetic English summary', kind: 'cultural', moduleCode: 'oral_histories', moduleName: 'Oral histories', media: [] };
-const report = { apiTransport: 'synthetic; all intercepted', routes: [], layoutIssues: [], runtimeErrors: [], unknownApi: [], interactions: [] };
+const report = { apiTransport: 'synthetic; all intercepted', routes: [], layoutIssues: [], runtimeErrors: [], unknownApi: [], invalidNavigation: [], interactions: [] };
+const reportPath = process.env.EXPERIENCE_REPORT || 'docs/system-audit/experience-browser-2026-10-29.json';
+let failHistory = false, historyReads = 0;
 let activeRoute = '', width = 390, tutorCalls = 0, chatCalls = 0, mediaCalls = 0, guestMode = false;
 function fixture(url, method) {
   const pathname = url.pathname;
@@ -19,7 +21,7 @@ function fixture(url, method) {
   if (pathname === '/api/v1/bootstrap') return { apiVersion: 1, app: { name: 'Luo Heritage', tagline: 'Heritage', version: 'audit', icon: '/icons/luo-heritage-512.png', manifest: '/application.webmanifest' }, selectedLanguage: languages[0], languages, modules, routes: {}, contentFilters: [], contentViews: [] };
   if (pathname === '/api/v1/library') { const code = url.searchParams.get('module'); return { title: 'Synthetic collection', baseName: 'Synthetic collection', moduleCode: code === 'audio_visual' ? 'all' : code, languageId: 1, languageCode: 'luo', languageName: 'Dholuo', canContribute: true, items: [item], categories: modules.map(entry => ({ code: entry.code, name: entry.baseName })), limits: { records: 12, dictionaryEntries: 6 }, continuation: { records: null, dictionary: null } }; }
   if (pathname === '/api/v1/account') return account;
-  if (pathname === '/api/v1/account/conversations') return [];
+  if (pathname === '/api/v1/account/conversations') { historyReads++; return []; }
   if (pathname === '/api/v1/account/settings') return { account, sessions: [], notifications: [] };
   if (pathname === '/api/languages') return languages;
   if (pathname === '/api/interface-copy') return { catalog: {} };
@@ -47,8 +49,12 @@ async function main() {
   const browser = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--no-first-run', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
   let socket;
   try {
-    for (let i = 0; i < 100 && !fs.existsSync(path.join(profile, 'DevToolsActivePort')); i++) await delay(100);
-    const port = fs.readFileSync(path.join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0];
+    let port;
+    for (let i = 0; i < 150; i++) {
+      try { const value = fs.readFileSync(path.join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0]; if (/^\d+$/.test(value)) { port = value; break; } } catch { /* Chrome may still hold its startup file. */ }
+      await delay(100);
+    }
+    if (!port) throw new Error('Chrome debug port did not become available');
     const target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json();
     socket = new WebSocket(target.webSocketDebuggerUrl);
     await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject; });
@@ -58,6 +64,10 @@ async function main() {
       pending.set(id, message => { clearTimeout(timeout); message.error ? reject(new Error(message.error.message)) : resolve(message.result); });
       socket.send(JSON.stringify({ id, method, params }));
     });
+    socket.onclose = () => {
+      for (const callback of pending.values()) callback({ error: { message: 'Audit browser closed' } });
+      pending.clear();
+    };
     socket.onmessage = event => {
       const message = JSON.parse(event.data);
       if (pending.has(message.id)) { const callback = pending.get(message.id); pending.delete(message.id); callback(message); }
@@ -65,16 +75,73 @@ async function main() {
       if (message.method === 'Fetch.requestPaused') {
         const paused = message.params, url = new URL(paused.request.url);
         let payload = fixture(url, paused.request.method); const raw = ['/api/auth/session', '/api/app-version'].includes(url.pathname);
-        const code = payload === undefined ? 503 : 200;
+        const code = failHistory && url.pathname === '/api/v1/account/conversations' ? 503 : payload === undefined ? 503 : 200;
+        if (code === 503 && payload !== undefined) payload = { success: false, error: 'Synthetic history outage' };
         if (payload === undefined) { report.unknownApi.push(url.pathname); payload = { error: 'Synthetic audit fixture is not defined for this endpoint', success: false }; }
-        void send('Fetch.fulfillRequest', { requestId: paused.requestId, responseCode: code, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Cache-Control', value: 'no-store' }], body: Buffer.from(JSON.stringify(raw || code !== 200 ? payload : { success: true, data: payload })).toString('base64') }).catch(() => {});
+        void send('Fetch.fulfillRequest', { requestId: paused.requestId, responseCode: code, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }, { name: 'Cache-Control', value: 'no-store' }, { name: 'Access-Control-Allow-Origin', value: paused.request.headers.Origin || paused.request.headers.origin || 'http://127.0.0.1:4173' }, { name: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' }, { name: 'Access-Control-Allow-Methods', value: 'GET, POST, PATCH, DELETE, OPTIONS' }], body: Buffer.from(JSON.stringify(raw || code !== 200 ? payload : { success: true, data: payload })).toString('base64') }).catch(() => {});
       }
     };
     const evaluate = async expression => { const response = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }); if (response.exceptionDetails) throw new Error((response.exceptionDetails.exception?.description || response.exceptionDetails.text) + ' Expression: ' + expression.slice(0, 180)); return response.result.value; };
     const until = async (expression, label) => { const deadline = Date.now() + 150000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } throw new Error('Timed out: ' + label); };
     await send('Runtime.enable'); await send('Page.enable'); await send('Fetch.enable', { patterns: [{ urlPattern: '*/api/*' }] });
+    if (process.argv.includes('--shortcuts-install')) await send('Page.addScriptToEvaluateOnNewDocument', {source:`window.addEventListener('beforeinstallprompt',event=>{if(!event.auditFixture){event.preventDefault();event.stopImmediatePropagation();}},true);`});
+    if (!process.argv.includes('--native-only')) {
     await send('Page.navigate', { url: base + '/application#/dashboard' });
     await until('!!document.querySelector(".discovery-card")', 'discovery hydration');
+    if (process.argv.includes('--shortcuts-install')) {
+      report.installability = await send('Page.getInstallabilityErrors');
+      const openMenu = async () => {
+        await evaluate(`Array.from(document.querySelectorAll('button[aria-label="Open menu"],button[aria-label="Expand sidebar"]')).find(el=>el.getClientRects().length)?.click()`);
+        await until(`document.querySelector('aside[aria-label="Navigation"]')?.getAttribute('aria-hidden')==='false'`, 'sidebar opens');
+      };
+      for (const targetWidth of [320,390,1440]) {
+        width=targetWidth;
+        await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:width<768});await delay(150);
+        for (const route of ['/dashboard','/dashboard?module=oral_histories','/workspace','/help','/learn']) {
+          activeRoute=route;await evaluate(`location.hash=${JSON.stringify(route)}`);await delay(350);
+          await until(`!!document.querySelector('.floating-chatbot')`, 'chat shortcut on '+route);
+          const metrics=await evaluate(`(()=>{const el=document.querySelector('.floating-chatbot'),r=el.getBoundingClientRect();return {count:document.querySelectorAll('.floating-chatbot').length,visible:getComputedStyle(el).display!=='none',inside:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,clickable:!!document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.floating-chatbot')};})()`);
+          assert.deepEqual(metrics,{count:1,visible:true,inside:true,clickable:true});report.routes.push({route,width,...metrics});
+        }
+      }
+      await evaluate(`document.querySelector('.floating-chatbot').click()`);
+      await until(`!!document.querySelector('.chat-workspace')`, 'shortcut opens CULTURAL HERITAGE');
+      await evaluate('location.hash="/dashboard"');
+      await until('!!document.querySelector(".discovery-card")', 'return from chat');
+      await openMenu();
+      assert.equal(await evaluate(`document.querySelector('aside button,aside a')===document.querySelector('aside [data-app-install] button')`),true);
+      await evaluate(`document.querySelector('[data-app-install] button').click()`);
+      await until(`!!document.querySelector('[aria-label="App installation instructions"]')`, 'manual installation instructions');
+      await evaluate(`{window.auditInstallCalls=0;const offer=new Event('beforeinstallprompt',{cancelable:true});offer.auditFixture=true;offer.prompt=async()=>{window.auditInstallCalls++};offer.userChoice=Promise.resolve({outcome:'dismissed'});window.dispatchEvent(offer)}`);
+      await delay(100);await evaluate(`document.querySelector('[data-app-install] button').click()`);
+      await until(`document.querySelector('[data-app-install] [role=status]')?.textContent.includes('cancelled')`, 'cancelled installation feedback');
+      await evaluate(`document.querySelector('[data-app-install] button').click()`);assert.equal(await evaluate('window.auditInstallCalls'),1);
+      await evaluate(`{const offer=new Event('beforeinstallprompt',{cancelable:true});offer.auditFixture=true;offer.prompt=async()=>{throw Error('Synthetic install failure')};offer.userChoice=Promise.resolve({outcome:'dismissed'});window.dispatchEvent(offer)}`);
+      await delay(100);await evaluate(`document.querySelector('[data-app-install] button').click()`);
+      await until(`document.querySelector('[data-app-install] [role=status]')?.textContent.includes('could not open')`, 'failed install recovery');
+      await evaluate(`window.dispatchEvent(new Event('appinstalled'))`);
+      await until(`!document.querySelector('[data-app-install]')`, 'installed control hides');
+      for(const route of ['/login','/register','/privacy','/about']) {
+        await send('Page.navigate',{url:base+route});await until(`document.querySelectorAll('.floating-chatbot').length===1`, 'global shortcut '+route);report.routes.push({route,width,globalShortcut:true});
+      }
+      report.interactions.push('One visible and clickable chatbot on feeds and shared staff/public screens; global authentication/info shortcut; first sidebar install action; manual guidance, cancellation, consumed-event protection, error recovery and installed state');
+      report.completedAt=new Date().toISOString();
+      assert.deepEqual(report.runtimeErrors,[]);assert.deepEqual(report.unknownApi,[]);
+      console.log(JSON.stringify({checks:report.routes.length,runtimeErrors:report.runtimeErrors,interactions:report.interactions}));
+      await send('Browser.close').catch(()=>{});return;
+    }
+    if (process.argv.includes('--final-platform')) {
+      assert.equal(historyReads, 0, 'startup must not fetch saved history');
+      failHistory = true;
+      await evaluate('location.hash="/account"');
+      await until('document.querySelector("main [role=alert]")?.textContent.includes("Synthetic history outage")', 'independent history failure');
+      assert.equal(await evaluate('document.querySelector("main").textContent.includes("Master Super Admin")'), true);
+      await evaluate('location.hash="/workspace"');
+      await until(`!!document.querySelector('nav[aria-label="Staff workspace sections"]')`, 'staff access survives history outage');
+      assert.equal(await evaluate('!!document.querySelector(".heritage-app > [role=alert]")'), false);
+      failHistory = false;
+      report.interactions.push('Startup skips saved history; history failure preserves the account and staff navigation');
+    }
     if (process.argv.includes('--diagnose')) {
       await send('Emulation.setDeviceMetricsOverride', { width: 320, height: 900, deviceScaleFactor: 1, mobile: true });
       for (const route of ['/research', '/workspace']) {
@@ -179,12 +246,52 @@ async function main() {
     await evaluate(`document.querySelector('a[href="/application#/dashboard"]').click()`);
     await until('!!document.querySelector(".discovery-card")', 'explicit guest library browsing');
     report.interactions.push('Phone entry opens registration and Browse the public library opens guest discovery');
+    }
+    if (process.env.MOBILE_SMOKE_URL && process.argv.includes('--final-platform')) {
+      report.nativeRoutes = [];
+      for (const platform of ['android', 'ios']) {
+        const bridge = await send('Page.addScriptToEvaluateOnNewDocument', { source: `(() => {
+          if (${JSON.stringify(platform)} === 'android') window.androidBridge = {};
+          else window.webkit = {messageHandlers:{bridge:{}}};
+          window.Capacitor = {
+            PluginHeaders: [
+              {name:'SecureAuthStorage',methods:[{name:'read',rtype:'promise'},{name:'write',rtype:'promise'}]},
+              {name:'DevelopmentConnection',methods:[{name:'canUseUsbAuth',rtype:'promise'}]},
+              {name:'App',methods:[{name:'getLaunchUrl',rtype:'promise'},{name:'addListener',rtype:'callback'},{name:'removeListener',rtype:'promise'}]}
+            ], nativeCallback: () => 'synthetic-listener',
+            nativePromise: async (name,method) => name==='SecureAuthStorage'&&method==='read'?{value:null}:name==='DevelopmentConnection'?{enabled:true}:{}
+          };
+        })();` });
+        width = 390;
+        await send('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true });
+        activeRoute = platform + ':fresh-install';
+        await send('Page.navigate', {url:process.env.MOBILE_SMOKE_URL + '/?platform-audit=' + platform});
+        await until(`document.querySelector('main')?.textContent.includes('Create account')`, 'fresh native registration ' + platform);
+        await evaluate(`document.querySelector('a[href="#/dashboard"]').click()`);
+        await until('!!document.querySelector(".discovery-card")', 'native guest browsing ' + platform);
+        assert.equal(await evaluate('window.Capacitor.getPlatform()'), platform);
+        for (const route of ['/dashboard','/dashboard?module=oral_histories','/learn','/courses','/research','/places','/knowledge','/chatbot','/help','/settings','/workspace']) {
+          activeRoute = platform + ':' + route;
+          await evaluate(`location.hash=${JSON.stringify(route)}`); await delay(350);
+          await until(`!Array.from(document.querySelectorAll('main [role=status]')).some(el=>/Loading|Bringing the collection/i.test(el.textContent))`, 'native screen ' + route);
+          const metrics = await evaluate(`({page:document.documentElement.scrollWidth,viewport:innerWidth,content:document.querySelector('main').scrollWidth,available:document.querySelector('main').clientWidth})`);
+          report.nativeRoutes.push({platform, route, ...metrics});
+          if (metrics.page > metrics.viewport + 1 || metrics.content > metrics.available + 2) report.layoutIssues.push({platform,route,...metrics});
+        }
+        await evaluate('location.hash="/dashboard"'); await delay(200);
+        await evaluate('location.hash="/help"'); await delay(200);
+        await evaluate('history.back()');
+        await until('location.hash==="#/dashboard"', 'native navigation history ' + platform);
+        report.interactions.push(platform + ' bridge simulation: fresh registration, guest browsing, shared screens and back navigation');
+        await send('Page.removeScriptToEvaluateOnNewDocument', {identifier:bridge.identifier});
+      }
+    }
     report.completedAt = new Date().toISOString();
     report.unknownApi = [...new Set(report.unknownApi)];
-    fs.writeFileSync('docs/system-audit/experience-browser-2026-10-29.json', JSON.stringify(report, null, 2));
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(JSON.stringify({ routesChecked: report.routes.length, layoutIssues: report.layoutIssues, runtimeErrors: report.runtimeErrors, unknownApi: report.unknownApi, interactions: report.interactions, sourceLinkWorks: report.sourceLinkWorks, invalidNavigation: report.invalidNavigation }));
     await send('Browser.close').catch(() => {});
-    if (report.layoutIssues.length || report.runtimeErrors.length || !report.sourceLinkWorks || report.invalidNavigation.length || report.unknownApi.length) process.exitCode = 1;
-  } finally { if (!process.argv.includes('--diagnose')) fs.writeFileSync('docs/system-audit/experience-browser-2026-10-29.json', JSON.stringify(report, null, 2)); socket?.close(); browser.kill(); }
+    if (report.layoutIssues.length || report.runtimeErrors.length || (!process.argv.includes('--native-only') && !report.sourceLinkWorks) || report.invalidNavigation.length || report.unknownApi.length) process.exitCode = 1;
+  } finally { if (!process.argv.includes('--diagnose')) fs.writeFileSync(reportPath, JSON.stringify(report, null, 2)); socket?.close(); browser.kill(); }
 }
-main().catch(error => { report.auditError = error.message; fs.writeFileSync('docs/system-audit/experience-browser-2026-10-29.json', JSON.stringify(report, null, 2)); console.error(error.message); process.exitCode = 1; });
+main().catch(error => { report.auditError = error.message; fs.writeFileSync(reportPath, JSON.stringify(report, null, 2)); console.error(error.message); process.exitCode = 1; });

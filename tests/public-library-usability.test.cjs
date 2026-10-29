@@ -47,15 +47,16 @@ test('collection search belongs inside the sticky toolbar and empty state has on
   assert.match(html, /data-bottom-controls/);
 });
 
-test('English view displays the paired English title and downloadable full text', () => {
+test('English feed displays the paired English title and complete-item download', () => {
   const actual = React.useState;
   const load = loader({ react: { ...React, useState: initial => actual(initial === 'luo' ? 'eng' : initial) } });
   const { ModuleContentView } = load('src/components/shared/module-content-view.tsx');
   const Link = ({ href, children }) => React.createElement('a', { href }, children);
   const html = renderToStaticMarkup(React.createElement(ModuleContentView, { title: 'Stories', baseName: 'Stories', languageName: 'Dholuo', languageCode: 'luo', languageId: 1, moduleCode: 'folktales', items: [{ id: 'story', title: 'Local title', englishTitle: 'English title', summary: 'Local summary', englishSummary: 'English summary', englishBodyText: 'The complete English story', media: [{ id: 'audio', type: 'audio', url: '/api/media/audio/file' }] }], Link }));
-  assert.match(html, /<h3[^>]*title="English title"/);
-  assert.match(html, /download=1/);
-  assert.match(html, /The%20complete%20English%20story/);
+  assert.match(html, /<h2><button[^>]*>English title<\/button><\/h2>/);
+  assert.match(html, /English summary/);
+  assert.match(html, /href="\/api\/v1\/download\?id=story&amp;kind=cultural"/);
+  assert.match(html, /aria-label="Explore this item"/);
 });
 
 test('public branding exposes approved presentation fields without exposing service settings', async () => {

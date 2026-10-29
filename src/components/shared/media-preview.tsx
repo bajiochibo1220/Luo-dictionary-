@@ -23,12 +23,20 @@ export function MediaAudio(props: AudioHTMLAttributes<HTMLAudioElement>) {
 }
 
 export function MediaImage({ src = "", alt = "", sizes = "(max-width: 767px) 100vw, 640px", ...props }: ImgHTMLAttributes<HTMLImageElement>) {
-  const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [src]);
-  const original = src.split("?")[0];
-  return <img loading="lazy" decoding="async" {...props} style={{ objectFit: "contain", backgroundColor: "#000", ...props.style }} src={failed ? original : src}
-    {...(!failed ? responsiveMediaSources(src) : {})} sizes={sizes} alt={alt}
-    onError={event => { if (!failed && original !== src) setFailed(true); props.onError?.(event); }} />;
+  const [fallbackFor, setFallbackFor] = useState<string | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
+  useEffect(() => { setFallbackFor(null); setUnavailable(false); }, [src]);
+  const original = originalMediaSource(src) || src;
+  const fallback = fallbackFor === src;
+  return <><img loading="lazy" decoding="async" {...props} style={{ objectFit: "contain", backgroundColor: "#000", ...props.style }} src={fallback ? original : src}
+    {...(!fallback ? responsiveMediaSources(src) : {})} sizes={sizes} alt={alt}
+    onLoad={event => { setUnavailable(false); props.onLoad?.(event); }}
+    onError={event => {
+      if (!fallback && original !== src) { setFallbackFor(src); return; }
+      setUnavailable(true); props.onError?.(event);
+    }} />
+    {unavailable && !props.onError && <span role="alert" className="media-image-error"><InterfaceText source="This image could not load. Check your connection or open the item to download the original." /></span>}
+  </>;
 }
 
 // Offscreen videos must not each fetch metadata and posters. Mount their sources

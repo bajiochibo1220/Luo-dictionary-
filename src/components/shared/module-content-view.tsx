@@ -138,7 +138,7 @@ export function ModuleContentView({
         <GridView viewLanguageCode={viewLanguageCode} items={filteredItems} mediaForCard={mediaForCard} onOpen={item => { emitActivity({eventType:"view",recordId:item.id}); setSelectedItem(item); }} />
       )}
 
-      {selectedItem && <ContentDialog viewLanguageCode={viewLanguageCode} item={selectedItem} onSave={onSave} languageCode={languageCode} onClose={() => setSelectedItem(null)} />}
+      {selectedItem && <ContentDialog key={selectedItem.id} viewLanguageCode={viewLanguageCode} item={selectedItem} items={items} onRelated={setSelectedItem} onSave={onSave} languageCode={languageCode} onClose={() => setSelectedItem(null)} />}
     </div></DownloadOrigin.Provider>
   );
 }
@@ -155,6 +155,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave, onOpen,
   const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
   useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
   const description = showEnglish ? (expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText) : expanded ? item.bodyText || item.summary : item.summary || item.bodyText;
+  const overview = showEnglish ? item.englishSummary : item.summary;
   return (
     <article className={`library-feed-card ${media.length ? "has-media" : ""} ${detail ? "is-detail" : ""}`}>
       <LibraryMediaGallery item={item} media={media} onOpen={onOpen} />
@@ -170,7 +171,8 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave, onOpen,
           </button>}
         </div>
         {!showEnglish && !detail && item.englishTitle && <p className="discovery-english-title" lang="en" contentEditable={false}>{item.englishTitle}</p>}
-        {description && <div className={`library-item-description ${expanded ? "is-expanded" : ""} space-y-2`}><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
+        {detail && overview && overview !== description && <p className="text-sm leading-relaxed whitespace-pre-wrap">{overview}</p>}
+        {description && <div className={`library-item-description ${expanded ? "is-expanded" : ""} space-y-2`}><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{!detail && (description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
         {!showEnglish && languageCode !== "eng" && (detail || item.englishBodyText || item.englishSummary) && (!hasLinkedTranscripts || item.englishBodyText || item.englishSummary) && <div lang="en" translate="no" contentEditable={false} className="library-english-preview space-y-1 border-t border-stone-200 pt-2 text-xs text-stone-700">
           <p className="text-xs font-semibold uppercase tracking-wide"><InterfaceText source="English" /></p>
           {detail && item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
@@ -240,11 +242,13 @@ export function LibraryItemDialog({ downloadOrigin, ...props }: Parameters<typeo
   return <DownloadOrigin.Provider value={downloadOrigin || ""}><ContentDialog {...props} /></DownloadOrigin.Provider>;
 }
 
-function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode }: { viewLanguageCode: string; item: ContentItem; languageCode: string; onClose: () => void; onSave?: (item: ContentItem) => void }) {
+function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode, items = [], onRelated }: { viewLanguageCode: string; item: ContentItem; languageCode: string; onClose: () => void; onSave?: (item: ContentItem) => void; items?: ContentItem[]; onRelated?: (item: ContentItem) => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const related = items.filter(candidate => candidate.id !== item.id && candidate.moduleCode === item.moduleCode).slice(0, 4);
   useEffect(() => { const value = dialog.current; if (value && !value.open) value.showModal(); }, []);
   return <dialog ref={dialog} onClose={onClose} className="library-content-dialog max-h-[90dvh] w-[min(96vw,90rem)] overflow-auto rounded-xl bg-[#f4f7f8] p-3 text-stone-900 backdrop:bg-black/60">
     <button type="button" autoFocus onClick={() => dialog.current?.close()} className="mb-4 min-h-11 rounded-full bg-amber-900 px-5 py-2 text-white"><InterfaceText source="Close details" /></button>
-    <FeedCard item={{ ...item, summary: item.bodyText || item.summary }} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} detail />
+    <FeedCard item={item} media={item.media} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} detail />
+    {onRelated && related.length > 0 && <nav aria-label="More from this collection" className="mt-4 rounded-xl border border-stone-300 bg-white p-4"><h3 className="font-semibold"><InterfaceText source="More from this collection" /></h3><div className="mt-2 grid gap-2 sm:grid-cols-2">{related.map(candidate => <button type="button" key={candidate.id} onClick={() => onRelated(candidate)} className="min-h-11 rounded-lg border border-stone-200 p-3 text-left underline">{viewLanguageCode === "eng" ? candidate.englishTitle || candidate.title : candidate.title}</button>)}</div></nav>}
   </dialog>;
 }

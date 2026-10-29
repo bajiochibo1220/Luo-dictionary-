@@ -1,0 +1,156 @@
+{
+  "apiTransport": "synthetic; all intercepted",
+  "routes": [
+    {
+      "route": "/dashboard",
+      "width": 320,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 320,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/workspace",
+      "width": 320,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/help",
+      "width": 320,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/learn",
+      "width": 320,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/dashboard",
+      "width": 390,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 390,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/workspace",
+      "width": 390,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/help",
+      "width": 390,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/learn",
+      "width": 390,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/dashboard",
+      "width": 1440,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 1440,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/workspace",
+      "width": 1440,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/help",
+      "width": 1440,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/learn",
+      "width": 1440,
+      "count": 1,
+      "visible": true,
+      "inside": true,
+      "clickable": true
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "globalShortcut": true
+    },
+    {
+      "route": "/register",
+      "width": 1440,
+      "globalShortcut": true
+    },
+    {
+      "route": "/privacy",
+      "width": 1440,
+      "globalShortcut": true
+    },
+    {
+      "route": "/about",
+      "width": 1440,
+      "globalShortcut": true
+    }
+  ],
+  "layoutIssues": [],
+  "runtimeErrors": [],
+  "unknownApi": [],
+  "invalidNavigation": [],
+  "interactions": [
+    "One visible and clickable chatbot on feeds and shared staff/public screens; global authentication/info shortcut; first sidebar install action; manual guidance, cancellation, consumed-event protection, error recovery and installed state"
+  ],
+  "installability": {
+    "installabilityErrors": []
+  },
+  "completedAt": "2026-10-29T17:30:08.741Z"
+}

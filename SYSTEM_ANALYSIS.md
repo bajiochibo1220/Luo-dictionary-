@@ -2,6 +2,12 @@
 
 > Historical audit before repairs. Implemented fixes and current verification are documented in [REPAIR_REPORT.md](REPAIR_REPORT.md); findings below describe the original state, not the repaired state.
 
+> Current cross-platform final review: [web, Android and iOS verification, 29 October 2026](docs/system-audit/final-platform-review-2026-10-29.md).
+
+> Latest interface follow-up: [chatbot shortcut and installation verification](docs/system-audit/shortcuts-and-install-2026-10-29.md).
+
+> Latest authentication and media follow-up: [compact feed descriptions, account checks and media verification](docs/system-audit/auth-media-feed-2026-10-29.md).
+
 Review date: 11 October 2026. Scope: local source review, TypeScript checking, lint/build checks, and isolated route checks with mocked sessions and database records. This is not a live production penetration test. Application source and database records were not changed.
 
 ## What the system does

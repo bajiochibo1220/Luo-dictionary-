@@ -1,0 +1,57 @@
+{
+  "databaseWrites": 0,
+  "discoveryItems": 12,
+  "visibleMedia": 9,
+  "items": [
+    {
+      "id": "ed3f3294-450a-4dc7-a75f-e2d0f25df672",
+      "attachments": 0
+    },
+    {
+      "id": "24728580-213c-42e9-bca2-e2c98e330b11",
+      "attachments": 1
+    },
+    {
+      "id": "1689da77-a5ad-41f9-ad7a-1207a9fe76cb",
+      "attachments": 1
+    },
+    {
+      "id": "bda7ce74-bccb-4ce3-9b0d-3293bc4e7210",
+      "attachments": 1
+    },
+    {
+      "id": "4bff9096-efc6-42e9-96ec-bd68f248f06a",
+      "attachments": 1
+    },
+    {
+      "id": "526ff5b1-24e8-47a6-9ab2-34e36b01672c",
+      "attachments": 1
+    },
+    {
+      "id": "4daa5b08-85ea-4f51-b3a2-33053b844399",
+      "attachments": 1
+    },
+    {
+      "id": "c6987b7b-94e0-4e2a-aadb-a0608476ceea",
+      "attachments": 1
+    },
+    {
+      "id": "6be51b40-9b36-4474-923e-5b8ab3e75691",
+      "attachments": 1
+    },
+    {
+      "id": "35ba60ac-9e27-4c90-aa25-d9e6bf7e8df9",
+      "attachments": 0
+    },
+    {
+      "id": "62ee8bb0-c9fd-43d2-88ab-0f675925f168",
+      "attachments": 0
+    },
+    {
+      "id": "2aea3369-ea98-45d9-a0a3-2542a585b209",
+      "attachments": 1
+    }
+  ],
+  "deliveryNote": "Stored asset URLs are internal relative proxy routes, not external provider URLs. Fetching them as absolute URLs was an invalid diagnostic, not a missing-file result. Actual published image delivery is checked through the application proxy in live-media-browser-2026-10-29.json.",
+  "recordingsNote": "The user confirmed that no audio or video recordings are currently uploaded. Future playback is verified with valid synthetic video/audio through the shared feed."
+}

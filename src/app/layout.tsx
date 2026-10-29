@@ -4,6 +4,8 @@ import { AuthProvider } from "@/components/providers/session-provider";
 import { AppInstallationProvider } from "@/components/pwa/app-installation";
 import { AppUpdatesProvider } from "@/components/pwa/app-updates";
 import { APP_NAME } from "@/lib/brand";
+import { FloatingChatbot } from "@/components/layout/floating-chatbot";
+import Script from "next/script";
 import { WebInterfaceLanguageProvider } from "@/components/shared/web-interface-language";
 import "./globals.css";
 
@@ -33,9 +35,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head><Script src="/install-prompt.js" strategy="beforeInteractive" /></head>
       <body className="font-sans antialiased">
         <WebInterfaceLanguageProvider><AppUpdatesProvider currentVersion={process.env.NEXT_PUBLIC_APP_VERSION || "development"}>
-          <AppInstallationProvider><AuthProvider>{children}</AuthProvider></AppInstallationProvider>
+          <AppInstallationProvider><AuthProvider>{children}<FloatingChatbot /></AuthProvider></AppInstallationProvider>
           <Toaster richColors position="bottom-center" closeButton />
         </AppUpdatesProvider></WebInterfaceLanguageProvider>
       </body>

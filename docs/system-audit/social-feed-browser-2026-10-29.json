@@ -422,8 +422,10 @@
     }
   ],
   "interactions": [
+    "Inline underlined more/less controls expand and restore one-line phone and two-line desktop previews across every tested layout",
     "Portrait and panoramic images and video keep their full frames with black unused space",
     "Save uses one API request and confirms the saved state",
+    "Explore preserves usage, meaning, place and overview; related collection buttons open complete details",
     "Full 216-turn reader, complete text download, honest English fallback and dialog dismissal",
     "Horizontal attachment paging preserves video/audio/document access; sliding or scrolling away pauses playback; details toggle restores overlays"
   ],
@@ -431,5 +433,5 @@
   "unexpectedApis": [],
   "liveWrites": 0,
   "readingRequests": 1,
-  "completedAt": "2026-10-29T16:07:19.776Z"
+  "completedAt": "2026-10-29T18:17:46.661Z"
 }

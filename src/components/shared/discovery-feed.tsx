@@ -20,9 +20,12 @@ export function mixDiscoveryItems(items: ContentItem[]) {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(item);
   }
+  // Start with a visual collection when available; retain chronological order
+  // inside each collection and keep every text-only record in the rotation.
+  const ordered = [...groups.values()].sort((a, b) => Number(b[0].media.length > 0) - Number(a[0].media.length > 0));
   const mixed: ContentItem[] = [];
   for (let index = 0; mixed.length < items.length; index++) {
-    for (const group of groups.values()) if (group[index]) mixed.push(group[index]);
+    for (const group of ordered) if (group[index]) mixed.push(group[index]);
   }
   return mixed;
 }
@@ -106,7 +109,7 @@ export function DiscoveryFeed({ request, languageCode, languageName = "Dholuo", 
       {!signedIn && <div className="discovery-welcome"><Bookmark size={23} aria-hidden="true" /><h2><InterfaceText source="A place for your favourites." /></h2><p><InterfaceText source="Browse freely. Create a free account to save what you love and come back to it." /></p>{join}</div>}
       <nav aria-label="More heritage experiences"><h2><InterfaceText source="Follow your curiosity" /></h2>{[["/explore", "All collections"], ["/learn", "Learn the language"], ["/places", "Explore cultural places"], ["/contribute", "Share your heritage"]].map(([href, label]) => <Link key={href} href={href}><NavigationIcon href={href} size={19} /><InterfaceText source={label} /><ArrowUpRight size={15} aria-hidden="true" /></Link>)}</nav>
     </aside></div>
-    {selected && <LibraryItemDialog key={`${languageCode}:${selected.id}`} item={selected} languageCode={languageCode} viewLanguageCode={languageCode} downloadOrigin={downloadOrigin} onClose={() => setSelected(null)} onSave={signedIn ? item => void save(item) : undefined} />}
+    {selected && <LibraryItemDialog key={`${languageCode}:${selected.id}`} item={selected} items={library?.items} onRelated={setSelected} languageCode={languageCode} viewLanguageCode={languageCode} downloadOrigin={downloadOrigin} onClose={() => setSelected(null)} onSave={signedIn ? item => void save(item) : undefined} />}
   </section>;
 }
 

@@ -9,7 +9,6 @@ import { getDefaultPublicLanguage, getPublicModules } from "@/lib/public-navigat
 import { AppShell } from "@/components/layout/app-shell";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppTopbar } from "@/components/layout/app-topbar";
-import { FloatingChatbot } from "@/components/layout/floating-chatbot";
 import { SidebarProvider } from "@/components/layout/sidebar-controls";
 
 // Account data and maintenance settings are read per request, never at build time.
@@ -89,7 +88,6 @@ export default async function DashboardLayout({
           {children}
         </AppShell>
       </Suspense>
-      <FloatingChatbot />
     </div>
     </SidebarProvider>
   );

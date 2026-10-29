@@ -1,0 +1,23 @@
+{
+  "regressionTests": {
+    "passed": 408,
+    "failed": 0,
+    "command": "node --test --test-isolation=none tests/*.test.cjs",
+    "note": "PowerShell recorded the expected auth-denial test diagnostic on stderr; the Node test report has 408 passes and zero failures."
+  },
+  "focusedTestsPassed": 17,
+  "productionWebRoutesChecked": 140,
+  "nativeBridgeRoutesChecked": 22,
+  "webBuild": "passed",
+  "mobileBuild": "passed",
+  "androidAssembleAndLint": "passed",
+  "iOSCompilation": "not run; requires macOS/Xcode",
+  "physicalDeviceAcceptance": "not run; no Android device connected and no iPhone environment",
+  "mobileEntryJavaScript": {
+    "beforeBytesApprox": 755500,
+    "afterBytesApprox": 521110,
+    "reductionPercentApprox": 31
+  },
+  "bundleEvidence": "final-native-bundles-2026-10-29.json",
+  "deployment": "local changes only"
+}

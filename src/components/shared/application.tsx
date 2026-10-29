@@ -2,11 +2,7 @@
 import { AppInstallationProvider } from "@/components/pwa/app-installation";
 import { EnglishInterface, InterfaceButton, InterfaceLanguageProvider, InterfaceLanguageSelector, InterfaceOption, InterfaceSelect, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
 import { ActivityTelemetry } from "./activity-telemetry";
-import { PlacesExplorer } from "./places-explorer";
-import { KnowledgeExplorer } from "./knowledge-explorer";
-import { AiToolsWorkspace } from "./ai-tools-workspace";
-import { TutorWorkspace } from "./tutor-workspace";
-import { createContext, useContext, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, createContext, useContext, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AppSidebarView } from "@/components/shared/app-sidebar-view";
 import { ExplorePathways } from "./explore-pathways";
 import { DashboardOverview } from "@/components/shared/dashboard-overview";
@@ -16,12 +12,9 @@ import { PaginatedLibrary } from "@/components/shared/paginated-library";
 import { AccountHistoryView } from "@/components/shared/account-history-view";
 import { SharedChatInterface } from "@/components/shared/chat-interface";
 import { AccountSettings } from "@/components/shared/account-settings";
-import { ManagementWorkspace } from "@/components/shared/management-workspace";
 import { SavedItems } from "@/components/shared/saved-items";
 import { ContributionHub } from "@/components/shared/contribution-hub";
 import { Toaster } from "sonner";
-import { EducationHub } from "@/components/shared/education-hub";
-import { ResearchLibrary } from "@/components/shared/research-library";
 import { LearningHub } from "@/components/shared/learning-hub";
 import { SidebarPanel, SidebarProvider, SidebarToggle, useSidebar } from "@/components/layout/sidebar-controls";
 import type { AppBootstrap, AppLibrary } from "@/lib/app-contract";
@@ -31,9 +24,18 @@ import { DismissiblePopover, PopoverClose } from "./dismissible-popover";
 import { PartnerBranding } from "./partner-branding";
 import { AccountHelp } from "./account-help";
 import { applicationScreenHref } from "@/lib/app-navigation";
+import { ChatbotShortcut } from "./chatbot-shortcut";
 import { BrandMark } from "./brand-mark";
+import { ScreenBoundary } from "./screen-boundary";
 import { APP_NAME } from "@/lib/brand";
 import { loginDestination, nativeLoginDestination } from "@/lib/login-destination";
+const PlacesExplorer = lazy(() => import("./places-explorer").then(module => ({ default: module.PlacesExplorer })));
+const KnowledgeExplorer = lazy(() => import("./knowledge-explorer").then(module => ({ default: module.KnowledgeExplorer })));
+const AiToolsWorkspace = lazy(() => import("./ai-tools-workspace").then(module => ({ default: module.AiToolsWorkspace })));
+const TutorWorkspace = lazy(() => import("./tutor-workspace").then(module => ({ default: module.TutorWorkspace })));
+const ManagementWorkspace = lazy(() => import("./management-workspace").then(module => ({ default: module.ManagementWorkspace })));
+const ResearchLibrary = lazy(() => import("./research-library").then(module => ({ default: module.ResearchLibrary })));
+const EducationHub = lazy(() => import("./education-hub").then(module => ({ default: module.EducationHub })));
 const ApplicationContext = createContext<ApplicationAdapters | null>(null);
 function useAdapters() { const value = useContext(ApplicationContext); if (!value) throw new Error("Application adapters are missing."); return value; }
 export function SharedApplication({ adapters }: { adapters: ApplicationAdapters }) {
@@ -71,6 +73,8 @@ function App() {
   const [history, setHistory] = useState<ConversationHistory>([]);
   const [archived, setArchived] = useState(false);
   const [personalLoading, setPersonalLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
   const [personalError, setPersonalError] = useState("");
   const [signingIn, setSigningIn] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -113,7 +117,7 @@ function App() {
         setEntry("registration");
         if (!nativeSession.isNative) location.replace("/register");
       }
-      if (reason !== "renew") { setProfile(null); setHistory([]); setPersonalLoading(false); setArchived(false); }
+      if (reason !== "renew") { setProfile(null); setHistory([]); setPersonalLoading(false); setHistoryError(""); setArchived(false); }
       setPersonalError("");
       if (value && (reason === "sign-in" || reason === "restore" && !location.hash)) location.hash = "/dashboard";
     });
@@ -138,10 +142,10 @@ function App() {
     const controller = new AbortController();
     let active = true;
     const timeout = window.setTimeout(() => controller.abort(new Error("The connection timed out. Please try again.")), READ_TIMEOUT_MS);
-    setPersonalLoading(true); setPersonalError(""); setHistory([]);
-    Promise.all([account(controller.signal), conversations(archived, controller.signal)])
-      .then(([user, chats]) => { if (active && expectedIdentity === identityEpoch.current) {
-        setProfile(user); setHistory(chats);
+    setPersonalLoading(true); setPersonalError("");
+    account(controller.signal)
+      .then(user => { if (active && expectedIdentity === identityEpoch.current) {
+        setProfile(user);
         if (pendingNativeLanding.current) {
           pendingNativeLanding.current = false;
           if (location.hash === "#/dashboard") location.hash = nativeLoginDestination({ user });
@@ -150,7 +154,20 @@ function App() {
       .catch(reason => { if (active && expectedIdentity === identityEpoch.current) { setProfile(null); setPersonalError(reason instanceof Error ? reason.message : "Unable to load your account."); } })
       .finally(() => { clearTimeout(timeout); if (active && expectedIdentity === identityEpoch.current) setPersonalLoading(false); });
     return () => { active = false; clearTimeout(timeout); controller.abort(); };
-  }, [session, isAccount, archived, retry, account, conversations]);
+  }, [session, retry, account]);
+  useEffect(() => {
+    if (!session || !isAccount) { setHistoryLoading(false); return; }
+    const expectedIdentity = identityEpoch.current;
+    const controller = new AbortController();
+    let active = true;
+    const timeout = window.setTimeout(() => controller.abort(), READ_TIMEOUT_MS);
+    setHistoryLoading(true); setHistoryError(""); setHistory([]);
+    conversations(archived, controller.signal)
+      .then(chats => { if (active && expectedIdentity === identityEpoch.current) setHistory(chats); })
+      .catch(reason => { if (active && expectedIdentity === identityEpoch.current) setHistoryError(reason instanceof Error ? reason.message : "Unable to load saved chats."); })
+      .finally(() => { clearTimeout(timeout); if (active && expectedIdentity === identityEpoch.current) setHistoryLoading(false); });
+    return () => { active = false; clearTimeout(timeout); controller.abort(); };
+  }, [session, isAccount, archived, retry, conversations]);
   async function signIn(intent: "login" | "register" = "login") {
     setSigningIn(true); setPersonalError("");
     try { if (!nativeSession.isNative) { try { sessionStorage.setItem("application-return", "/application" + (location.hash || "")); } catch {} } await nativeSession.start(intent); }
@@ -183,7 +200,7 @@ function App() {
   useEffect(() => { closeMobile?.(); contentPanel.current?.scrollTo({ top: 0, left: 0 }); }, [route, closeMobile]);
 
   if (entry === "checking") return <p role="status" className="p-8"><InterfaceText source="Opening Luo Heritage?" /></p>;
-  if (entry === "registration") return <main className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-stone-50 p-6 text-center text-teal-950">
+  if (entry === "registration") return <><ChatbotShortcut href="#/chatbot" /><main className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-stone-50 p-6 text-center text-teal-950">
     <img src={artwork} alt="Luo Heritage" className="h-40 w-40 object-contain" />
     <h1 className="font-serif text-3xl"><InterfaceText source="Get started" /></h1>
     <p><InterfaceText source="Create an account to join the community" /></p>
@@ -191,7 +208,7 @@ function App() {
     <button type="button" onClick={() => void signIn("login")} className="min-h-11 underline"><InterfaceText source="Log in" /></button>
     <a href="#/dashboard" className="min-h-11 py-3 font-semibold underline"><InterfaceText source="Browse the public library" /></a>
     {personalError && <p role="alert">{personalError}</p>}
-  </main>;
+  </main></>;
   return <EnglishInterface enabled={isWorkspace || isChat && isStaff}><div className="heritage-app flex h-dvh overflow-hidden flex-col bg-[#b89a68]">
     {nativeSession.isNative && <Toaster richColors />}
     <header className="institution-masthead relative z-30 flex shrink-0 items-center gap-2 border-b border-amber-100/15 bg-[#5c3a1c] px-3 py-2 text-amber-50 pt-safe">
@@ -208,15 +225,17 @@ function App() {
       <PartnerBranding request={featureRequest}/>
       <SidebarPanel width={280}><AppSidebarView staffHref={isStaff ? dashboardHref : undefined} modules={configuration?.modules ?? []} pathname={new URL(route, "https://client.local").pathname} activeModule={activeModule} communityControls={<label className="block px-5 py-3 text-sm text-amber-50"><InterfaceText source="Community" /><InterfaceSelect aria-label="Choose community" value={language} onChange={event => { setLanguage(event.target.value); sidebar?.closeMobile(); }} className="mt-2 min-h-11 w-full rounded-lg border border-amber-100/20 bg-[#6b4724] px-3">{(configuration?.languages ?? [{ code: "luo", nativeName: "Dholuo" }]).filter(item => item.code !== "eng").map(item => <InterfaceOption key={item.code} value={item.code}>{item.nativeName}</InterfaceOption>)}</InterfaceSelect></label>} onNavigate={sidebar?.closeMobile} Link={Link} /></SidebarPanel>
       <ActivityTelemetry request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} route={route} />
-      <main ref={contentPanel} className={`heritage-canvas relative min-h-0 min-w-0 flex-1 ${isChat ? "overflow-hidden" : "overflow-y-auto pb-safe heritage-pattern"}`}>
+      <main ref={contentPanel} className={`heritage-canvas relative min-h-0 min-w-0 flex-1 pb-safe ${isChat ? "overflow-hidden" : "overflow-y-auto heritage-pattern"}`}>
+        <ScreenBoundary key={route}><Suspense fallback={<p role="status" className="p-5"><InterfaceText source="Loading…" /></p>}>
         {isDiscovery ? <DiscoveryFeed key={`${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageCode={language} languageName={configuration?.selectedLanguage.code === language ? configuration.selectedLanguage.nativeName : language === "luo" ? "Dholuo" : language} signedIn={!!session} downloadOrigin={apiOrigin} Link={Link} onRegister={nativeSession.isNative ? () => { void signIn("register"); } : undefined} /> : !session && (isSaved || isSettings || isAccount || isWorkspace || isContribution) ? <AccountRequired onSignIn={() => { void signIn(); }} /> : routeUrl.pathname === "/explore" ? <ExplorePathways Link={Link} request={featureRequest} languageCode={language} initialSubject={routeUrl.searchParams.get("subject") || ""} /> : routeUrl.pathname === "/help" ? session&&personalLoading ? <p role="status" className="p-5"><InterfaceText source="Loading your account guide..."/></p> : <AccountHelp account={profile} Link={Link} workspaceHref="/workspace"/> : routeUrl.pathname === "/not-found" ? <div className="space-y-4 p-5"><h1 className="font-serif text-2xl"><InterfaceText source="This page is unavailable"/></h1><Link href="/dashboard" className="inline-flex min-h-11 items-center underline"><InterfaceText source="Open the public library"/></Link></div> : <>
         {routeUrl.pathname === "/places" ? <PlacesExplorer key={language} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} /> : routeUrl.pathname === "/knowledge" ? <KnowledgeExplorer key={language} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} /> : routeUrl.pathname === "/ai-tools" ? <AiToolsWorkspace signedIn={!!session} onSignIn={() => { void signIn(); }} key={`${language}:${profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} /> : routeUrl.pathname === "/tutor" ? <TutorWorkspace signedIn={!!session} onSignIn={() => { void signIn(); }} Link={Link} key={`${language}:${profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} languageCode={language} /> : isResearch ? <ResearchLibrary Link={Link} key={`${language}:${profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} languageId={configuration?.selectedLanguage.id ?? 1} account={profile} /> : isEducation ? <EducationHub key={`${routeUrl.pathname}:${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialView={routeUrl.pathname === "/classrooms" ? "classes" : "courses"} onOpenResource={(id, resourceLanguageId) => { const target = configuration?.languages.find(item => item.id === resourceLanguageId); if (target) setLanguage(target.code); location.hash = `/learn?resource=${encodeURIComponent(id)}`; }} /> : isWorkspace ? <ManagementWorkspace onPasswordChanged={() => { void signOut(); }} languages={configuration?.languages ?? []} key={session?.accountId || profile?.id || "guest"} request={featureRequest} transport={featureFetch} account={profile} languageId={configuration?.selectedLanguage.id ?? 1} englishLanguageId={configuration?.languages.find(item => item.code === "eng")?.id} /> : isSaved ? <SavedItems key={profile?.id || "guest"} request={featureRequest} Link={Link} /> : isContribution ? <ContributionHub key={`${language}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} transport={featureFetch} origin={apiOrigin} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} initialModule={contributionModule} /> : isSettings ? <AccountSettings key={session?.accountId || profile?.id || "guest"} request={featureRequest} onSignedOut={() => { void signOut(); }} recoveryHref={new URL("/account-recovery", apiOrigin).href} /> : isLearn ? <LearningHub languageCode={language} initialKind={routeUrl.searchParams.get("section") || "lesson"} initialResourceId={initialResourceId} key={`${language}:${routeUrl.searchParams.get("section") || "lesson"}:${initialResourceId || "list"}:${session?.accountId || profile?.id || "guest"}`} request={featureRequest} languageId={configuration?.selectedLanguage.id ?? 1} userId={session ? profile?.id || session.accountId : undefined} origin={apiOrigin} /> : isChat ? <SharedChatInterface key={`${language}:${session?.accountId ?? session?.refreshToken?.split(".")[0] ?? session?.accessToken ?? "guest"}`} languageCode={isStaff ? "eng" : language} cultureCode={language} guest={!session} onClose={() => { location.hash = "/dashboard"; }} request={chatRequest} BackLink={MobileBackLink} Link={Link} onSessionExpired={onChatSessionExpired} initialConversationId={initialConversationId} />
-          : isAccount ? session && profile ? <AccountHistoryView account={profile} history={history} archived={archived} loading={personalLoading} error={personalError} onArchivedChange={setArchived} onRetry={() => setRetry(value => value + 1)} onOpenChat={id => { location.hash = `/chatbot?conversation=${encodeURIComponent(id)}`; }} />
+          : isAccount ? session && profile ? <AccountHistoryView account={profile} history={history} archived={archived} loading={personalLoading || historyLoading} error={personalError || historyError} onArchivedChange={setArchived} onRetry={() => setRetry(value => value + 1)} onOpenChat={id => { location.hash = `/chatbot?conversation=${encodeURIComponent(id)}`; }} />
           : <div className="p-8"><h1 className="font-serif text-3xl"><InterfaceText source="My account" /></h1><p className="mt-4" role={personalError ? "alert" : "status"}>{personalError || (personalLoading ? "Loading your account…" : "Sign in to view your saved chats.")}</p>{session && <button type="button" onClick={() => setRetry(value => value + 1)} className="mt-4 underline"><InterfaceText source="Try again" /></button>}</div>
           : loading ? <p role="status" className="p-8"><InterfaceText source="Loading library…" /></p> : error ? <div role="alert" className="p-8"><p>{error}</p><button type="button" className="mt-4 rounded-full bg-[#6b4724] px-5 py-2 text-amber-50" onClick={() => setRetry(value => value + 1)}><InterfaceText source="Try again" /></button></div> : content ? <PaginatedLibrary downloadOrigin={apiOrigin} key={`${language}:${activeModule}`} initial={content} request={featureRequest} Link={Link} /> : <DashboardOverview Link={Link} mode={profile?.languageRoles.some(role => role.role === "teacher") ? "teacher" : profile?.languageRoles.some(role => role.role === "researcher") ? "researcher" : "public"} languageName={configuration?.selectedLanguage.nativeName || "Dholuo"} name={session ? profile?.name : undefined} />}
         </>}
+        </Suspense></ScreenBoundary>
       </main>
-      {!isChat && <Link href="/chatbot" className="floating-chatbot absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 text-white shadow-xl"><svg aria-label="Open CULTURAL HERITAGE" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></Link>}
+      {!isChat && <ChatbotShortcut href="#/chatbot" />}
     </div>
   </div></EnglishInterface>;
 }

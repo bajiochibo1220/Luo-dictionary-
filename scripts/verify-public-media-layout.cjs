@@ -13,9 +13,9 @@ const account = { id: 'layout-reader', name: 'Layout reader', email: 'reader@exa
 const illustration = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600"><rect width="960" height="600" fill="#e0ebdf"/><circle cx="760" cy="130" r="70" fill="#f0c777"/><path d="M0 360Q250 160 500 360T960 260V600H0" fill="#5c8f7c"/><path d="M0 450Q400 340 960 490V600H0" fill="#184f4b"/><text x="50" y="550" fill="white" font-family="Arial" font-size="28">FICTIONAL MEDIA — LAYOUT CHECK</text></svg>');
 let videoBytes = '', videoPromise, saveCalls = 0, readingCalls = 0;
 const items = () => [
-  { id: 'mixed', title: 'Wach mar oganda', englishTitle: 'Community voices', summary: 'Fictional layout sample: original media stays together, with the item description and actions beside it.', moduleCode: 'oral_histories', moduleName: 'Oral Histories', transcriptCount: 216, isProvisional: true, media: [{ id: 'image', type: 'image', url: base + '/api/media/image/file' }, { id: 'video', type: 'video', url: base + '/api/media/video/file', thumbnailUrl: base + '/api/media/image/file' }, { id: 'audio', type: 'audio', url: base + '/api/media/audio/file' }, { id: 'document', type: 'document', url: base + '/api/media/document/file' }] },
+  { id: 'mixed', title: 'Wach mar oganda', englishTitle: 'Community voices', summary: 'Fictional layout sample: original media stays together, with the item description and actions beside it.', bodyText: 'meaning: Fictional full meaning.\n\ncounty: Fictional place.\n\nusage: Complete detail marker.', moduleCode: 'oral_histories', moduleName: 'Oral Histories', transcriptCount: 216, isProvisional: true, media: [{ id: 'image', type: 'image', url: base + '/api/media/image/file' }, { id: 'video', type: 'video', url: base + '/api/media/video/file', thumbnailUrl: base + '/api/media/image/file' }, { id: 'audio', type: 'audio', url: base + '/api/media/audio/file' }, { id: 'document', type: 'document', url: base + '/api/media/document/file' }] },
   { id: 'recording', title: 'Wende mag oganda', englishTitle: 'Community song', summary: 'Another fictional recording card, kept close to the previous item.', moduleCode: 'songs', moduleName: 'Traditional Songs', transcriptCount: 0, media: [{ id: 'audio2', type: 'audio', url: base + '/api/media/audio2/file' }] },
-  { id: 'text', title: 'A long fictional title that stays readable when the navigation is expanded', summary: 'A text-only item should not reserve an empty media column.', moduleCode: 'folktales', moduleName: 'Folktales', media: [] },
+  { id: 'text', title: 'A long fictional title that stays readable when the navigation is expanded', summary: 'A text-only item should not reserve an empty media column.', moduleCode: 'oral_histories', moduleName: 'Oral Histories', media: [] },
 ];
 const reading = id => ({ id, title: 'Fictional complete interview', sourceLanguageCode: 'luo', sourceLanguageName: 'Dholuo', sourceText: '', englishText: '', transcripts: Array.from({ length: 216 }, (_, i) => ({ id: `segment-${i + 1}`, text: `Conversation turn ${i + 1}. Fictional source text for a full-reader check.`, languageCode: 'luo', role: i % 2 ? 'Respondent' : 'Interviewer' })) });
 const wav = Buffer.alloc(44 + 8000 * 2 * 8);
@@ -88,12 +88,20 @@ async function main() {
           assert.ok(Math.abs(metrics.cardHeight-metrics.paneHeight)<=2, 'Card fills the reading pane: '+JSON.stringify(metrics));
           assert.ok(Math.abs(metrics.mediaWidth-metrics.cardWidth)<=2 && Math.abs(metrics.mediaHeight-metrics.cardHeight)<=2,'Media fills its entire card');
           assert.equal(metrics.captionInside,true); assert.equal(metrics.actionsInside,true);
+          const preview = cardSelector + ' .social-card-description';
+          assert.equal(await evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(preview + ' .social-description-text')})).webkitLineClamp`), width < 768 || height < 500 ? '1' : '2');
+          await evaluate(`document.querySelector(${JSON.stringify(preview + ' button')}).click()`);
+          assert.equal(await evaluate(`document.querySelector(${JSON.stringify(preview)}).dataset.expanded==='true'&&!document.querySelector('dialog')`), true, 'More expands inside the card');
+          assert.equal(await evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(preview + ' button')})).textDecorationLine.includes('underline')`),true);
+          await evaluate(`document.querySelector(${JSON.stringify(preview + ' button')}).click()`);
+          assert.equal(await evaluate(`document.querySelector(${JSON.stringify(preview)}).dataset.expanded`),'false');
           assert.equal(await evaluate(`(()=>{const button=document.querySelector(${JSON.stringify(cardSelector)}).querySelector('button[aria-label="Next attachment"]');const r=button.getBoundingClientRect();return document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('button')===button;})()`),true,'Attachment navigation is not covered by action buttons');
           if ([1440,390,320].includes(width) && state !== 'expanded') { const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync(`docs/system-audit/screenshots/social-${route.includes('?') ? 'collection' : 'discovery'}-${width}.png`, Buffer.from(shot.data, 'base64')); }
         }
       }
     }
     console.log('PASS '+report.viewports.length+' full-height layouts');
+    report.interactions.push('Inline underlined more/less controls expand and restore one-line phone and two-line desktop previews across every tested layout');
     await send('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:true});
     await evaluate('location.hash="/dashboard"'); await until('!!document.querySelector(".discovery-card")', 'return to discovery');
     await until('document.querySelector(".public-media-gallery img").complete', 'media dimensions loaded');
@@ -119,6 +127,8 @@ async function main() {
     await evaluate(`document.querySelector('dialog .public-transcript-reader').scrollIntoView({block:'center',behavior:'instant'})`);
     await until('document.querySelectorAll("dialog .public-transcript-text > div").length===216', 'all conversation turns');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), true);
+    assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Complete detail marker.") && document.querySelector("dialog").textContent.includes("Fictional layout sample:")'),true,'Explore retains the full body and overview');
+    assert.equal(await evaluate(`document.querySelectorAll('dialog nav[aria-label="More from this collection"] button').length`),1);
     assert.equal(await evaluate('document.querySelector("video").paused'),true,'Explore pauses background playback');
     const transcriptDownload = await evaluate('document.querySelector("dialog a[download^=transcript]").href');
     assert.match(decodeURIComponent(transcriptDownload), /Conversation turn 216\./);
@@ -128,6 +138,12 @@ async function main() {
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), false);
     const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync('docs/system-audit/screenshots/social-transcript-mobile.png', Buffer.from(shot.data, 'base64'));
     await evaluate('document.querySelector("dialog > button").click()'); await until('!document.querySelector("dialog")', 'close item');
+    await evaluate(`document.querySelector('.discovery-card .social-card-actions button[aria-label="Explore this item"]').click()`);
+    await until('!!document.querySelector("dialog nav button")','related collection item');
+    await evaluate('document.querySelector("dialog nav button").click()');
+    await until('!!document.querySelector("dialog[open]") && document.querySelector("dialog").textContent.includes("A text-only item")','related details open');
+    await evaluate('document.querySelector("dialog > button").click()'); await until('!document.querySelector("dialog")','close related details');
+    report.interactions.push('Explore preserves usage, meaning, place and overview; related collection buttons open complete details');
     report.interactions.push('Full 216-turn reader, complete text download, honest English fallback and dialog dismissal');
     await evaluate('document.querySelector("video").play()'); assert.equal(await evaluate('document.querySelector("video").paused'), false);
     await evaluate(`document.querySelector('.discovery-card button[aria-label="Next attachment"]').click()`);

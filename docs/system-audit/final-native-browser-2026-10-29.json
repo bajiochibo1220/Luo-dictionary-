@@ -1,0 +1,191 @@
+{
+  "apiTransport": "synthetic; all intercepted",
+  "routes": [],
+  "layoutIssues": [],
+  "runtimeErrors": [],
+  "unknownApi": [],
+  "invalidNavigation": [],
+  "interactions": [
+    "android bridge simulation: fresh registration, guest browsing, shared screens and back navigation",
+    "ios bridge simulation: fresh registration, guest browsing, shared screens and back navigation"
+  ],
+  "nativeRoutes": [
+    {
+      "platform": "android",
+      "route": "/dashboard",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/dashboard?module=oral_histories",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/learn",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/courses",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/research",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/places",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/knowledge",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/chatbot",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/help",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/settings",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "android",
+      "route": "/workspace",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/dashboard",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/dashboard?module=oral_histories",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/learn",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/courses",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/research",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/places",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/knowledge",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/chatbot",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/help",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/settings",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "platform": "ios",
+      "route": "/workspace",
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    }
+  ],
+  "completedAt": "2026-10-29T17:08:31.561Z"
+}

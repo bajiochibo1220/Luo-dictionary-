@@ -2,7 +2,7 @@
  * server-rendered pages. Approved lesson text is managed separately in IndexedDB. */
 const RELEASE = new URL(self.location.href).searchParams.get('v') || '1';
 const CACHE = 'luo-public-shell-' + RELEASE;
-const staticPath = path => path.startsWith('/_next/static/') || path.startsWith('/icons/');
+const staticPath = path => path.startsWith('/_next/static/') || path.startsWith('/icons/') || path === '/install-prompt.js';
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
@@ -11,7 +11,7 @@ self.addEventListener('install', event => {
     const html = await response.clone().text();
     await cache.put('/application', response);
     const assets = [...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"<>]+)"/g)].map(match => match[1].replaceAll('&amp;', '&'));
-    await cache.addAll([...new Set(['/icons/luo-heritage-512.png', ...assets])]);
+    await cache.addAll([...new Set(['/icons/luo-heritage-512.png', '/install-prompt.js', ...assets])]);
     // Wait for existing tabs to close: never replace unfinished work mid-session.
   })());
 });

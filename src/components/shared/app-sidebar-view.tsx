@@ -36,6 +36,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
 
   return (
     <div className="flex flex-col h-full">
+      <div className="pr-12 md:pr-0"><InstallAppButton /></div>
       {/* Header — taller on mobile to avoid close button overlap */}
       <div className="px-5 pt-5 md:pt-5 pb-3 border-b border-amber-100/15 min-h-[68px] flex items-end">
         <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/70 font-medium"><InterfaceText source="Explore" /></p>
@@ -61,7 +62,6 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
           {more.map(([href, label]) => <Link key={href} href={href} onClick={onNavigate} className={`${linkClass} ${pathname === href ? "border-amber-400 bg-black/25 font-semibold" : "border-transparent"}`}><NavigationIcon href={href} /><span aria-current={pathname === href ? "page" : undefined}><InterfaceText source={label} /></span></Link>)}
         </details>
       </nav>
-      <InstallAppButton />
 
     </div>
   );

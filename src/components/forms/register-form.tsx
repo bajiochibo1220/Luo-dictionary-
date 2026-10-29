@@ -6,7 +6,7 @@ import { authenticationContinueTarget } from "@/lib/application-return";
 import Link from "next/link";
 
 import { Eye, EyeOff } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ export function RegisterForm() {
   const nativeReturn = nativeLoginReturn(searchParams.get("callbackUrl"));
   const loginHref = nativeAuthHref("login", nativeReturn);
   const [loading, setLoading] = useState(false);
+  const submitting = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -54,13 +55,14 @@ export function RegisterForm() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (loading) return;
+    if (loading || submitting.current) return;
 
     if (!dob.day || !dob.month || !dob.year) {
       toast.error(<InterfaceText source={"Please enter your full date of birth"} />);
       return;
     }
 
+    submitting.current = true;
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
@@ -80,16 +82,20 @@ export function RegisterForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(40000),
       });
       data = await res.json();
+      if (!res.ok) data = { success: false, error: typeof data?.error === "string" ? data.error : "Registration failed" };
     } catch {
+      submitting.current = false;
       setLoading(false);
       toast.error(<InterfaceText source={"Unable to create your account right now. Please try again."} />);
       return;
     }
-    if (!data.success) {
+    if (data?.success !== true) {
+      submitting.current = false;
       setLoading(false);
-      toast.error(<InterfaceText source={data.error || "Registration failed"} />);
+      toast.error(<InterfaceText source={typeof data?.error === "string" ? data.error : "Registration failed"} />);
       return;
     }
 

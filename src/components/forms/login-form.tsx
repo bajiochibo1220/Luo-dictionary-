@@ -3,7 +3,7 @@ import { InterfaceInput, InterfaceText } from "@/components/shared/interface-lan
 import { authenticationContinueTarget } from "@/lib/application-return";
 
 import { Eye, EyeOff, LogIn } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -15,6 +15,7 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const submitting = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const googleError = searchParams.get("error");
   const nativeReturn = nativeLoginReturn(searchParams.get("callbackUrl"));
@@ -28,7 +29,8 @@ export function LoginForm() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (loading) return;
+    if (loading || submitting.current) return;
+    submitting.current = true;
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
@@ -39,12 +41,14 @@ export function LoginForm() {
     try {
       result = await signIn("credentials", { email, password, redirect: false });
     } catch {
+      submitting.current = false;
       setLoading(false);
       toast.error(<InterfaceText source={"Unable to log in right now. Please try again."} />);
       return;
     }
 
     if (!result || result.error || !result.ok) {
+      submitting.current = false;
       setLoading(false);
       toast.error(<InterfaceText source={"Incorrect email or password"} />);
       return;

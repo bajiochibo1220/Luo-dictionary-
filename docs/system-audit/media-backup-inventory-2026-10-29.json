@@ -1,0 +1,65 @@
+[
+  {
+    "file": "backup-2026-09-27T07-23-37.json",
+    "mediaCount": 3,
+    "types": {
+      "image": 3
+    },
+    "stillPresent": 0,
+    "absent": 3
+  },
+  {
+    "file": "backup-2026-10-01T13-15-17.json",
+    "mediaCount": 30,
+    "types": {
+      "image": 30
+    },
+    "stillPresent": 0,
+    "absent": 30
+  },
+  {
+    "file": "backup-2026-10-11T16-52-29-969Z-cff74cee.json",
+    "mediaCount": 51,
+    "types": {
+      "image": 51
+    },
+    "stillPresent": 51,
+    "absent": 0
+  },
+  {
+    "file": "backup-2026-10-23T10-52-30-376Z-cd0e2223.json",
+    "mediaCount": 51,
+    "types": {
+      "image": 51
+    },
+    "stillPresent": 51,
+    "absent": 0
+  },
+  {
+    "file": "backup-2026-10-23T14-13-59-799Z-84027dc9.json",
+    "mediaCount": 51,
+    "types": {
+      "image": 51
+    },
+    "stillPresent": 51,
+    "absent": 0
+  },
+  {
+    "file": "backup-2026-10-26T12-50-31-198Z-b951b7d4.json",
+    "mediaCount": 51,
+    "types": {
+      "image": 51
+    },
+    "stillPresent": 51,
+    "absent": 0
+  },
+  {
+    "file": "backup-2026-10-26T21-12-43-952Z-6e026105.json",
+    "mediaCount": 51,
+    "types": {
+      "image": 51
+    },
+    "stillPresent": 51,
+    "absent": 0
+  }
+]

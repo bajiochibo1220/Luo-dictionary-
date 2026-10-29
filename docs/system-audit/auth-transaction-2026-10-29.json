@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Real registration and normalized email with a bcrypt password hash",
+    "Duplicate email rejected",
+    "Real credential verification and ordinary-account JWT/session callbacks",
+    "Wrong password rejected",
+    "Suspended account rejected"
+  ],
+  "retainedAccounts": 0,
+  "retainedConsentRows": 0,
+  "rolledBack": true
+}

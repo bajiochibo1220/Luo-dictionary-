@@ -63,7 +63,7 @@ test('the real credentials form sends a master signing in from the public librar
   globalThis.FormData = class { get(key) { return key === 'email' ? 'master@example.test' : 'fixture-password'; } };
   try {
     const load = loader({
-      react: { ...React, useState: initial => [initial, () => {}] },
+      react: { ...React, useRef: () => ({ current: false }), useState: initial => [initial, () => {}] },
       'next/navigation': { useRouter: () => ({ push: () => assert.fail('Web role routing must use a fresh server navigation'), refresh: () => {} }), useSearchParams: () => new URLSearchParams() },
       'next-auth/react': { signIn: async (provider, options) => { assert.equal(provider, 'credentials'); assert.equal(options.redirect, false); return { ok: true }; } },
     });
@@ -84,7 +84,7 @@ test('Google sign-in also delegates saved public returns to server role routing'
   globalThis.sessionStorage = { getItem: key => disk.get(key), removeItem: key => disk.delete(key) };
   globalThis.window = { location: { protocol: 'https:' } }; globalThis.document = { cookie: '' };
   try {
-    const { LoginForm } = loader({ react: { ...React, useState: initial => [initial, () => {}] }, 'next/navigation': { useRouter: () => ({}), useSearchParams: () => new URLSearchParams() }, 'next-auth/react': { signIn: (provider, options) => { assert.equal(provider, 'google'); callback = options.callbackUrl; } } })('src/components/forms/login-form.tsx');
+    const { LoginForm } = loader({ react: { ...React, useRef: () => ({ current: false }), useState: initial => [initial, () => {}] }, 'next/navigation': { useRouter: () => ({}), useSearchParams: () => new URLSearchParams() }, 'next-auth/react': { signIn: (provider, options) => { assert.equal(provider, 'google'); callback = options.callbackUrl; } } })('src/components/forms/login-form.tsx');
     find(LoginForm(), node => node.props?.onClick?.name === 'startGoogleLogin').props.onClick();
     assert.equal(new URL(callback, 'https://heritage.test').pathname, '/auth/continue');
   } finally { globalThis.sessionStorage = previous.storage; globalThis.window = previous.window; globalThis.document = previous.document; }
@@ -99,7 +99,7 @@ test('valid mobile sign-in callbacks are preserved and native staff open their e
   const target = `/mobile-auth?challenge=${'a'.repeat(43)}&state=${'b'.repeat(32)}`;
   globalThis.FormData = class { get() { return 'fixture'; } };
   try {
-    const { LoginForm } = loader({ react: { ...React, useState: initial => [initial, () => {}] }, 'next/navigation': { useRouter: () => ({ push: value => { destination = value; }, refresh() {} }), useSearchParams: () => new URLSearchParams({ callbackUrl: target }) }, 'next-auth/react': { signIn: async () => ({ ok: true }) } })('src/components/forms/login-form.tsx');
+    const { LoginForm } = loader({ react: { ...React, useRef: () => ({ current: false }), useState: initial => [initial, () => {}] }, 'next/navigation': { useRouter: () => ({ push: value => { destination = value; }, refresh() {} }), useSearchParams: () => new URLSearchParams({ callbackUrl: target }) }, 'next-auth/react': { signIn: async () => ({ ok: true }) } })('src/components/forms/login-form.tsx');
     await find(LoginForm(), node => node.type === 'form').props.onSubmit({ preventDefault() {}, currentTarget: {} });
     assert.equal(destination, target);
   } finally { globalThis.FormData = previous.FormData; }

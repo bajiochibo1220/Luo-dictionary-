@@ -1,0 +1,1244 @@
+{
+  "apiTransport": "synthetic; all intercepted",
+  "routes": [
+    {
+      "route": "/dashboard",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Discover living heritage."
+    },
+    {
+      "route": "/explore",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Start here"
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/dashboard?module=audio_visual",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/learn",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Learn, play & connect"
+    },
+    {
+      "route": "/courses",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Explore at your own pace"
+    },
+    {
+      "route": "/research",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Research library"
+    },
+    {
+      "route": "/places",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Explore cultural places"
+    },
+    {
+      "route": "/knowledge",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Cultural knowledge connections"
+    },
+    {
+      "route": "/tutor",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "AI language tutor"
+    },
+    {
+      "route": "/ai-tools",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "AI media tools"
+    },
+    {
+      "route": "/saved",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Saved words & items"
+    },
+    {
+      "route": "/account",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "My account"
+    },
+    {
+      "route": "/settings",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Account settings"
+    },
+    {
+      "route": "/contribute",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/my-submissions",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/help",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Help & training"
+    },
+    {
+      "route": "/chatbot",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "CULTURAL HERITAGE"
+    },
+    {
+      "route": "/workspace",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320,
+      "heading": "Staff workspace"
+    },
+    {
+      "route": "/dashboard",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Discover living heritage."
+    },
+    {
+      "route": "/explore",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Start here"
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/dashboard?module=audio_visual",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/learn",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Learn, play & connect"
+    },
+    {
+      "route": "/courses",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Explore at your own pace"
+    },
+    {
+      "route": "/research",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Research library"
+    },
+    {
+      "route": "/places",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Explore cultural places"
+    },
+    {
+      "route": "/knowledge",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Cultural knowledge connections"
+    },
+    {
+      "route": "/tutor",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "AI language tutor"
+    },
+    {
+      "route": "/ai-tools",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "AI media tools"
+    },
+    {
+      "route": "/saved",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Saved words & items"
+    },
+    {
+      "route": "/account",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "My account"
+    },
+    {
+      "route": "/settings",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Account settings"
+    },
+    {
+      "route": "/contribute",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/my-submissions",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/help",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Help & training"
+    },
+    {
+      "route": "/chatbot",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "CULTURAL HERITAGE"
+    },
+    {
+      "route": "/workspace",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390,
+      "heading": "Staff workspace"
+    },
+    {
+      "route": "/dashboard",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "Discover living heritage."
+    },
+    {
+      "route": "/explore",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "Start here"
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/dashboard?module=audio_visual",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/learn",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Learn, play & connect"
+    },
+    {
+      "route": "/courses",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Explore at your own pace"
+    },
+    {
+      "route": "/research",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Research library"
+    },
+    {
+      "route": "/places",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Explore cultural places"
+    },
+    {
+      "route": "/knowledge",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Cultural knowledge connections"
+    },
+    {
+      "route": "/tutor",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "AI language tutor"
+    },
+    {
+      "route": "/ai-tools",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "AI media tools"
+    },
+    {
+      "route": "/saved",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Saved words & items"
+    },
+    {
+      "route": "/account",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "My account"
+    },
+    {
+      "route": "/settings",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "Account settings"
+    },
+    {
+      "route": "/contribute",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/my-submissions",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/help",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "Help & training"
+    },
+    {
+      "route": "/chatbot",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768,
+      "heading": "CULTURAL HERITAGE"
+    },
+    {
+      "route": "/workspace",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753,
+      "heading": "Staff workspace"
+    },
+    {
+      "route": "/dashboard",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "Discover living heritage."
+    },
+    {
+      "route": "/explore",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "Start here"
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/dashboard?module=audio_visual",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/learn",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Learn, play & connect"
+    },
+    {
+      "route": "/courses",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Explore at your own pace"
+    },
+    {
+      "route": "/research",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Research library"
+    },
+    {
+      "route": "/places",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Explore cultural places"
+    },
+    {
+      "route": "/knowledge",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Cultural knowledge connections"
+    },
+    {
+      "route": "/tutor",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "AI language tutor"
+    },
+    {
+      "route": "/ai-tools",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "AI media tools"
+    },
+    {
+      "route": "/saved",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Saved words & items"
+    },
+    {
+      "route": "/account",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "My account"
+    },
+    {
+      "route": "/settings",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "Account settings"
+    },
+    {
+      "route": "/contribute",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/my-submissions",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/help",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "Help & training"
+    },
+    {
+      "route": "/chatbot",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024,
+      "heading": "CULTURAL HERITAGE"
+    },
+    {
+      "route": "/workspace",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009,
+      "heading": "Staff workspace"
+    },
+    {
+      "route": "/dashboard",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "Discover living heritage."
+    },
+    {
+      "route": "/explore",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "Start here"
+    },
+    {
+      "route": "/dashboard?module=oral_histories",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/dashboard?module=audio_visual",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Synthetic collection"
+    },
+    {
+      "route": "/learn",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Learn, play & connect"
+    },
+    {
+      "route": "/courses",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Explore at your own pace"
+    },
+    {
+      "route": "/research",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Research library"
+    },
+    {
+      "route": "/places",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Explore cultural places"
+    },
+    {
+      "route": "/knowledge",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Cultural knowledge connections"
+    },
+    {
+      "route": "/tutor",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "AI language tutor"
+    },
+    {
+      "route": "/ai-tools",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "AI media tools"
+    },
+    {
+      "route": "/saved",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Saved words & items"
+    },
+    {
+      "route": "/account",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "My account"
+    },
+    {
+      "route": "/settings",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "Account settings"
+    },
+    {
+      "route": "/contribute",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/my-submissions",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "Contributions & submissions"
+    },
+    {
+      "route": "/help",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "Help & training"
+    },
+    {
+      "route": "/chatbot",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440,
+      "heading": "CULTURAL HERITAGE"
+    },
+    {
+      "route": "/workspace",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425,
+      "heading": "Staff workspace"
+    },
+    {
+      "route": "/workspace:Edit system text",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Users",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Staff",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Languages",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Analytics",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:AI activity",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:History",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:System",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Backups",
+      "width": 320,
+      "page": 320,
+      "viewport": 320,
+      "content": 320,
+      "available": 320
+    },
+    {
+      "route": "/workspace:Edit system text",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Users",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Staff",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Languages",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Analytics",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:AI activity",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:History",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:System",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Backups",
+      "width": 390,
+      "page": 390,
+      "viewport": 390,
+      "content": 390,
+      "available": 390
+    },
+    {
+      "route": "/workspace:Edit system text",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:Users",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:Staff",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:Languages",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:Analytics",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753
+    },
+    {
+      "route": "/workspace:AI activity",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:History",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:System",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 753,
+      "available": 753
+    },
+    {
+      "route": "/workspace:Backups",
+      "width": 768,
+      "page": 768,
+      "viewport": 768,
+      "content": 768,
+      "available": 768
+    },
+    {
+      "route": "/workspace:Edit system text",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:Users",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:Staff",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:Languages",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:Analytics",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009
+    },
+    {
+      "route": "/workspace:AI activity",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:History",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:System",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1009,
+      "available": 1009
+    },
+    {
+      "route": "/workspace:Backups",
+      "width": 1024,
+      "page": 1024,
+      "viewport": 1024,
+      "content": 1024,
+      "available": 1024
+    },
+    {
+      "route": "/workspace:Edit system text",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:Users",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:Staff",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:Languages",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:Analytics",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425
+    },
+    {
+      "route": "/workspace:AI activity",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:History",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    },
+    {
+      "route": "/workspace:System",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1425,
+      "available": 1425
+    },
+    {
+      "route": "/workspace:Backups",
+      "width": 1440,
+      "page": 1440,
+      "viewport": 1440,
+      "content": 1440,
+      "available": 1440
+    }
+  ],
+  "layoutIssues": [],
+  "runtimeErrors": [],
+  "unknownApi": [],
+  "interactions": [
+    "Startup skips saved history; history failure preserves the account and staff navigation",
+    "Mobile navigation opens and closes with Escape",
+    "AI image tools submit an approved source and display a draft",
+    "Tutor submits and displays feedback",
+    "Cultural chat submits and displays an answer",
+    "Both answer languages expose the opposite translation in an initially collapsed dropdown",
+    "Public discovery renders without an account",
+    "Install lives in the sidebar, invokes the browser once and hides after installation",
+    "Guest receives a sign-in action for /tutor",
+    "Guest receives a sign-in action for /ai-tools",
+    "Guest receives a sign-in action for /saved",
+    "Guest receives a sign-in action for /settings",
+    "Guest receives a sign-in action for /account",
+    "Guest receives a sign-in action for /workspace",
+    "Guest receives a sign-in action for /contribute",
+    "Phone entry opens registration and Browse the public library opens guest discovery"
+  ],
+  "sourceLinkWorks": true,
+  "invalidNavigation": [],
+  "completedAt": "2026-10-29T17:07:32.841Z"
+}
