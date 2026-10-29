@@ -92,6 +92,17 @@ async function main() {
       }
     }
     await evaluate('location.hash="/dashboard"'); await until('!!document.querySelector(".discovery-card")', 'return to discovery');
+    await until('document.querySelector(".public-media-gallery img").complete && document.querySelector("video").readyState>=1', 'media dimensions loaded');
+    for (const shape of [{width:360,height:960},{width:1280,height:360}]) {
+      const dimensions = await evaluate(`new Promise(resolve=>{const image=document.querySelector('.public-media-gallery img');image.removeAttribute('srcset');image.onload=()=>{const style=getComputedStyle(image);resolve({naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,fit:style.objectFit,background:style.backgroundColor,width:image.clientWidth,height:image.clientHeight,frameWidth:image.closest('.public-media-asset').clientWidth});};image.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="${shape.width}" height="${shape.height}"><rect width="100%" height="100%" fill="#d9b968"/><text x="8" y="28">FULL FRAME</text></svg>');})`);
+      assert.equal(dimensions.fit,'contain'); assert.equal(dimensions.background,'rgb(0, 0, 0)');
+      assert.equal(dimensions.naturalWidth,shape.width); assert.equal(dimensions.naturalHeight,shape.height);
+      assert.ok(dimensions.width<=dimensions.frameWidth+1 && dimensions.height>0);
+    }
+    const videoStyle=await evaluate(`({fit:getComputedStyle(document.querySelector('video')).objectFit,background:getComputedStyle(document.querySelector('video')).backgroundColor,controls:document.querySelector('video').controls})`);
+    assert.deepEqual(videoStyle,{fit:'contain',background:'rgb(0, 0, 0)',controls:true});
+    report.interactions.push('Portrait and panoramic images and video keep their full frames with black unused space');
+
     const itemDownload = await evaluate('document.querySelector(".discovery-card .public-item-download").href');
     assert.equal(new URL(itemDownload).origin, base); assert.equal(new URL(itemDownload).searchParams.get('id'), 'mixed');
     await evaluate(`document.querySelector('.discovery-card-actions button[aria-label^="Save "]').click()`); await until(`!!document.querySelector('.discovery-card-actions button[aria-label^="Saved "]')`, 'saved feedback'); assert.equal(saveCalls, 1);

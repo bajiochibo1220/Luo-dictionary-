@@ -144,12 +144,11 @@ test('reader dashboards show discovery while teachers and researchers retain the
   }
 });
 
-test('the shared public application starts in discovery with navigation collapsed and sign-in available', () => {
+test('the shared application resolves the entry session before exposing content', () => {
   const { SharedApplication } = loader()('src/components/shared/application.tsx');
   const adapters = { featureFetch: async () => {}, featureRequest: async () => {}, apiOrigin: 'https://heritage.test', artwork: '/icons/luo-heritage-512.png', nativeSession: { isNative: false } };
   const html = renderToStaticMarkup(React.createElement(SharedApplication, { adapters }));
-  assert.match(html, /Discover living heritage/); assert.match(html, /aria-label="Navigation" aria-hidden="true"/);
-  assert.match(html, /href="https:\/\/heritage.test\/login"/);
+  assert.match(html, /Opening Luo Heritage/); assert.match(html, /role="status"/);
   assert.doesNotMatch(html, /Find your starting point|Choose an audience/);
 });
 

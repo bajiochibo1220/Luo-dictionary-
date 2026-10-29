@@ -7,6 +7,8 @@ import { prisma } from "@/lib/db";
 import { ConversationIdSchema } from "@/lib/chat-contract";
 import { hasAnyAdminRole } from "@/lib/permissions";
 
+export const metadata = { title: "CULTURAL HERITAGE | Luo Heritage", description: "Explore Luo culture, history, songs and Dholuo language with English and Dholuo translations." };
+
 export const dynamic = "force-dynamic";
 
 export default async function ChatbotPage({ searchParams }: { searchParams: Promise<{ conversation?: string }> }) {

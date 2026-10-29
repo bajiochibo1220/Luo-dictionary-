@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/session-provider";
-import { InstallAppPrompt } from "@/components/pwa/install-app-prompt";
+import { AppInstallationProvider } from "@/components/pwa/app-installation";
 import { AppUpdatesProvider } from "@/components/pwa/app-updates";
 import { APP_NAME } from "@/lib/brand";
 import { WebInterfaceLanguageProvider } from "@/components/shared/web-interface-language";
@@ -35,8 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <WebInterfaceLanguageProvider><AppUpdatesProvider currentVersion={process.env.NEXT_PUBLIC_APP_VERSION || "development"}>
-          <AuthProvider>{children}</AuthProvider>
-          <InstallAppPrompt />
+          <AppInstallationProvider><AuthProvider>{children}</AuthProvider></AppInstallationProvider>
           <Toaster richColors position="bottom-center" closeButton />
         </AppUpdatesProvider></WebInterfaceLanguageProvider>
       </body>

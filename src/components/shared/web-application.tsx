@@ -37,6 +37,7 @@ function browserAdapters(origin: string): ApplicationAdapters {
       // server permission; sync still requires a valid cookie and matching owner.
       const cached = (await offlineList<{ accountId: string; validUntil: number }>(identityKey).catch(() => [])).find(item => item.key === identityKey)?.value;
       if (cached && cached.validUntil > Date.now()) emit({ accountId: cached.accountId, expiresAt: new Date(Date.now() + 600000).toISOString() }, "restore");
+      else emit(null, "sign-out");
     }
   }
   return {

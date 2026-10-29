@@ -1,4 +1,5 @@
 "use client";
+import { AppInstallationProvider } from "@/components/pwa/app-installation";
 import { EnglishInterface, InterfaceButton, InterfaceLanguageProvider, InterfaceLanguageSelector, InterfaceOption, InterfaceSelect, InterfaceText, useInterfaceLanguage } from "@/components/shared/interface-language";
 import { ActivityTelemetry } from "./activity-telemetry";
 import { PlacesExplorer } from "./places-explorer";
@@ -36,7 +37,7 @@ import { loginDestination, nativeLoginDestination } from "@/lib/login-destinatio
 const ApplicationContext = createContext<ApplicationAdapters | null>(null);
 function useAdapters() { const value = useContext(ApplicationContext); if (!value) throw new Error("Application adapters are missing."); return value; }
 export function SharedApplication({ adapters }: { adapters: ApplicationAdapters }) {
-  return <ApplicationContext.Provider value={adapters}><InterfaceLanguageProvider transport={adapters.featureFetch}><SidebarProvider id="mobile-library-sidebar" storageKey="luo-heritage-mobile-sidebar" defaultCollapsed><App /></SidebarProvider></InterfaceLanguageProvider></ApplicationContext.Provider>;
+  return <ApplicationContext.Provider value={adapters}><InterfaceLanguageProvider transport={adapters.featureFetch}><AppInstallationProvider><SidebarProvider id="mobile-library-sidebar" storageKey="luo-heritage-mobile-sidebar" defaultCollapsed><App /></SidebarProvider></AppInstallationProvider></InterfaceLanguageProvider></ApplicationContext.Provider>;
 }
 
 // Give the backend's 30-second database connection window time to return its
@@ -56,6 +57,7 @@ function MobileBackLink({ label = "Back", variant }: { href?: string; label?: st
 function App() {
   const { bootstrap, library, apiOrigin, artwork, account, conversations, nativeSession, chatRequest, featureRequest, featureFetch } = useAdapters();
   const [route, setRoute] = useState("/dashboard");
+  const [entry, setEntry] = useState<"checking" | "registration" | "content">("checking");
   const interfaceLanguage = useInterfaceLanguage();
   const language = interfaceLanguage.community;
   const setLanguage = (code: string) => interfaceLanguage.select(code, interfaceLanguage.local);
@@ -106,6 +108,11 @@ function App() {
       identityEpoch.current++;
       if (reason !== "renew") pendingNativeLanding.current = !!value && nativeSession.isNative && (reason === "sign-in" || reason === "restore" && !location.hash);
       setSession(value);
+      if (value || location.hash || !nativeSession.isNative && !window.matchMedia("(max-width: 767px)").matches) setEntry("content");
+      else {
+        setEntry("registration");
+        if (!nativeSession.isNative) location.replace("/register");
+      }
       if (reason !== "renew") { setProfile(null); setHistory([]); setPersonalLoading(false); setArchived(false); }
       setPersonalError("");
       if (value && (reason === "sign-in" || reason === "restore" && !location.hash)) location.hash = "/dashboard";
@@ -113,7 +120,7 @@ function App() {
     let disconnect: (() => void) | undefined;
     nativeSession.connect(message => { if (active) setPersonalError(message); }).then(stop => {
       if (active) disconnect = stop; else stop();
-    }).catch(() => { if (active) setPersonalError("The app sign-in connection could not be started."); });
+    }).catch(() => { if (active) { setPersonalError("The app sign-in connection could not be started."); setEntry("registration"); } });
     return () => { active = false; unsubscribe(); disconnect?.(); };
   }, [nativeSession]);
   useEffect(() => {
@@ -157,11 +164,11 @@ function App() {
   }
 
   useEffect(() => {
-    const update = () => { const target = location.hash.slice(1) || "/dashboard"; setRoute(applicationScreenHref(target) || "/not-found"); };
+    const update = () => { if (location.hash || !nativeSession.isNative && !window.matchMedia("(max-width: 767px)").matches) setEntry("content"); const target = location.hash.slice(1) || "/dashboard"; setRoute(applicationScreenHref(target) || "/not-found"); };
     update();
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
-  }, []);
+  }, [nativeSession.isNative]);
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
@@ -175,6 +182,16 @@ function App() {
   }, [language, activeModule, retry, bootstrap, library]);
   useEffect(() => { closeMobile?.(); contentPanel.current?.scrollTo({ top: 0, left: 0 }); }, [route, closeMobile]);
 
+  if (entry === "checking") return <p role="status" className="p-8"><InterfaceText source="Opening Luo Heritage?" /></p>;
+  if (entry === "registration") return <main className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-stone-50 p-6 text-center text-teal-950">
+    <img src={artwork} alt="Luo Heritage" className="h-40 w-40 object-contain" />
+    <h1 className="font-serif text-3xl"><InterfaceText source="Get started" /></h1>
+    <p><InterfaceText source="Create an account to join the community" /></p>
+    <button type="button" disabled={signingIn} onClick={() => void signIn("register")} className="min-h-12 rounded-full bg-teal-800 px-8 py-3 font-semibold text-white"><InterfaceText source="Create account" /></button>
+    <button type="button" onClick={() => void signIn("login")} className="min-h-11 underline"><InterfaceText source="Log in" /></button>
+    <a href="#/dashboard" className="min-h-11 py-3 font-semibold underline"><InterfaceText source="Browse the public library" /></a>
+    {personalError && <p role="alert">{personalError}</p>}
+  </main>;
   return <EnglishInterface enabled={isWorkspace || isChat && isStaff}><div className="heritage-app flex h-dvh overflow-hidden flex-col bg-[#b89a68]">
     {nativeSession.isNative && <Toaster richColors />}
     <header className="institution-masthead relative z-30 flex shrink-0 items-center gap-2 border-b border-amber-100/15 bg-[#5c3a1c] px-3 py-2 text-amber-50 pt-safe">
@@ -199,7 +216,7 @@ function App() {
           : loading ? <p role="status" className="p-8"><InterfaceText source="Loading library…" /></p> : error ? <div role="alert" className="p-8"><p>{error}</p><button type="button" className="mt-4 rounded-full bg-[#6b4724] px-5 py-2 text-amber-50" onClick={() => setRetry(value => value + 1)}><InterfaceText source="Try again" /></button></div> : content ? <PaginatedLibrary downloadOrigin={apiOrigin} key={`${language}:${activeModule}`} initial={content} request={featureRequest} Link={Link} /> : <DashboardOverview Link={Link} mode={profile?.languageRoles.some(role => role.role === "teacher") ? "teacher" : profile?.languageRoles.some(role => role.role === "researcher") ? "researcher" : "public"} languageName={configuration?.selectedLanguage.nativeName || "Dholuo"} name={session ? profile?.name : undefined} />}
         </>}
       </main>
-      {!isChat && <Link href="/chatbot" className="floating-chatbot absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 text-white shadow-xl"><svg aria-label="Open AI chatbot" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></Link>}
+      {!isChat && <Link href="/chatbot" className="floating-chatbot absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 text-white shadow-xl"><svg aria-label="Open CULTURAL HERITAGE" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></Link>}
     </div>
   </div></EnglishInterface>;
 }

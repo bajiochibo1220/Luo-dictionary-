@@ -53,7 +53,7 @@ export default async function ArtifactDetailPage({
             <MediaImage
               src={image.url}
               alt={record.title}
-              className="w-full aspect-square object-cover"
+              className="w-full aspect-square object-contain bg-black"
             />
           ) : (
             <div className="w-full aspect-square bg-stone-100 flex items-center justify-center">
@@ -119,7 +119,7 @@ export default async function ArtifactDetailPage({
 
       {record.media.filter((item) => item.type !== "image").map((item) => (
         <section key={item.id} className="mb-6 bg-white rounded-xl border border-stone-100 p-5">
-          {item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[32rem] rounded-lg bg-stone-950" /> :
+          {item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[75dvh] rounded-lg bg-stone-950" /> :
             item.type === "audio" ? <MediaAudio src={item.url} controls className="w-full" /> :
             <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}
         </section>
@@ -142,7 +142,7 @@ export default async function ArtifactDetailPage({
                       <MediaImage
                         src={img.thumbnailUrl || img.url}
                         alt={r.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition"
+                        className="w-full h-full object-contain bg-black "
                       />
                     ) : (
                       <span className="text-4xl text-stone-300">🏺</span>

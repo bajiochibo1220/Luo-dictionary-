@@ -33,9 +33,9 @@ export function OralHistoryCard({
       {(item.media ?? []).map((asset) => asset.type === "audio" ? (
         <MediaAudio key={asset.id} src={asset.url} controls className="w-full" />
       ) : asset.type === "video" ? (
-        <MediaVideo key={asset.id} src={asset.url} poster={asset.thumbnailUrl ?? undefined} controls className="max-h-56 w-full bg-stone-950" />
+        <MediaVideo key={asset.id} src={asset.url} poster={asset.thumbnailUrl ?? undefined} controls className="max-h-[75dvh] w-full bg-stone-950" />
       ) : asset.type === "image" ? (
-        <MediaImage key={asset.id} src={asset.url} alt={item.title} className="max-h-56 w-full object-contain" />
+        <MediaImage key={asset.id} src={asset.url} alt={item.title} className="max-h-[75dvh] w-full object-contain" />
       ) : null)}
       <Link href={`/${langCode}/sigana/${item.id}`} className="block">
       <div className="p-6">

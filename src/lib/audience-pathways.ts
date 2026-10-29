@@ -20,7 +20,7 @@ export const MODULE_DIRECTORY = [
   ["Oral History Archive", "/dashboard?module=oral_histories"], ["Folktales (Sigana)", "/dashboard?module=folktales"],
   ["Traditional Songs", "/dashboard?module=songs"], ["Riddles (Ngeche)", "/dashboard?module=riddles"],
   ["Cultural Artifacts Library", "/dashboard?module=artifacts"], ["Heritage Sites", "/dashboard?module=heritage_sites"],
-  ["AI Language Tutor", "/tutor"], ["AI Chatbot", "/chatbot"], ["Games and Gamification", "/learn?section=game"],
+  ["AI Language Tutor", "/tutor"], ["CULTURAL HERITAGE", "/chatbot"], ["Games and Gamification", "/learn?section=game"],
   ["Learning Centre", "/learn?section=lesson"], ["Cultural Calendar", "/learn?section=event"],
   ["Audio-Visual Library", "/dashboard?module=audio_visual"], ["Research Portal", "/research"],
 ] as const;

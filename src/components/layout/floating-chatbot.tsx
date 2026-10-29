@@ -8,7 +8,7 @@ export function FloatingChatbot() {
     <Link
       href="/chatbot"
       className="floating-chatbot fixed bottom-4 right-4 z-30 group"
-      aria-label="Open AI chatbot"
+      aria-label="Open CULTURAL HERITAGE"
     >
       <div className="relative">
         {/* Pulse ring */}
@@ -29,7 +29,7 @@ export function FloatingChatbot() {
           </svg>
         </div>
         {/* Label on hover */}
-        <span className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-stone-900 text-amber-50 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none"><InterfaceText source="Ask the AI" /></span>
+        <span className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-stone-900 text-amber-50 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none"><InterfaceText source="CULTURAL HERITAGE" /></span>
       </div>
     </Link>
   );

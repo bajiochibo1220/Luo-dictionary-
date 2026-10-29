@@ -1,3 +1,4 @@
+import { readCulturalAnswer } from "@/lib/cultural-chat-answer";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -92,11 +93,11 @@ export async function GET(req: NextRequest) {
           coveragePct: embeddingCoverage,
         },
         recentQueries: recentQueries.map((q) => ({
-          ...q,
+          ...q, response: readCulturalAnswer(q.response).answer, translation: readCulturalAnswer(q.response).translation,
           createdAt: q.createdAt.toISOString(),
         })),
         flagged: flagged.map((f) => ({
-          ...f,
+          ...f, response: readCulturalAnswer(f.response).answer, translation: readCulturalAnswer(f.response).translation,
           createdAt: f.createdAt.toISOString(),
         })),
       },

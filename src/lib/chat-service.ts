@@ -1,3 +1,4 @@
+import { readCulturalAnswer, storeCulturalAnswer } from "@/lib/cultural-chat-answer";
 import { prisma } from "@/lib/db";
 import { assertAiQuota } from "@/lib/ai/quota";
 import { askQuestion, type ChatTurn } from "@/lib/ai/rag";
@@ -31,7 +32,7 @@ export async function answerChat(request: Request, account: AppAccount | null, i
     });
     history = previous.reverse().flatMap(message => [
       { role: "user" as const, content: message.query.slice(0, 2000) },
-      { role: "assistant" as const, content: message.response.slice(0, 2000) },
+      { role: "assistant" as const, content: readCulturalAnswer(message.response).answer.slice(0, 2000) },
     ]);
   }
   await assertAiQuota(request, account?.id);
@@ -60,7 +61,7 @@ export async function answerChat(request: Request, account: AppAccount | null, i
     }
     await transaction.aIResponse.create({ data: {
       conversationId: id, languageId: languageId ?? null, userId: account?.id ?? null,
-      query: input.question, response: result.answer, sources: result.sources,
+      query: input.question, response: storeCulturalAnswer({ answer: result.answer, languageCode: result.languageCode, translation: result.translation }), sources: result.sources,
       model: result.model, latencyMs: result.latencyMs,
     } });
     return id;

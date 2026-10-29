@@ -1,3 +1,4 @@
+import { readCulturalAnswer } from "@/lib/cultural-chat-answer";
 import { prisma } from "@/lib/db";
 import { ChatSourceSchema, type ConversationUpdateSchema } from "@/lib/chat-contract";
 import type { z } from "zod";
@@ -21,7 +22,8 @@ export async function getConversation(userId: string, id: string, before?: strin
     select: { id: true, query: true, response: true, sources: true, createdAt: true },
   });
   const messages = rows.slice(0, 100).reverse().map(row => ({
-    id: row.id, query: row.query, response: row.response,
+    id: row.id, query: row.query, response: readCulturalAnswer(row.response).answer,
+    languageCode: readCulturalAnswer(row.response).languageCode, translation: readCulturalAnswer(row.response).translation,
     sources: Array.isArray(row.sources) ? row.sources.flatMap(source => {
       const parsed = ChatSourceSchema.safeParse(source); return parsed.success ? [parsed.data] : [];
     }) : [], createdAt: row.createdAt.toISOString(),

@@ -48,11 +48,11 @@ export function DictionaryCard({
       <p className="text-stone-600">{entry.english}</p>
       {entry.meaning && <p className="mt-2 text-sm text-stone-500">{entry.meaning}</p>}
       {(entry.media ?? []).map((item) => item.type === "image" ? (
-        <MediaImage key={item.id} src={item.url} alt={entry.dholuo} className="mt-3 max-h-40 w-full object-cover rounded-lg" />
+        <MediaImage key={item.id} src={item.url} alt={entry.dholuo} className="mt-3 max-h-[75dvh] w-full object-contain bg-black rounded-lg" />
       ) : item.type === "audio" ? (
         <MediaAudio key={item.id} src={item.url} controls className="mt-3 w-full" />
       ) : item.type === "video" ? (
-        <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="mt-3 max-h-48 w-full rounded-lg" />
+        <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="mt-3 max-h-[75dvh] w-full rounded-lg" />
       ) : null)}
       {entry.kiswahili && (
         <p className="text-stone-400 text-sm mt-1"><InterfaceText source="Kiswahili: " />{entry.kiswahili}

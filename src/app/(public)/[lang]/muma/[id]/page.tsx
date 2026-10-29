@@ -43,7 +43,7 @@ export default async function DictionaryDetailPage({
         {antonyms.length > 0 && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-2"><InterfaceText source="Antonyms" /></h2><p className="text-stone-700">{antonyms.join(", ")}</p></section>}
         {data.wordOrigin && <section className="mt-7"><h2 className="text-xs uppercase tracking-wider text-stone-400 mb-1"><InterfaceText source="Word origin" /></h2><p className="text-stone-700">{data.wordOrigin}</p></section>}
         {authoredRecord.media.map((item) => <div key={item.id} className="mt-6">
-          {item.type === "image" ? <MediaImage src={item.url} alt={authoredRecord.title} className="max-h-96 rounded-lg" /> :
+          {item.type === "image" ? <MediaImage src={item.url} alt={authoredRecord.title} className="max-h-[75dvh] rounded-lg" /> :
             item.type === "audio" ? <MediaAudio src={item.url} controls className="w-full" /> :
             item.type === "video" ? <MediaVideo src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full rounded-lg" /> :
             <a href={item.url} target="_blank" rel="noreferrer" className="text-amber-800 underline"><InterfaceText source="Open transcript or document" /></a>}

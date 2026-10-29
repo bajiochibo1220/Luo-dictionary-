@@ -134,10 +134,10 @@ export default async function ReviewDetailPage({
               {record.media.map((m) => (
                 <div key={m.id} className="bg-stone-50 rounded-lg overflow-hidden border border-stone-200">
                   {m.type === "image" && (
-                    <MediaImage src={`/api/media/${encodeURIComponent(m.id)}/file`} alt={m.caption || ""} className="w-full max-h-64 object-cover" />
+                    <MediaImage src={`/api/media/${encodeURIComponent(m.id)}/file`} alt={m.caption || ""} className="w-full max-h-[75dvh] object-contain bg-black" />
                   )}
                   {m.type === "video" && (
-                    <MediaVideo src={`/api/media/${encodeURIComponent(m.id)}/file`} controls className="w-full max-h-64 bg-black" />
+                    <MediaVideo src={`/api/media/${encodeURIComponent(m.id)}/file`} controls className="w-full max-h-[75dvh] bg-black" />
                   )}
                   {m.type === "audio" && (
                     <div className="p-4">

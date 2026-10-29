@@ -29,9 +29,9 @@ export function FolktaleCard({
   return (
     <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       {(tale.media ?? []).map((item) => item.type === "image" ? (
-        <MediaImage key={item.id} src={item.url} alt={tale.title} className="max-h-64 w-full object-contain" />
+        <MediaImage key={item.id} src={item.url} alt={tale.title} className="max-h-[75dvh] w-full object-contain" />
       ) : item.type === "video" ? (
-        <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-64 w-full bg-stone-950" />
+        <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="max-h-[75dvh] w-full bg-stone-950" />
       ) : item.type === "audio" ? (
         <MediaAudio key={item.id} src={item.url} controls className="w-full" />
       ) : null)}

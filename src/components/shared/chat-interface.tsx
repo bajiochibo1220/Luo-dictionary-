@@ -32,6 +32,8 @@ type Message = {
   role: "user" | "assistant";
   content: string;
   sources?: Source[];
+  languageCode?: "eng" | "luo";
+  translation?: string;
 };
 
 type ConversationListItem = {
@@ -44,7 +46,7 @@ type ConversationListItem = {
 };
 
 const SUGGESTED = [
-  "Explain how solar energy works in simple terms.",
+  "How have Luo songs preserved history and traditions?",
   "What are Luo marriage customs?",
   "Explain the proverb Ng'ato ok nyal timo gima ok onyal",
   "What does nyathi mean?",
@@ -163,6 +165,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
         loaded.push({
           role: "assistant",
           content: m.response,
+          languageCode: m.languageCode, translation: m.translation,
           sources: m.sources ?? [],
         });
       }
@@ -298,6 +301,7 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
         {
           role: "assistant",
           content: json.data.answer,
+          languageCode: json.data.languageCode, translation: json.data.translation,
           sources: json.data.sources,
         },
       ]);
@@ -331,21 +335,21 @@ export function SharedChatInterface({ languageCode = "luo", cultureCode = langua
           </div>
         </aside>
       </>}
-      <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="AI assistant">
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="CULTURAL HERITAGE">
         <header className="chat-header flex shrink-0 items-center justify-between gap-3 border-b px-3 py-3 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">{!guest && <InterfaceButton type="button" aria-label="Open chat history" title="Your chats" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(value => !value)} className="chat-icon-button"><History size={20} /></InterfaceButton>}<span className="hidden rounded-xl bg-teal-50 p-2 text-teal-800 sm:inline-flex"><MessageCircle size={22} /></span><div className="min-w-0"><h1 className="text-base font-semibold text-teal-950 sm:text-lg"><InterfaceText source="AI assistant" /></h1><p className="text-xs text-stone-500"><InterfaceText source="General knowledge, language & culture" /></p></div></div>
+          <div className="flex min-w-0 items-center gap-3">{!guest && <InterfaceButton type="button" aria-label="Open chat history" title="Your chats" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(value => !value)} className="chat-icon-button"><History size={20} /></InterfaceButton>}<span className="hidden rounded-xl bg-teal-50 p-2 text-teal-800 sm:inline-flex"><MessageCircle size={22} /></span><div className="min-w-0"><h1 className="text-base font-semibold text-teal-950 sm:text-lg"><InterfaceText source="CULTURAL HERITAGE" /></h1><p className="text-xs text-stone-500"><InterfaceText source="Luo culture, history & Dholuo language" /></p></div></div>
           <div className="flex shrink-0 items-center gap-1"><InterfaceButton type="button" aria-label="New chat" title="New chat" disabled={busy} onClick={startNewChat} className="chat-icon-button"><Plus size={20} /></InterfaceButton>{onClose ? <InterfaceButton type="button" aria-label="Close chat" title="Close chat" onClick={onClose} className="chat-icon-button"><X size={22} /></InterfaceButton> : <Link href="/dashboard" className="chat-icon-button"><X size={22} /><span className="sr-only"><InterfaceText source="Close chat" /></span></Link>}</div>
         </header>
         {notice && <div role={notice.error ? "alert" : "status"} className={`flex shrink-0 items-start justify-between gap-3 px-4 py-3 text-sm ${notice.error ? "bg-red-50 text-red-900" : "bg-teal-50 text-teal-950"}`}><p>{notice.text}</p><InterfaceButton type="button" aria-label="Dismiss message" onClick={() => setNotice(null)} className="shrink-0 p-1"><X size={18} /></InterfaceButton></div>}
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-8" role="log" aria-label="Conversation" aria-live="polite" aria-busy={busy || conversationLoading}>
           {conversationLoading && <p role="status" className="mx-auto mb-4 max-w-2xl text-sm text-teal-800"><InterfaceText source="Loading chat…" /></p>}
           {beforeId && conversationId && <button type="button" disabled={busy || conversationLoading} onClick={() => void loadConversation(conversationId, beforeId)} className="mx-auto mb-5 block min-h-11 rounded-full border bg-white px-4 text-sm"><InterfaceText source="Load earlier messages" /></button>}
-          {!messages.length ? <div className="mx-auto flex min-h-full max-w-xl flex-col justify-center py-4"><div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-100 text-teal-800"><MessageCircle size={28} /></div><h2 className="font-serif text-3xl leading-tight text-teal-950"><InterfaceText source="What would you like to explore?" /></h2><p className="mt-3 text-sm leading-7 text-stone-600"><InterfaceText source="Ask about anything: everyday questions, science, technology, writing, language or culture. Relevant library sources are linked when available." /></p><div className="mt-6 grid gap-3 sm:grid-cols-2">{SUGGESTED.slice(0, 2).map(question => <button key={question} type="button" disabled={busy || conversationLoading} onClick={() => { setInput(question); inputRef.current?.focus(); }} className="chat-suggestion"><InterfaceText source={question} /><ArrowUpRight size={16} className="ml-auto shrink-0" /></button>)}</div></div> : <div className="mx-auto max-w-2xl space-y-6">{messages.map((message, index) => <article key={index} className={message.role === "user" ? "flex justify-end" : ""}><div className={message.role === "user" ? "chat-user-message" : "chat-assistant-message"}><p className="whitespace-pre-wrap break-words text-sm leading-7">{message.content}</p></div>{message.role === "assistant" && !!message.sources?.length && <details className="mt-2 text-xs text-teal-900"><summary className="min-h-11 cursor-pointer py-3 font-semibold"><InterfaceText source="Sources" /> ({message.sources.length})</summary><div className="flex flex-wrap gap-2 pb-2">{message.sources.map((source, sourceIndex) => { const href = publicSourceHref(cultureCode, source); return href ? <Link key={`${source.id}:${sourceIndex}`} href={href} className="rounded-lg border border-teal-200 bg-white px-3 py-2">{source.title}</Link> : <span key={`${source.id}:${sourceIndex}`} className="px-3 py-2">{source.title}</span>; })}</div></details>}</article>)}{busy && <p role="status" className="flex items-center gap-2 text-sm text-teal-800"><LoaderCircle size={18} className="animate-spin" /><InterfaceText source="Thinking…" /></p>}</div>}
+          {!messages.length ? <div className="mx-auto flex min-h-full max-w-xl flex-col justify-center py-4"><div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-100 text-teal-800"><MessageCircle size={28} /></div><h2 className="font-serif text-3xl leading-tight text-teal-950"><InterfaceText source="What would you like to learn about Luo heritage?" /></h2><p className="mt-3 text-sm leading-7 text-stone-600"><InterfaceText source="Explore Luo history, customs, songs, stories and Dholuo language using general cultural knowledge and relevant library sources. Ask in English or Dholuo, then expand the translation below each answer." /></p><div className="mt-6 grid gap-3 sm:grid-cols-2">{SUGGESTED.slice(0, 2).map(question => <button key={question} type="button" disabled={busy || conversationLoading} onClick={() => { setInput(question); inputRef.current?.focus(); }} className="chat-suggestion"><InterfaceText source={question} /><ArrowUpRight size={16} className="ml-auto shrink-0" /></button>)}</div></div> : <div className="mx-auto max-w-2xl space-y-6">{messages.map((message, index) => <article key={index} className={message.role === "user" ? "flex justify-end" : ""}><div className={message.role === "user" ? "chat-user-message" : "chat-assistant-message"}><p lang={message.role === "assistant" ? message.languageCode === "luo" ? "luo" : "en" : undefined} className="whitespace-pre-wrap break-words text-sm leading-7">{message.content}</p></div>{message.role === "assistant" && message.translation && message.languageCode && <details className="chat-translation mt-3 rounded-xl border border-teal-200 bg-teal-50 px-4 text-sm text-teal-950"><summary className="min-h-11 cursor-pointer py-3 font-semibold"><InterfaceText source={message.languageCode === "luo" ? "See translation in English" : "See translation in Dholuo"} /></summary><p lang={message.languageCode === "luo" ? "en" : "luo"} className="whitespace-pre-wrap break-words pb-4 leading-7">{message.translation}</p></details>}{message.role === "assistant" && !!message.sources?.length && <details className="mt-2 text-xs text-teal-900"><summary className="min-h-11 cursor-pointer py-3 font-semibold"><InterfaceText source="Sources" /> ({message.sources.length})</summary><div className="flex flex-wrap gap-2 pb-2">{message.sources.map((source, sourceIndex) => { const href = publicSourceHref(cultureCode, source); return href ? <Link key={`${source.id}:${sourceIndex}`} href={href} className="rounded-lg border border-teal-200 bg-white px-3 py-2">{source.title}</Link> : <span key={`${source.id}:${sourceIndex}`} className="px-3 py-2">{source.title}</span>; })}</div></details>}</article>)}{busy && <p role="status" className="flex items-center gap-2 text-sm text-teal-800"><LoaderCircle size={18} className="animate-spin" /><InterfaceText source="Thinking…" /></p>}</div>}
           {!!mediaPanel.length && <details className="mx-auto mt-6 max-w-2xl rounded-xl border border-teal-200 bg-white p-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-teal-900"><InterfaceText source="Related media" /> ({mediaPanel.length})</summary><div className="grid gap-3 sm:grid-cols-2">{mediaPanel.map((media, index) => <MediaCard key={`${media.recordId}:${index}`} media={media} />)}</div></details>}
         </div>
         <div className="chat-composer shrink-0 border-t px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
           <div className="mx-auto max-w-2xl">
-            <details className="mb-2 text-xs text-stone-600"><summary className="w-fit cursor-pointer rounded-lg py-2 font-medium text-teal-900"><InterfaceText source="Chat settings" /></summary><div className="space-y-3 rounded-xl bg-stone-50 p-3">{cultureCode !== "eng" && <label className="flex flex-wrap items-center gap-2"><InterfaceText source="Answer language" /><select value={answerLanguageCode} disabled={busy} onChange={event => setAnswerLanguageCode(event.target.value)} className="min-h-11 rounded-lg border bg-white px-3"><InterfaceOption value={cultureCode}>Community language</InterfaceOption><InterfaceOption value="eng">English</InterfaceOption></select></label>}<p className="leading-6"><InterfaceText source="The configured AI provider processes your question and recent chat messages. Avoid sharing private or sensitive information. AI answers can be mistaken; check the sources." /></p></div></details>
+            <details className="mb-2 text-xs text-stone-600"><summary className="w-fit cursor-pointer rounded-lg py-2 font-medium text-teal-900"><InterfaceText source="Chat settings" /></summary><div className="space-y-3 rounded-xl bg-stone-50 p-3">{cultureCode !== "eng" && <label className="flex flex-wrap items-center gap-2"><InterfaceText source="Language for short or ambiguous questions" /><select value={answerLanguageCode} disabled={busy} onChange={event => setAnswerLanguageCode(event.target.value)} className="min-h-11 rounded-lg border bg-white px-3"><InterfaceOption value={cultureCode}>Community language</InterfaceOption><InterfaceOption value="eng">English</InterfaceOption></select></label>}<p className="leading-6"><InterfaceText source="The configured AI provider processes your question and recent chat messages. Avoid sharing private or sensitive information. AI answers can be mistaken; check the sources." /></p></div></details>
             <label className="mb-3 flex min-h-8 items-start gap-2 text-xs leading-5 text-stone-600"><input type="checkbox" checked={allowExternalAi} onChange={event => setAllowExternalAi(event.target.checked)} disabled={busy} className="mt-1 h-4 w-4 shrink-0 accent-teal-800" /><span><InterfaceText source="Allow AI processing for this chat" /></span></label>
             <form onSubmit={event => { event.preventDefault(); void send(input); }} className="flex items-end gap-2 rounded-2xl border border-stone-300 bg-white p-2 shadow-sm focus-within:border-teal-600 focus-within:ring-2 focus-within:ring-teal-100">
               <InterfaceTextarea ref={inputRef} aria-label="Your question" rows={2} maxLength={2000} value={input} onChange={event => setInput(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(input); } }} placeholder="Ask a question…" disabled={busy || conversationLoading} className="max-h-36 min-h-12 min-w-0 flex-1 resize-y rounded-xl border-0 bg-transparent px-3 py-2 text-base text-stone-900 outline-none placeholder:text-stone-400 disabled:opacity-50" />
@@ -393,7 +397,7 @@ function MediaCard({ media }: { media: MediaItem }) {
           <MediaImage
             src={media.url}
             alt={media.title}
-            className="w-full max-h-64 object-cover"
+            className="w-full max-h-[70dvh] object-contain bg-black"
           />
         )}
         {media.mediaType === "video" && (
@@ -401,7 +405,7 @@ function MediaCard({ media }: { media: MediaItem }) {
             src={media.url}
             poster={media.thumbnailUrl || undefined}
             controls
-            className="w-full max-h-64"
+            className="w-full max-h-[70dvh] object-contain bg-black"
           />
         )}
         {media.mediaType === "audio" && (

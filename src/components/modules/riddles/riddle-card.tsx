@@ -36,9 +36,9 @@ export function RiddleCard({
       <div className="p-6">
         <EnglishVersionLink langCode={langCode} href={`/${langCode}/ngeche/${riddle.id}`} />
         {(riddle.media ?? []).map((item) => item.type === "image" ? (
-          <MediaImage key={item.id} src={item.url} alt={riddle.title} className="my-3 max-h-64 w-full rounded-lg object-contain" />
+          <MediaImage key={item.id} src={item.url} alt={riddle.title} className="my-3 max-h-[75dvh] w-full rounded-lg object-contain" />
         ) : item.type === "video" ? (
-          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="my-3 max-h-64 w-full rounded-lg bg-stone-950" />
+          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="my-3 max-h-[75dvh] w-full rounded-lg bg-stone-950" />
         ) : item.type === "audio" ? (
           <MediaAudio key={item.id} src={item.url} controls className="my-3 w-full" />
         ) : null)}

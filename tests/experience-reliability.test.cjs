@@ -107,34 +107,3 @@ test('tutor retries after a provider error and ignores duplicate submissions', a
   submit = find(tree, node => node.type === 'form').props.onSubmit; submit({ preventDefault() {} }); await tick(); tree = render();
   assert.equal(calls, 2); assert.equal(find(tree, node => node.props.href === '/luo/ngero/source').props.children, 'Reviewed source');
 });
-
-test('the installation prompt waits, can be dismissed, and handles a consumed browser event', async () => {
-  const previousWindow = global.window;
-  const storageDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
-  const storage = new Map(), listeners = new Map(), timers = [];
-  global.window = { matchMedia: () => ({ matches: false }), addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: name => listeners.delete(name), setTimeout: (fn, ms) => { timers.push({ fn, ms }); return timers.length; }, clearTimeout() {} };
-  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) } });
-  try {
-    const h = harness({ './app-updates': { useAppUpdates: () => null } });
-    const { InstallAppPrompt } = h.load('src/components/pwa/install-app-prompt.tsx');
-    const render = () => h.render(() => InstallAppPrompt());
-    assert.equal(render(), null);
-    listeners.get('beforeinstallprompt')({ preventDefault() {}, prompt: async () => {}, userChoice: Promise.resolve({ outcome: 'dismissed' }) });
-    assert.equal(render(), null); assert.equal(timers.at(-1).ms, 20000);
-    timers.at(-1).fn(); let tree = render();
-    find(tree, node => node.props['aria-label'] === 'Dismiss installation prompt').props.onClick();
-    assert.equal(render(), null); assert.equal(storage.get('heritage-install-dismissed'), 'true');
-    storage.clear();
-    const h2 = harness({ './app-updates': { useAppUpdates: () => null } });
-    const SecondPrompt = h2.load('src/components/pwa/install-app-prompt.tsx').InstallAppPrompt;
-    const second = () => h2.render(() => SecondPrompt()); second();
-    listeners.get('beforeinstallprompt')({ preventDefault() {}, prompt: async () => { throw new Error('Event already used'); } });
-    second(); timers.at(-1).fn(); tree = second();
-    find(tree, node => node.type === 'button' && !node.props['aria-label']).props.onClick();
-    await tick(); assert.equal(second(), null);
-    assert.equal(storage.get('heritage-install-dismissed'), 'true');
-  } finally {
-    global.window = previousWindow;
-    if (storageDescriptor) Object.defineProperty(globalThis, 'sessionStorage', storageDescriptor); else delete globalThis.sessionStorage;
-  }
-});

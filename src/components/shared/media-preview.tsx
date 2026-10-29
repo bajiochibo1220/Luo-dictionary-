@@ -26,7 +26,7 @@ export function MediaImage({ src = "", alt = "", sizes = "(max-width: 767px) 100
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
   const original = src.split("?")[0];
-  return <img loading="lazy" decoding="async" {...props} src={failed ? original : src}
+  return <img loading="lazy" decoding="async" {...props} style={{ objectFit: "contain", backgroundColor: "#000", ...props.style }} src={failed ? original : src}
     {...(!failed ? responsiveMediaSources(src) : {})} sizes={sizes} alt={alt}
     onError={event => { if (!failed && original !== src) setFailed(true); props.onError?.(event); }} />;
 }
@@ -47,7 +47,7 @@ export function MediaVideo({ src, poster, ...props }: VideoHTMLAttributes<HTMLVi
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
-  return <div className="w-full min-w-0"><video ref={ref} playsInline {...props}
+  return <div className="w-full min-w-0"><video ref={ref} playsInline {...props} style={{ objectFit: "contain", backgroundColor: "#000", ...props.style }}
     onError={event => { if (fallbackFor !== src && originalMediaSource(src)) { setFallbackFor(src!); return; } setFailed(true); props.onError?.(event); }}
     onPlay={event => { pauseOtherMedia(event); props.onPlay?.(event); }} preload={visible ? "metadata" : "none"} src={visible ? fallbackFor === src ? originalMediaSource(src) || src : src : undefined} poster={visible ? poster : undefined} />
     {failed && <p role="alert" className="mt-2 text-sm text-red-900"><InterfaceText source="Video could not load. Check your connection or try the original download." /> <button type="button" className="min-h-11 underline" onClick={() => { setFailed(false); ref.current?.load(); }}><InterfaceText source="Try again" /></button></p>}

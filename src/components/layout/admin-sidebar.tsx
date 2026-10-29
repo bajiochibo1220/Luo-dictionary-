@@ -1,4 +1,5 @@
 "use client";
+import { InstallAppButton } from "@/components/pwa/app-installation";
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import { NavigationIcon } from "@/components/shared/navigation-icon";
@@ -81,6 +82,7 @@ export function AdminSidebar({ isSuperAdmin, isMasterSuperAdmin = false, roles, 
 
   return <div className="h-full overflow-y-auto bg-transparent py-4 text-amber-50">
     {sections.map(renderSection)}
+    <InstallAppButton />
     <nav aria-label="Workspace help" className="mb-4 border-t border-amber-100/15 pt-3"><Link href={isSuperAdmin ? "/super-admin/help" : "/admin/help"} onClick={onNavigate} className={`mx-2 flex min-h-11 items-center rounded-lg px-4 text-sm ${isActive(isSuperAdmin ? "/super-admin/help" : "/admin/help") ? "bg-black/25 text-amber-100" : "text-amber-50/80 hover:bg-black/15"}`}><InterfaceText source="Help & training"/></Link></nav>
     {isSuperAdmin && <div className="mt-8 border-t border-amber-100/15 pt-6">{renderSection(SUPER_ADMIN_SECTION, 999)}</div>}
   </div>;

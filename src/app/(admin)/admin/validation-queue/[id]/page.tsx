@@ -161,8 +161,8 @@ export default async function ValidationDetailPage({
         <h2 className="mb-4 text-xs uppercase tracking-wider text-stone-500"><InterfaceText source="Attached files (" />{record.media.length}<InterfaceText source=") · check these with the story" /></h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {record.media.map((asset) => <article key={asset.id} className="overflow-hidden rounded-lg border border-stone-200 bg-stone-50">
-            {asset.type === "image" && <MediaImage src={`/api/media/${asset.id}/file`} alt={asset.caption || "Attached cultural image"} className="max-h-80 w-full object-contain bg-stone-900/5" />}
-            {asset.type === "video" && <MediaVideo src={`/api/media/${asset.id}/file`} controls className="max-h-80 w-full bg-black" />}
+            {asset.type === "image" && <MediaImage src={`/api/media/${asset.id}/file`} alt={asset.caption || "Attached cultural image"} className="max-h-[75dvh] w-full object-contain bg-stone-900/5" />}
+            {asset.type === "video" && <MediaVideo src={`/api/media/${asset.id}/file`} controls className="max-h-[75dvh] w-full bg-black" />}
             {asset.type === "audio" && <MediaAudio src={`/api/media/${asset.id}/file`} controls className="w-full p-4" />}
             <div className="flex items-center justify-between gap-3 border-t border-stone-200 px-3 py-2 text-xs text-stone-600">
               <span className="capitalize">{asset.type} · {asset.format}</span>

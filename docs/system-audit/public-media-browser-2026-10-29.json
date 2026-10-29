@@ -344,6 +344,7 @@
     }
   ],
   "interactions": [
+    "Portrait and panoramic images and video keep their full frames with black unused space",
     "Save uses one API request and confirms the saved state",
     "Full 216-turn reader, complete text download, honest English fallback and dialog dismissal",
     "Attached video plays with native controls",
@@ -353,5 +354,5 @@
   "unexpectedApis": [],
   "liveWrites": 0,
   "readingRequests": 1,
-  "completedAt": "2026-10-29T14:22:14.676Z"
+  "completedAt": "2026-10-29T15:20:01.090Z"
 }

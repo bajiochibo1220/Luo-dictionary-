@@ -2,7 +2,7 @@ import { getSystemSetting } from "@/lib/settings";
 import { AiProviderError } from "./gemini-errors";
 import { getDeepSeekApiKey } from "./provider-config";
 
-export async function generateDeepSeekText(prompt: string, instruction: string, timeoutMs = 40000, image?: { mime: string; bytes: Buffer }): Promise<{ text: string; model: string }> {
+export async function generateDeepSeekText(prompt: string, instruction: string, timeoutMs = 40000, image?: { mime: string; bytes: Buffer }, options?: { json?: boolean }): Promise<{ text: string; model: string }> {
   if (image && (!/^image\/(jpeg|png|gif|webp)$/.test(image.mime) || !image.bytes.length || image.bytes.length > 8 * 1024 * 1024)) throw new AiProviderError(400, "Choose a supported image smaller than 8 MB.");
   const key = await getDeepSeekApiKey();
   const model = (process.env.DEEPSEEK_MODEL || await getSystemSetting("deepseek_model") || "deepseek-flash").trim();
@@ -13,7 +13,7 @@ export async function generateDeepSeekText(prompt: string, instruction: string, 
     response = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST", redirect: "error", cache: "no-store",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ model, stream: false, max_tokens: 2400, thinking: { type: "disabled" },
+      body: JSON.stringify({ model, stream: false, ...(options?.json ? { response_format: { type: "json_object" } } : {}), max_tokens: 2400, thinking: { type: "disabled" },
         messages: [{ role: "system", content: instruction }, { role: "user", content: image ? [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: `data:${image.mime};base64,${image.bytes.toString("base64")}`, detail: "auto" } }] : prompt }] }),
       signal: AbortSignal.timeout(timeoutMs),
     });

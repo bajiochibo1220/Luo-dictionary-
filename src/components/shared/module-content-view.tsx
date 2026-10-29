@@ -172,7 +172,7 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave, onOpen,
           </button>}
         </div>
         {!showEnglish && !detail && item.englishTitle && <p className="discovery-english-title" lang="en" contentEditable={false}>{item.englishTitle}</p>}
-        {description && <div className={`library-item-description ${expanded ? "is-expanded" : ""} space-y-2`}><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{detail && (description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
+        {description && <div className={`library-item-description ${expanded ? "is-expanded" : ""} space-y-2`}><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
         {!showEnglish && languageCode !== "eng" && (detail || item.englishBodyText || item.englishSummary) && (!hasLinkedTranscripts || item.englishBodyText || item.englishSummary) && <div lang="en" translate="no" contentEditable={false} className="library-english-preview space-y-1 border-t border-stone-200 pt-2 text-xs text-stone-700">
           <p className="text-xs font-semibold uppercase tracking-wide"><InterfaceText source="English" /></p>
           {detail && item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
@@ -201,12 +201,12 @@ function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLangu
         const icons = Array.from(new Set(media.map((m) => m.type)));
         return (
           <button type="button" onClick={() => onOpen(item)} aria-label={`Open ${item.title}`} key={item.id} className="text-left bg-black/5 backdrop-blur-sm rounded-xl border border-stone-900/10 overflow-hidden shadow-md hover:shadow-xl hover:border-amber-800/40 transition-all cursor-pointer group">
-            <div className="aspect-square bg-[#b89a68] relative overflow-hidden">
+            <div className="aspect-square bg-black relative overflow-hidden">
               {thumb?.type === "image" && (
-                <MediaImage src={thumb.thumbnailUrl || thumb.url} sizes="(max-width: 767px) 50vw, 25vw" alt={item.title} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                <MediaImage src={thumb.thumbnailUrl || thumb.url} sizes="(max-width: 767px) 50vw, 25vw" alt={item.title} className="w-full h-full object-contain" />
               )}
               {thumb?.type === "video" && thumb.thumbnailUrl && (
-                <MediaImage src={thumb.thumbnailUrl} sizes="(max-width: 767px) 50vw, 25vw" alt={item.title} className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500" />
+                <MediaImage src={thumb.thumbnailUrl} sizes="(max-width: 767px) 50vw, 25vw" alt={item.title} className="w-full h-full object-contain" />
               )}
               {(!thumb || (thumb.type === "video" && !thumb.thumbnailUrl)) && (
                 <div className="w-full h-full flex items-center justify-center text-5xl text-amber-200/30">

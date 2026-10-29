@@ -2,7 +2,7 @@ import { getSystemSetting } from "@/lib/settings";
 import { AiProviderError } from "./gemini-errors";
 import { getGroqApiKey } from "./provider-config";
 
-export async function generateGroqText(prompt: string, instruction: string, timeoutMs = 40000, image?: { mime: string; bytes: Buffer }): Promise<{ text: string; model: string }> {
+export async function generateGroqText(prompt: string, instruction: string, timeoutMs = 40000, image?: { mime: string; bytes: Buffer }, options?: { json?: boolean }): Promise<{ text: string; model: string }> {
   if (image && (!/^image\/(jpeg|png|gif|webp)$/.test(image.mime) || !image.bytes.length || image.bytes.length > 8 * 1024 * 1024)) throw new AiProviderError(400, "Choose a supported image smaller than 8 MB.");
   const key = await getGroqApiKey();
   const model = (image ? process.env.GROQ_VISION_MODEL || await getSystemSetting("groq_vision_model") || "qwen/qwen3.8-27b" : process.env.GROQ_MODEL || await getSystemSetting("groq_model") || "openai/gpt-oss-20b").trim();
@@ -13,7 +13,7 @@ export async function generateGroqText(prompt: string, instruction: string, time
     response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST", redirect: "error", cache: "no-store",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ model, stream: false, max_completion_tokens: 2400, ...(model.startsWith("openai/gpt-oss-") ? { include_reasoning: false, reasoning_effort: "low" } : model.startsWith("qwen/") ? { reasoning_format: "hidden" } : {}),
+      body: JSON.stringify({ model, stream: false, ...(options?.json ? { response_format: { type: "json_object" } } : {}), max_completion_tokens: 2400, ...(model.startsWith("openai/gpt-oss-") ? { include_reasoning: false, reasoning_effort: "low" } : model.startsWith("qwen/") ? { reasoning_format: "hidden" } : {}),
         messages: [{ role: "system", content: instruction }, { role: "user", content: image ? [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: `data:${image.mime};base64,${image.bytes.toString("base64")}`, detail: "auto" } }] : prompt }] }),
       signal: AbortSignal.timeout(timeoutMs),
     });

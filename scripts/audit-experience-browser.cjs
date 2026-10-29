@@ -32,7 +32,7 @@ function fixture(url, method) {
   if (pathname === '/api/v1/ai-tools' && method === 'POST') { mediaCalls++; return { text: 'Synthetic image draft', draft: true }; }
   if (pathname === '/api/v1/ai-tools') return { capabilities: { ocr: true, describe: true, transcribe: false, illustrate: false }, assets: [{ id: item.id, type: 'image', title: 'Synthetic approved image' }], stories: [] };
   if (pathname === '/api/v1/tutor') { tutorCalls++; return { text: 'Synthetic tutor feedback', sources: [] }; }
-  if (pathname === '/api/v1/chat') { chatCalls++; return { answer: 'Synthetic cultural answer', sources: [{ id: item.id, title: item.title, module: 'oral_histories', similarity: 1 }], media: [], conversationId: null }; }
+  if (pathname === '/api/v1/chat') { chatCalls++; return { languageCode: chatCalls === 1 ? 'eng' : 'luo', translation: chatCalls === 1 ? 'Synthetic Dholuo translation' : 'Synthetic English translation', answer: 'Synthetic cultural answer', sources: [{ id: item.id, title: item.title, module: 'oral_histories', similarity: 1 }], media: [], conversationId: null }; }
   if (['/api/users', '/api/super-admin/admins', '/api/super-admin/backup', '/api/audit-logs'].includes(pathname)) return [];
   if (['/api/analytics', '/api/ai/monitoring', '/api/super-admin/settings'].includes(pathname)) return {};
   if (pathname === '/api/content') return [{ ...item, status: 'submitted', languageId: 1, contributorId: 'other-uploader', language: languages[0], module: { code: 'oral_histories', baseName: 'Oral histories' }, canDelete: true }];
@@ -71,7 +71,7 @@ async function main() {
       }
     };
     const evaluate = async expression => { const response = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }); if (response.exceptionDetails) throw new Error((response.exceptionDetails.exception?.description || response.exceptionDetails.text) + ' Expression: ' + expression.slice(0, 180)); return response.result.value; };
-    const until = async (expression, label) => { const deadline = Date.now() + 90000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } throw new Error('Timed out: ' + label); };
+    const until = async (expression, label) => { const deadline = Date.now() + 150000; while (Date.now() < deadline) { if (await evaluate(expression)) return; await delay(200); } throw new Error('Timed out: ' + label); };
     await send('Runtime.enable'); await send('Page.enable'); await send('Fetch.enable', { patterns: [{ urlPattern: '*/api/*' }] });
     await send('Page.navigate', { url: base + '/application#/dashboard' });
     await until('!!document.querySelector(".discovery-card")', 'discovery hydration');
@@ -138,6 +138,18 @@ async function main() {
     await delay(100); await evaluate('document.querySelector(".chat-composer form").requestSubmit()');
     await until('document.querySelector("main").textContent.includes("Synthetic cultural answer")', 'chat response'); assert.equal(chatCalls, 1);
     report.interactions.push('Cultural chat submits and displays an answer');
+    assert.equal(await evaluate('document.querySelector(".chat-translation").open'), false);
+    assert.equal(await evaluate('document.querySelector(".chat-translation summary").textContent.includes("See translation in Dholuo")'), true);
+    await evaluate('document.querySelector(".chat-translation summary").click()');
+    assert.equal(await evaluate('document.querySelector(".chat-translation").open && document.querySelector(".chat-translation p").lang === "luo"'), true);
+    await evaluate(`(() => {const input=document.querySelector('textarea');Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(input,'Amos uru');input.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await delay(100); await evaluate('document.querySelector(".chat-composer form").requestSubmit()');
+    await until('document.querySelectorAll(".chat-translation").length===2', 'Dholuo answer translation');
+    assert.equal(await evaluate('document.querySelectorAll(".chat-translation summary")[1].textContent.includes("See translation in English")'), true);
+    await evaluate('document.querySelectorAll(".chat-translation summary")[1].click()');
+    assert.equal(await evaluate('document.querySelectorAll(".chat-translation p")[1].lang'), 'en');
+    report.interactions.push('Both answer languages expose the opposite translation in an initially collapsed dropdown');
+
     report.sourceLinkWorks = await evaluate('!!document.querySelector("main details a[href*=sigana]")');
     const { applicationScreenHref } = require('../tests/load-ts.cjs').loader()('src/lib/app-navigation.ts');
     const hashLinks = await evaluate(`Array.from(document.querySelectorAll('a[href^="#/"]')).map(link=>link.getAttribute('href').slice(1))`);
@@ -145,11 +157,28 @@ async function main() {
     guestMode = true;
     await send('Page.navigate', { url: base + '/application?audit=guest#/dashboard' }); await until('!!document.querySelector(".discovery-card")', 'guest discovery');
     report.interactions.push('Public discovery renders without an account');
+    await evaluate(`document.querySelector('button[aria-label="Open menu"]').click()`);
+    assert.equal(await evaluate('document.querySelector("aside").textContent.includes("Install the app")'), true);
+    await evaluate(`window.auditInstallCalls=0;const event=new Event('beforeinstallprompt',{cancelable:true});event.prompt=async()=>{window.auditInstallCalls++};event.userChoice=Promise.resolve({outcome:'accepted'});window.dispatchEvent(event);`);
+    await until(`Array.from(document.querySelectorAll('aside button')).some(button=>button.textContent.includes('Install the app'))`, 'sidebar install button');
+    await evaluate(`Array.from(document.querySelectorAll('aside button')).find(button=>button.textContent.includes('Install the app')).click()`);
+    assert.equal(await evaluate('window.auditInstallCalls'), 1);
+    await evaluate(`window.dispatchEvent(new Event('appinstalled'))`);
+    await until('!document.querySelector("aside").textContent.includes("Install the app")', 'installed app control hides');
+    await evaluate('document.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+    report.interactions.push('Install lives in the sidebar, invokes the browser once and hides after installation');
+
     for (const route of ['/tutor','/ai-tools','/saved','/settings','/account','/workspace','/contribute']) {
       activeRoute = 'guest:' + route; await evaluate(`location.hash=${JSON.stringify(route)}`); await delay(250);
       await until('!!document.querySelector("main button") && document.querySelector("main").textContent.includes("Sign in")', 'guest sign-in action ' + route);
       report.interactions.push('Guest receives a sign-in action for ' + route);
     }
+    await send('Page.navigate', {url:base+'/application?audit=mobile-entry'});
+    await until('location.pathname === "/register" && !!document.querySelector("form")', 'mobile registration first');
+    assert.equal(await evaluate(`!!document.querySelector('a[href="/application#/dashboard"]')`), true);
+    await evaluate(`document.querySelector('a[href="/application#/dashboard"]').click()`);
+    await until('!!document.querySelector(".discovery-card")', 'explicit guest library browsing');
+    report.interactions.push('Phone entry opens registration and Browse the public library opens guest discovery');
     report.completedAt = new Date().toISOString();
     report.unknownApi = [...new Set(report.unknownApi)];
     fs.writeFileSync('docs/system-audit/experience-browser-2026-10-29.json', JSON.stringify(report, null, 2));

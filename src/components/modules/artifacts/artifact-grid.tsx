@@ -60,7 +60,7 @@ export function ArtifactGrid({
                   <MediaImage
                     src={image.thumbnailUrl || image.url}
                     alt={a.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-contain bg-black "
                   />
                 ) : (
                   <span className="text-5xl text-stone-300">🏺</span>

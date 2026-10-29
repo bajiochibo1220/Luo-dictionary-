@@ -57,7 +57,7 @@ export default async function HeritageSiteDetailPage({
               <MediaImage
                 src={img.url}
                 alt={record.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-black"
               />
             </div>
           ))}

@@ -51,19 +51,18 @@ export function SongCard({
 
   return (
     <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
-      <Link href={`/${langCode}/wende/${song.id}`} className="block">
       <div className="p-6">
         {(song.media ?? []).map((item) => item.type === "image" ? (
-          <MediaImage key={item.id} src={item.url} alt={song.title} className="w-full max-h-64 object-cover rounded-lg mb-4" />
+          <MediaImage key={item.id} src={item.url} alt={song.title} className="w-full max-h-[75dvh] object-contain bg-black rounded-lg mb-4" />
         ) : item.type === "video" ? (
-          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-64 rounded-lg mb-4 bg-stone-950" />
+          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[75dvh] rounded-lg mb-4 bg-black" />
         ) : item.type === "audio" ? (
           <MediaAudio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}
         <span className="text-xs uppercase tracking-wider text-amber-600"><InterfaceText source="Song" /></span>
 
         <h3 className="text-xl font-serif text-stone-800 mt-2 mb-3 group-hover:text-amber-700 transition leading-snug">
-          {song.title}
+          <Link href={`/${langCode}/wende/${song.id}`}>{song.title}</Link>
         </h3>
 
         {d.meaning && (
@@ -99,7 +98,6 @@ export function SongCard({
           </div>
         )}
       </div>
-      </Link>
       <div className="px-6 pb-5"><EnglishVersionLink langCode={langCode} href={`/${langCode}/wende/${song.id}`} /></div>
     </div>
   );

@@ -124,6 +124,7 @@ export function RegisterForm() {
 
   return (
     <div className="space-y-4">
+      <Link href="/application#/dashboard" className="block min-h-11 text-center font-semibold underline"><InterfaceText source="Browse the public library" /></Link>
       <form onSubmit={onSubmit} className="space-y-3">
         <InterfaceInput
           name="name"

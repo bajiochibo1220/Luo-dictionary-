@@ -1,4 +1,5 @@
 "use client";
+import { InstallAppButton } from "@/components/pwa/app-installation";
 import { InterfaceText } from "@/components/shared/interface-language";
 
 import type { ComponentType, ReactNode } from "react";
@@ -26,7 +27,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
   ];
   const more = [
     ["/learn", "Lessons, games & calendar"], ["/tutor", "AI language tutor"],
-    ["/chatbot", "AI assistant"], ["/research", "Research portal"],
+    ["/chatbot", "CULTURAL HERITAGE"], ["/research", "Research portal"],
     ["/places", "Cultural places map"], ["/knowledge", "Cultural connections"],
     ["/ai-tools", "AI media tools"], ["/courses", "Learning pathways"],
     ["/contribute", "Contribute & submissions"], ["/settings", "Settings"], ["/help", "Help & training"],
@@ -60,6 +61,7 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
           {more.map(([href, label]) => <Link key={href} href={href} onClick={onNavigate} className={`${linkClass} ${pathname === href ? "border-amber-400 bg-black/25 font-semibold" : "border-transparent"}`}><NavigationIcon href={href} /><span aria-current={pathname === href ? "page" : undefined}><InterfaceText source={label} /></span></Link>)}
         </details>
       </nav>
+      <InstallAppButton />
 
     </div>
   );

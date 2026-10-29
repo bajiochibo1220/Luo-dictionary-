@@ -147,14 +147,14 @@ export function MediaGrid({
                 <MediaImage
                   src={a.thumbnailUrl || a.url}
                   alt={a.caption || a.publicId}
-                  className="w-full h-full object-cover group-hover:scale-105 transition"
+                  className="w-full h-full object-contain bg-black "
                 />
               ) : a.resourceType === "video" ? (
                 a.thumbnailUrl ? (
                   <MediaImage
                     src={a.thumbnailUrl}
                     alt={a.caption || a.publicId}
-                    className="w-full h-full object-cover group-hover:scale-105 transition"
+                    className="w-full h-full object-contain bg-black "
                   />
                 ) : (
                   <span className="text-5xl text-stone-400">🎬</span>

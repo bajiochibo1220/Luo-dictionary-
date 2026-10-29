@@ -161,7 +161,7 @@
       "viewport": 320,
       "content": 320,
       "available": 320,
-      "heading": "AI assistant"
+      "heading": "CULTURAL HERITAGE"
     },
     {
       "route": "/workspace",
@@ -332,7 +332,7 @@
       "viewport": 390,
       "content": 390,
       "available": 390,
-      "heading": "AI assistant"
+      "heading": "CULTURAL HERITAGE"
     },
     {
       "route": "/workspace",
@@ -503,7 +503,7 @@
       "viewport": 768,
       "content": 768,
       "available": 768,
-      "heading": "AI assistant"
+      "heading": "CULTURAL HERITAGE"
     },
     {
       "route": "/workspace",
@@ -674,7 +674,7 @@
       "viewport": 1024,
       "content": 1024,
       "available": 1024,
-      "heading": "AI assistant"
+      "heading": "CULTURAL HERITAGE"
     },
     {
       "route": "/workspace",
@@ -845,7 +845,7 @@
       "viewport": 1440,
       "content": 1440,
       "available": 1440,
-      "heading": "AI assistant"
+      "heading": "CULTURAL HERITAGE"
     },
     {
       "route": "/workspace",
@@ -1225,16 +1225,19 @@
     "AI image tools submit an approved source and display a draft",
     "Tutor submits and displays feedback",
     "Cultural chat submits and displays an answer",
+    "Both answer languages expose the opposite translation in an initially collapsed dropdown",
     "Public discovery renders without an account",
+    "Install lives in the sidebar, invokes the browser once and hides after installation",
     "Guest receives a sign-in action for /tutor",
     "Guest receives a sign-in action for /ai-tools",
     "Guest receives a sign-in action for /saved",
     "Guest receives a sign-in action for /settings",
     "Guest receives a sign-in action for /account",
     "Guest receives a sign-in action for /workspace",
-    "Guest receives a sign-in action for /contribute"
+    "Guest receives a sign-in action for /contribute",
+    "Phone entry opens registration and Browse the public library opens guest discovery"
   ],
   "sourceLinkWorks": true,
   "invalidNavigation": [],
-  "completedAt": "2026-10-29T14:11:20.575Z"
+  "completedAt": "2026-10-29T15:20:10.209Z"
 }

@@ -41,9 +41,9 @@ export function ProverbCard({
     <div className="group bg-white rounded-xl shadow-xs hover:shadow-lg transition-all border border-stone-100 hover:border-amber-300 overflow-hidden">
       <div className="p-6">
         {media.map((item) => item.type === "image" ? (
-          <MediaImage key={item.id} src={item.url} alt={proverb.title} className="w-full max-h-72 object-contain rounded-lg mb-4 bg-stone-100" />
+          <MediaImage key={item.id} src={item.url} alt={proverb.title} className="w-full max-h-[75dvh] object-contain rounded-lg mb-4 bg-stone-100" />
         ) : item.type === "video" ? (
-          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-72 rounded-lg mb-4 bg-stone-950" />
+          <MediaVideo key={item.id} src={item.url} poster={item.thumbnailUrl ?? undefined} controls className="w-full max-h-[75dvh] rounded-lg mb-4 bg-stone-950" />
         ) : item.type === "audio" ? (
           <MediaAudio key={item.id} src={item.url} controls className="w-full mb-4" />
         ) : null)}

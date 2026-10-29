@@ -61,7 +61,7 @@ export function LoginForm() {
 
   return (
     <div className="space-y-4">
-      <Link href="/application" className="block min-h-11 text-center font-semibold underline"><InterfaceText source="Browse the public library" /></Link>
+      <Link href="/application#/dashboard" className="block min-h-11 text-center font-semibold underline"><InterfaceText source="Browse the public library" /></Link>
       {googleError && <div role="alert" className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
         {googleError === "GoogleAccountNotFound"
           ? <><InterfaceText source="We could not find an account for this Google email. " /><Link href={registrationHref} className="font-semibold underline"><InterfaceText source="Create an account to continue." /></Link></>
