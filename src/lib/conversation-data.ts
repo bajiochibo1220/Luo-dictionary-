@@ -21,13 +21,16 @@ export async function getConversation(userId: string, id: string, before?: strin
     orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 101,
     select: { id: true, query: true, response: true, sources: true, createdAt: true },
   });
-  const messages = rows.slice(0, 100).reverse().map(row => ({
-    id: row.id, query: row.query, response: readCulturalAnswer(row.response).answer,
-    languageCode: readCulturalAnswer(row.response).languageCode, translation: readCulturalAnswer(row.response).translation,
-    sources: Array.isArray(row.sources) ? row.sources.flatMap(source => {
-      const parsed = ChatSourceSchema.safeParse(source); return parsed.success ? [parsed.data] : [];
-    }) : [], createdAt: row.createdAt.toISOString(),
-  }));
+  const messages = rows.slice(0, 100).reverse().map(row => {
+    const answer = readCulturalAnswer(row.response);
+    return {
+      id: row.id, query: row.query, response: answer.answer,
+      languageCode: answer.languageCode, translation: answer.translation,
+      sources: Array.isArray(row.sources) ? row.sources.flatMap(source => {
+        const parsed = ChatSourceSchema.safeParse(source); return parsed.success ? [parsed.data] : [];
+      }) : [], createdAt: row.createdAt.toISOString(),
+    };
+  });
   return { ...conversation, messages, beforeId: rows.length > 100 ? messages[0]?.id ?? null : null };
 }
 

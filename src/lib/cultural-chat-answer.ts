@@ -1,10 +1,12 @@
 import { z } from "zod";
 
-export const CulturalAnswerSchema = z.object({
+const StoredAnswerSchema = z.object({
   languageCode: z.enum(["eng", "luo"]),
   answer: z.string().trim().min(1).max(18000),
   translation: z.string().trim().min(1).max(18000),
-}).strict().superRefine((value, context) => {
+}).strict();
+
+export const CulturalAnswerSchema = StoredAnswerSchema.superRefine((value, context) => {
   const markers = (text: string) => [...new Set(text.match(/\[Source \d+\]/g) ?? [])].sort().join("|");
   if (markers(value.answer) !== markers(value.translation)) {
     context.addIssue({ code: "custom", message: "Preserve every source marker in both versions." });
@@ -25,7 +27,7 @@ export function storeCulturalAnswer(value: { answer: string; languageCode?: stri
 // Versioned in the existing response column; historical plain-text chats remain readable.
 export function readCulturalAnswer(value: string): { answer: string; languageCode?: "eng" | "luo"; translation?: string } {
   if (value.startsWith(PREFIX)) {
-    try { return CulturalAnswerSchema.parse(JSON.parse(value.slice(PREFIX.length))); } catch { /* Legacy plain text. */ }
+    try { return StoredAnswerSchema.parse(JSON.parse(value.slice(PREFIX.length))); } catch { /* Legacy plain text. */ }
   }
   return { answer: value };
 }
