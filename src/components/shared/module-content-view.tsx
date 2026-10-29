@@ -1,5 +1,6 @@
 "use client";
 import { MediaImage } from "@/components/shared/media-preview";
+import { SocialFeed, SocialFeedCard } from "./social-feed";
 import { LibraryMediaGallery } from "./library-media-gallery";
 
 import { InterfaceOption, InterfaceSelect, InterfaceText } from "@/components/shared/interface-language";
@@ -10,7 +11,7 @@ import { ObjViewer } from "./obj-viewer";
 import { StoryTour } from "./story-tour";
 import { useState, useMemo, useEffect, useRef, useContext, createContext, type ComponentType, type ReactNode } from "react";
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
-import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
+import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus, SlidersHorizontal } from "lucide-react";
 import { BottomMediaControls } from "./bottom-media-controls";
 import { PublicTranscriptReader } from "./public-transcript-reader";
 import { CompleteItemDownload } from "./complete-item-download";
@@ -88,7 +89,8 @@ export function ModuleContentView({
   };
 
   return (
-    <DownloadOrigin.Provider value={downloadOrigin || ""}><div className="library-page" data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
+    <DownloadOrigin.Provider value={downloadOrigin || ""}><div className="library-page" data-social-feed={view === "feed"} data-toolbar-in-masthead={toolbarInMasthead} data-all-content={moduleCode === "all"}>
+      <details className="collection-feed-tools" open={view !== "feed"}><summary><SlidersHorizontal size={18} aria-hidden="true" /><InterfaceText source="Browse & search" /></summary><div className="collection-control-panel">
       <div className="module-controls sticky top-0 z-20 mb-2 bg-[#eee5d5] px-2 py-1 shadow-sm" data-sticky-controls>
       <CollectionToolbar onPlacementChange={setToolbarInMasthead}>
         {searchControls && <div className="min-w-0 flex-1">{searchControls}</div>}
@@ -108,12 +110,13 @@ export function ModuleContentView({
       </div>}
 
       </div>
-      <BottomMediaControls>
+      <BottomMediaControls inline={view === "feed"}>
         <div className="media-filter-buttons" role="group" aria-label="Content type">
           {FILTERS.map(f => { const Icon = FILTER_ICONS[f.key]; return <button key={f.key} type="button" title={f.label} aria-label={f.label} aria-pressed={filter === f.key} onClick={() => setFilter(f.key)} className={`media-filter-button ${filter === f.key ? "is-active" : ""}`}><Icon size={20} aria-hidden="true" /><span>{f.label}</span></button>; })}
         </div>
         {VIEW_MODES.filter(mode => mode.key !== view).map(mode => <button key={mode.key} type="button" title={mode.label} aria-label={`${mode.label} view`} onClick={() => setView(mode.key)} className="media-filter-button">{mode.key === "grid" ? <LayoutGrid size={20} aria-hidden="true" /> : <List size={20} aria-hidden="true" />}<span><InterfaceText source={mode.label} /></span></button>)}
       </BottomMediaControls>
+      </div></details>
 
       {filteredItems.length === 0 ? (
         <div className="px-4 py-8 md:py-14 text-center max-w-xl mx-auto">
@@ -130,7 +133,7 @@ export function ModuleContentView({
 
         </div>
       ) : view === "feed" ? (
-        <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} onOpen={item => { emitActivity({ eventType: "view", recordId: item.id }); setSelectedItem(item); }} />
+        <FeedView items={filteredItems} mediaForCard={mediaForCard} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} Link={NavigationLink} onOpen={item => { emitActivity({ eventType: "view", recordId: item.id }); setSelectedItem(item); }} />
       ) : (
         <GridView viewLanguageCode={viewLanguageCode} items={filteredItems} mediaForCard={mediaForCard} onOpen={item => { emitActivity({eventType:"view",recordId:item.id}); setSelectedItem(item); }} />
       )}
@@ -140,14 +143,9 @@ export function ModuleContentView({
   );
 }
 
-function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave, onOpen }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void; onOpen: (item: ContentItem) => void }) {
-  return (
-      <div className="library-feed space-y-3 px-2">
-      {items.map((item) => (
-        <FeedCard key={item.id} item={item} media={mediaForCard(item)} languageCode={languageCode} viewLanguageCode={viewLanguageCode} onSave={onSave} onOpen={() => onOpen(item)} />
-      ))}
-    </div>
-  );
+function FeedView({ items, mediaForCard, viewLanguageCode, onSave, onOpen, Link }: { items: ContentItem[]; mediaForCard: (i: ContentItem) => MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void; onOpen: (item: ContentItem) => void; Link: AppLink }) {
+  const downloadOrigin = useContext(DownloadOrigin);
+  return <SocialFeed className="library-feed">{items.map(item => <SocialFeedCard key={item.id} item={item} media={mediaForCard(item)} english={viewLanguageCode === "eng"} downloadOrigin={downloadOrigin} onOpen={() => onOpen(item)} onSave={onSave ? () => onSave(item) : undefined} Link={Link} className="library-feed-card" />)}</SocialFeed>;
 }
 
 function FeedCard({ item, media, languageCode, viewLanguageCode, onSave, onOpen, detail = false }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void; onOpen?: () => void; detail?: boolean }) {

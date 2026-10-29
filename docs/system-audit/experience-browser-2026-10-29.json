@@ -348,8 +348,8 @@
       "width": 768,
       "page": 768,
       "viewport": 768,
-      "content": 768,
-      "available": 768,
+      "content": 753,
+      "available": 753,
       "heading": "Discover living heritage."
     },
     {
@@ -519,8 +519,8 @@
       "width": 1024,
       "page": 1024,
       "viewport": 1024,
-      "content": 1024,
-      "available": 1024,
+      "content": 1009,
+      "available": 1009,
       "heading": "Discover living heritage."
     },
     {
@@ -690,8 +690,8 @@
       "width": 1440,
       "page": 1440,
       "viewport": 1440,
-      "content": 1440,
-      "available": 1440,
+      "content": 1425,
+      "available": 1425,
       "heading": "Discover living heritage."
     },
     {
@@ -1239,5 +1239,5 @@
   ],
   "sourceLinkWorks": true,
   "invalidNavigation": [],
-  "completedAt": "2026-10-29T15:20:10.209Z"
+  "completedAt": "2026-10-29T16:11:04.013Z"
 }

@@ -71,8 +71,8 @@ async function main() {
     await until('document.querySelectorAll(".discovery-card").length===3', 'discovery');
     assert.equal(readingCalls, 0, 'Browsing cards must not load every conversation');
     fs.mkdirSync('docs/system-audit/screenshots', { recursive: true });
-    for (const width of [1440, 1366, 1024, 768, 390, 320]) {
-      await send('Emulation.setDeviceMetricsOverride', { width, height: 950, deviceScaleFactor: 1, mobile: width < 768 });
+    for (const [width, height] of [[1440,950], [1366,950], [1024,950], [768,950], [390,844], [320,568], [844,390]]) {
+      await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 768 });
       for (const route of ['/dashboard', '/dashboard?module=oral_histories']) {
         await evaluate(`location.hash=${JSON.stringify(route)}`);
         const cardSelector = route.includes('?') ? '.library-feed-card' : '.discovery-card';
@@ -81,55 +81,79 @@ async function main() {
         for (const state of states) {
           if (state !== 'responsive') { const button = state === 'collapsed' ? 'Collapse sidebar' : 'Expand sidebar'; await evaluate(`document.querySelector('button[aria-label=${JSON.stringify(button)}]')?.click()`); }
           await delay(400); await evaluate('document.querySelector("main").scrollTop=0');
-          const metrics = await evaluate(`(()=>{const main=document.querySelector('main'),card=document.querySelector(${JSON.stringify(cardSelector)}),media=card.querySelector('.public-media-gallery'),detail=card.querySelector('.discovery-card-body,.library-item-details'),heading=card.querySelector('.discovery-card-heading,.library-item-heading'),category=heading.querySelector('.discovery-card-category,.library-item-category');const a=media.getBoundingClientRect(),b=detail.getBoundingClientRect();return{viewport:innerWidth,page:document.documentElement.scrollWidth,content:main.scrollWidth,available:main.clientWidth,cardWidth:card.clientWidth,mediaWidth:a.width,detailsWidth:b.width,sideBySide:a.right<=b.left+2,headerRow:Math.abs(heading.querySelector('h2,h3').getBoundingClientRect().top-category.getBoundingClientRect().top)<15,detailsHeight:b.height,audio:card.querySelectorAll('audio').length,video:card.querySelectorAll('video').length,images:card.querySelectorAll('.public-media-gallery img').length,players:card.querySelectorAll('audio,video').length};})()`);
-          report.viewports.push({ route, width, state, ...metrics });
+          const metrics = await evaluate(`(()=>{const main=document.querySelector('main'),card=document.querySelector(${JSON.stringify(cardSelector)}),media=card.querySelector('.immersive-media'),caption=card.querySelector('.social-card-caption'),actions=card.querySelector('.social-card-actions');const a=media.getBoundingClientRect(),b=caption.getBoundingClientRect(),c=card.getBoundingClientRect(),d=actions.getBoundingClientRect();return{viewport:innerWidth,page:document.documentElement.scrollWidth,content:main.scrollWidth,available:main.clientWidth,paneHeight:main.clientHeight,cardWidth:c.width,cardHeight:c.height,mediaWidth:a.width,mediaHeight:a.height,captionInside:b.left>=c.left&&b.right<=c.right&&b.top>=c.top&&b.bottom<=c.bottom,actionsInside:d.left>=c.left&&d.right<=c.right&&d.top>=c.top&&d.bottom<=c.bottom,audio:card.querySelectorAll('audio').length,video:card.querySelectorAll('video').length,images:card.querySelectorAll('.public-media-gallery img').length,players:card.querySelectorAll('audio,video').length};})()`);
+          report.viewports.push({ route, width, height, state, ...metrics });
           assert.ok(metrics.page <= metrics.viewport + 1 && metrics.content <= metrics.available + 2, 'No overflow: ' + JSON.stringify(metrics));
           assert.equal(metrics.players, 2); assert.equal(metrics.images, 1);
-          if (metrics.cardWidth >= 832) { assert.equal(metrics.sideBySide, true); assert.ok(metrics.mediaWidth / metrics.detailsWidth > 2, 'Media occupies most of the desktop row'); }
-          if (width < 768) { assert.equal(metrics.headerRow, true, 'Title and category share a row'); assert.ok(metrics.detailsHeight < (route.includes('?') ? 500 : 220), 'Phone metadata stays compact'); }
-          if ([1440,390,320].includes(width) && state !== 'expanded') { const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync(`docs/system-audit/screenshots/public-${route.includes('?') ? 'collection' : 'discovery'}-${width}.png`, Buffer.from(shot.data, 'base64')); }
+          assert.ok(Math.abs(metrics.cardHeight-metrics.paneHeight)<=2, 'Card fills the reading pane: '+JSON.stringify(metrics));
+          assert.ok(Math.abs(metrics.mediaWidth-metrics.cardWidth)<=2 && Math.abs(metrics.mediaHeight-metrics.cardHeight)<=2,'Media fills its entire card');
+          assert.equal(metrics.captionInside,true); assert.equal(metrics.actionsInside,true);
+          assert.equal(await evaluate(`(()=>{const button=document.querySelector(${JSON.stringify(cardSelector)}).querySelector('button[aria-label="Next attachment"]');const r=button.getBoundingClientRect();return document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('button')===button;})()`),true,'Attachment navigation is not covered by action buttons');
+          if ([1440,390,320].includes(width) && state !== 'expanded') { const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync(`docs/system-audit/screenshots/social-${route.includes('?') ? 'collection' : 'discovery'}-${width}.png`, Buffer.from(shot.data, 'base64')); }
         }
       }
     }
+    console.log('PASS '+report.viewports.length+' full-height layouts');
+    await send('Emulation.setDeviceMetricsOverride', {width:390,height:844,deviceScaleFactor:1,mobile:true});
     await evaluate('location.hash="/dashboard"'); await until('!!document.querySelector(".discovery-card")', 'return to discovery');
-    await until('document.querySelector(".public-media-gallery img").complete && document.querySelector("video").readyState>=1', 'media dimensions loaded');
+    await until('document.querySelector(".public-media-gallery img").complete', 'media dimensions loaded');
     for (const shape of [{width:360,height:960},{width:1280,height:360}]) {
       const dimensions = await evaluate(`new Promise(resolve=>{const image=document.querySelector('.public-media-gallery img');image.removeAttribute('srcset');image.onload=()=>{const style=getComputedStyle(image);resolve({naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,fit:style.objectFit,background:style.backgroundColor,width:image.clientWidth,height:image.clientHeight,frameWidth:image.closest('.public-media-asset').clientWidth});};image.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="${shape.width}" height="${shape.height}"><rect width="100%" height="100%" fill="#d9b968"/><text x="8" y="28">FULL FRAME</text></svg>');})`);
       assert.equal(dimensions.fit,'contain'); assert.equal(dimensions.background,'rgb(0, 0, 0)');
       assert.equal(dimensions.naturalWidth,shape.width); assert.equal(dimensions.naturalHeight,shape.height);
       assert.ok(dimensions.width<=dimensions.frameWidth+1 && dimensions.height>0);
     }
+    await evaluate(`document.querySelector('.discovery-card button[aria-label="Next attachment"]').click()`);
+    await until('document.querySelector(".social-media-count").textContent==="2 / 4" && document.querySelector("video").readyState>=1','video attachment visible');
     const videoStyle=await evaluate(`({fit:getComputedStyle(document.querySelector('video')).objectFit,background:getComputedStyle(document.querySelector('video')).backgroundColor,controls:document.querySelector('video').controls})`);
     assert.deepEqual(videoStyle,{fit:'contain',background:'rgb(0, 0, 0)',controls:true});
     report.interactions.push('Portrait and panoramic images and video keep their full frames with black unused space');
 
     const itemDownload = await evaluate('document.querySelector(".discovery-card .public-item-download").href');
     assert.equal(new URL(itemDownload).origin, base); assert.equal(new URL(itemDownload).searchParams.get('id'), 'mixed');
-    await evaluate(`document.querySelector('.discovery-card-actions button[aria-label^="Save "]').click()`); await until(`!!document.querySelector('.discovery-card-actions button[aria-label^="Saved "]')`, 'saved feedback'); assert.equal(saveCalls, 1);
+    await evaluate(`document.querySelector('.social-card-actions button[aria-label^="Save "]').click()`); await until(`!!document.querySelector('.social-card-actions button[aria-label^="Saved "]')`, 'saved feedback'); assert.equal(saveCalls, 1);
     report.interactions.push('Save uses one API request and confirms the saved state');
-    await evaluate(`document.querySelector('.discovery-card-actions button').click()`);
+    await evaluate('document.querySelector("video").play()');
+    await evaluate(`document.querySelector('.discovery-card .social-card-actions button[aria-label="Explore this item"]').click()`);
+    await until('!!document.querySelector("dialog .public-transcript-reader")','transcript reader available');
+    await evaluate(`document.querySelector('dialog .public-transcript-reader').scrollIntoView({block:'center',behavior:'instant'})`);
     await until('document.querySelectorAll("dialog .public-transcript-text > div").length===216', 'all conversation turns');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), true);
+    assert.equal(await evaluate('document.querySelector("video").paused'),true,'Explore pauses background playback');
     const transcriptDownload = await evaluate('document.querySelector("dialog a[download^=transcript]").href');
     assert.match(decodeURIComponent(transcriptDownload), /Conversation turn 216\./);
     assert.equal(await evaluate('document.querySelector("dialog").scrollWidth<=document.querySelector("dialog").clientWidth'), true);
     await evaluate(`const s=document.querySelector('dialog select');s.value='eng';s.dispatchEvent(new Event('change',{bubbles:true}));`);
     await until(`document.querySelector('dialog').textContent.includes('An English transcript has not been uploaded')`, 'missing English wording');
     assert.equal(await evaluate('document.querySelector("dialog").textContent.includes("Conversation turn 216.")'), false);
-    const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync('docs/system-audit/screenshots/public-transcript-mobile.png', Buffer.from(shot.data, 'base64'));
+    const shot = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync('docs/system-audit/screenshots/social-transcript-mobile.png', Buffer.from(shot.data, 'base64'));
     await evaluate('document.querySelector("dialog > button").click()'); await until('!document.querySelector("dialog")', 'close item');
     report.interactions.push('Full 216-turn reader, complete text download, honest English fallback and dialog dismissal');
-    await evaluate('document.querySelector("video").play()'); assert.equal(await evaluate('document.querySelector("video").paused'), false); await evaluate('document.querySelector("video").pause()');
-    report.interactions.push('Attached video plays with native controls');
-    await evaluate(`document.querySelectorAll('audio')[0].play()`); await evaluate(`document.querySelectorAll('audio')[1].play()`);
-    assert.equal(await evaluate('document.querySelectorAll("audio")[0].paused&&!document.querySelectorAll("audio")[1].paused'), true);
-    report.interactions.push('Starting another recording pauses the first player');
+    await evaluate('document.querySelector("video").play()'); assert.equal(await evaluate('document.querySelector("video").paused'), false);
+    await evaluate(`document.querySelector('.discovery-card button[aria-label="Next attachment"]').click()`);
+    await until('document.querySelector(".social-media-count").textContent==="3 / 4"', 'audio attachment');
+    assert.equal(await evaluate('document.querySelector("video").paused'),true);
+    await evaluate(`document.querySelectorAll('audio')[0].play()`);
+    await evaluate(`document.querySelectorAll('.discovery-card')[1].scrollIntoView({block:'start',behavior:'instant'})`);
+    await until('document.querySelectorAll("audio")[0].paused', 'offscreen audio pauses');
+    await evaluate(`document.querySelectorAll('audio')[1].play()`);
+    assert.equal(await evaluate('document.querySelectorAll("audio")[1].paused'),false);
+    await evaluate(`document.querySelectorAll('.discovery-card')[0].scrollIntoView({block:'start',behavior:'instant'})`);
+    await until('document.querySelectorAll("audio")[1].paused', 'next card audio pauses');
+    await evaluate(`document.querySelector('.discovery-card button[aria-label="Next attachment"]').click()`);
+    await until('document.querySelector(".social-media-count").textContent==="4 / 4"', 'document attachment');
+    assert.equal(await evaluate('!document.querySelector(".discovery-card .media-document").inert'),true);
+    await evaluate(`document.querySelector('.discovery-card button[aria-label="Hide details"]').click()`);
+    await until('!document.querySelector(".discovery-card").querySelector(".social-card-caption")','details hide');
+    await evaluate(`document.querySelector('.discovery-card button[aria-label="Show details"]').click()`);
+    await until('!!document.querySelector(".discovery-card").querySelector(".social-card-caption")','details restore');
+    report.interactions.push('Horizontal attachment paging preserves video/audio/document access; sliding or scrolling away pauses playback; details toggle restores overlays');
     assert.deepEqual(report.unexpectedApis, []); assert.deepEqual(report.runtimeErrors, []);
     report.readingRequests = readingCalls; report.completedAt = new Date().toISOString();
     console.log(JSON.stringify({ checkedLayouts: report.viewports.length, interactions: report.interactions, runtimeErrors: report.runtimeErrors, liveWrites: 0 }));
     await send('Browser.close').catch(() => {});
   } finally {
-    fs.writeFileSync('docs/system-audit/public-media-browser-2026-10-29.json', JSON.stringify(report, null, 2));
+    fs.writeFileSync('docs/system-audit/social-feed-browser-2026-10-29.json', JSON.stringify(report, null, 2));
     socket?.close(); browser.kill();
   }
 }

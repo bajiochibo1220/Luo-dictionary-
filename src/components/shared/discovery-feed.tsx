@@ -8,8 +8,7 @@ import { moduleHref } from "@/lib/app-navigation";
 import { emitActivity } from "@/lib/activity-events";
 import { InterfaceText } from "./interface-language";
 import { LibraryItemDialog, type AppLink } from "./module-content-view";
-import { LibraryMediaGallery } from "./library-media-gallery";
-import { CompleteItemDownload } from "./complete-item-download";
+import { SocialFeed, SocialFeedCard } from "./social-feed";
 import { NavigationIcon } from "./navigation-icon";
 import type { FeatureRequest } from "./learning-hub";
 
@@ -90,20 +89,20 @@ export function DiscoveryFeed({ request, languageCode, languageName = "Dholuo", 
   }
 
   const join = onRegister ? <button type="button" onClick={onRegister} className="discovery-join"><InterfaceText source="Create an account" /><ArrowUpRight size={16} aria-hidden="true" /></button> : <Link href="/register" className="discovery-join"><InterfaceText source="Create an account" /><ArrowUpRight size={16} aria-hidden="true" /></Link>;
-  return <section className="discovery-page" aria-labelledby="discovery-title">
+  return <section className="discovery-page discovery-social" aria-labelledby="discovery-title">
     <header className="discovery-heading"><div><p className="discovery-eyebrow"><InterfaceText source="LIVING CULTURE" /> <span aria-hidden="true">/</span> {languageName}</p><h1 id="discovery-title"><InterfaceText source="Discover living heritage." /></h1><p><InterfaceText source="Listen, watch and read from the community." /></p></div><Link href="/explore" className="discovery-browse"><InterfaceText source="Browse the library" /><ArrowUpRight size={17} aria-hidden="true" /></Link></header>
-    <div className="discovery-tools">
+    <details className="social-feed-tools"><summary><Search size={18} aria-hidden="true" /><InterfaceText source="Browse & search" /></summary><div className="discovery-tools">
       <nav aria-label="Discover content areas" className="discovery-categories">{[{ code: "all", name: "Discover" }, ...categories].map(item => <button key={item.code} type="button" aria-pressed={category === item.code} onClick={() => { setCategory(item.code); setError(""); }}><InterfaceText source={item.name} /></button>)}</nav>
       <form role="search" className="discovery-search" onSubmit={event => { event.preventDefault(); setSearch(query.trim()); if (query.trim()) emitActivity({ eventType: "search", query: query.trim() }); }}><label><span className="sr-only"><InterfaceText source="Search cultural content" /></span><input type="search" placeholder="Find a story, word or tradition" value={query} maxLength={200} onChange={event => setQuery(event.target.value)} /></label><button type="submit" aria-label="Search cultural content"><Search size={18} aria-hidden="true" /></button></form>
-    </div>
-    <div className="discovery-layout"><div className="discovery-stream">
+    </div></details>
+    <div className="discovery-layout"><SocialFeed className="discovery-stream">
       {error && <div role="alert" className="discovery-message"><p>{error}</p><button type="button" onClick={() => library ? void loadMore() : setRetry(value => value + 1)}><InterfaceText source="Try again" /></button></div>}
       {saveError && <p role="alert" className="discovery-message">{saveError}</p>}
       {loading && <div role="status" aria-label="Loading cultural content" className="discovery-loading"><div className="discovery-placeholder" /><p><InterfaceText source="Bringing the collection to you..." /></p></div>}
       {!loading && library?.items.length === 0 && <div className="discovery-message"><BookOpen size={28} aria-hidden="true" /><h2><InterfaceText source="There is more to discover." /></h2><p><InterfaceText source="No published items match this selection yet. Try another content area or clear your search." /></p><button type="button" onClick={() => { setCategory("all"); setQuery(""); setSearch(""); }}><InterfaceText source="Show all heritage" /></button><Link href="/explore" className="discovery-browse"><InterfaceText source="Browse the library" /></Link></div>}
       {library?.items.map(item => <DiscoveryCard key={item.id} item={item} downloadOrigin={downloadOrigin} saved={saved.includes(item.id)} saveBusy={saveBusy === item.id} Link={Link} onOpen={() => { emitActivity({ eventType: "view", recordId: item.id }); setSelected(item); }} onSave={() => void save(item)} joinPrompt={joinItem === item.id ? <div className="discovery-save-prompt"><p><InterfaceText source="Keep your favourites with a free account." /></p>{join}</div> : undefined} />)}
       {(library?.continuation?.records || library?.continuation?.dictionary) && <button type="button" className="discovery-more" disabled={loading || moreBusy} onClick={() => void loadMore()}><InterfaceText source={moreBusy ? "Loading more..." : "Discover more"} /></button>}
-    </div><aside className="discovery-aside" aria-label="Continue exploring">
+    </SocialFeed><aside className="discovery-aside" aria-label="Continue exploring">
       {!signedIn && <div className="discovery-welcome"><Bookmark size={23} aria-hidden="true" /><h2><InterfaceText source="A place for your favourites." /></h2><p><InterfaceText source="Browse freely. Create a free account to save what you love and come back to it." /></p>{join}</div>}
       <nav aria-label="More heritage experiences"><h2><InterfaceText source="Follow your curiosity" /></h2>{[["/explore", "All collections"], ["/learn", "Learn the language"], ["/places", "Explore cultural places"], ["/contribute", "Share your heritage"]].map(([href, label]) => <Link key={href} href={href}><NavigationIcon href={href} size={19} /><InterfaceText source={label} /><ArrowUpRight size={15} aria-hidden="true" /></Link>)}</nav>
     </aside></div>
@@ -112,14 +111,5 @@ export function DiscoveryFeed({ request, languageCode, languageName = "Dholuo", 
 }
 
 export function DiscoveryCard({ item, onOpen, onSave, saved, saveBusy, Link, joinPrompt, downloadOrigin }: { item: ContentItem; onOpen: () => void; onSave: () => void; saved: boolean; saveBusy: boolean; Link: AppLink; joinPrompt?: React.ReactNode; downloadOrigin?: string }) {
-  const description = item.summary || item.bodyText || item.englishSummary || "";
-  return <article className={`discovery-card ${item.media.length ? "has-media" : ""}`}>
-    <LibraryMediaGallery item={item} onOpen={onOpen} />
-    <div className="discovery-card-body"><div className="discovery-card-heading"><h2><button type="button" title={item.title} onClick={onOpen}>{item.title}</button></h2><Link href={moduleHref(item.moduleCode || "")} className="discovery-card-category"><NavigationIcon href={moduleHref(item.moduleCode || "")} size={14} /><InterfaceText source={item.moduleName || "Community heritage"} /></Link></div>
-      <div className="discovery-card-actions"><button type="button" onClick={onOpen}><InterfaceText source="Explore this item" /><ArrowUpRight size={14} aria-hidden="true" /></button><button type="button" disabled={saveBusy || saved} aria-label={`${saved ? "Saved" : "Save"} ${item.title}`} onClick={onSave}><Bookmark size={16} aria-hidden="true" fill={saved ? "currentColor" : "none"} /><InterfaceText source={saved ? "Saved" : saveBusy ? "Saving..." : "Save"} /></button>{item.isProvisional && <span className="discovery-review-label"><InterfaceText source="Review in progress" /></span>}<CompleteItemDownload id={item.id} kind={item.kind} origin={downloadOrigin} compact /></div>
-      {item.englishTitle && item.englishTitle !== item.title && <p className="discovery-english-title" lang="en" contentEditable={false}>{item.englishTitle}</p>}
-      {description && <p className="discovery-excerpt">{description.slice(0, 260)}{description.length > 260 ? "..." : ""}</p>}{description.length > 260 && <details className="text-sm leading-7"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-teal-900"><InterfaceText source="Read more" /></summary><p className="whitespace-pre-wrap break-words">{description}</p></details>}
-      {joinPrompt}
-    </div>
-  </article>;
+  return <SocialFeedCard item={item} onOpen={onOpen} onSave={onSave} saved={saved} saveBusy={saveBusy} Link={Link} categoryHref={moduleHref(item.moduleCode || "")} joinPrompt={joinPrompt} downloadOrigin={downloadOrigin} className="discovery-card" />;
 }
