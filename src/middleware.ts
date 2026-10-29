@@ -22,7 +22,7 @@ function isPublic(pathname: string): boolean {
   if (pathname === "/api/v1/activity") return true;
   if (pathname === "/api/v1/knowledge") return true;
   if (pathname === "/api/v1/bootstrap") return true;
-  if (pathname === "/api/v1/library") return true;
+  if (pathname === "/api/v1/library" || pathname === "/api/v1/reading") return true;
   if (pathname === "/api/v1/download") return true;
   if (pathname === "/api/v1/learning") return true;
   if (pathname === "/api/v1/education") return true;

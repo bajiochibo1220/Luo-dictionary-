@@ -26,7 +26,7 @@ export async function GET(
   const mayRead = publicAccess || (!!accessUser && canReviewGovernedItem(accessUser, transcript, transcript.languageId)) ||
     transcript.record?.contributorId === user?.id;
   if (!mayRead) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (transcript.record && transcript.record.contributorId !== user?.id &&
+  if (!publicAccess && transcript.record && transcript.record.contributorId !== user?.id &&
       !canReviewGovernedItem(accessUser, transcript.record, transcript.record.languageId)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-29T06:50:19.455Z",
+  "databaseWrites": 0,
+  "checks": [
+    {
+      "name": "grounded-cultural-chat",
+      "pass": true,
+      "ms": 22332,
+      "model": "deepseek-flash",
+      "nonempty": true,
+      "citedSources": 5
+    }
+  ]
+}

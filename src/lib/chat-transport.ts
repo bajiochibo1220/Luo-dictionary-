@@ -1,3 +1,4 @@
+import { requestSignal } from "./api-request-timeout";
 import { parseAppApiOrigin } from "@/lib/app-client";
 
 // Both interfaces use the same versioned endpoints. Native requests never
@@ -21,7 +22,7 @@ export function createChatTransport(options: { origin: string; accessToken?: () 
     if (token) headers.set("Authorization", `Bearer ${token}`);
     const response = await transport(new URL(endpoint + parsed.search, origin), {
       ...init, headers, cache: "no-store", credentials: options.accessToken ? "omit" : "same-origin",
-      signal: init.signal ?? AbortSignal.timeout(parsed.pathname === "/api/ai/chat" ? 90000 : 20000),
+      signal: requestSignal(init.signal, parsed.pathname === "/api/ai/chat" ? 90000 : 20000),
     });
     const body = await response.json();
     // Media delivery endpoints are relative to the API, not the bundled app.

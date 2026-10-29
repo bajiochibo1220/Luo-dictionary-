@@ -14,5 +14,5 @@ export function loginDestination(session: Parameters<typeof hasAnyAdminRole>[0],
 }
 
 export function nativeLoginDestination(session: Parameters<typeof hasAnyAdminRole>[0]) {
-  return session?.user?.id && hasAnyAdminRole(session) ? "/workspace" : "/account";
+  return session?.user?.id && hasAnyAdminRole(session) ? "/workspace" : "/dashboard";
 }

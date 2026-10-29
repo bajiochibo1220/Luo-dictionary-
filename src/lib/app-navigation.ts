@@ -28,7 +28,7 @@ export function applicationScreenHref(href: string): string | null {
   if (url.pathname === "/application") return "/dashboard" + url.search;
   if (["/admin/help", "/super-admin/help"].includes(url.pathname)) return "/help";
   if (url.pathname === "/profile") return "/settings";
-  if (url.pathname === "/classrooms") return "/learn";
+  if (url.pathname === "/classrooms") return "/courses" + url.search;
   const screens = ["/explore", "/dashboard", "/learn", "/research", "/courses", "/settings", "/saved", "/workspace", "/account", "/chatbot", "/places", "/knowledge", "/ai-tools", "/tutor", "/help", "/contribute", "/my-submissions"];
   return screens.includes(url.pathname) || /^\/contribute\/[a-z0-9_-]+$/.test(url.pathname) ? url.pathname + url.search : null;
 }
@@ -71,7 +71,7 @@ export function publicSourceHref(languageCode: string, source: { id: string; mod
     folktales: "sigana/folktales", "traditional songs": "wende", songs: "wende",
     "cultural artifacts": "gik-luo", artifacts: "gik-luo", "heritage sites": "piny-luo",
   };
-  const route = paths[source.module.trim().toLowerCase()];
+  const route = paths[source.module.trim().toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ")];
   return route ? `/${languageCode}/${route}/${encodeURIComponent(source.id)}` : null;
 }
 

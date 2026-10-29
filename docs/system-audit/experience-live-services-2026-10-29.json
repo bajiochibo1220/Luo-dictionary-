@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-10-29T06:46:23.159Z",
+  "databaseWrites": 0,
+  "checks": [
+    {
+      "name": "database-public-catalog",
+      "pass": true,
+      "ms": 13539,
+      "publishedPreviewCount": 12,
+      "availableAreas": 10
+    },
+    {
+      "name": "configured-text-provider",
+      "pass": true,
+      "ms": 3180,
+      "model": "deepseek-flash",
+      "nonempty": true
+    },
+    {
+      "name": "cultural-chat-service",
+      "pass": true,
+      "ms": 6264,
+      "model": "deepseek-flash",
+      "nonempty": true
+    },
+    {
+      "name": "tutor-translation-service",
+      "pass": true,
+      "ms": 28562,
+      "model": "deepseek-flash",
+      "nonempty": true
+    },
+    {
+      "name": "configured-image-understanding",
+      "pass": true,
+      "ms": 2331,
+      "model": "deepseek-flash",
+      "nonempty": true
+    },
+    {
+      "name": "media-tool-availability",
+      "pass": true,
+      "capabilities": {
+        "ocr": true,
+        "describe": true,
+        "transcribe": false,
+        "illustrate": false
+      }
+    }
+  ]
+}

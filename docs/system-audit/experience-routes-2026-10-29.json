@@ -1,0 +1,234 @@
+[
+  {
+    "path": "/explore",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1442
+  },
+  {
+    "path": "/",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1806
+  },
+  {
+    "path": "/application",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1760
+  },
+  {
+    "path": "/login",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1021
+  },
+  {
+    "path": "/register",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1032
+  },
+  {
+    "path": "/account-recovery",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 1148
+  },
+  {
+    "path": "/help",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 645
+  },
+  {
+    "path": "/about",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 681
+  },
+  {
+    "path": "/privacy",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 3894
+  },
+  {
+    "path": "/mobile-apps",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 375
+  },
+  {
+    "path": "/terms",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 422
+  },
+  {
+    "path": "/chatbot",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 963
+  },
+  {
+    "path": "/luo",
+    "protectedPage": false,
+    "status": 307,
+    "redirect": "/",
+    "pass": true,
+    "ms": 10
+  },
+  {
+    "path": "/luo/muma",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 5552
+  },
+  {
+    "path": "/luo/sigana",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 9545
+  },
+  {
+    "path": "/luo/ngeche",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 2320
+  },
+  {
+    "path": "/luo/ngero",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 2754
+  },
+  {
+    "path": "/luo/wende",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 7343
+  },
+  {
+    "path": "/account",
+    "protectedPage": true,
+    "status": 200,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 848
+  },
+  {
+    "path": "/luo/piny-luo",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 3419
+  },
+  {
+    "path": "/luo/gik-luo",
+    "protectedPage": false,
+    "status": 200,
+    "redirect": null,
+    "pass": true,
+    "ms": 5048
+  },
+  {
+    "path": "/settings",
+    "protectedPage": true,
+    "status": 200,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 1652
+  },
+  {
+    "path": "/tutor",
+    "protectedPage": true,
+    "status": 200,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 1709
+  },
+  {
+    "path": "/ai-tools",
+    "protectedPage": true,
+    "status": 200,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 1710
+  },
+  {
+    "path": "/workspace",
+    "protectedPage": true,
+    "status": 307,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 68
+  },
+  {
+    "path": "/admin/content",
+    "protectedPage": true,
+    "status": 307,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 95
+  },
+  {
+    "path": "/admin/validation-queue",
+    "protectedPage": true,
+    "status": 307,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 173
+  },
+  {
+    "path": "/admin/review-queue",
+    "protectedPage": true,
+    "status": 307,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 12
+  },
+  {
+    "path": "/super-admin/system",
+    "protectedPage": true,
+    "status": 307,
+    "redirect": "/login",
+    "pass": true,
+    "ms": 19
+  }
+]

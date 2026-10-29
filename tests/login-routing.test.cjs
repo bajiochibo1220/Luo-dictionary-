@@ -93,7 +93,7 @@ test('Google sign-in also delegates saved public returns to server role routing'
 test('valid mobile sign-in callbacks are preserved and native staff open their embedded staff dashboard', async () => {
   const { nativeLoginDestination } = loader()('src/lib/login-destination.ts');
   assert.equal(nativeLoginDestination(master), '/workspace');
-  assert.equal(nativeLoginDestination({ user: { id: 'reader' } }), '/account');
+  assert.equal(nativeLoginDestination({ user: { id: 'reader' } }), '/dashboard');
   const previous = { FormData: globalThis.FormData };
   let destination;
   const target = `/mobile-auth?challenge=${'a'.repeat(43)}&state=${'b'.repeat(32)}`;

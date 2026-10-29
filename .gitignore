@@ -31,6 +31,7 @@ node_modules/
 .next-review/
 .next-turbo-review/
 .next-phase-two-auth/
+.next-organization/
 out/
 build/
 dist/

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientLocationMap as LocationMap } from "@/components/modules/oral-history/client-location-map";
 import { prisma } from "@/lib/db";
-import { TranscriptViewer } from "@/components/modules/oral-history/transcript-viewer";
-import { SummarizeButton } from "@/components/admin/summarize-button";
+import { PublicTranscriptReader } from "@/components/shared/public-transcript-reader";
+import { getPublicReading } from "@/lib/public-reading";
 import { findLocalizedRecord } from "@/lib/content-translations";
 import { EnglishVersionLink } from "@/components/layout/english-version-link";
 
@@ -35,9 +35,7 @@ export default async function OralHistoryDetailPage({
   if (!record) notFound();
 
   const d = record.data as any;
-  const publicTranscriptText = typeof d.transcript === "string" && d.transcript.trim()
-    ? d.transcript
-    : (record as typeof record & { transcripts?: { text: string }[] }).transcripts?.map((item) => item.text.trim()).filter(Boolean).join("\n\n") ?? "";
+  const reading = await getPublicReading(record.id);
   const coords = d.county ? COUNTY_COORDS[d.county] : undefined;
 
   return (
@@ -53,7 +51,7 @@ export default async function OralHistoryDetailPage({
         <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mt-2 mb-3">
           {record.title}
         </h1>
-        <CompleteItemDownload id={record.id} />
+
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-500">
           {d.narrator && (
@@ -104,29 +102,23 @@ export default async function OralHistoryDetailPage({
 
           {record.summary ? (
             <div className="bg-linear-to-br from-amber-50 to-stone-50 rounded-xl border border-amber-100 p-6">
-              <p className="text-xs uppercase tracking-wider text-amber-700 mb-3"><InterfaceText source="✨ AI Summary" /></p>
+              <p className="text-xs uppercase tracking-wider text-amber-700 mb-3"><InterfaceText source="Summary" /></p>
               <p className="text-stone-700 leading-relaxed">
                 {record.summary}
               </p>
             </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-stone-100 p-6 text-center">
-              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="AI Summary" /></p>
-              <p className="text-sm text-stone-500 mb-3"><InterfaceText source="Generate an AI summary of this transcript" /></p>
-              <SummarizeButton recordId={record.id} />
-            </div>
-          )}
+          ) : null}
         </div>
 
         <div>
           <div className="bg-white rounded-xl shadow-xs border border-stone-100 p-6">
             <p className="text-xs uppercase tracking-wider text-stone-400 mb-3"><InterfaceText source="Transcript" /></p>
-            <div className="max-h-96 overflow-y-auto pr-2">
-              <TranscriptViewer text={publicTranscriptText} />
-            </div>
+            <PublicTranscriptReader key={record.id} recordId={record.id} languageCode={language.code} initial={reading} />
           </div>
         </div>
       </div>
+
+      <CompleteItemDownload id={record.id} />
 
       {coords && (
         <section className="mb-12">

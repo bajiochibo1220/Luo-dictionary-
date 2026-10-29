@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { ModuleContent } from "@/components/layout/module-content";
 import { DashboardOverview } from "@/components/shared/dashboard-overview";
+import { PublicDiscovery } from "@/components/layout/public-discovery";
 import { getDefaultPublicLanguage } from "@/lib/public-navigation";
 import { getPublicLibrary } from "@/lib/public-library";
 
@@ -20,5 +21,6 @@ export default async function UserDashboardPage({ searchParams }: { searchParams
     if (library) return <ModuleContent key={moduleCode} {...library} />;
   }
   const roles = session.user.languageRoles?.map(role => role.role) || [];
+  if (!roles.includes("teacher") && !roles.includes("researcher")) return <PublicDiscovery languageCode={languageCode} languageName={languageName} />;
   return <DashboardOverview languageName={languageName} name={session.user.name} mode={roles.includes("teacher") ? "teacher" : roles.includes("researcher") ? "researcher" : "public"} />;
 }

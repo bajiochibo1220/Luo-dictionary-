@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAction } from "@/lib/audit";
-import { canContribute, canReviewContent, canUploadContent } from "@/lib/permissions";
+import { canContribute, canDeleteContent, canReviewContent, canUploadContent } from "@/lib/permissions";
 import { createDefaultRecordTranslations } from "@/lib/content-translations";
 import { buildRecordUri, canReviewGovernedItem, generateCollectionSessionId, getRepositoryDomain, parseGovernanceMetadata } from "@/lib/governance";
 import { addContentVersion } from "@/lib/content-revisions";
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
           )
           .map((r) => r.languageId);
 
-    const where: any = {};
+    const where: any = { publicationOfId: null };
     if (uploaderOnly) {
       where.contributorId = user.id;
     } else if (!isSuperAdmin) {
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
       });
       if (mod) where.moduleId = mod.id;
     }
-    if (status) where.status = status;
+    if (status) where.status = status === "published" ? { in: ["published", "published_source"] } : status;
     if (q) where.title = { contains: q, mode: "insensitive" };
 
     const accessUser = { isSuperAdmin, languageRoles: user.languageRoles };
@@ -99,12 +99,15 @@ export async function GET(req: NextRequest) {
         language: { select: { code: true, name: true, nativeName: true } },
         module: { select: { code: true, baseName: true } },
         media: true,
+        publication: { select: { id: true } },
         contributor: { select: { id: true, name: true, email: true, age: true } },
       },
     }) : [];
 
     const visibleRecords = records.map((record) => ({
         ...record,
+        hasPublicVersion: !!record.publication || ["published", "published_source"].includes(record.status),
+        canDelete: canDeleteContent(session, record),
         media: record.media.filter((asset) => record.contributorId === user.id || canReviewGovernedItem(accessUser, asset, asset.languageId)).map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })),
       }));
 

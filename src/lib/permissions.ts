@@ -91,6 +91,12 @@ export function canEditContent(session: Session | null, languageId: number): boo
   return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "content_editor");
 }
 
+export function canDeleteContent(session: Session | null, record: { languageId: number; status: string; contributorId?: string | null; publication?: unknown; hasPublicVersion?: boolean }): boolean {
+  const hasPublicVersion = !!record.publication || !!record.hasPublicVersion || ["published", "published_source"].includes(record.status);
+  if (hasPublicVersion) return isMasterSuperAdmin(session) || hasRole(session, record.languageId, "language_admin");
+  return canEditContent(session, record.languageId) || (!!session?.user?.id && record.contributorId === session.user.id && canUploadContent(session, record.languageId));
+}
+
 export function canFinalizeContent(session: Session | null, languageId: number): boolean {
   return isMasterSuperAdmin(session) || hasRole(session, languageId, "language_admin") || hasRole(session, languageId, "publisher");
 }

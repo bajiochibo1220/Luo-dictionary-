@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-29T07:43:51.500Z",
+  "databaseWrites": 0,
+  "checks": [
+    {
+      "question": "Why does ice float on water? Answer in two clear sentences.",
+      "pass": true,
+      "model": "deepseek-flash",
+      "answer": "Ice floats because it is less dense than liquid water, since water expands as it freezes and the same mass occupies a larger volume. This lower density means the buoyant force from the displaced water exceeds the ice's weight, so it stays afloat.",
+      "sources": 0,
+      "ms": 8032
+    },
+    {
+      "question": "What are proverbs? Explain simply and give one original example.",
+      "pass": true,
+      "model": "deepseek-flash",
+      "answer": "A proverb is a short, well-known saying that expresses a general truth or piece of wisdom about life. Proverbs are usually brief, memorable, and often metaphorical — they pass down lessons about behavior, relationships, patience, or caution in a few words.\n\nFor example, the English proverb \"A stitch in time saves nine\" means that fixing a small problem early prevents it from becoming a bigger one later.\n\nHere's an **original example** (I wrote this one, it isn't a traditional saying):\n\n> \"A pot watched too closely never boils faster.\"\n\nMeaning: impatience doesn't speed things up; some things simply take the time they take.\n\nProverbs appear in every culture, and they often vary in wording between communities even when the underlying idea is similar. In Dholuo, such sayings are commonly called *ngeche* (singular *ng'ech*), and their exact meaning usually depends on the situation in which they are used.",
+      "sources": 0,
+      "ms": 17469
+    },
+    {
+      "question": "Write a JavaScript function named add that adds two numbers.",
+      "pass": true,
+      "model": "deepseek-flash",
+      "answer": "Here's a simple JavaScript function named `add`:\n\n```javascript\nfunction add(a, b) {\n  return a + b;\n}\n```\n\nUsage:\n\n```javascript\nconsole.log(add(2, 3));      // 5\nconsole.log(add(-4, 10));    // 6\nconsole.log(add(1.5, 2.25)); // 3.75\n```\n\nA few notes:\n\n- JavaScript's `+` works for both numbers and strings, so `add(\"2\", \"3\")` would return `\"23\"`. If you want to guarantee numeric behavior, convert the inputs first:\n\n```javascript\nfunction add(a, b) {\n  return Number(a) + Number(b);\n}\n```\n\n- For an arrow-function version: `const add = (a, b) => a + b;`\n\n- Be aware of floating-point quirks: `add(0.1, 0.2)` returns `0.30000000000000004`, which is normal IEEE 754 behavior in JavaScript, not a bug in the function.",
+      "sources": 0,
+      "ms": 15353
+    }
+  ]
+}

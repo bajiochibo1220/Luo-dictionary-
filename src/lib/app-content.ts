@@ -9,6 +9,7 @@ export type MediaItem = {
 
 export type ContentItem = {
   isProvisional?: boolean;
+  transcriptCount?: number;
   id: string;
   title: string;
   kind?: "cultural" | "dictionary";

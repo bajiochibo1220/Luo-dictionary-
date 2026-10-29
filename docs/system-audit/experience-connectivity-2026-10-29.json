@@ -1,0 +1,19 @@
+{
+  "databaseWrites": 0,
+  "note": "Provider checks use environment configuration only, independent of database-saved settings.",
+  "results": [
+    {
+      "check": "environment-ai-provider",
+      "skipped": true,
+      "reason": "No usable environment credential; database-saved configuration is required"
+    },
+    {
+      "check": "DATABASE_URL",
+      "pass": true
+    },
+    {
+      "check": "DIRECT_URL",
+      "pass": true
+    }
+  ]
+}

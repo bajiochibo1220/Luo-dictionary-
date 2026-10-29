@@ -1,3 +1,4 @@
+import { orderTranscriptRows } from "@/lib/reading-contract";
 import type { Prisma } from "@prisma/client";
 import { buildRecordUri, isPubliclyEligible } from "@/lib/governance";
 
@@ -48,10 +49,11 @@ export async function writePublication(
       consentScope: source.consentScope, restrictionLevel: source.restrictionLevel,
       embargoUntil: source.embargoUntil } });
   }
-  for (const item of source.transcripts.filter(item => isPubliclyEligible(item))) {
+  for (const [index, item] of orderTranscriptRows(source.transcripts.filter(item => isPubliclyEligible(item))).entries()) {
     const { id: _id, recordId: _recordId, sourceId: _sourceId, sourceUri: _sourceUri,
       timestamps, aiSummary: _aiSummary, aiEntities: _aiEntities, ...transcript } = item;
     await tx.transcript.create({ data: { ...transcript, recordId: id,
+      sourceId: `publication:${id}:segment:${String(index + 1).padStart(6, "0")}`,
       timestamps: timestamps ?? undefined, consentScope: source.consentScope,
       restrictionLevel: source.restrictionLevel, embargoUntil: source.embargoUntil } });
   }

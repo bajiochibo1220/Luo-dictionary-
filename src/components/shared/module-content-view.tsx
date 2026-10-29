@@ -11,6 +11,7 @@ import { useState, useMemo, useEffect, useRef, useContext, createContext, type C
 import { CONTENT_FILTERS as FILTERS, CONTENT_VIEWS as VIEW_MODES, contributionHref } from "@/lib/app-navigation";
 import { LayoutGrid, List, Image, Headphones, Video, FileText, Plus } from "lucide-react";
 import { BottomMediaControls } from "./bottom-media-controls";
+import { PublicTranscriptReader } from "./public-transcript-reader";
 import { CompleteItemDownload } from "./complete-item-download";
 import { CollectionToolbar } from "./collection-toolbar";
 import type { ContentItem, MediaItem } from "@/lib/app-content";
@@ -26,6 +27,7 @@ export type ModuleContentProps = {
   languageId: number;
   moduleCode: string;
   subject?: string;
+  categories?: { code: string; name: string }[];
   downloadOrigin?: string;
   items: ContentItem[];
   canContribute?: boolean;
@@ -47,11 +49,16 @@ export function ModuleContentView({
   onSave,
   downloadOrigin,
   searchControls,
+  categories: availableCategories,
+  selectedCategory,
+  onCategoryChange,
+  categoryBusy = false,
   Link: NavigationLink,
-}: ModuleContentProps & { Link: AppLink; searchControls?: ReactNode }) {
+}: ModuleContentProps & { Link: AppLink; searchControls?: ReactNode; selectedCategory?: string; onCategoryChange?: (category: string) => void; categoryBusy?: boolean }) {
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [filter, setFilter] = useState("all");
-  const [category, setCategory] = useState("all");
+  const [localCategory, setCategory] = useState("all");
+  const category = selectedCategory ?? localCategory;
   const [view, setView] = useState("feed");
   const [viewLanguageCode, setViewLanguageCode] = useState(languageCode);
   const [toolbarInMasthead, setToolbarInMasthead] = useState(false);
@@ -65,14 +72,14 @@ export function ModuleContentView({
     if (filter === "transcript") {
       return byCategory.filter(
         (i) =>
-          i.media.length === 0 ||
+          (i.transcriptCount || 0) > 0 || !!i.bodyText || i.media.length === 0 ||
           i.media.some((m) => m.type === "document" || m.type === "transcript")
       );
     }
     return byCategory.filter((i) => i.media.some((m) => m.type === filter));
   }, [items, filter, category, moduleCode]);
 
-  const categories = Array.from(new Map(items.filter((item) => item.moduleCode).map((item) => [item.moduleCode!, item.moduleName || item.moduleCode!])).entries());
+  const categories = availableCategories?.map(item => [item.code, item.name]) ?? Array.from(new Map(items.filter((item) => item.moduleCode).map((item) => [item.moduleCode!, item.moduleName || item.moduleCode!])).entries());
 
   const mediaForCard = (item: ContentItem): MediaItem[] => {
     if (filter === "all") return item.media;
@@ -93,9 +100,9 @@ export function ModuleContentView({
         <div className="flex min-w-0 items-baseline gap-2"><h2 className="truncate font-serif text-lg text-stone-900 sm:text-2xl" title={title}><InterfaceText source={baseName} /></h2><span className="truncate text-xs text-stone-700" title={baseName}>{languageName}</span></div>
         {moduleCode !== "all" && canContribute && <NavigationLink href={contributionHref(moduleCode)} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-amber-950 hover:bg-white/60"><Plus size={18} aria-hidden="true" /><span><InterfaceText source="Contribute" /></span></NavigationLink>}
       </header>
-      {moduleCode === "all" && <div className="flex flex-nowrap gap-2 overflow-x-auto">
+      {moduleCode === "all" && <div aria-label="Content areas" className="flex flex-nowrap gap-2 overflow-x-auto">
         {[{ key: "all", label: "All content" }, ...categories.map(([key, label]) => ({ key, label }))].map((item) => (
-          <button key={item.key} aria-pressed={category === item.key} onClick={() => setCategory(item.key)} className={`shrink-0 min-h-11 text-xs font-semibold px-4 py-1.5 rounded-full border ${category === item.key ? "bg-amber-800 text-white border-amber-800" : "bg-white/60 text-stone-800 border-stone-800/20"}`}><InterfaceText source={item.label} /></button>
+          <button key={item.key} type="button" disabled={categoryBusy} aria-pressed={category === item.key} onClick={() => onCategoryChange ? onCategoryChange(item.key) : setCategory(item.key)} className={`shrink-0 min-h-11 text-xs font-semibold px-4 py-1.5 rounded-full border disabled:opacity-50 ${category === item.key ? "bg-amber-800 text-white border-amber-800" : "bg-white/60 text-stone-800 border-stone-800/20"}`}><InterfaceText source={item.label} /></button>
         ))}
       </div>}
 
@@ -113,7 +120,7 @@ export function ModuleContentView({
             <span className="text-2xl opacity-70">📖</span>
           </div>
 
-          <h3 className="font-serif text-xl md:text-3xl text-stone-900 mb-3 leading-tight"><InterfaceText source="No " />{title}<InterfaceText source=" entries yet" /></h3>
+          <h3 className="font-serif text-xl md:text-3xl text-stone-900 mb-3 leading-tight"><InterfaceText source="No matching entries" /></h3>
           <p className="text-base text-stone-800/70 mb-8 leading-relaxed">
             <InterfaceText source={canContribute && moduleCode !== "all"
               ? "Be the first to share something with the community. Your contribution will be reviewed and published."
@@ -144,6 +151,7 @@ function FeedView({ items, mediaForCard, languageCode, viewLanguageCode, onSave 
 
 function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { item: ContentItem; media: MediaItem[]; languageCode: string; viewLanguageCode: string; onSave?: (item: ContentItem) => void }) {
   const downloadOrigin = useContext(DownloadOrigin);
+  const hasLinkedTranscripts = (item.transcriptCount || 0) > 0;
   const [expanded, setExpanded] = useState(true);
   const [showEnglish, setShowEnglish] = useState(viewLanguageCode === "eng");
   useEffect(() => setShowEnglish(viewLanguageCode === "eng"), [viewLanguageCode]);
@@ -170,18 +178,19 @@ function FeedCard({ item, media, languageCode, viewLanguageCode, onSave }: { ite
           </button>
         )}
         {description && <div className="space-y-2"><p className={`text-sm text-stone-800 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-3"}`}>{description}</p>{(description.length > 180 || !!item.bodyText || !!item.englishBodyText) && <button type="button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} className="min-h-11 text-sm font-semibold text-amber-900 underline"><InterfaceText source={expanded ? "Read less" : "Read more"} /></button>}</div>}
-        {!showEnglish && languageCode !== "eng" && <div lang="en" translate="no" contentEditable={false} className="mt-4 space-y-2 border-t border-stone-300 pt-3 text-sm text-stone-700">
+        {!showEnglish && languageCode !== "eng" && (!hasLinkedTranscripts || item.englishBodyText || item.englishSummary) && <div lang="en" translate="no" contentEditable={false} className="mt-4 space-y-2 border-t border-stone-300 pt-3 text-sm text-stone-700">
           <p className="text-xs font-semibold uppercase tracking-wide"><InterfaceText source="English" /></p>
           {item.englishTitle && <p className="font-serif text-lg">{item.englishTitle}</p>}
           {item.englishBodyText || item.englishSummary ? <p className={`whitespace-pre-wrap leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>{expanded ? item.englishBodyText || item.englishSummary : item.englishSummary || item.englishBodyText}</p> : <p className="italic"><InterfaceText source="An English description has not been added yet." /></p>}
         </div>}
+        {hasLinkedTranscripts && <PublicTranscriptReader key={item.id} recordId={item.id} languageCode={showEnglish ? "eng" : languageCode} origin={downloadOrigin} />}
         <CompleteItemDownload id={item.id} kind={item.kind || "cultural"} origin={downloadOrigin} />
         {media.length > 0 && <div className="mt-3 flex flex-wrap gap-3">{media.map(asset => <a key={asset.id} href={`${asset.url}${asset.url.includes("?") ? "&" : "?"}download=1`} download className="inline-flex min-h-11 items-center text-sm font-semibold underline"><InterfaceText source="Download " />{asset.type}</a>)}</div>}
-        {description && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
+        {description && !hasLinkedTranscripts && <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(`${showEnglish ? item.englishTitle || item.title : item.title}\n\n${showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""}`)}`} download={`heritage-${item.id}-${showEnglish ? "english" : languageCode}.txt`} className="mt-3 flex min-h-11 w-fit items-center rounded-lg border border-stone-400 px-3 text-sm font-semibold"><InterfaceText source="Download text / transcript" /></a>}
         {(item.moduleCode === "folktales" || item.moduleCode === "heritage_sites") && <StoryTour item={item} text={showEnglish ? item.englishBodyText || item.englishSummary || "" : item.bodyText || item.summary || ""} />}
         {item.moduleCode === "artifacts" && item.media.filter(asset => asset.format === "obj").map(asset => <ObjViewer key={asset.id} address={asset.url} />)}
         {onSave && <button type="button" className="mt-3 min-h-11 rounded-lg bg-amber-900 px-4 py-2 text-sm text-white" onClick={() => onSave(item)}><InterfaceText source="Save item" /></button>}
-        {showEnglish && !item.englishSummary && <p className="text-sm text-stone-700 italic"><InterfaceText source="An English description has not been added yet." /></p>}
+        {showEnglish && !hasLinkedTranscripts && !item.englishBodyText && !item.englishSummary && <p className="text-sm text-stone-700 italic"><InterfaceText source="An English description has not been added yet." /></p>}
       </div>
     </article>
   );
@@ -230,6 +239,10 @@ function GridView({ items, mediaForCard, onOpen, viewLanguageCode }: { viewLangu
       })}
     </div>
   );
+}
+
+export function LibraryItemDialog({ downloadOrigin, ...props }: Parameters<typeof ContentDialog>[0] & { downloadOrigin?: string }) {
+  return <DownloadOrigin.Provider value={downloadOrigin || ""}><ContentDialog {...props} /></DownloadOrigin.Provider>;
 }
 
 function ContentDialog({ item, languageCode, onClose, onSave, viewLanguageCode }: { viewLanguageCode: string; item: ContentItem; languageCode: string; onClose: () => void; onSave?: (item: ContentItem) => void }) {

@@ -37,6 +37,23 @@ Open **Help & training** for the current manual selected for your assigned dutie
 Verification: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
 See [RECOVERY.md](RECOVERY.md) for recovery and [REPAIR_REPORT.md](REPAIR_REPORT.md) for repair details and verification limits.
 
+## Production domain
+
+The public website is https://culturalheritage.com.co. In the Vercel project's **Settings > Environment Variables**, set these values for **Production**, then redeploy:
+
+```dotenv
+AUTH_URL=https://culturalheritage.com.co
+NEXTAUTH_URL=https://culturalheritage.com.co
+APP_PUBLIC_URL=https://culturalheritage.com.co
+NEXT_PUBLIC_APP_URL=https://culturalheritage.com.co
+```
+
+`AUTH_URL` takes priority over the legacy `NEXTAUTH_URL`; neither should retain the old Vercel address. `APP_PUBLIC_URL` controls account recovery and verification links. These are hosting settings, separate from the administrator's AI API credentials. Editing the local `.env` does not update Vercel. Keep localhost values for local development. If Render also runs this application's authentication or account services, update its corresponding production URL settings and redeploy that service too.
+
+For Google sign-in, add `https://culturalheritage.com.co/api/auth/callback/google` to the Google OAuth client's **Authorized redirect URIs**. If that client uses **Authorized JavaScript origins**, add `https://culturalheritage.com.co` there too.
+
+After redeployment, visit `https://culturalheritage.com.co/api/auth/providers`: every `signinUrl` and `callbackUrl` should use the custom domain. Start a fresh browser session on the custom domain, sign in, navigate the dashboards and sign out. Sessions on the old domain do not transfer to the new domain.
+
 ## Importing the prepared Luo transcript corpus
 
 After applying database migrations and seeding the `luo` language and `oral_histories` module, an authorized operator can import the prepared NLP corpus:

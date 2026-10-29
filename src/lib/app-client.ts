@@ -1,3 +1,4 @@
+import { requestSignal } from "./api-request-timeout";
 import { z } from "zod";
 import { AppBootstrapSchema, AppLibrarySchema } from "@/lib/app-contract";
 import { AppAccountSchema, ConversationHistorySchema } from "@/lib/account-contract";
@@ -22,7 +23,7 @@ export function createAppClient(options: { origin: string; fetch?: typeof fetch;
     const headers: Record<string, string> = { Accept: "application/json" };
     if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
     const response = await transport(new URL(path, origin), {
-      signal, credentials: personal && !options.accessToken ? "same-origin" : "omit", cache: "no-store", headers,
+      signal: requestSignal(signal, 40000), credentials: personal && !options.accessToken ? "same-origin" : "omit", cache: "no-store", headers,
     });
     const body = await response.json();
     if (!response.ok || body.success !== true) throw new Error(typeof body.error === "string" ? body.error : "The service is temporarily unavailable.");

@@ -11,7 +11,7 @@ const shortcuts = [
 ];
 export function DashboardOverview({ languageName, name, mode = "public", Link = DefaultLink }: { languageName: string; name?: string | null; mode?: "public" | "teacher" | "researcher"; Link?: AppLink }) {
   const assignedTasks = mode === "teacher" ? [
-    { title: "Your teaching workspace", description: "Open courses, manage your classrooms and review assigned work.", href: "/courses", tone: "blue" },
+    { title: "Your teaching workspace", description: "Explore published pathways, lessons and learning activities.", href: "/courses", tone: "blue" },
     { title: "Resources for your lessons", description: "Find material permitted for your teaching assignment.", href: "/research", tone: "teal" },
   ] : mode === "researcher" ? [
     { title: "Your research library", description: "Explore publications, datasets and source material permitted for your assignment.", href: "/research", tone: "teal" },

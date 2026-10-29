@@ -1,0 +1,1226 @@
+{
+  "checkedAt": "2026-10-29T07:59:52.183Z",
+  "databaseWrites": 0,
+  "records": [
+    {
+      "id": "ed205229-bc24-4a3f-b17f-b5d7f72e41fa",
+      "title": "Oral history KIS_026",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 2,
+          "characters": 311,
+          "speakerRoles": 2
+        }
+      ]
+    },
+    {
+      "id": "5f2f7b0a-c3cc-4a0e-b231-b458eec60697",
+      "title": "Oral history SIA_022",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 38,
+          "characters": 9494,
+          "speakerRoles": 38
+        }
+      ]
+    },
+    {
+      "id": "81a0f85e-352e-4251-a734-5483eff41957",
+      "title": "Oral history SIA_021",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 11,
+          "characters": 6965,
+          "speakerRoles": 11
+        }
+      ]
+    },
+    {
+      "id": "f00ad664-6a99-4cce-b9ef-263909800509",
+      "title": "Oral history SIA_021",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 11,
+          "characters": 6965,
+          "speakerRoles": 11
+        }
+      ]
+    },
+    {
+      "id": "a6254ebf-2f6c-455d-b3d6-7935d33519f7",
+      "title": "Oral history SIA_020",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 67,
+          "characters": 4954,
+          "speakerRoles": 67
+        }
+      ]
+    },
+    {
+      "id": "586b6b40-1e2a-458e-971e-4f439bf33a77",
+      "title": "Oral history KIS_019",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 49,
+          "characters": 42024,
+          "speakerRoles": 49
+        }
+      ]
+    },
+    {
+      "id": "24126963-5b21-4078-bad2-67bbb1595339",
+      "title": "Oral history KIS_025",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 281,
+          "characters": 38372,
+          "speakerRoles": 281
+        }
+      ]
+    },
+    {
+      "id": "96230102-7dc5-42f7-8b75-2c3776430d19",
+      "title": "Oral history HOM_006",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 120,
+          "characters": 39538,
+          "speakerRoles": 120
+        }
+      ]
+    },
+    {
+      "id": "ca97b4b3-cae9-406b-b23f-b00edce5eb4f",
+      "title": "Oral history NYA_005",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 296,
+          "characters": 41239,
+          "speakerRoles": 296
+        }
+      ]
+    },
+    {
+      "id": "19671ff5-03cb-4d90-a629-190639f753d6",
+      "title": "Oral history SIA_023",
+      "status": "needs_edit",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 37,
+          "characters": 14260,
+          "speakerRoles": 37
+        }
+      ]
+    },
+    {
+      "id": "ff466265-64ae-4e0d-b785-8808fe44a240",
+      "title": "Oral history KIS_024",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 17,
+          "characters": 12379,
+          "speakerRoles": 17
+        }
+      ]
+    },
+    {
+      "id": "bd414839-09fb-47c3-add1-eb17534ff707",
+      "title": "Oral history KIS_024",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 17,
+          "characters": 12379,
+          "speakerRoles": 17
+        }
+      ]
+    },
+    {
+      "id": "3cac2c3f-0c25-4bb6-b276-4e63df0a6753",
+      "title": "Oral history HOM_001",
+      "status": "needs_edit",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "title",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion",
+        "sourcePermission",
+        "attributionPreference"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 33,
+          "characters": 3771,
+          "speakerRoles": 33
+        }
+      ]
+    },
+    {
+      "id": "59b27397-1157-476e-9044-7c64ef3b6fcf",
+      "title": "Oral history NYA_008",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 9,
+          "characters": 9432,
+          "speakerRoles": 9
+        }
+      ]
+    },
+    {
+      "id": "1978aef8-a19d-41b6-ad1d-982d651d6382",
+      "title": "Oral history NYA_007",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 146,
+          "characters": 18844,
+          "speakerRoles": 146
+        }
+      ]
+    },
+    {
+      "id": "426ce750-032c-4cea-a8ec-94a0e62d02ed",
+      "title": "Oral history HOM_009",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 133,
+          "characters": 17856,
+          "speakerRoles": 133
+        }
+      ]
+    },
+    {
+      "id": "adaafc7f-a776-4508-a0e2-8606afec18da",
+      "title": "Oral history NYA_008",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 9,
+          "characters": 9432,
+          "speakerRoles": 9
+        }
+      ]
+    },
+    {
+      "id": "50fd1a46-5fbc-45c3-819b-55cc712433e8",
+      "title": "Oral history NYA_007",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 146,
+          "characters": 18844,
+          "speakerRoles": 146
+        }
+      ]
+    },
+    {
+      "id": "e98e9feb-4b30-4648-bcfe-29cf30d4b09c",
+      "title": "Oral history XCT_017",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 107,
+          "characters": 56912,
+          "speakerRoles": 107
+        }
+      ]
+    },
+    {
+      "id": "70a31e1e-56b6-4018-ac4e-9be2d2a6bb19",
+      "title": "Oral history SIA_015",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 37,
+          "characters": 32258,
+          "speakerRoles": 37
+        }
+      ]
+    },
+    {
+      "id": "5d6c2b3f-3f01-4991-a997-dba1f68ab912",
+      "title": "Oral history KIS_013",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 29,
+          "characters": 25953,
+          "speakerRoles": 29
+        }
+      ]
+    },
+    {
+      "id": "ffb4cc89-0256-4951-882b-61e4490a86f4",
+      "title": "Oral history HOM_012",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 27,
+          "characters": 23195,
+          "speakerRoles": 27
+        }
+      ]
+    },
+    {
+      "id": "6a0789a8-f2f3-4e2b-9f4b-a9460a327688",
+      "title": "Oral history HOM_011",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 29,
+          "characters": 24653,
+          "speakerRoles": 29
+        }
+      ]
+    },
+    {
+      "id": "f6c0d117-db66-46e7-9556-774932f4a5d3",
+      "title": "Oral history KIS_026",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 2,
+          "characters": 311,
+          "speakerRoles": 2
+        }
+      ]
+    },
+    {
+      "id": "b325f14d-6f45-4a50-a984-495e6a14a6b0",
+      "title": "Oral history SIA_022",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 38,
+          "characters": 9494,
+          "speakerRoles": 38
+        }
+      ]
+    },
+    {
+      "id": "ef8864f6-d058-45e5-8deb-ab983a4eec23",
+      "title": "Oral history KIS_025",
+      "status": "needs_edit",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 281,
+          "characters": 38372,
+          "speakerRoles": 281
+        }
+      ]
+    },
+    {
+      "id": "5806ed2d-4932-4f54-8a88-a52745a064a8",
+      "title": "Oral history SIA_020",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 67,
+          "characters": 4954,
+          "speakerRoles": 67
+        }
+      ]
+    },
+    {
+      "id": "7484a28d-7929-4e8d-9198-a9e02c6f6a07",
+      "title": "Oral history KIS_019",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 49,
+          "characters": 42024,
+          "speakerRoles": 49
+        }
+      ]
+    },
+    {
+      "id": "d25fbde1-ebc7-4587-a9e7-c69019d7f097",
+      "title": "Oral history HOM_018",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 52,
+          "characters": 38994,
+          "speakerRoles": 52
+        }
+      ]
+    },
+    {
+      "id": "288a2a91-115f-476c-9450-cd447f344673",
+      "title": "Oral history HOM_018",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 52,
+          "characters": 38994,
+          "speakerRoles": 52
+        }
+      ]
+    },
+    {
+      "id": "abac421d-f85e-4f3b-8473-f794675fb215",
+      "title": "Oral history XCT_017",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 107,
+          "characters": 56912,
+          "speakerRoles": 107
+        }
+      ]
+    },
+    {
+      "id": "b88c66a5-5b2f-4047-8253-0f5c32986cad",
+      "title": "Oral history SIA_016",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 28,
+          "characters": 22394,
+          "speakerRoles": 28
+        }
+      ]
+    },
+    {
+      "id": "270ef381-faa1-448d-8767-f7d0d6e11a8b",
+      "title": "Oral history SIA_016",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 28,
+          "characters": 22394,
+          "speakerRoles": 28
+        }
+      ]
+    },
+    {
+      "id": "e73b72d8-a54a-4f65-abaf-cdfbdd4bbdfe",
+      "title": "Oral history SIA_015",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 37,
+          "characters": 32258,
+          "speakerRoles": 37
+        }
+      ]
+    },
+    {
+      "id": "7c1a5199-56be-4704-9e37-55d373fcd42e",
+      "title": "Oral history KIS_014",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 26,
+          "characters": 23249,
+          "speakerRoles": 26
+        }
+      ]
+    },
+    {
+      "id": "7d15b895-060c-47c4-866c-7e64d0b45823",
+      "title": "Oral history KIS_014",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 26,
+          "characters": 23249,
+          "speakerRoles": 26
+        }
+      ]
+    },
+    {
+      "id": "e20ecaac-9dd2-4b29-8037-c337c554ad15",
+      "title": "Oral history KIS_013",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 29,
+          "characters": 25953,
+          "speakerRoles": 29
+        }
+      ]
+    },
+    {
+      "id": "90a37bab-588d-4202-ac39-cbdb6385d074",
+      "title": "Oral history HOM_012",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 27,
+          "characters": 23195,
+          "speakerRoles": 27
+        }
+      ]
+    },
+    {
+      "id": "ed9bb4cb-2786-4b17-883b-935f452b0262",
+      "title": "Oral history HOM_011",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 29,
+          "characters": 24653,
+          "speakerRoles": 29
+        }
+      ]
+    },
+    {
+      "id": "ca379a86-dda0-4c54-a02d-1c8bde509256",
+      "title": "Oral history KIS_010",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 292,
+          "characters": 42493,
+          "speakerRoles": 292
+        }
+      ]
+    },
+    {
+      "id": "28521c9e-05e3-414d-82b8-649cb3270a60",
+      "title": "Oral history KIS_010",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 292,
+          "characters": 42493,
+          "speakerRoles": 292
+        }
+      ]
+    },
+    {
+      "id": "0e2d722a-529c-43e9-aeaf-4bcaaf28cfa6",
+      "title": "Oral history HOM_009",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 133,
+          "characters": 17856,
+          "speakerRoles": 133
+        }
+      ]
+    },
+    {
+      "id": "e681bda5-e4d7-4460-95dd-e891dc0e210f",
+      "title": "Oral history HOM_006",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 120,
+          "characters": 39538,
+          "speakerRoles": 120
+        }
+      ]
+    },
+    {
+      "id": "5bfedb42-aac5-4316-b93b-3e38fec18dbe",
+      "title": "Oral history NYA_005",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 296,
+          "characters": 41239,
+          "speakerRoles": 296
+        }
+      ]
+    },
+    {
+      "id": "0b200c87-b18a-4abf-b3ec-d45cabdf8b3e",
+      "title": "Oral history HOM_004",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 491,
+          "characters": 67976,
+          "speakerRoles": 491
+        }
+      ]
+    },
+    {
+      "id": "16f3ee5e-e508-42c1-839d-94a20d37f4af",
+      "title": "Oral history HOM_004",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 491,
+          "characters": 67976,
+          "speakerRoles": 491
+        }
+      ]
+    },
+    {
+      "id": "b65fa6a0-15f1-49b5-beb7-62a819bc42ac",
+      "title": "Oral history HOM_001",
+      "status": "curated",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 33,
+          "characters": 3771,
+          "speakerRoles": 33
+        }
+      ]
+    },
+    {
+      "id": "17172692-0ba5-4d35-a2a5-d1ce6264102c",
+      "title": "Oral history HOM_003",
+      "status": "submitted",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 135,
+          "characters": 20626,
+          "speakerRoles": 135
+        }
+      ]
+    },
+    {
+      "id": "e87407cb-fd6b-4e8e-8d9f-14427ea473f5",
+      "title": "Oral history HOM_003",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 135,
+          "characters": 20626,
+          "speakerRoles": 135
+        }
+      ]
+    },
+    {
+      "id": "4508a864-d85f-4b03-8b17-e3e967e99334",
+      "title": "Oral history HOM_002",
+      "status": "needs_edit",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "title",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion",
+        "sourcePermission",
+        "attributionPreference"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [
+        {
+          "code": "eng",
+          "keys": [
+            "title"
+          ],
+          "characters": 24,
+          "summaryCharacters": 0
+        }
+      ],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 216,
+          "characters": 62606,
+          "speakerRoles": 216
+        }
+      ]
+    },
+    {
+      "id": "ed3f3294-450a-4dc7-a75f-e2d0f25df672",
+      "title": "Oral history HOM_002",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "title",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion",
+        "sourcePermission",
+        "attributionPreference"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [
+        {
+          "code": "eng",
+          "keys": [
+            "title"
+          ],
+          "characters": 24,
+          "summaryCharacters": 0
+        }
+      ],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 216,
+          "characters": 62606,
+          "speakerRoles": 216
+        }
+      ]
+    },
+    {
+      "id": "7d1e1001-034c-46e7-b77e-33cd824be2af",
+      "title": "Oral history SIA_023",
+      "status": "published",
+      "consent": "public_excerpt",
+      "restriction": "public",
+      "dataKeys": [
+        "sessionId",
+        "sourceUri",
+        "segmentCount",
+        "sourceVersion"
+      ],
+      "embeddedTranscriptCharacters": 0,
+      "translations": [],
+      "transcripts": [
+        {
+          "scope": "luo/public_excerpt/public",
+          "segments": 37,
+          "characters": 14260,
+          "speakerRoles": 37
+        }
+      ]
+    }
+  ]
+}

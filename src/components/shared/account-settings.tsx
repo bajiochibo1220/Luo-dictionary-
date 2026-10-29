@@ -5,7 +5,7 @@ import type { FeatureRequest } from "./learning-hub";
 export function AccountSettings({ request, onSignedOut, recoveryHref }: { request: FeatureRequest; onSignedOut: () => void; recoveryHref: string }) {
   const recoveryActionHref = (purpose: "reset" | "verify" | "delete") => `${recoveryHref}${recoveryHref.includes("?") ? "&" : "?"}purpose=${purpose}`;
   const [data, setData] = useState<any>(null); const [error, setError] = useState(""); const [notice, setNotice] = useState(""); const [busy, setBusy] = useState(false);
-  const reload = useCallback(async () => { try { setData(await request("/api/v1/account/settings")); } catch (reason) { setError(reason instanceof Error ? reason.message : "Settings unavailable."); } }, [request]);
+  const reload = useCallback(async () => { setError(""); try { setData(await request("/api/v1/account/settings")); } catch (reason) { setError(reason instanceof Error ? reason.message : "Settings unavailable."); } }, [request]);
   useEffect(() => { void reload(); }, [reload]);
   async function act(input: unknown, logout = false) {
     setBusy(true); setError(""); setNotice("");

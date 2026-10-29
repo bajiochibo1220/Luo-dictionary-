@@ -22,13 +22,13 @@ export function AppSidebarView({ modules, pathname, activeModule, onNavigate, Li
 }) {
   const items = modules.filter(module => !["ai_tutor", "language_tutor", "tutor", "games", "learning", "cultural_calendar", "chatbot", "research"].includes(module.code));
   const primary = [
-    ["/explore", "Start here"], ["/dashboard", "Explore heritage"],
-    ["/learn", "Lessons, games & calendar"], ["/tutor", "AI language tutor"],
-    ["/chatbot", "AI cultural assistant"], ["/research", "Research portal"], ["/saved", "Saved words & items"],
+    ["/dashboard", "Discover"], ["/explore", "Browse the library"], ["/saved", "Saved words & items"],
   ];
   const more = [
+    ["/learn", "Lessons, games & calendar"], ["/tutor", "AI language tutor"],
+    ["/chatbot", "AI assistant"], ["/research", "Research portal"],
     ["/places", "Cultural places map"], ["/knowledge", "Cultural connections"],
-    ["/ai-tools", "AI media tools"], ["/courses", "Courses & classrooms"],
+    ["/ai-tools", "AI media tools"], ["/courses", "Learning pathways"],
     ["/contribute", "Contribute & submissions"], ["/settings", "Settings"], ["/help", "Help & training"],
   ];
   const linkClass = "sidebar-link flex min-h-12 items-center gap-3 border-l-4 px-5 py-3 text-amber-50 transition-colors hover:bg-black/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200";

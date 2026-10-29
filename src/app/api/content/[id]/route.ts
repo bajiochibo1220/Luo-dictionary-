@@ -2,7 +2,7 @@ import { deleteUnpublishedContent } from "@/lib/content-deletion";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { canEditContent, canReviewContent, canUploadContent } from "@/lib/permissions";
+import { canDeleteContent, canEditContent, canReviewContent, canUploadContent } from "@/lib/permissions";
 import { embedRecord } from "@/lib/ai/embeddings";
 import { hasGemini } from "@/lib/ai/gemini";
 import { buildRecordUri, canReadRecord, canAccessGovernedItem, canReviewGovernedItem, parseGovernanceMetadata } from "@/lib/governance";
@@ -31,6 +31,7 @@ export async function GET(
     include: {
       language: true,
       module: true,
+      publication: { select: { id: true } },
       translations: true,
       media: true,
       reviews: {
@@ -60,7 +61,7 @@ export async function GET(
       entityId: record.id,
     });
   }
-  const result = { ...record, media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) };
+  const result = { ...record, canDelete: canDeleteContent(session, record), hasPublicVersion: !!record.publication || ["published", "published_source"].includes(record.status), media: visibleMedia.map(asset => ({ ...asset, sizeBytes: Number(asset.sizeBytes) })) };
   const staff = !!user.isSuperAdmin || (user.languageRoles ?? []).some((role: { languageId: number; role: string }) => role.languageId === record.languageId && ["language_admin", "uploader", "publisher", "content_editor"].includes(role.role));
   return NextResponse.json({ success: true, data: record.contributorId === user.id || staff ? result : publicFields(result) });
 }
@@ -293,10 +294,10 @@ async function handlePATCH(
   return NextResponse.json({ success: true, data: updated });
 }
 
-export const DELETE = withApiErrors(async (_req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const DELETE = withApiErrors(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth();
   const { id } = await params;
-  await deleteUnpublishedContent(session, [id]);
+  await deleteUnpublishedContent(session, [id], { deletePublicVersions: new URL(req.url).searchParams.get("deletePublicVersions") === "true" });
   return NextResponse.json({ success: true });
 });
 

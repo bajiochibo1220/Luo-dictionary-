@@ -5,14 +5,16 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ContentTable } from "@/components/admin/content-table";
 import { getSelectedAdminCultureId } from "@/lib/admin-language";
-import { canEditContent, canFinalizeContent, canPublishBeforeReview, canReviewContent, canSendToFinalReview, canUploadContent, canValidateCulture } from "@/lib/permissions";
+import { canDeleteContent, canEditContent, canFinalizeContent, canPublishBeforeReview, canReviewContent, canSendToFinalReview, canUploadContent, canValidateCulture } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 import { publicReleaseIssues } from "@/lib/public-release-readiness";
 
-type SearchParams = { status?: string; module?: string; languageId?: string };
+type SearchParams = { status?: string; module?: string; languageId?: string; page?: string };
 
 export default async function ContentPage({ searchParams: promisedSearchParams }: { searchParams: Promise<SearchParams> }) {
   const searchParams = await promisedSearchParams;
+  const requestedPage = Number(searchParams.page);
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const session = await auth();
   if (!session?.user) redirect("/login");
   const user = session!.user as any;
@@ -39,15 +41,17 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
 
   const candidates = await prisma.culturalRecord.findMany({
     where,
-    orderBy: [{ moduleId: "asc" }, { createdAt: "desc" }],
-    take: 500,
+    orderBy: [{ moduleId: "asc" }, { createdAt: "desc" }, { id: "asc" }],
+    skip: (page - 1) * 500,
+    take: 501,
     include: {
       language: { select: { code: true, nativeName: true } },
       module: { select: { code: true, baseName: true } },
       publication: { select: { id: true, status: true, isProvisional: true } },
     },
   });
-  const records = candidates.filter((record) => canReadRecord(session!.user, record));
+  const hasMore = candidates.length > 500;
+  const records = candidates.slice(0, 500).filter((record) => canReadRecord(session!.user, record));
 
   const formatted = records.map((record) => ({
     id: record.id,
@@ -65,11 +69,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     module: record.module,
     canModerate: canUploadContent(session, record.languageId),
     canEdit: canEditContent(session, record.languageId),
-    canDelete: !record.publication && !["published", "published_source"].includes(record.status) && (
-      canEditContent(session, record.languageId) ||
-      roles.some((role) => role.languageId === record.languageId && role.role === "language_admin") ||
-      (record.contributorId === user.id && canUploadContent(session, record.languageId))
-    ),
+    canDelete: canDeleteContent(session, record),
     canCultureReview: canValidateCulture(session, record.languageId),
     canForward: canSendToFinalReview(session, record.languageId),
     canFinalReview: !!record.validatorId && canFinalizeContent(session, record.languageId),
@@ -90,6 +90,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
     if (values.module) params.set("module", values.module);
     if (values.status) params.set("status", values.status);
     if (values.languageId) params.set("languageId", values.languageId);
+    if (values.page) params.set("page", values.page);
     const query = params.toString();
     return `/admin/content${query ? `?${query}` : ""}`;
   };
@@ -99,7 +100,7 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
       <header className="workspace-heading mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="mb-1 text-3xl font-serif text-stone-800"><InterfaceText source="Content" /></h1>
-          <p className="text-sm text-stone-500"><InterfaceText source="Items are grouped by language and content area. Select several items at the same stage to move them together." /></p>
+          <p className="text-sm text-stone-500"><InterfaceText source="Choose a content area, then filter by language or status. Select visible items to manage them together." /></p>
         </div>
         {!!createLanguageId && canUploadContent(session, createLanguageId) && <details className="upload-picker">
           <summary className="flex min-h-11 w-fit max-w-full cursor-pointer items-center rounded-lg bg-amber-800 px-4 text-sm font-semibold text-white"><InterfaceText source="+ New upload" /></summary>
@@ -116,34 +117,17 @@ export default async function ContentPage({ searchParams: promisedSearchParams }
       {isSuperAdmin && <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
         <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by language " /><span className="ml-1 text-xs font-normal text-stone-400"><InterfaceText source={searchParams.languageId ? "· selected" : "· all"} /></span></summary>
         <nav aria-label="Filter by language" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ languageId: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All languages" /></Link>
+        <Link href={paramsFor({ languageId: undefined, page: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.languageId ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All languages" /></Link>
         {(await prisma.language.findMany({ where: { isActive: true }, orderBy: { displayOrder: "asc" }, select: { id: true, nativeName: true } })).map((language) => (
-          <Link key={language.id} href={paramsFor({ languageId: String(language.id) })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.languageId === String(language.id) ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{language.nativeName}</Link>
+          <Link key={language.id} href={paramsFor({ languageId: String(language.id), page: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.languageId === String(language.id) ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{language.nativeName}</Link>
         ))}
         </nav>
       </details>}
 
-      <details className="mobile-filter-group mb-3 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by content area " /><span className="ml-1 text-xs font-normal text-stone-400">{searchParams.module ? `· ${modules.find((contentModule) => contentModule.code === searchParams.module)?.baseName ?? "selected"}` : "· all"}</span></summary>
-        <nav aria-label="Filter by content area" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ module: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.module ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All content areas" /></Link>
-        {modules.filter((contentModule) => contentModule.isActive && !contentModule.isStub).map((contentModule) => (
-          <Link key={contentModule.code} href={paramsFor({ module: contentModule.code })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.module === contentModule.code ? "bg-amber-700 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{contentModule.baseName}</Link>
-        ))}
-        </nav>
-      </details>
 
-      <details className="mobile-filter-group mb-4 rounded-xl border border-stone-200/80 bg-white/90 p-3 shadow-xs">
-        <summary className="cursor-pointer list-none text-sm font-semibold text-stone-700"><InterfaceText source="Filter by status " /><span className="ml-1 text-xs font-normal text-stone-400">{searchParams.status ? `· ${searchParams.status.replaceAll("_", " ")}` : "· all"}</span></summary>
-        <nav aria-label="Filter by status" className="mt-3 flex flex-wrap gap-2">
-        <Link href={paramsFor({ status: undefined })} className={`rounded-full px-3 py-1.5 text-xs ${!searchParams.status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}><InterfaceText source="All statuses" /></Link>
-        {["draft", "submitted", "needs_edit", "under_review", "curated", "published", "rejected"].map((status) => (
-          <Link key={status} href={paramsFor({ status })} className={`rounded-full px-3 py-1.5 text-xs ${searchParams.status === status ? "bg-stone-800 text-white" : "border border-stone-200 bg-white text-stone-600"}`}>{status.replaceAll("_", " ")}</Link>
-        ))}
-        </nav>
-      </details>
-
-      <ContentTable records={formatted} canDelete={formatted.some((record) => record.canDelete)} canBulkWorkflow={canBulkWorkflow} />
+      {searchParams.status && <p className="mb-3 text-sm text-stone-600"><InterfaceText source="Workflow filter:" /> {searchParams.status.replaceAll("_", " ")} · <Link href={paramsFor({ status: undefined, page: undefined })} className="underline"><InterfaceText source="Clear status filter" /></Link></p>}
+      <ContentTable records={formatted} canDelete={formatted.some((record) => record.canDelete)} canBulkWorkflow={canBulkWorkflow} areaNavigation={<nav aria-label="Content areas" className="flex flex-wrap gap-2">{[{ code: "", baseName: "All content areas" }, ...modules.filter(item => item.isActive && !item.isStub)].map(item => <Link key={item.code} href={paramsFor({ module: item.code || undefined, page: undefined })} aria-current={(searchParams.module || "") === item.code ? "page" : undefined} className={`inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-medium ${(searchParams.module || "") === item.code ? "border-teal-900 bg-teal-900 text-white" : "border-stone-200 text-stone-700 hover:bg-stone-50"}`}><InterfaceText source={item.baseName} /></Link>)}</nav>} />
+      {(page > 1 || hasMore) && <nav aria-label="More content batches" className="mt-4 flex flex-wrap items-center justify-center gap-4 rounded-xl border bg-white p-4 text-sm">{page > 1 && <Link href={paramsFor({ page: String(page - 1) })} className="inline-flex min-h-11 items-center underline"><InterfaceText source="Previous 500 uploads" /></Link>}<span><InterfaceText source="Upload batch" /> {page}</span>{hasMore && <Link href={paramsFor({ page: String(page + 1) })} className="inline-flex min-h-11 items-center underline"><InterfaceText source="Next 500 uploads" /></Link>}</nav>}
     </div>
   );
 }

@@ -17,21 +17,21 @@ type SidebarState = {
 const SidebarContext = createContext<SidebarState | null>(null);
 export const useSidebar = () => useContext(SidebarContext);
 
-export function SidebarProvider({ children, id, storageKey }: { children: React.ReactNode; id: string; storageKey: string }) {
-  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+export function SidebarProvider({ children, id, storageKey, defaultCollapsed = false }: { children: React.ReactNode; id: string; storageKey: string; defaultCollapsed?: boolean }) {
+  const [desktopCollapsed, setDesktopCollapsed] = useState(defaultCollapsed);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const openMobile = useCallback(() => setMobileOpen(true), []);
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
-    try { setDesktopCollapsed(localStorage.getItem(storageKey) === "collapsed"); } catch { /* Storage may be disabled. */ }
+    try { const saved = localStorage.getItem(storageKey); setDesktopCollapsed(saved === null ? defaultCollapsed : saved === "collapsed"); } catch { /* Storage may be disabled. */ }
     const media = window.matchMedia("(max-width: 767px)");
     const update = () => { setIsMobile(media.matches); if (!media.matches) setMobileOpen(false); };
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
-  }, [storageKey]);
+  }, [storageKey, defaultCollapsed]);
 
   const toggleDesktop = () => {
     const collapsed = !desktopCollapsed;
